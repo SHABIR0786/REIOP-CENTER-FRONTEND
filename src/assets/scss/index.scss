@@ -1,0 +1,15 @@
+@import '_sidebar.scss';
+@import '_navbar.scss';
+@import '_home.scss';
+@import '_import.scss';
+@import '_uxStyle.scss';
+
+@import '_variables.scss';
+
+body {
+    margin: 0 !important;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    #app{
+        margin: 0 !important;
+    }
+}

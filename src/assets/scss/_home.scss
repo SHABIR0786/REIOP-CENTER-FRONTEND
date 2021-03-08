@@ -1,0 +1,20 @@
+.home {
+    padding: 55px 38px;
+    .card {
+        cursor: pointer;
+        a {
+            color: #333;
+            .circle {
+                padding: 15px;
+                margin-right: 10px;
+                font-size: 2.5rem;
+                border-radius: 50%;
+                color: #fff;
+            }
+            .detail{
+                font-size: 12px;
+            }
+        }        
+    }
+    
+}

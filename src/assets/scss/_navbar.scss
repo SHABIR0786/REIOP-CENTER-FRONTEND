@@ -1,0 +1,13 @@
+.navbar-expand{
+    box-shadow: 0 12px 7px -11px #969696;
+    .navbar-nav{
+        .nav-item{
+            .nav-link{
+                color: #333;
+                &:active{
+                    outline: none;
+                }
+            }
+        }
+    }
+}
