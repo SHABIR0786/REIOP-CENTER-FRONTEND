@@ -1,13 +1,13 @@
 .side-menu{
     margin: 0;
-    height: 100vh;
+    height: 100%;
     max-width: 300px;
     min-width: 300px;
     padding: 0 !important;
     float: left;
     background: #deefef;
     color: #4c7497;
-    position: relative;
+    position: fixed;
     z-index: 9;
     font-family: "Montserrat", sans-serif;
     border-radius: unset;
@@ -22,7 +22,8 @@
         top: 0;
         .navbar-header{        
             .navbar-brand{
-                margin-right: 0 !important;            
+                margin-right: 0 !important;
+                transition: 0.05s;        
             }
         }
         ul {
@@ -49,8 +50,10 @@
         top: 0;
         left: 277px;
         width: 30px;   
+        transition: 0.2s;
         &.collapsemenu {
             left: 56px;
+            transition: 0.2s;
         }
         span{
             font-size: 38px;

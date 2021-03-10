@@ -1,0 +1,13 @@
+.footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background: #deefef;
+    color: #4c7497;
+    z-index: 8;
+    text-align: center;
+    p {
+        margin: 0 !important;
+        padding: 0.7rem;
+    }
+}

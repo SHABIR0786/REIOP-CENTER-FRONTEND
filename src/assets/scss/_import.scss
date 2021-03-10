@@ -1,4 +1,25 @@
 .import {
     background: #f2f2f2;
     height: 100vh;
+    margin-top: 2rem;
+    padding: 3rem 2rem;
+    .file-input-group{
+        .file-input {
+            visibility: hidden;
+            height: 0;
+            width: 0;
+        }
+        label {
+            cursor: pointer;
+            border: 3px dashed #ddd;
+            background: #f2f2f2;
+            width: 8rem;
+            height: 8rem;
+            border-radius: 50%;
+            padding: 2.5rem 0.5rem;
+            clear: both;
+            color: #999;
+        }
+    }
+    
 }

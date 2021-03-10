@@ -1,5 +1,7 @@
 <template>
-    <b-container fluid class="import">
+    <b-container fluid 
+        :class="`import main-content ${isCollapsed ? 'wide-content' : ''}`"
+    >
         <b-row>
             <b-col v-for="(item, index) in cards"
                 :key="index"
@@ -24,7 +26,8 @@ export default {
     },
     computed: {
         ...mapGetters({
-            cards: 'importModule/cards'
+            cards: 'importModule/cards',
+            isCollapsed: 'uxModule/isCollapsed'
         })
     },
 }

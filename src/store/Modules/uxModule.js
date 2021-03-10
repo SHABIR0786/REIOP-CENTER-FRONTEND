@@ -1,6 +1,7 @@
 const state = {
     isLoading: false,
-    loaderText: ''
+    loaderText: '',
+    isCollapsed: false,
 }
 
 const mutations = {
@@ -11,6 +12,9 @@ const mutations = {
     HIDE_LOADER(state) {
         state.isLoading = false
         state.loaderText = ''
+    },
+    TOGGLE_SIDEBAR(state) {
+        state.isCollapsed = !state.isCollapsed
     }
 }
 
@@ -20,12 +24,16 @@ const actions = {
     },
     hideLoader ({ commit }) {
         commit('HIDE_LOADER')
+    },
+    toggleSidebar({ commit }) {
+        commit('TOGGLE_SIDEBAR')
     }
 }
 
 const getters = {
     isLoading: ({ isLoading }) => isLoading,
     loaderText: ({ loaderText }) => loaderText,
+    isCollapsed: ({ isCollapsed }) => isCollapsed,
 }
 
 export default {

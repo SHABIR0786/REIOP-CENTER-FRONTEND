@@ -62,6 +62,7 @@
 <script>
 import { BIcon } from "bootstrap-vue"
 import { routes } from "@/router/routes"
+import { mapGetters } from "vuex"
 
 export default {
     name: "Sidebar",
@@ -70,12 +71,13 @@ export default {
     },
     data () {
         return {
-            routes,
-            isCollapsed: false,
-            
+            routes,            
         }
     },
     computed: {
+        ...mapGetters({
+            isCollapsed: 'uxModule/isCollapsed'
+        }),
         toggleClass () {
             if(this.isCollapsed)
                 return 'collapsemenu'
@@ -84,7 +86,7 @@ export default {
     },
     methods: {
         toggleSidebar () {
-            this.isCollapsed = !this.isCollapsed
+            this.$store.dispatch('uxModule/toggleSidebar')
         } 
     }
 }

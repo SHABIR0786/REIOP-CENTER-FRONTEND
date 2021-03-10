@@ -1,5 +1,7 @@
 <template>
-    <b-container fluid class="home">
+    <b-container fluid 
+        :class="`home main-content ${isCollapsed ? 'wide-content' : ''}`"
+    >
         <b-row>
             <b-col v-for="(item, index) in cards"
                 :key="index"
@@ -24,7 +26,8 @@ export default {
     },
     computed: {
         ...mapGetters({
-            cards: 'homeModule/cards'
+            cards: 'homeModule/cards',
+            isCollapsed: 'uxModule/isCollapsed'
         })
     },
     // created () {
