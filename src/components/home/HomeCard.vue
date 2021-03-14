@@ -16,8 +16,8 @@
                 <span>
                     <h4>{{item.counter}}</h4>
                     <p class="detail">{{item.text}}</p>
-                </span>     
-            </router-link>                                           
+                </span>  
+            </router-link>
         </b-card-text>
     </b-card>
 </template>

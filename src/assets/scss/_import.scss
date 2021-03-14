@@ -3,23 +3,17 @@
     height: 100vh;
     margin-top: 2rem;
     padding: 3rem 2rem;
-    .file-input-group{
-        .file-input {
-            visibility: hidden;
-            height: 0;
-            width: 0;
-        }
-        label {
+    .b-form-file{
+        cursor: pointer;
+        .custom-file-label{
             cursor: pointer;
-            border: 3px dashed #ddd;
-            background: #f2f2f2;
-            width: 8rem;
-            height: 8rem;
-            border-radius: 50%;
-            padding: 2.5rem 0.5rem;
-            clear: both;
-            color: #999;
+            background-color: #deefef;
+            color: #368683;
+            border-color: #368683;;
+            &::after {
+                background-color: $primary;
+                color: #fff;
+            }
         }
-    }
-    
+    }    
 }
