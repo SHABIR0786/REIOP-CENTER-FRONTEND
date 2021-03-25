@@ -1,42 +1,82 @@
 export const state = {
-    cards: [
+    emailFields: [
+        'seller_id', 'email_address', 'email_validify', 'skip_source'
+    ],
+    goldenAddressFields: [
+        'seller_id', 'golden_address', 'golden_city', 'golden_state', 'golden_zip'
+    ],
+    listFields: [
+        'list_dept', 'list_group', 'list_code', 'list_source', 'list_stack'
+    ],
+    phoneNumberFields: [
+        'seller_id', 'phone_number', 'phone_type', 'phone_validity', 'skip_source'
+    ],
+    sellerFields: [
+        'seller_full_name',
+        'seller_first_name',
+        'seller_last_name',
+        'seller_middle_name',
+        'seller_mailing_address',
+        'seller_mailing_city',
+        'seller_mailing_state',
+        'seller_mailing_zip',
+        'seller_company_owned',
+        'total_subject'
+    ],
+    subjectFields: [
+        'subject_address',
+        'subject_city',
+        'subject_state',
+        'subject_zip',
+        'subject_county',
+        'market',
+        'sub_market',
+        'subject_age',
+        'subject_type',
+        'total_seller',
+        'liststack'
+    ],
+    mappedHeader: [
         {
-            id: "main",
-            text: "Main Data Upload",
+            key: 'fromField',
+            label: 'From',
+            sortable: true
         },
         {
-            id: "email",
-            text: "Seller Email",
+            key: 'toField',
+            label: 'To',
+            sortable: true
         },
         {
-            id: "phone",
-            text: "Seller Phone Number",
-        },
-        {
-            id: "address",
-            text: "Seller Golden Address",
-        },
-        {
-            id: "phone_validity",
-            text: "Phone Validity",
-        },
-        {
-            id: "email_validity",
-            text: "Email Validity",
+            key: 'action',
+            label: 'Remove',
+            sourtable: false
         }
-    ]
+    ],
+    uploadedFields: []
 }
 
 export const mutations = {
-
+    SET_UPLOADED_FIELDS(state, payload) {
+        state.uploadedFields = payload
+    }
 }
 
 export const actions = {
-
+    setUploadedFields ({ commit }, data) {
+        commit('SET_UPLOADED_FIELDS', data)
+    }
 }
 
 export const getters = {
-    cards: ({ cards }) => cards,
+    emailFields: ({ emailFields }) => emailFields,
+    goldenAddressFields: ({ goldenAddressFields }) => goldenAddressFields,
+    listFields: ({ listFields }) => listFields,
+    phoneNumberFields: ({ phoneNumberFields }) => phoneNumberFields,
+    sellerFields: ({ sellerFields }) => sellerFields,
+    subjectFields: ({ subjectFields }) => subjectFields,
+    uploadedFields: ({ uploadedFields }) => uploadedFields,
+    mappedHeader: ({ mappedHeader }) => mappedHeader,
 }
 
 export default {
