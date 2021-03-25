@@ -118,6 +118,7 @@ export default {
                 let sheetName = workbook.SheetNames[0]
                 let worksheet = workbook.Sheets[sheetName];
                 $this.jsonSheet = XLSX.utils.sheet_to_json(worksheet);
+                this.uploadedFields = []
                 if($this.jsonSheet.length > 0) {
                     for(let k in $this.jsonSheet[0]) $this.uploadedFields.push(k)                    
                 }
@@ -129,7 +130,7 @@ export default {
             this.mappedItems = [] 
             if(this.jsonSheet.length > 0)             
                 for(let k in this.jsonSheet[0]) this.uploadedFields.push(k)
-                
+
             switch(item){
                 case 'email':
                     this.selectedFields = [...this.emailFields]
