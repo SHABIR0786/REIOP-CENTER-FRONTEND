@@ -6,16 +6,16 @@ export const state = {
         'seller_id', 'golden_address', 'golden_city', 'golden_state', 'golden_zip'
     ],
     listFields: [
-        'list_dept', 'list_group', 'list_code', 'list_source', 'list_stack'
+        'dept', 'list_type', 'group', 'code', 'source', 'stack'
     ],
     phoneNumberFields: [
         'seller_id', 'phone_number', 'phone_type', 'phone_validity', 'skip_source'
     ],
     sellerFields: [
-        'seller_full_name',
-        'seller_first_name',
-        'seller_last_name',
-        'seller_middle_name',
+        'full_name',
+        'first_name',
+        'last_name',
+        'middle_name',
         'seller_mailing_address',
         'seller_mailing_city',
         'seller_mailing_state',
