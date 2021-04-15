@@ -1,7 +1,7 @@
 <template>
     <b-container fluid 
         :class="`import main-content ${isCollapsed ? 'wide-content' : ''}`"
-    >
+    >        
         <b-row>
             <b-col>
                 <b-form-file
@@ -47,6 +47,16 @@
                         >Map</b-button>
                     </b-col>                    
                 </b-row>
+                <b-row class="text-center mt-5">
+                    <b-col>
+                        <b-btn
+                            variant="primary"
+                            @click="upload"
+                        >
+                            Save
+                        </b-btn>
+                    </b-col>                    
+                </b-row>
             </b-col>
             <b-col cols="12" md="3">
                 <fields-card
@@ -61,7 +71,7 @@
                     @clearMappedItem="clearMappedItem"
                 ></mapped-fields>
             </b-col>
-        </b-row>
+        </b-row>        
     </b-container>
 </template>
 
@@ -122,6 +132,7 @@ export default {
                 if($this.jsonSheet.length > 0) {
                     for(let k in $this.jsonSheet[0]) $this.uploadedFields.push(k)                    
                 }
+                console.log(this.jsonSheet)
             };
             reader.readAsArrayBuffer(f);
         },
@@ -174,6 +185,20 @@ export default {
             this.uploadedFields.push(this.mappedItems[index].fromField)
             this.selectedFields.push(this.mappedItems[index].toField)
             this.mappedItems.splice(index, 1)
+        },
+        async upload() {
+            let data = []
+            let obj = {}
+            this.jsonSheet.forEach((item) => {
+                this.mappedItems.forEach((field) => {
+                    obj[field.toField] = item[field.fromField]
+                })
+                console.log(obj)
+                data.push({...obj})
+            })
+            console.log(data)
+            const res = await this.$store.dispatch('importModule/uploadExcelData', data)
+            console.log(res)
         }
     }
 }

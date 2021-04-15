@@ -9,6 +9,7 @@ import uxModule from "./Modules/uxModule"
 import homeModule from "./Modules/homeModule"
 import importModule from "./Modules/importModule"
 import listModule from "./Modules/listModule"
+import sellerModule from "./Modules/sellerModule"
 
 const state = {}
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
         homeModule: homeModule,
         listModule: listModule,
         importModule: importModule,
+        sellerModule: sellerModule
     },
 
     state,

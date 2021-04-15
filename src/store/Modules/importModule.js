@@ -1,3 +1,5 @@
+import * as api from "../Services/api.js";
+
 export const state = {
     emailFields: [
         'seller_id', 'email_address', 'email_validify', 'skip_source'
@@ -16,11 +18,11 @@ export const state = {
         'first_name',
         'last_name',
         'middle_name',
-        'seller_mailing_address',
-        'seller_mailing_city',
-        'seller_mailing_state',
-        'seller_mailing_zip',
-        'seller_company_owned',
+        'mailing_address',
+        'mailing_city',
+        'mailing_state',
+        'mailing_zip',
+        'company_owned',
         'total_subject'
     ],
     subjectFields: [
@@ -53,18 +55,29 @@ export const state = {
             sourtable: false
         }
     ],
-    uploadedFields: []
+    uploadedFields: [],
+    uploaded: false
 }
 
 export const mutations = {
     SET_UPLOADED_FIELDS(state, payload) {
         state.uploadedFields = payload
+    },
+    SET_UPLOADED(state, payload){
+        state.uploaded = payload
     }
 }
 
 export const actions = {
     setUploadedFields ({ commit }, data) {
         commit('SET_UPLOADED_FIELDS', data)
+    },
+    async uploadExcelData({ commit }, data) {
+        return await api.post('/seller/', data)
+        .then((response) => {
+            commit('SET_UPLOADED', true)
+            return response
+        })
     }
 }
 

@@ -37,7 +37,7 @@
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 export default {
-    name: "Footer",
+    name: "List",
     components: {
         BIcon
     },
