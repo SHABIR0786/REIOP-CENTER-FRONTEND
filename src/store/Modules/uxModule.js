@@ -19,7 +19,7 @@ const mutations = {
 }
 
 const actions = {
-    setLoading ({ commit }, data) {
+    setLoading ({ commit }, data='Loading data...') {
         commit('SET_LOADING', data)
     },
     hideLoader ({ commit }) {

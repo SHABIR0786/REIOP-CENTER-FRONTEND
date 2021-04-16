@@ -2,7 +2,15 @@
     <div
         :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`"
     >
+        <b-pagination
+            class="float-right"
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="seller-table"
+        ></b-pagination>
         <b-table
+            id="seller-table"
             small
             striped
             hover
@@ -10,6 +18,8 @@
             :fields="headers"
             :items="items"
             responsive="md"
+            :per-page="perPage"
+            :current-page="currentPage"
         >
             <template #table-busy>
                 <div class="text-center" my-2>
@@ -19,31 +29,52 @@
                     <strong>Loading...</strong>
                 </div>
             </template>
-            <template #cell(actions)>
+            <template v-slot:cell(actions)="data">
                 <b-icon
                     class="mr-2"
                     icon="pencil"
                     variant="primary"
+                    @click="editItem(data.item)"
                 ></b-icon>
                 <b-icon
                     variant="primary"
                     icon="trash"
+                    @click="editItem(data.item)"
                 ></b-icon>
             </template>
         </b-table>
+        <b-pagination
+            class="float-right"
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="seller-table"
+        ></b-pagination>
+        <seller-modal
+            :showModal="showModal"
+            :propsSeller="editedItem"
+            @cancel="showModal=false"
+            @save="save"
+        ></seller-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
+import SellerModal from '@/components/seller/SellerModal'
 export default {
     name: "Seller",
     components: {
-        BIcon
+        BIcon,
+        SellerModal
     },
     data () {
         return {
-            isBusy: false
+            isBusy: false,
+            showModal: false,
+            perPage: 20,
+            currentPage: 1,
+            editedItem: {}
         }
     },
     computed: {
@@ -51,10 +82,23 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             headers: 'sellerModule/headers',
             items: 'sellerModule/sellers'
-        })
+        }),
+        rows() { return this.items.length}
     },
     async created () {
+        this.$store.dispatch('uxModule/setLoading')
         await this.$store.dispatch("sellerModule/getAllSellers")
+        this.$store.dispatch('uxModule/hideLoader')
+    },
+    methods: {
+        editItem(item) {
+            this.showModal = true
+            this.editedItem = { ...item }
+        },
+        save (item) {
+            this.showModal = false
+            this.$store.dispatch('sellerModule/EditeSeller', {...item})
+        }
     }
 }
 </script>

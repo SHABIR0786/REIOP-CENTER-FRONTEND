@@ -60,6 +60,11 @@ const state = {
 const mutations = {
     SET_ALL_SELLERS(state, payload) {
         state.sellers = [...payload]
+    },
+    EDIT_SELLER(state, payload) {
+        const findIndex = state.sellers.findIndex(({ id }) => id === payload.id)
+        findIndex && state.sellers.splice(findIndex, 1, { ...payload })
+        console.log(findIndex)
     }
 }
 
@@ -70,6 +75,13 @@ const actions = {
             commit('SET_ALL_SELLERS', response)
             return response
         })
+    },
+    EditeSeller({ commit }, data) {
+        // return await api.post('/seller/', {...data})
+        // .then((response) => {
+            commit('EDIT_SELLER', data)
+        //     return response
+        // })
     }
 }
 
