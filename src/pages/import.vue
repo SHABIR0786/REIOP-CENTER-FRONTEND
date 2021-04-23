@@ -103,6 +103,7 @@ export default {
             selectedFields: [],
             fromField: '',
             toField: '',
+            url: '',
             mappedItems: []
         }
     },
@@ -145,20 +146,27 @@ export default {
             switch(item){
                 case 'email':
                     this.selectedFields = [...this.emailFields]
+                    this.url = 'email-address'
                     break
                 case 'golden address':
                     this.selectedFields = [...this.goldenAddressFields]
+                    this.url = 'golden-address'
                     break
                 case 'list':
                     this.selectedFields = [...this.listFields]
+                    this.url = 'list'
                     break
                 case 'phone number':
                     this.selectedFields = [...this.phoneNumberFields]
+                    this.url = 'phone-number'
                     break
                 case 'seller':
                     this.selectedFields = [...this.sellerFields]
+                    this.url = 'seller'
                     break
                 default:
+                    this.selectedFields = [...this.subjectFields]
+                    this.url = 'subject'
             }
             console.log(this.selectedFields)
         },
@@ -193,12 +201,12 @@ export default {
                 this.mappedItems.forEach((field) => {
                     obj[field.toField] = item[field.fromField]
                 })
-                console.log(obj)
                 data.push({...obj})
             })
-            console.log(data)
-            const res = await this.$store.dispatch('importModule/uploadExcelData', data)
-            console.log(res)
+            this.$store.dispatch('uxModule/setLoading')
+            await this.$store.dispatch('importModule/uploadExcelData', {data: data, url: this.url})
+            this.$store.dispatch('uxModule/hideLoader')
+            this.$router.push({path: this.url})
         }
     }
 }

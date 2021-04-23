@@ -1,6 +1,7 @@
 import * as api from "../Services/api"
+
 const state = {
-    headers: [
+    fields: [
         {
             key: "full_name",
             label: "Full Name",
@@ -27,11 +28,7 @@ const state = {
         },
         {
             key: "mailing_state",
-            label: "Mailing Address"
-        },
-        {
-            key: "mailing_state",
-            label: "Mailing Address"
+            label: "Mailing State"
         },
         {
             key: "mailing_city",
@@ -64,29 +61,41 @@ const mutations = {
     EDIT_SELLER(state, payload) {
         const findIndex = state.sellers.findIndex(({ id }) => id === payload.id)
         findIndex && state.sellers.splice(findIndex, 1, { ...payload })
-        console.log(findIndex)
+    },
+    DELETE_SELLER(state, payload) {
+        const findIndex = state.sellers.findIndex(({ id }) => id === payload)
+        findIndex && state.sellers.splice(findIndex, 1)
     }
 }
 
 const actions = {
     async getAllSellers({ commit }) {
-        return await api.get('/seller/')
+        return await api.get('/seller')
         .then((response) => {
             commit('SET_ALL_SELLERS', response)
             return response
         })
     },
-    EditeSeller({ commit }, data) {
-        // return await api.post('/seller/', {...data})
-        // .then((response) => {
+    async editSeller({ commit }, data) {
+        return await api.put('/seller/', {...data})
+        .then((response) => {
+            console.log(response, 'response')
             commit('EDIT_SELLER', data)
-        //     return response
-        // })
+            return response
+        })
+    },
+    async deleteSeller({ commit }, data) {
+        return await api.deleteAPI(`/seller/${data}`)
+        .then((response) => {
+            console.log(response, 'response')
+            commit('DELETE_SELLER', data)
+            return response
+        })
     }
 }
 
 const getters = {
-    headers: ({ headers }) => headers,
+    fields: ({ fields }) => fields,
     sellers: ({ sellers }) => sellers
 }
 

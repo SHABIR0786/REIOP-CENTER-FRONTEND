@@ -15,7 +15,7 @@
             striped
             hover
             :busy="isBusy"
-            :fields="headers"
+            :fields="fields"
             :items="items"
             responsive="md"
             :per-page="perPage"
@@ -39,7 +39,7 @@
                 <b-icon
                     variant="primary"
                     icon="trash"
-                    @click="editItem(data.item)"
+                    @click="deleteItem(data.item)"
                 ></b-icon>
             </template>
         </b-table>
@@ -80,15 +80,21 @@ export default {
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            headers: 'sellerModule/headers',
+            fields: 'sellerModule/fields',
             items: 'sellerModule/sellers'
         }),
         rows() { return this.items.length}
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
-        await this.$store.dispatch("sellerModule/getAllSellers")
-        this.$store.dispatch('uxModule/hideLoader')
+        try {
+            await this.$store.dispatch("sellerModule/getAllSellers")
+            this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+            console.log(error)
+            this.$store.dispatch('uxModule/hideLoader')
+        }
+        
     },
     methods: {
         editItem(item) {
@@ -97,7 +103,10 @@ export default {
         },
         save (item) {
             this.showModal = false
-            this.$store.dispatch('sellerModule/EditeSeller', {...item})
+            this.$store.dispatch('sellerModule/editSeller', {...item})
+        },
+        deleteItem(item){
+            this.$store.dispatch('sellerModule/deleteSeller', item.id)
         }
     }
 }

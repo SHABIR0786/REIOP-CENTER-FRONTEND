@@ -1,72 +1,92 @@
+import * as api from "../Services/api"
+
 const state = {
-    headers: [
+    listHeaders: [
         {
-            key: "listId",
-            label: "ListId",
-            sortable: true
-        },
-        {
-            key: "dept",
+            key:"dept",
             label: "Dept",
             sortable: true
+
         },
         {
-            key: "type",
-            label: "Type",
+            key:"list_type",
+            label: "List Type",
             sortable: true
+
         },
         {
-            key: "group",
+            key:"group",
             label: "Group",
             sortable: true
+
         },
         {
-            key: "code",
+            key:"code",
             label: "Code",
             sortable: true
+
         },
         {
-            key: "source",
+            key:"source",
             label: "Source",
             sortable: true
+
         },
         {
-            key: "totalSubjects",
-            label: "Total Subjects",
+            key:"stack",
+            label: "Stack",
             sortable: true
-        },
-        {
-            key: "totalIndividualList",
-            label: "Total Individual List",
-            sortable: true
-        },
-        {
-            key: "createDate",
-            label: "Create Date",
-            sortable: true
+
         },
         {
             key: "actions",
             label: "Actions"
-        },
-        {
-            key: "markets",
-            label: "Markets",
-            sortable: true
         }
-    ]
+    ],
+    lists: []
 }
 
 const mutations = {
-
+    SET_ALL_LISTS(state, payload) {
+        state.lists = [...payload]
+    },
+    EDIT_LIST(state, payload) {
+        const findIndex = state.lists.findIndex(({ id }) => id === payload.id)
+        findIndex && state.lists.splice(findIndex, 1, { ...payload })
+    },
+    DELETE_LIST(state, payload) {
+        const findIndex = state.lists.findIndex(({ id }) => id === payload)
+        findIndex && state.lists.splice(findIndex, 1)
+    }
 }
 
 const actions = {
-
+    async getAllLists({ commit }) {
+        return await api.get('/list')
+        .then((response) => {
+            commit('SET_ALL_LISTS', response)
+            return response
+        })
+    },
+    async editList({ commit }, data) {
+        return await api.put('/list/', {...data})
+        .then((response) => {
+            commit('EDIT_LIST', data)
+            return response
+        })
+    },
+    async deleteList({ commit }, data) {
+        return await api.deleteAPI(`/list/${data}`)
+        .then((response) => {
+            commit('DELETE_LIST', data)
+            return response
+        })
+    }
 }
 
 const getters = {
-    headers: ({ headers }) => headers
+    listHeaders: ({ listHeaders }) => listHeaders,
+    lists: ({ lists }) => lists
 }
 
 export default {

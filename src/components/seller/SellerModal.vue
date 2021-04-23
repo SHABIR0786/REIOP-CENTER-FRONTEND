@@ -173,7 +173,7 @@ export default {
     },
     watch: {
         showModal() {
-            this.seller = this.propsSeller
+            this.seller = {...this.propsSeller}
         }
     }
 

@@ -36,7 +36,7 @@ export const state = {
         'subject_age',
         'subject_type',
         'total_seller',
-        'liststack'
+        'list_stack'
     ],
     mappedHeader: [
         {
@@ -72,8 +72,8 @@ export const actions = {
     setUploadedFields ({ commit }, data) {
         commit('SET_UPLOADED_FIELDS', data)
     },
-    async uploadExcelData({ commit }, data) {
-        return await api.post('/seller/', data)
+    async uploadExcelData({ commit }, {data, url}) {
+        return await api.post(`/${url}/`, data)
         .then((response) => {
             commit('SET_UPLOADED', true)
             return response

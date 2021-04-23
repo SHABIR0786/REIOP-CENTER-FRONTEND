@@ -46,14 +46,14 @@ export const routes = [
     },
     {
         name: "PhoneNumberPage",
-        path: "/phone",
+        path: "/phone-number",
         component: PhoneNumber,
         title: "Phone Number",
         icon: "telephone-fill"
     },
     {
         name: "EmailPage",
-        path: "/email",
+        path: "/email-address",
         component: Email,
         title: "Email",
         icon: "envelope-fill"
