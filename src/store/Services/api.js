@@ -1,6 +1,6 @@
 import axios from "axios";
-const urlPrefix = "http://localhost:8000/api";
-// const urlPrefix = "http://54.273.0.200/api";
+// const urlPrefix = "http://localhost:8000/api";
+const urlPrefix = "http://54.273.0.200/api";
 
 export async function get(subURL) {
   return axios
