@@ -30,13 +30,8 @@ export default {
             isCollapsed: 'uxModule/isCollapsed'
         })
     },
-    // created () {
-    //     this.$bvToast.toast('Toast body content', {
-    //         title: 'title',
-    //         variant: 'primary',
-    //         solid: true,
-    //         noAutoHide: true
-    //     })
-    // }
+    async created () {
+        await this.$store.dispatch('homeModule/getTotalRows')
+    }
 }
 </script>

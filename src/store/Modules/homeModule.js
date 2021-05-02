@@ -1,3 +1,5 @@
+import * as api from "../Services/api"
+
 export const state = {
     cards: [
         {
@@ -35,15 +37,27 @@ export const state = {
             variant: "success",
             counter: 0
         }
-    ]
+    ],
 }
 
 export const mutations = {
-
+    SET_TOTAL_ROWS(state, payload) {
+        state.cards[0].counter = payload.subject
+        state.cards[1].counter = payload.seller
+        state.cards[2].counter = payload.email
+        state.cards[3].counter = payload.phone
+        state.cards[4].counter = payload.golden
+    }
 }
 
 export const actions = {
-
+    async getTotalRows({ commit }) {
+        return await api.get('/home')
+        .then((response) => {
+            commit('SET_TOTAL_ROWS', response)
+            return response
+        })
+    },
 }
 
 export const getters = {

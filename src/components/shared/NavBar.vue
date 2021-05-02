@@ -8,8 +8,8 @@
                 <template #button-content>
                     Brandin Petteren
                 </template>
-                <b-dropdown-item>
-                    Profile
+                <b-dropdown-item @click="logout">
+                    Logout
                 </b-dropdown-item>
             </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -24,6 +24,12 @@ export default {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
         })
+    },
+    methods: {
+        logout () {
+            this.$store.dispatch('loginModule/logout')
+            this.$router.push({name: "Login"})
+        }
     }
 }
 </script>

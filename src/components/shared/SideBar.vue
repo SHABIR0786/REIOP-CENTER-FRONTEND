@@ -18,7 +18,7 @@
             <ul
                 class="nav navbar-nav"
             >
-                <li v-for="(item, index) in routes"
+                <li v-for="(item, index) in routeItems"
                     :key="index"
                     :class="$route.name===item.name ? 'active-tab' : ''"
                 >
@@ -69,15 +69,18 @@ export default {
     components: {
         BIcon,
     },
-    data () {
-        return {
-            routes,            
-        }
-    },
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed'
         }),
+        routeItems () {
+            let buf = []
+            routes.map((item) => {
+                item.isNavbar && buf.push(item)
+            })
+
+            return buf
+        },
         toggleClass () {
             if(this.isCollapsed)
                 return 'collapsemenu'

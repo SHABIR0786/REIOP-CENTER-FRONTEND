@@ -6,6 +6,7 @@ import createPersistedState from "vuex-persistedstate"
 Vue.use(Vuex)
 
 import uxModule from "./Modules/uxModule"
+import loginModule from "./Modules/loginModule"
 import homeModule from "./Modules/homeModule"
 import importModule from "./Modules/importModule"
 import emailModule from "./Modules/emailModule"
@@ -24,6 +25,7 @@ const actions = {}
 export default new Vuex.Store({
     modules: {
         uxModule: uxModule,
+        loginModule: loginModule,
         homeModule: homeModule,
         emailModule: emailModule,
         goldenAddressModule: goldenAddressModule,

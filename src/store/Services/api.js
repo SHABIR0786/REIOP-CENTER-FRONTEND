@@ -1,6 +1,9 @@
 import axios from "axios";
-// const urlPrefix = "http://localhost:8000/api";
-const urlPrefix = "http://54.273.0.200/api";
+const urlPrefix = process.env.VUE_APP_API_URL
+
+export async function setHeader(response) {
+  axios.defaults.headers.common['Authorization'] = 'JWT ' + response.access
+}
 
 export async function get(subURL) {
   return axios
