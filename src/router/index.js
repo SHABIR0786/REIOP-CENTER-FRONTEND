@@ -8,20 +8,17 @@ Vue.use(VueRouter)
 let router = new VueRouter({
     mode: "history",
     base: process.env.BASE_URL,
-
     routes
 })
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some((rec) => rec.meta.requireAuth)) {
-        if(store.getters['loginModule/isLogin']) {
+        if (store.getters['loginModule/isLogged']) {
             next()
-        }
-        else {
+        } else {
             next({name: "Login"})
         }
-    }
-    else {
+    } else {
         next()
     }
 })
