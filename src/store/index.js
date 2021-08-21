@@ -35,7 +35,6 @@ export default new Vuex.Store({
         phoneNumberModule: phoneNumberModule,
         subjectModule: subjectModule
     },
-
     state,
     mutations,
     actions,

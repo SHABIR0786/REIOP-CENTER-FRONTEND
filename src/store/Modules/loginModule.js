@@ -1,43 +1,54 @@
+import { getLocalStorage, setLocalStorage, clearLocalStorage } from '../../utils/localStorage'
 import * as api from "../Services/api"
 
 export const state = {
-    isLogin: false
+    isLogged: false,
+    accessToken: getLocalStorage('accessToken') || '',
+    authUser: JSON.parse(getLocalStorage('authUser')) || {},
 }
 
 export const mutations = {
-    SET_LOGIN(state, payload) {
-        state.isLogin = payload
-        console.log(state.isLogin, 'login module')
+    SIGN_IN(state, {user, token}) {
+        state.isLogged = true;
+        state.authUser = user || {};
+        state.accessToken = token;
+        setLocalStorage('accessToken', token);
+        setLocalStorage('authUser', JSON.stringify(user));
+    },
+    LOGOUT(state) {
+        state.isLogged = false;
+        state.authUser = null;
+        state.accessToken = '';
+        clearLocalStorage();
     }
 }
 
 export const actions = {
-    async login({ commit }, data) {
-        console.log(data)
-        return await api.post('/auth/token/obtain/', {...data})
-        .then((response) => {
-            
-            if(response.access && response.refresh){
-                localStorage.setItem('accessToken', response.access)
-                localStorage.setItem('refreshToken', response.refresh)
-                api.setHeader(response)
-                commit('SET_LOGIN', true)
-            }
-            else {
-                localStorage.setItem('accessToken', null)
-                localStorage.setItem('refreshToken', null)
-                commit('SET_LOGIN', false)
-            }
-            return response
-        })
+    async login({ commit }, {vm, email, password}) {
+        let userData = await api.post('/auth/login/', {email, password});
+
+        if (userData && userData.access_token) {
+            commit('SIGN_IN', {user: userData.user, token: userData.access_token})
+        } else {
+            vm.$bvToast.toast('You have entered an invalid username or password.', {
+                title: 'Oops!',
+                solid: true,
+                variant: 'danger',
+                autoHideDelay: 4000,
+            })
+        }
+
+        return userData;
     },
-    logout({ commit }) {
-        commit('SET_LOGIN', false)
+    async logout({ commit }) {
+        await api.post('/auth/logout/');
+        commit('LOGOUT');
     }
 }
 
 export const getters = {
-    isLogin: ({ isLogin }) => isLogin,
+    isLogged: ({ isLogged }) => isLogged,
+    getAuthUser: ({ authUser }) => authUser
 }
 
 export default {

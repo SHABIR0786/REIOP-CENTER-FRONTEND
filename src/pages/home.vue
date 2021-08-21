@@ -1,15 +1,8 @@
 <template>
-    <b-container fluid 
-        :class="`home main-content ${isCollapsed ? 'wide-content' : ''}`"
-    >
+    <b-container fluid :class="`home main-content ${isCollapsed ? 'wide-content' : ''}`">
         <b-row>
-            <b-col v-for="(item, index) in cards"
-                :key="index"
-                md="3"
-            >
-                <home-card
-                    :item="item"
-                ></home-card>
+            <b-col v-for="(item, index) in cards" :key="index" md="3">
+                <home-card :item="item"></home-card>
             </b-col>
         </b-row>
     </b-container>

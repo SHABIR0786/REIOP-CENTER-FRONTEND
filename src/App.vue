@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div v-if="isLogin">
+    <div v-if="isLogged">
       <side-bar></side-bar>
       <nav-bar></nav-bar>
       <Footer></Footer>
@@ -8,7 +8,7 @@
       <loader></loader>
     </div>
     <router-view v-else></router-view>
-  </div>  
+  </div>
 </template>
 
 <script>
@@ -28,12 +28,16 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isLogin: 'loginModule/isLogin'
+      isLogged: 'loginModule/isLogged'
     })
   },
   created () {
-    if(localStorage.getItem('accessToken')){
-      this.$store.commit('loginModule/SET_LOGIN', true)
+    if(localStorage.getItem('accessToken') && localStorage.getItem('authUser')){
+      this.$store.commit('loginModule/SIGN_IN', {
+        vm : this,
+        user: JSON.parse(localStorage.getItem('authUser')),
+        token: localStorage.getItem('accessToken')
+      })
     }
   }
 }
