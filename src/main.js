@@ -29,6 +29,9 @@ const token = localStorage.getItem('accessToken')
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
 }
+Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
+Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Headers'] = '*'
 
 new Vue({
   router,

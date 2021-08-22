@@ -25,7 +25,7 @@ export const mutations = {
 
 export const actions = {
     async login({ commit }, {vm, email, password}) {
-        let userData = await api.post('/auth/login/', {email, password});
+        let userData = await api.post('/auth/login', {email, password});
 
         if (userData && userData.access_token) {
             commit('SIGN_IN', {user: userData.user, token: userData.access_token})
@@ -41,7 +41,7 @@ export const actions = {
         return userData;
     },
     async logout({ commit }) {
-        await api.post('/auth/logout/');
+        await api.post('/auth/logout');
         commit('LOGOUT');
     }
 }
