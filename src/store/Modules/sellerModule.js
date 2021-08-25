@@ -60,34 +60,32 @@ const mutations = {
     },
     EDIT_SELLER(state, payload) {
         const findIndex = state.sellers.findIndex(({ id }) => id === payload.id)
-        findIndex && state.sellers.splice(findIndex, 1, { ...payload })
+        findIndex !== -1 && state.sellers.splice(findIndex, 1, { ...payload })
     },
     DELETE_SELLER(state, payload) {
         const findIndex = state.sellers.findIndex(({ id }) => id === payload)
-        findIndex && state.sellers.splice(findIndex, 1)
+        findIndex !== -1 && state.sellers.splice(findIndex, 1)
     }
 }
 
 const actions = {
-    async getAllSellers({ commit }) {
-        return await api.get('/seller')
-        .then((response) => {
-            commit('SET_ALL_SELLERS', response)
+    async getAllSellers({ commit }, data = 1) {
+        return await api.get(`/sellers?page=${data}`).then((response) => {
+            if (response && response.sellers && response.sellers.data) {
+                commit('SET_ALL_SELLERS', response.sellers.data)
+            }
+
             return response
         })
     },
     async editSeller({ commit }, data) {
-        return await api.put('/seller/', {...data})
-        .then((response) => {
-            console.log(response, 'response')
+        return await api.put(`/sellers/${data.id}`, {...data}).then((response) => {
             commit('EDIT_SELLER', data)
             return response
         })
     },
     async deleteSeller({ commit }, data) {
-        return await api.deleteAPI(`/seller/${data}`)
-        .then((response) => {
-            console.log(response, 'response')
+        return await api.deleteAPI(`/sellers/${data}`).then((response) => {
             commit('DELETE_SELLER', data)
             return response
         })

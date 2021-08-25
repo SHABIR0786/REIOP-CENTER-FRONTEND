@@ -1,18 +1,6 @@
 <template>
-    <b-card
-        header-tag="header"
-        header-bg-variant="light"
-        header="Mapped Fields"
-    >
-        <b-table
-            small
-            striped
-            hover
-            :busy="isBusy"
-            :fields="headers"
-            :items="items"
-            responsive="md"
-        >
+    <b-card header-tag="header" header-bg-variant="light" header="Mapped Fields">
+        <b-table small striped hover :busy="isBusy" :fields="headers" :items="items" responsive="md">
             <template #table-busy>
                 <div class="text-center" my-2>
                     <b-spinner
@@ -22,11 +10,7 @@
                 </div>
             </template>
             <template #cell(action)="data">
-                <b-icon
-                    variant="primary"
-                    icon="x-circle"
-                    @click="$emit('clearMappedItem', data.index)"
-                ></b-icon>
+                <b-icon variant="primary" icon="x-circle" @click="$emit('clearMappedItem', data.index)"></b-icon>
             </template>
         </b-table>
     </b-card>
@@ -55,6 +39,6 @@ export default {
             headers: 'importModule/mappedHeader'
         })
     }
-    
+
 }
 </script>

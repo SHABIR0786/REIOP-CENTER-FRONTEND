@@ -1,14 +1,6 @@
 <template>
-    <div
-        :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`"
-    >
-        <b-pagination
-            class="float-right"
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="seller-table"
-        ></b-pagination>
+    <div :class="`list-page seller main-content ${isCollapsed ? 'wide-content' : ''}`">
+        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
         <b-table
             id="seller-table"
             small
@@ -18,50 +10,30 @@
             :fields="fields"
             :items="items"
             responsive="md"
-            :per-page="perPage"
+            :per-page="0"
             :current-page="currentPage"
         >
             <template #table-busy>
                 <div class="text-center" my-2>
-                    <b-spinner
-                        class="align-middle"
-                    ></b-spinner>
+                    <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
             </template>
             <template v-slot:cell(actions)="data">
-                <b-icon
-                    class="mr-2"
-                    icon="pencil"
-                    variant="primary"
-                    @click="editItem(data.item)"
-                ></b-icon>
-                <b-icon
-                    variant="primary"
-                    icon="trash"
-                    @click="deleteItem(data.item)"
-                ></b-icon>
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
             </template>
         </b-table>
-        <b-pagination
-            class="float-right"
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="seller-table"
-        ></b-pagination>
-        <seller-modal
-            :showModal="showModal"
-            :propsSeller="editedItem"
-            @cancel="showModal=false"
-            @save="save"
-        ></seller-modal>
+        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+        <seller-modal :showModal="showModal" :propsSeller="editedItem" @cancel="showModal=false" @save="save"></seller-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import SellerModal from '@/components/seller/SellerModal'
+import { CARDS_ENUM } from '../utils/enum/cards';
+
 export default {
     name: "Seller",
     components: {
@@ -72,7 +44,7 @@ export default {
         return {
             isBusy: false,
             showModal: false,
-            perPage: 20,
+            perPage: 10, // server-side connection!
             currentPage: 1,
             editedItem: {}
         }
@@ -81,9 +53,10 @@ export default {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'sellerModule/fields',
-            items: 'sellerModule/sellers'
+            items: 'sellerModule/sellers',
+            totals: 'homeModule/cards'
         }),
-        rows() { return this.items.length}
+        rows() { return this.totals && this.totals[CARDS_ENUM.SELLERS] ? this.totals[CARDS_ENUM.SELLERS].counter: 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
@@ -94,19 +67,25 @@ export default {
             console.log(error)
             this.$store.dispatch('uxModule/hideLoader')
         }
-        
     },
     methods: {
         editItem(item) {
             this.showModal = true
             this.editedItem = { ...item }
         },
-        save (item) {
+        save(item) {
             this.showModal = false
             this.$store.dispatch('sellerModule/editSeller', {...item})
         },
         deleteItem(item){
             this.$store.dispatch('sellerModule/deleteSeller', item.id)
+        },
+    },
+    watch: {
+        currentPage: {
+            handler: function() {
+                this.$store.dispatch('sellerModule/getAllSellers', this.currentPage)
+            }
         }
     }
 }

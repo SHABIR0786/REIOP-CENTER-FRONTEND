@@ -23,7 +23,7 @@ export default {
     methods: {
         async logout () {
             await this.$store.dispatch('loginModule/logout')
-            this.$router.push({name: "Login"})
+            this.$router.push({name: "Login"}).catch(() => {})
         }
     }
 }

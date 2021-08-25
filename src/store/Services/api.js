@@ -1,9 +1,13 @@
 import axios from "axios";
 
-const urlPrefix = process.env.VUE_APP_API_URL
+const urlPrefix = process.env.VUE_APP_API_URL;
 
-export async function setHeader(response) {
-  axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.access
+export function setHeader(token) {
+    if (token) {
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    } else {
+        axios.defaults.headers.common['Authorization'] = '';
+    }
 }
 
 export async function get(subURL) {

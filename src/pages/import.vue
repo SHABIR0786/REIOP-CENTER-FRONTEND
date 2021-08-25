@@ -1,7 +1,5 @@
 <template>
-    <b-container fluid 
-        :class="`import main-content ${isCollapsed ? 'wide-content' : ''}`"
-    >        
+    <b-container fluid :class="`import main-content ${isCollapsed ? 'wide-content' : ''}`">
         <b-row>
             <b-col>
                 <b-form-file
@@ -17,19 +15,12 @@
         </b-row>
         <b-row  class="mt-5">
             <b-col cols="12" md="3">
-                <fields-card
-                    :tableFields="uploadedFields"
-                    :title="`Uploaded Fields`"
-                    @selectItem="selectUploadedField"
-                />
+                <fields-card :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
             </b-col>
             <b-col cols="12" md="2">
                 <b-row class="text-center mt-5">
                     <b-col>
-                        <b-dropdown  
-                            text="Select target table"
-                            variant="primary"
-                        >
+                        <b-dropdown text="Select target table" variant="primary">
                             <b-dropdown-item
                                 v-for="(item, index) in tableLabels"
                                 :key="index"
@@ -40,38 +31,22 @@
                 </b-row>
                 <b-row class="text-center mt-5">
                     <b-col>
-                        <b-button
-                            variant="primary"
-                            @click="mapFields"
-                            :disabled="!(fromField && toField)"
-                        >Map</b-button>
-                    </b-col>                    
+                        <b-button variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
+                    </b-col>
                 </b-row>
                 <b-row class="text-center mt-5">
                     <b-col>
-                        <b-btn
-                            variant="primary"
-                            @click="upload"
-                        >
-                            Save
-                        </b-btn>
-                    </b-col>                    
+                        <b-btn variant="primary" @click="upload">Save</b-btn>
+                    </b-col>
                 </b-row>
             </b-col>
             <b-col cols="12" md="3">
-                <fields-card
-                    :tableFields="selectedFields"
-                    :title="`Target Fields`"
-                    @selectItem="selectTargetField"
-                />                
+                <fields-card :tableFields="selectedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
             </b-col>
             <b-col cols="12" md="4">
-                <mapped-fields
-                    :items="mappedItems"
-                    @clearMappedItem="clearMappedItem"
-                ></mapped-fields>
+                <mapped-fields :items="mappedItems" @clearMappedItem="clearMappedItem"></mapped-fields>
             </b-col>
-        </b-row>        
+        </b-row>
     </b-container>
 </template>
 
@@ -83,7 +58,7 @@ import MappedFields from '../components/import/MappedFields.vue'
 
 export default {
     name: "Import",
-    components: { 
+    components: {
         FieldsCard,
         MappedFields
     },
@@ -108,7 +83,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({            
+        ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
             emailFields: 'importModule/emailFields',
             goldenAddressFields: 'importModule/goldenAddressFields',
@@ -127,30 +102,33 @@ export default {
                 var data = new Uint8Array(e.target.result);
                 var workbook = XLSX.read(data, {type: 'array'});
                 let sheetName = workbook.SheetNames[0]
+
+                console.log('sheetName', sheetName)
+
                 let worksheet = workbook.Sheets[sheetName];
                 $this.jsonSheet = XLSX.utils.sheet_to_json(worksheet);
                 this.uploadedFields = []
                 if($this.jsonSheet.length > 0) {
-                    for(let k in $this.jsonSheet[0]) $this.uploadedFields.push(k)                    
+                    for(let k in $this.jsonSheet[0]) $this.uploadedFields.push(k)
                 }
-                console.log(this.jsonSheet)
+                console.log('jsonSheet', this.jsonSheet)
             };
             reader.readAsArrayBuffer(f);
         },
         changeTable(item){
             this.uploadedFields = []
-            this.mappedItems = [] 
-            if(this.jsonSheet.length > 0)             
+            this.mappedItems = []
+            if(this.jsonSheet.length > 0)
                 for(let k in this.jsonSheet[0]) this.uploadedFields.push(k)
 
             switch(item){
                 case 'email':
                     this.selectedFields = [...this.emailFields]
-                    this.url = 'email-address'
+                    this.url = 'emails'
                     break
                 case 'golden address':
                     this.selectedFields = [...this.goldenAddressFields]
-                    this.url = 'golden-address'
+                    this.url = 'golden-addresses'
                     break
                 case 'list':
                     this.selectedFields = [...this.listFields]
@@ -158,15 +136,15 @@ export default {
                     break
                 case 'phone number':
                     this.selectedFields = [...this.phoneNumberFields]
-                    this.url = 'phone-number'
+                    this.url = 'phones'
                     break
                 case 'seller':
                     this.selectedFields = [...this.sellerFields]
-                    this.url = 'seller'
+                    this.url = 'sellers'
                     break
                 default:
                     this.selectedFields = [...this.subjectFields]
-                    this.url = 'subject'
+                    this.url = 'subjects'
             }
             console.log(this.selectedFields)
         },
@@ -206,7 +184,7 @@ export default {
             this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch('importModule/uploadExcelData', {data: data, url: this.url})
             this.$store.dispatch('uxModule/hideLoader')
-            this.$router.push({path: this.url})
+            this.$router.push({path: this.url}).catch(() => {})
         }
     }
 }
