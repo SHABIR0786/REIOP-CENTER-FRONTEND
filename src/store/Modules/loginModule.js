@@ -28,6 +28,7 @@ export const actions = {
         let userData = await api.post('/auth/login', {email, password});
 
         if (userData && userData.access_token) {
+            api.setHeader(userData.access_token);
             commit('SIGN_IN', {user: userData.user, token: userData.access_token})
         } else {
             vm.$bvToast.toast('You have entered an invalid username or password.', {
@@ -42,7 +43,9 @@ export const actions = {
     },
     async logout({ commit }) {
         await api.post('/auth/logout');
+        api.setHeader(null);
         commit('LOGOUT');
+        window.location.href = '/login';
     }
 }
 

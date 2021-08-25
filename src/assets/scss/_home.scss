@@ -4,6 +4,7 @@
     .card {
         cursor: pointer;
         a {
+            text-decoration: none;
             color: #333;
             .circle {
                 padding: 15px;
@@ -15,7 +16,6 @@
             .detail{
                 font-size: 12px;
             }
-        }        
+        }
     }
-    
 }
