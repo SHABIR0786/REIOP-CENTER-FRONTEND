@@ -2,54 +2,17 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {
-            key: "full_name",
-            label: "Full Name",
-            sortable: true
-        },
-        {
-            key: "first_name",
-            label: "First Name",
-            sortable: true
-        },
-        {
-            key: "last_name",
-            label: "Last Name",
-            sortable: true
-        },
-        {
-            key: "middle_name",
-            label: "Middle Name",
-            sortable: true
-        },
-        {
-            key: "mailing_address",
-            label: "Mailing Address"
-        },
-        {
-            key: "mailing_state",
-            label: "Mailing State"
-        },
-        {
-            key: "mailing_city",
-            label: "Mailing City"
-        },
-        {
-            key: "mailing_zip",
-            label: "Mailing Zip"
-        },
-        {
-            key: "company_owned",
-            label: "Company Owned"
-        },
-        {
-            key: "total_seller",
-            label: "Total Seller"
-        },
-        {
-            key: "actions",
-            label: "Actions"
-        }
+        {key: "full_name", label: "Full Name", sortable: true},
+        {key: "first_name", label: "First Name", sortable: true},
+        {key: "last_name", label: "Last Name", sortable: true},
+        {key: "middle_name", label: "Middle Name", sortable: true},
+        {key: "mailing_address", label: "Mailing Address"},
+        {key: "mailing_state", label: "Mailing State"},
+        {key: "mailing_city", label: "Mailing City"},
+        {key: "mailing_zip", label: "Mailing Zip"},
+        {key: "company_owned", label: "Company Owned"},
+        {key: "total_seller", label: "Total Seller"},
+        {key: "actions", label: "Actions"}
     ],
     sellers: []
 }

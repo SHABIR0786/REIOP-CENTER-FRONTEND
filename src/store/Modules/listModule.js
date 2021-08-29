@@ -1,47 +1,14 @@
 import * as api from "../Services/api"
 
 const state = {
-    listHeaders: [
-        {
-            key:"dept",
-            label: "Dept",
-            sortable: true
-
-        },
-        {
-            key:"list_type",
-            label: "List Type",
-            sortable: true
-
-        },
-        {
-            key:"group",
-            label: "Group",
-            sortable: true
-
-        },
-        {
-            key:"code",
-            label: "Code",
-            sortable: true
-
-        },
-        {
-            key:"source",
-            label: "Source",
-            sortable: true
-
-        },
-        {
-            key:"stack",
-            label: "Stack",
-            sortable: true
-
-        },
-        {
-            key: "actions",
-            label: "Actions"
-        }
+    fields: [
+        {key:"dept", label: "Dept", sortable: true},
+        {key:"type", label: "List Type", sortable: true},
+        {key:"group", label: "Group", sortable: true},
+        {key:"code", label: "Code", sortable: true},
+        {key:"source", label: "Source", sortable: true},
+        {key:"stack", label: "Stack", sortable: true},
+        {key: "actions", label: "Actions"}
     ],
     lists: []
 }
@@ -52,32 +19,36 @@ const mutations = {
     },
     EDIT_LIST(state, payload) {
         const findIndex = state.lists.findIndex(({ id }) => id === payload.id)
-        findIndex && state.lists.splice(findIndex, 1, { ...payload })
+        findIndex !== -1 && state.lists.splice(findIndex, 1, { ...payload })
     },
     DELETE_LIST(state, payload) {
         const findIndex = state.lists.findIndex(({ id }) => id === payload)
-        findIndex && state.lists.splice(findIndex, 1)
+        findIndex !== -1 && state.lists.splice(findIndex, 1)
     }
 }
 
 const actions = {
-    async getAllLists({ commit }) {
-        return await api.get('/list')
-        .then((response) => {
-            commit('SET_ALL_LISTS', response)
+    async getAllLists({ commit, dispatch }, data = 1) {
+        return await api.get(`/lists?page=${data}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.lists && response.lists.data) {
+                commit('SET_ALL_LISTS', response.lists.data)
+            }
+
             return response
         })
     },
     async editList({ commit }, data) {
-        return await api.put('/list/', {...data})
-        .then((response) => {
+        return await api.put(`/lists/${data.id}`, {...data}).then((response) => {
             commit('EDIT_LIST', data)
             return response
         })
     },
     async deleteList({ commit }, data) {
-        return await api.deleteAPI(`/list/${data}`)
-        .then((response) => {
+        return await api.deleteAPI(`/lists/${data}`).then((response) => {
             commit('DELETE_LIST', data)
             return response
         })
@@ -85,7 +56,7 @@ const actions = {
 }
 
 const getters = {
-    listHeaders: ({ listHeaders }) => listHeaders,
+    fields: ({ fields }) => fields,
     lists: ({ lists }) => lists
 }
 

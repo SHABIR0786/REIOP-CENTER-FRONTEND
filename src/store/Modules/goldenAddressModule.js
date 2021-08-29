@@ -1,32 +1,12 @@
 import * as api from "../Services/api"
 
 const state = {
-    goldenHeaders: [
-        {
-            key: "seller",
-            label: "Seller",
-            sortable: true
-        },
-        {
-            key: "golden_address",
-            label: "Golden Address",
-            sortable: true
-        },
-        {
-            key: "golden_city",
-            label: "Golden City",
-            sortable: true
-        },
-        {
-            key: "golden_state",
-            label: "Golden State",
-            sortable: true
-        },
-        {
-            key: "golden_zip",
-            label: "Golden Zip",
-            sortable: true
-        },
+    fields: [
+        {key: "seller", label: "Seller", sortable: true},
+        {key: "address", label: "Golden Address", sortable: true},
+        {key: "city", label: "Golden City", sortable: true},
+        {key: "state", label: "Golden State", sortable: true},
+        {key: "zip", label: "Golden Zip", sortable: true},
     ],
     goldenAddresses: []
 }
@@ -37,34 +17,36 @@ const mutations = {
     },
     EDIT_GOLDEN_ADDRESS(state, payload) {
         const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload.id)
-        findIndex && state.goldenAddresses.splice(findIndex, 1, { ...payload })
+        findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1, { ...payload })
     },
     DELETE_GOLDEN_ADDRESS(state, payload) {
         const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload)
-        findIndex && state.goldenAddresses.splice(findIndex, 1)
+        findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1)
     }
 }
 
 const actions = {
-    async getAllGoldenAddresses({ commit }) {
-        return await api.get('/golden-address')
-        .then((response) => {
-            commit('SET_ALL_GOLDEN_ADDRESSES', response)
+    async getAllGoldenAddresses({ commit, dispatch }, data = 1) {
+        return await api.get(`/golden-addresses?page=${data}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.goldenAddresses && response.goldenAddresses.data) {
+                commit('SET_ALL_GOLDEN_ADDRESSES', response.goldenAddresses.data)
+            }
+
             return response
         })
     },
     async editGoldenAddress({ commit }, data) {
-        return await api.put('/golden-address/', {...data})
-        .then((response) => {
-            console.log(response, 'response')
+        return await api.put(`/golden-addresses/${data.id}`, {...data}).then((response) => {
             commit('EDIT_GOLDEN_ADDRESS', data)
             return response
         })
     },
     async deleteGoldenAddress({ commit }, data) {
-        return await api.deleteAPI(`/golden-address/${data}`)
-        .then((response) => {
-            console.log(response, 'response')
+        return await api.deleteAPI(`/golden-addresses/${data}`).then((response) => {
             commit('DELETE_GOLDEN_ADDRESS', data)
             return response
         })
@@ -72,7 +54,7 @@ const actions = {
 }
 
 const getters = {
-    goldenHeaders: ({ goldenHeaders }) => goldenHeaders,
+    fields: ({ fields }) => fields,
     goldenAddresses: ({ goldenAddresses }) => goldenAddresses,
 }
 

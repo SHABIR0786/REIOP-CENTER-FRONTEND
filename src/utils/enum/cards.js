@@ -4,4 +4,5 @@ export const CARDS_ENUM = {
     EMAILS: 2,
     PHONES: 3,
     GOLDEN_ADDRESS: 4,
+    LISTS: 5,
 };

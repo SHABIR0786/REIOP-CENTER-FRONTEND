@@ -1,14 +1,6 @@
 <template>
-    <div
-        :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`"
-    >
-        <b-pagination
-            class="float-right"
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="subject-table"
-        ></b-pagination>
+    <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
+        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         <b-table
             id="subject-table"
             small
@@ -18,50 +10,30 @@
             :fields="fields"
             :items="items"
             responsive="md"
-            :per-page="perPage"
+            :per-page="0"
             :current-page="currentPage"
         >
             <template #table-busy>
                 <div class="text-center" my-2>
-                    <b-spinner
-                        class="align-middle"
-                    ></b-spinner>
+                    <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
             </template>
             <template v-slot:cell(actions)="data">
-                <b-icon
-                    class="mr-2"
-                    icon="pencil"
-                    variant="primary"
-                    @click="editSubject(data.item)"
-                ></b-icon>
-                <b-icon
-                    variant="primary"
-                    icon="trash"
-                    @click="deleteSubject(data.item)"
-                ></b-icon>
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
             </template>
         </b-table>
-        <b-pagination
-            class="float-right"
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="subject-table"
-        ></b-pagination>
-        <subject-modal
-            :showModal="showModal"
-            :propsData="editedItem"
-            @cancel="showModal=false"
-            @save="save"
-        ></subject-modal>
+        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+        <subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></subject-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import SubjectModal from '@/components/subject/SubjectModal'
+import {CARDS_ENUM} from "../utils/enum/cards";
+
 export default {
     name: "Subject",
     components: {
@@ -72,7 +44,7 @@ export default {
         return {
             isBusy: false,
             showModal: false,
-            perPage: 20,
+            perPage: 10,
             currentPage: 1,
             editedItem: {}
         }
@@ -80,10 +52,10 @@ export default {
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            fields: 'subjectModule/subjectHeaders',
+            fields: 'subjectModule/fields',
             items: 'subjectModule/subjects'
         }),
-        rows() { return this.items.length}
+        rows() { return this.totals && this.totals[CARDS_ENUM.SUBJECTS] ? this.totals[CARDS_ENUM.SUBJECTS].counter: 1}
     },
     async created () {
         try {
