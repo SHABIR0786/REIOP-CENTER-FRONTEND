@@ -1,35 +1,13 @@
 import * as api from "../Services/api"
 
 const state = {
-    phoneHeaders: [
-        {
-            key: "seller",
-            label: "Seller",
-            sortable: true
-        },
-        {
-            key: "phone_number",
-            label: "Phone Number",
-            sortable: true
-        },
-        {
-            key: "phone_type",
-            label: "Phone Type",
-            sortable: true
-        },
-        {
-            key: "phone_validity",
-            label: "Validity",
-            sortable: true
-        },
-        {
-            key: "skip_source",
-            label: "Skip Source"
-        },
-        {
-            key: "actions",
-            label: "Actions"
-        }
+    fields: [
+        {key: "seller", label: "Seller", sortable: true},
+        {key: "number", label: "Phone Number", sortable: true},
+        {key: "type", label: "Phone Type", sortable: true},
+        {key: "validity", label: "Validity", sortable: true},
+        {key: "skip_source", label: "Skip Source"},
+        {key: "actions", label: "Actions"}
     ],
     phoneNumbers: []
 }
@@ -40,35 +18,36 @@ const mutations = {
     },
     EDIT_ITEM(state, payload) {
         const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload.id)
-        findIndex && state.phoneNumbers.splice(findIndex, 1, { ...payload })
+        findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1, { ...payload })
     },
     DELETE_ITEM(state, payload) {
         const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload)
-        findIndex && state.phoneNumbers.splice(findIndex, 1)
+        findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1)
     }
 }
 
 const actions = {
-    async getAllPhoneNumbers({ commit }) {
-        return await api.get('/phone-number')
-        .then((response) => {
-            commit('SET_ALL_ITEMS', response)
-            console.log(response)
+    async getAllPhoneNumbers({ commit, dispatch }, data = 1) {
+        return await api.get(`/phones?page=${data}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.phones && response.phones.data) {
+                commit('SET_ALL_ITEMS', response.phones.data)
+            }
+
             return response
         })
     },
     async editPhoneNumber({ commit }, data) {
-        return await api.put('/phone-number/', {...data})
-        .then((response) => {
-            console.log(response, 'response')
+        return await api.put(`/phones/${data.id}`, {...data}).then((response) => {
             commit('EDIT_ITEM', data)
             return response
         })
     },
     async deletePhoneNumber({ commit }, data) {
-        return await api.deleteAPI(`/phone-number/${data}`)
-        .then((response) => {
-            console.log(response, 'response')
+        return await api.deleteAPI(`/phones/${data}`).then((response) => {
             commit('DELETE_ITEM', data)
             return response
         })
@@ -76,7 +55,7 @@ const actions = {
 }
 
 const getters = {
-    phoneHeaders: ({ phoneHeaders }) => phoneHeaders,
+    fields: ({ fields }) => fields,
     phoneNumbers: ({ phoneNumbers }) => phoneNumbers
 }
 
