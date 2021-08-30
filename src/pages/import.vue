@@ -21,11 +21,9 @@
                 <b-row class="text-center mt-5">
                     <b-col>
                         <b-dropdown text="Select target table" variant="primary">
-                            <b-dropdown-item
-                                v-for="(item, index) in tableLabels"
-                                :key="index"
-                                @click="changeTable(item)"
-                            >{{item}}</b-dropdown-item>
+                            <b-dropdown-item v-for="(item, index) in tableLabels" :key="index" @click="changeTable(item)">
+                                {{item}}
+                            </b-dropdown-item>
                         </b-dropdown>
                     </b-col>
                 </b-row>
@@ -65,15 +63,9 @@ export default {
     data () {
         return {
             uploadedFile: null,
+            file: null,
             jsonSheet: [],
-            tableLabels: [
-                'email',
-                'golden address',
-                'list',
-                'phone number',
-                'seller',
-                'subject'
-            ],
+            tableLabels: ['emails', 'golden_addresses', 'lists', 'phones', 'sellers', 'subjects'],
             uploadedFields: [],
             selectedFields: [],
             fromField: '',
@@ -97,13 +89,13 @@ export default {
         previewFile (e) {
             let $this = this
             let files = e.target.files, f = files[0]
+            this.file = e.target.files[0];
+
             let reader = new FileReader()
             reader.onload = (e) => {
                 var data = new Uint8Array(e.target.result);
                 var workbook = XLSX.read(data, {type: 'array'});
                 let sheetName = workbook.SheetNames[0]
-
-                console.log('sheetName', sheetName)
 
                 let worksheet = workbook.Sheets[sheetName];
                 $this.jsonSheet = XLSX.utils.sheet_to_json(worksheet);
@@ -111,7 +103,6 @@ export default {
                 if($this.jsonSheet.length > 0) {
                     for(let k in $this.jsonSheet[0]) $this.uploadedFields.push(k)
                 }
-                console.log('jsonSheet', this.jsonSheet)
             };
             reader.readAsArrayBuffer(f);
         },
@@ -122,23 +113,23 @@ export default {
                 for(let k in this.jsonSheet[0]) this.uploadedFields.push(k)
 
             switch(item){
-                case 'email':
+                case 'emails':
                     this.selectedFields = [...this.emailFields]
                     this.url = 'emails'
                     break
-                case 'golden address':
+                case 'golden_addresses':
                     this.selectedFields = [...this.goldenAddressFields]
                     this.url = 'golden-addresses'
                     break
-                case 'list':
+                case 'lists':
                     this.selectedFields = [...this.listFields]
                     this.url = 'list'
                     break
-                case 'phone number':
+                case 'phones':
                     this.selectedFields = [...this.phoneNumberFields]
                     this.url = 'phones'
                     break
-                case 'seller':
+                case 'sellers':
                     this.selectedFields = [...this.sellerFields]
                     this.url = 'sellers'
                     break
@@ -146,7 +137,6 @@ export default {
                     this.selectedFields = [...this.subjectFields]
                     this.url = 'subjects'
             }
-            console.log(this.selectedFields)
         },
         selectUploadedField(field) {
             this.fromField = field
@@ -155,11 +145,8 @@ export default {
             this.toField = field
         },
         mapFields() {
-            this.mappedItems.push({
-                fromField: this.fromField,
-                toField: this.toField,
-                action: "",
-            })
+            this.mappedItems.push({fromField: this.fromField, toField: this.toField, action: ""})
+
             const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
             this.uploadedFields.splice(fromIndex, 1)
             const toIndex = this.selectedFields.findIndex(item => item === this.toField)
@@ -173,17 +160,11 @@ export default {
             this.mappedItems.splice(index, 1)
         },
         async upload() {
-            let data = []
-            let obj = {}
-            this.jsonSheet.forEach((item) => {
-                this.mappedItems.forEach((field) => {
-                    obj[field.toField] = item[field.fromField]
-                })
-                data.push({...obj})
-            })
-            this.$store.dispatch('uxModule/setLoading')
-            await this.$store.dispatch('importModule/uploadExcelData', {data: data, url: this.url})
-            this.$store.dispatch('uxModule/hideLoader')
+            await this.$store.dispatch('uxModule/setLoading')
+            // await this.$store.dispatch('importModule/uploadExcelData', {data: data, url: this.url})
+            await this.$store.dispatch('importModule/uploadExcelDataV2', {file: this.file, mappedItems: this.mappedItems, url: this.url})
+
+            await this.$store.dispatch('uxModule/hideLoader')
             this.$router.push({path: this.url}).catch(() => {})
         }
     }
