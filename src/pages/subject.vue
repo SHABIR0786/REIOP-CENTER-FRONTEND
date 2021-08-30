@@ -53,7 +53,8 @@ export default {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'subjectModule/fields',
-            items: 'subjectModule/subjects'
+            items: 'subjectModule/subjects',
+            totals: 'homeModule/cards'
         }),
         rows() { return this.totals && this.totals[CARDS_ENUM.SUBJECTS] ? this.totals[CARDS_ENUM.SUBJECTS].counter: 1}
     },
@@ -65,7 +66,6 @@ export default {
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
-        
     },
     methods: {
         editSubject(item) {
@@ -78,6 +78,13 @@ export default {
         },
         deleteSubject(item){
             this.$store.dispatch('subjectModule/deleteSubject', item.id)
+        }
+    },
+    watch: {
+        currentPage: {
+            handler: function() {
+                this.$store.dispatch('subjectModule/getAllSubjects', this.currentPage)
+            }
         }
     }
 }

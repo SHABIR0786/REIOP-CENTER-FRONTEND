@@ -56,7 +56,7 @@ export default {
             items: 'emailModule/emails',
             totals: 'homeModule/cards'
         }),
-        rows() {  return this.wa && this.totals[CARDS_ENUM.EMAILS] ? this.totals[CARDS_ENUM.EMAILS].counter: 1 }
+        rows() { return this.totals && this.totals[CARDS_ENUM.EMAILS] ? this.totals[CARDS_ENUM.EMAILS].counter: 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
@@ -79,6 +79,13 @@ export default {
         },
         deleteItem(item){
             this.$store.dispatch('emailModule/deleteEmail', item.id)
+        }
+    },
+    watch: {
+        currentPage: {
+            handler: function() {
+                this.$store.dispatch('emailModule/getAllEmails', this.currentPage)
+            }
         }
     }
 }
