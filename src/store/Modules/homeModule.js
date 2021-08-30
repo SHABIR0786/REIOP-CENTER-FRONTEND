@@ -7,7 +7,8 @@ export const state = {
         {icon: "person-circle", path: "/sellers", text: "Total Sellers", variant: "secondary", counter: 0, isVisible: true},
         {icon: "envelope-fill", path: "/emails", text: "Total Emails", variant: "danger", counter: 0, isVisible: true},
         {icon: "telephone-fill", path: "/phones", text: "Total Phones", variant: "info", counter: 0, isVisible: true},
-        {icon: "key-fill", path: "/golden-addresses", text: "Total Addresses", variant: "success", counter: 0, isVisible: false}
+        {icon: "key-fill", path: "/golden-addresses", text: "Total Addresses", variant: "success", counter: 0, isVisible: true},
+        {icon: "key-fill", path: "/lists", text: "Lists", variant: "success", counter: 0, isVisible: false}
     ],
 }
 
@@ -18,8 +19,8 @@ export const mutations = {
             state.cards[CARDS_ENUM.SELLERS].counter = payload.sellers || 0
             state.cards[CARDS_ENUM.EMAILS].counter = payload.emails || 0
             state.cards[CARDS_ENUM.PHONES].counter = payload.phones || 0
-            state.cards[CARDS_ENUM.LISTS].counter = payload.lists || 0
             state.cards[CARDS_ENUM.GOLDEN_ADDRESS].counter = payload.golden_addresses || 0
+            state.cards[CARDS_ENUM.LISTS].counter = payload.lists || 0
         }
     }
 }

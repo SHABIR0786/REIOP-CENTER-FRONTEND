@@ -39,21 +39,9 @@ export const state = {
         'list_stack'
     ],
     mappedHeader: [
-        {
-            key: 'fromField',
-            label: 'From',
-            sortable: true
-        },
-        {
-            key: 'toField',
-            label: 'To',
-            sortable: true
-        },
-        {
-            key: 'action',
-            label: 'Remove',
-            sourtable: false
-        }
+        {key: 'fromField', label: 'From', sortable: true},
+        {key: 'toField', label: 'To', sortable: true},
+        {key: 'action', label: 'Remove', sortable: false}
     ],
     uploadedFields: [],
     uploaded: false
@@ -73,8 +61,27 @@ export const actions = {
         commit('SET_UPLOADED_FIELDS', data)
     },
     async uploadExcelData({ commit }, {data, url}) {
-        return await api.post(`/${url}/`, data)
-        .then((response) => {
+        return await api.post(`/${url}/`, data).then((response) => {
+            commit('SET_UPLOADED', true)
+            return response
+        })
+    },
+
+    async uploadExcelDataV2({ commit }, {file, mappedItems, url}) {
+        const config = {headers: {'content-type': 'multipart/form-data'}}
+
+        let data = new FormData();
+        data.append('file', file);
+        data.append('section', url);
+
+        const mapObject = {};
+        mappedItems.forEach(map => {
+            mapObject[map.fromField] = map.toField;
+        })
+
+        data.append('map', JSON.stringify(mapObject));
+
+        return await api.post('/upload', data, config).then((response) => {
             commit('SET_UPLOADED', true)
             return response
         })
