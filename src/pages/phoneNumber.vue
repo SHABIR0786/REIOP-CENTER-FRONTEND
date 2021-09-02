@@ -53,7 +53,8 @@ export default {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'phoneNumberModule/fields',
-            items: 'phoneNumberModule/phoneNumbers'
+            items: 'phoneNumberModule/phoneNumbers',
+            totals: 'homeModule/cards'
         }),
         rows() {  return this.totals && this.totals[CARDS_ENUM.PHONES] ? this.totals[CARDS_ENUM.PHONES].counter: 1 }
     },
@@ -78,6 +79,13 @@ export default {
         },
         deleteItem(item){
             this.$store.dispatch('phoneNumberModule/deletePhoneNumber', item.id)
+        }
+    },
+    watch: {
+        currentPage: {
+            handler: function() {
+                this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', this.currentPage)
+            }
         }
     }
 }

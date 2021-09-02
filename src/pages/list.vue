@@ -52,7 +52,8 @@ export default {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'listModule/fields',
-            items: 'listModule/lists'
+            items: 'listModule/lists',
+            totals: 'homeModule/cards'
         }),
         rows() { return this.items.length}
     },
@@ -77,6 +78,13 @@ export default {
         },
         deleteItem(item){
             this.$store.dispatch('listModule/deleteList', item.id)
+        },
+    },
+    watch: {
+        currentPage: {
+            handler: function() {
+                this.$store.dispatch('listModule/getAllLists', this.currentPage)
+            }
         }
     }
 }

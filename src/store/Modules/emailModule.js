@@ -27,7 +27,7 @@ const mutations = {
 
 const actions = {
     async getAllEmails({ commit, dispatch }, data = 1) {
-        return await api.get(`/emails/?page=${data}`).then((response) => {
+        return await api.get(`/emails?page=${data}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

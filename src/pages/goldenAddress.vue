@@ -53,7 +53,8 @@ export default {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'goldenAddressModule/fields',
-            items: 'goldenAddressModule/goldenAddresses'
+            items: 'goldenAddressModule/goldenAddresses',
+            totals: 'homeModule/cards'
         }),
         rows() {  return this.totals && this.totals[CARDS_ENUM.GOLDEN_ADDRESS] ? this.totals[CARDS_ENUM.GOLDEN_ADDRESS].counter: 1 }
     },
@@ -78,6 +79,13 @@ export default {
         },
         deleteItem(item){
             this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', item.id)
+        }
+    },
+    watch: {
+        currentPage: {
+            handler: function() {
+                this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', this.currentPage)
+            }
         }
     }
 }
