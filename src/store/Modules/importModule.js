@@ -98,7 +98,7 @@ export const actions = {
     },
 
     async loadSchemas({ commit }) {
-        return await api.get('/schemas/').then((response) => {
+        return await api.get('/schemas').then((response) => {
             console.log(response);
             commit('SET_SCHEMAS', true)
             return response
