@@ -14,17 +14,22 @@ export const state = {
         'seller_id', 'phone_number', 'phone_type', 'phone_validity', 'skip_source'
     ],
     sellerFields: [
-        'full_name',
-        'first_name',
-        'last_name',
-        'middle_name',
-        'mailing_address',
-        'mailing_city',
-        'mailing_state',
-        'mailing_zip',
-        'company_owned',
-        'total_subject'
-    ],
+        'seller_full_name',
+        'seller_first_name',
+        'seller_last_name',
+        'seller_middle_name',
+        'seller_mailing_address',
+        'seller_mailing_city',
+        'seller_mailing_state',
+        'seller_mailing_zip',
+        'seller_company_owned',
+        'seller_total_subject',
+        'phone_number',
+        'phone_type',
+        'phone_validity',
+        'subject_market',
+        'subject_sub_market'
+],
     subjectFields: [
         'subject_address',
         'subject_city',
@@ -44,15 +49,19 @@ export const state = {
         {key: 'action', label: 'Remove', sortable: false}
     ],
     uploadedFields: [],
-    uploaded: false
+    uploaded: false,
+    schemas: {}
 }
 
 export const mutations = {
     SET_UPLOADED_FIELDS(state, payload) {
         state.uploadedFields = payload
     },
-    SET_UPLOADED(state, payload){
+    SET_UPLOADED(state, payload) {
         state.uploaded = payload
+    },
+    SET_SCHEMAS(state, payload) {
+        state.schemas = payload
     }
 }
 
@@ -60,6 +69,7 @@ export const actions = {
     setUploadedFields ({ commit }, data) {
         commit('SET_UPLOADED_FIELDS', data)
     },
+
     async uploadExcelData({ commit }, {data, url}) {
         return await api.post(`/${url}/`, data).then((response) => {
             commit('SET_UPLOADED', true)
@@ -85,6 +95,14 @@ export const actions = {
             commit('SET_UPLOADED', true)
             return response
         })
+    },
+
+    async loadSchemas({ commit }) {
+        return await api.get('/schemas/').then((response) => {
+            console.log(response);
+            commit('SET_SCHEMAS', true)
+            return response
+        })
     }
 }
 
@@ -97,6 +115,7 @@ export const getters = {
     subjectFields: ({ subjectFields }) => subjectFields,
     uploadedFields: ({ uploadedFields }) => uploadedFields,
     mappedHeader: ({ mappedHeader }) => mappedHeader,
+    schemas: ({ schemas }) => schemas,
 }
 
 export default {

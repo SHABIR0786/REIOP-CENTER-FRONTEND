@@ -82,8 +82,12 @@ export default {
             listFields: 'importModule/listFields',
             phoneNumberFields: 'importModule/phoneNumberFields',
             sellerFields: 'importModule/sellerFields',
-            subjectFields: 'importModule/subjectFields'
+            subjectFields: 'importModule/subjectFields',
+            schemas: 'importModule/schemas',
         })
+    },
+    async created () {
+        await this.$store.dispatch('importModule/loadSchemas')
     },
     methods: {
         previewFile (e) {
