@@ -26,6 +26,7 @@
         </b-table>
         <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="golden-address-table"></b-pagination>
         <golden-address-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></golden-address-modal>
+        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     </div>
 </template>
 <script>
@@ -33,12 +34,14 @@ import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import GoldenAddressModal from '@/components/goldenAddress/GoldenAddressModal'
 import {CARDS_ENUM} from "../utils/enum/cards";
+import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 export default {
     name: "Email",
     components: {
         BIcon,
-        GoldenAddressModal
+        GoldenAddressModal,
+        DeleteModal
     },
     data () {
         return {
@@ -46,7 +49,9 @@ export default {
             showModal: false,
             perPage: 10,
             currentPage: 1,
-            editedItem: {}
+            editedItem: {},
+            showDeleteModal: false,
+            itemToDelete: {}
         }
     },
     computed: {
@@ -78,7 +83,14 @@ export default {
             this.$store.dispatch('goldenAddressModule/editGoldenAddress', {...item})
         },
         deleteItem(item){
-            this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', item.id)
+            this.showDeleteModal = true;
+            this.itemToDelete = item;
+        },
+        modalResponse(response) {
+            this.showDeleteModal = false;
+            if (response) {
+                this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', this.itemToDelete.id)
+            }
         }
     },
     watch: {
