@@ -2,16 +2,22 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "full_name", label: "Full Name", sortable: true},
-        {key: "first_name", label: "First Name", sortable: true},
-        {key: "last_name", label: "Last Name", sortable: true},
-        {key: "middle_name", label: "Middle Name", sortable: true},
-        {key: "mailing_address", label: "Mailing Address"},
-        {key: "mailing_state", label: "Mailing State"},
-        {key: "mailing_city", label: "Mailing City"},
-        {key: "mailing_zip", label: "Mailing Zip"},
-        {key: "company_owned", label: "Company Owned"},
-        {key: "total_seller", label: "Total Seller"},
+        {key: "seller_full_name", label: "Full Name", sortable: true},
+        {key: "seller_first_name", label: "First Name", sortable: true},
+        {key: "seller_last_name", label: "Last Name", sortable: true},
+        {key: "seller_middle_name", label: "Middle Name", sortable: true},
+        {key: "seller_mailing_address", label: "Mailing Address"},
+        {key: "seller_mailing_state", label: "Mailing State"},
+        {key: "seller_mailing_city", label: "Mailing City"},
+        {key: "seller_mailing_zip", label: "Mailing Zip"},
+        {key: "seller_company_owned", label: "Company Owned"},
+        {key: "seller_full_mailing_address", label: "Full Mailing Address"},
+        {key: "seller_full_mailing_city", label: "Full Mailing City"},
+        {key: "seller_full_mailing_state", label: "Full Mailing State"},
+        {key: "seller_full_mailing_zip", label: "Full Mailing Zip"},
+        {key: "seller_pull_date", label: "Pull Date", sortable: true},
+        {key: "seller_upload_date", label: "Upload Date", sortable: true},
+        {key: "seller_last_edit_date", label: "Last edit Date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
     sellers: []

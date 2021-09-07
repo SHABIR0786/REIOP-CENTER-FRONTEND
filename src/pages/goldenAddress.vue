@@ -47,7 +47,7 @@ export default {
         return {
             isBusy: false,
             showModal: false,
-            perPage: 10,
+            perPage: 20,
             currentPage: 1,
             editedItem: {},
             showDeleteModal: false,

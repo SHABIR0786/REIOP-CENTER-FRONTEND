@@ -2,17 +2,17 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "address", label: "Subject Address", sortable: true},
-        {key: "city", label: "Subject City", sortable: true},
-        {key: "state", label: "Subject State", sortable: true},
-        {key: "zip", label: "Subject Zip", sortable: true},
-        {key: "county", label: "Subject County", sortable: true},
-        {key: "market", label: "Market", sortable: true},
-        {key: "submarket", label: "Submarket", sortable: true},
-        {key: "age", label: "Subject Age", sortable: true},
-        {key: "type", label: "Subject Type", sortable: true},
-        {key: "total_seller", label: "Total Seller", sortable: true},
-        {key: "list_stack", label: "List Stack", sortable: true},
+        {key: "subject_address", label: "Subject Address", sortable: true},
+        {key: "subject_city", label: "Subject City", sortable: true},
+        {key: "subject_state", label: "Subject State", sortable: true},
+        {key: "subject_zip", label: "Subject Zip", sortable: true},
+        {key: "subject_country", label: "Subject County", sortable: true},
+        {key: "subject_market", label: "Market", sortable: true},
+        {key: "subject_submarket", label: "Submarket", sortable: true},
+        {key: "subject_age", label: "Subject Age", sortable: true},
+        {key: "subject_type", label: "Subject Type", sortable: true},
+        {key: "subject_pull_date", label: "Pull Date", sortable: true},
+        {key: "subject_last_edit_date", label: "Last Edit Date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
     subjects: []

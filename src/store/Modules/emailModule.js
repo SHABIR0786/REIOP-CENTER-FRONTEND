@@ -3,9 +3,12 @@ import * as api from "../Services/api"
 const state = {
     fields: [
         {key: "seller", label: "Seller", sortable: true},
-        {key: "email", label: "Email Address", sortable: true},
-        {key: "validity", label: "Email validity", sortable: true},
-        {key: "skip_source", label: "Skip Source", sortable: true},
+        {key: "email_address", label: "Email Address", sortable: true},
+        {key: "email_validity", label: "Email validity", sortable: true},
+        {key: "email_skip_source", label: "Skip Source", sortable: true},
+        {key: "email_pull_date", label: "Pull Date", sortable: true},
+        {key: "email_upload_date", label: "Upload date", sortable: true},
+        {key: "email_last_edit_date", label: "Last Edit Date date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
     emails: []

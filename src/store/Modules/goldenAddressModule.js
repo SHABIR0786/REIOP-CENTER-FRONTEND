@@ -3,10 +3,13 @@ import * as api from "../Services/api"
 const state = {
     fields: [
         {key: "seller", label: "Seller", sortable: true},
-        {key: "address", label: "Golden Address", sortable: true},
-        {key: "city", label: "Golden City", sortable: true},
-        {key: "state", label: "Golden State", sortable: true},
-        {key: "zip", label: "Golden Zip", sortable: true},
+        {key: "golden_addresses_address", label: "Golden Address", sortable: true},
+        {key: "golden_addresses_city", label: "Golden City", sortable: true},
+        {key: "golden_addresses_state", label: "Golden State", sortable: true},
+        {key: "golden_addresses_zip", label: "Golden Zip", sortable: true},
+        {key: "golden_address_pull_date", label: "Pull Date", sortable: true},
+        {key: "golden_address_upload_date", label: "Upload Date", sortable: true},
+        {key: "golden_address_last_edit_date", label: "Last Edit Date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
     goldenAddresses: []
