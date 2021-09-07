@@ -47,7 +47,7 @@ export default {
         return {
             isBusy: false,
             showModal: false,
-            perPage: 10, // server-side connection!
+            perPage: 20, // server-side connection!
             currentPage: 1,
             editedItem: {},
             showDeleteModal: false,

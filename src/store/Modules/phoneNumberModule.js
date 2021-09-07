@@ -3,10 +3,13 @@ import * as api from "../Services/api"
 const state = {
     fields: [
         {key: "seller", label: "Seller", sortable: true},
-        {key: "number", label: "Phone Number", sortable: true},
-        {key: "type", label: "Phone Type", sortable: true},
-        {key: "validity", label: "Validity", sortable: true},
-        {key: "skip_source", label: "Skip Source"},
+        {key: "phone_number", label: "Phone Number", sortable: true},
+        {key: "phone_type", label: "Phone Type", sortable: true},
+        {key: "phone_validity", label: "Validity", sortable: true},
+        {key: "phone_skip_source", label: "Skip Source"},
+        {key: "phone_pull_date", label: "Pull Date", sortable: true},
+        {key: "phone_upload_date", label: "Upload Date", sortable: true},
+        {key: "phone_last_edit_date", label: "Last Edit Date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
     phoneNumbers: []
