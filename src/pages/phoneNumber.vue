@@ -26,6 +26,7 @@
         </b-table>
         <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="phone-number-table"></b-pagination>
         <phone-number-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></phone-number-modal>
+        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     </div>
 </template>
 <script>
@@ -33,12 +34,14 @@ import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import PhoneNumberModal from '@/components/phoneNumber/PhoneNumberModal'
 import {CARDS_ENUM} from "../utils/enum/cards";
+import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 export default {
     name: "phoneNumber",
     components: {
         BIcon,
-        PhoneNumberModal
+        PhoneNumberModal,
+        DeleteModal
     },
     data () {
         return {
@@ -46,7 +49,9 @@ export default {
             showModal: false,
             perPage: 10,
             currentPage: 1,
-            editedItem: {}
+            editedItem: {},
+            showDeleteModal: false,
+            itemToDelete: {}
         }
     },
     computed: {
@@ -78,7 +83,14 @@ export default {
             this.$store.dispatch('phoneNumberModule/editPhoneNumber', {...item})
         },
         deleteItem(item){
-            this.$store.dispatch('phoneNumberModule/deletePhoneNumber', item.id)
+            this.showDeleteModal = true;
+            this.itemToDelete = item;
+        },
+        modalResponse(response) {
+            this.showDeleteModal = false;
+            if (response) {
+                this.$store.dispatch('phoneNumberModule/deletePhoneNumber', this.itemToDelete.id)
+            }
         }
     },
     watch: {

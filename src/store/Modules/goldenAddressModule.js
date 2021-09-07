@@ -7,6 +7,7 @@ const state = {
         {key: "city", label: "Golden City", sortable: true},
         {key: "state", label: "Golden State", sortable: true},
         {key: "zip", label: "Golden Zip", sortable: true},
+        {key: "actions", label: "Actions"}
     ],
     goldenAddresses: []
 }

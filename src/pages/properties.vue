@@ -26,18 +26,21 @@
         </b-table>
         <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         <subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></subject-modal>
+        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import SubjectModal from '@/components/subject/SubjectModal'
+import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 export default {
     name: "Properties",
     components: {
         BIcon,
-        SubjectModal
+        SubjectModal,
+        DeleteModal
     },
     data () {
         return {
@@ -45,7 +48,9 @@ export default {
             showModal: false,
             perPage: 10,
             currentPage: 1,
-            editedItem: {}
+            editedItem: {},
+            showDeleteModal: false,
+            itemToDelete: {}
         }
     },
     computed: {
@@ -76,7 +81,14 @@ export default {
             this.$store.dispatch('subjectModule/editSubject', {...item})
         },
         deleteItem(item){
-            this.$store.dispatch('subjectModule/deleteSubject', item.id)
+            this.showDeleteModal = true;
+            this.itemToDelete = item;
+        },
+        modalResponse(response) {
+            this.showDeleteModal = false;
+            if (response) {
+                this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id)
+            }
         }
     }
 }
