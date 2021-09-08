@@ -11,11 +11,10 @@ const state = {
         {key: "subject_submarket", label: "Submarket", sortable: true},
         {key: "subject_age", label: "Subject Age", sortable: true},
         {key: "subject_type", label: "Subject Type", sortable: true},
-        {key: "subject_pull_date", label: "Pull Date", sortable: true},
-        {key: "subject_last_edit_date", label: "Last Edit Date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
-    subjects: []
+    subjects: [],
+    total: 0,
 }
 
 const mutations = {
@@ -29,6 +28,9 @@ const mutations = {
     DELETE_SUBJECT(state, payload) {
         const findIndex = state.subjects.findIndex(({ id }) => id === payload)
         findIndex !== -1 && state.subjects.splice(findIndex, 1)
+    },
+    GET_TOTAL(state, payload) {
+        state.total = payload;
     }
 }
 
@@ -57,12 +59,21 @@ const actions = {
             commit('DELETE_SUBJECT', data)
             return response
         })
+    },
+    async getTotal({ commit }) {
+        return await api.get(`/totals/subjects`).then((response) => {
+            if (response && response.count > -1) {
+                commit ('GET_TOTAL', response.count);
+            }
+            return response
+        })
     }
 }
 
 const getters = {
     fields: ({ fields }) => fields,
-    subjects: ({ subjects }) => subjects
+    subjects: ({ subjects }) => subjects,
+    total: ({total}) => total
 }
 
 export default {

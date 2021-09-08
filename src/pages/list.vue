@@ -1,6 +1,7 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="list-table"></b-pagination>
+<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="list-table"></b-pagination>-->
+        <div class="mb-4">Total: {{total}}</div>
         <b-table
             id="list-table"
             small
@@ -58,12 +59,13 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'listModule/fields',
             items: 'listModule/lists',
-            totals: 'homeModule/cards'
+            total: 'listModule/total'
         }),
-        rows() { return this.items.length}
+        rows() { return this.total ? this.total : 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('listModule/getTotal')
         try {
             await this.$store.dispatch("listModule/getAllLists")
             this.$store.dispatch('uxModule/hideLoader')

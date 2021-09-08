@@ -1,6 +1,7 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="phone-number-table"></b-pagination>
+<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="phone-number-table"></b-pagination>-->
+        <div class="mb-4">Total: {{total}}</div>
         <b-table
             id="phone-number-table"
             small
@@ -33,7 +34,6 @@
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import PhoneNumberModal from '@/components/phoneNumber/PhoneNumberModal'
-import {CARDS_ENUM} from "../utils/enum/cards";
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 export default {
@@ -59,12 +59,13 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'phoneNumberModule/fields',
             items: 'phoneNumberModule/phoneNumbers',
-            totals: 'homeModule/cards'
+            total: 'phoneNumberModule/total'
         }),
-        rows() {  return this.totals && this.totals[CARDS_ENUM.PHONES] ? this.totals[CARDS_ENUM.PHONES].counter: 1 }
+        rows() { return this.total ? this.total : 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('phoneNumberModule/getTotal')
         try {
             await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers")
             this.$store.dispatch('uxModule/hideLoader')

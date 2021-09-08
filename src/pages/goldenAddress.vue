@@ -1,6 +1,7 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="golden-address-table"></b-pagination>
+<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="golden-address-table"></b-pagination>-->
+        <div class="mb-4">Total: {{total}}</div>
         <b-table
             id="golden-address-table"
             small
@@ -33,7 +34,6 @@
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import GoldenAddressModal from '@/components/goldenAddress/GoldenAddressModal'
-import {CARDS_ENUM} from "../utils/enum/cards";
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 export default {
@@ -59,12 +59,13 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'goldenAddressModule/fields',
             items: 'goldenAddressModule/goldenAddresses',
-            totals: 'homeModule/cards'
+            total: 'goldenAddressModule/total'
         }),
-        rows() {  return this.totals && this.totals[CARDS_ENUM.GOLDEN_ADDRESS] ? this.totals[CARDS_ENUM.GOLDEN_ADDRESS].counter: 1 }
+        rows() { return this.total ? this.total : 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('goldenAddressModule/getTotal')
         try {
             await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses")
             this.$store.dispatch('uxModule/hideLoader')

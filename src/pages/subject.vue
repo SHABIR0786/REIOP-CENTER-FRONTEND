@@ -1,6 +1,7 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
+        <div class="mb-4">Total: {{total}}</div>
         <b-table
             id="subject-table"
             small
@@ -33,7 +34,6 @@
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import SubjectModal from '@/components/subject/SubjectModal'
-import {CARDS_ENUM} from "../utils/enum/cards";
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 export default {
@@ -59,11 +59,12 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'subjectModule/fields',
             items: 'subjectModule/subjects',
-            totals: 'homeModule/cards'
+            total: 'subjectModule/total'
         }),
-        rows() { return this.totals && this.totals[CARDS_ENUM.SUBJECTS] ? this.totals[CARDS_ENUM.SUBJECTS].counter: 1}
+        rows() { return this.total ? this.total : 1}
     },
     async created () {
+        this.$store.dispatch('subjectModule/getTotal')
         try {
             this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch("subjectModule/getAllSubjects")

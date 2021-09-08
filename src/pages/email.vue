@@ -1,6 +1,7 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="email-table"></b-pagination>
+<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="email-table"></b-pagination>-->
+        <div class="mb-4">Total: {{total}}</div>
         <b-table
             id="email-table"
             small
@@ -33,7 +34,6 @@
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import EmailModal from '@/components/email/EmailModal'
-import {CARDS_ENUM} from "../utils/enum/cards";
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 export default {
@@ -59,12 +59,14 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'emailModule/fields',
             items: 'emailModule/emails',
-            totals: 'homeModule/cards'
+            // totals: 'homeModule/cards',
+            total: 'emailModule/total'
         }),
-        rows() { return this.totals && this.totals[CARDS_ENUM.EMAILS] ? this.totals[CARDS_ENUM.EMAILS].counter: 1 }
+        rows() { return this.total ? this.total : 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('emailModule/getTotal')
         try {
             await this.$store.dispatch("emailModule/getAllEmails")
             this.$store.dispatch('uxModule/hideLoader')

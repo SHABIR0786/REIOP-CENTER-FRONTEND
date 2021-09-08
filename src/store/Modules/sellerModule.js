@@ -15,12 +15,10 @@ const state = {
         {key: "seller_full_mailing_city", label: "Full Mailing City"},
         {key: "seller_full_mailing_state", label: "Full Mailing State"},
         {key: "seller_full_mailing_zip", label: "Full Mailing Zip"},
-        {key: "seller_pull_date", label: "Pull Date", sortable: true},
-        {key: "seller_upload_date", label: "Upload Date", sortable: true},
-        {key: "seller_last_edit_date", label: "Last edit Date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
-    sellers: []
+    sellers: [],
+    total: 0,
 }
 
 const mutations = {
@@ -34,6 +32,9 @@ const mutations = {
     DELETE_SELLER(state, payload) {
         const findIndex = state.sellers.findIndex(({ id }) => id === payload)
         findIndex !== -1 && state.sellers.splice(findIndex, 1)
+    },
+    GET_TOTAL(state, payload) {
+        state.total = payload;
     }
 }
 
@@ -58,12 +59,21 @@ const actions = {
             commit('DELETE_SELLER', data)
             return response
         })
+    },
+    async getTotal({ commit }) {
+        return await api.get(`/totals/sellers`).then((response) => {
+            if (response && response.count > -1) {
+                commit ('GET_TOTAL', response.count);
+            }
+            return response
+        })
     }
 }
 
 const getters = {
     fields: ({ fields }) => fields,
-    sellers: ({ sellers }) => sellers
+    sellers: ({ sellers }) => sellers,
+    total: ({total}) => total
 }
 
 export default {
