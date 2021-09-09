@@ -6,12 +6,10 @@ const state = {
         {key: "email_address", label: "Email Address", sortable: true},
         {key: "email_validity", label: "Email validity", sortable: true},
         {key: "email_skip_source", label: "Skip Source", sortable: true},
-        {key: "email_pull_date", label: "Pull Date", sortable: true},
-        {key: "email_upload_date", label: "Upload date", sortable: true},
-        {key: "email_last_edit_date", label: "Last Edit Date date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
-    emails: []
+    emails: [],
+    total: 0,
 }
 
 const mutations = {
@@ -25,6 +23,9 @@ const mutations = {
     DELETE_EMAIL(state, payload) {
         const findIndex = state.emails.findIndex(({ id }) => id === payload)
         findIndex !== -1 && state.emails.splice(findIndex, 1)
+    },
+    GET_TOTAL(state, payload) {
+        state.total = payload;
     }
 }
 
@@ -53,12 +54,21 @@ const actions = {
             commit('DELETE_EMAIL', data)
             return response
         })
+    },
+    async getTotal({ commit }) {
+        return await api.get(`/totals/emails`).then((response) => {
+            if (response && response.count > -1) {
+                commit ('GET_TOTAL', response.count);
+            }
+            return response
+        })
     }
 }
 
 const getters = {
     fields: ({ fields }) => fields,
-    emails: ({ emails }) => emails
+    emails: ({ emails }) => emails,
+    total: ({total}) => total
 }
 
 export default {

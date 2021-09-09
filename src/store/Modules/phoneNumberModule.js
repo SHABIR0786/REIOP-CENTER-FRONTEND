@@ -7,12 +7,10 @@ const state = {
         {key: "phone_type", label: "Phone Type", sortable: true},
         {key: "phone_validity", label: "Validity", sortable: true},
         {key: "phone_skip_source", label: "Skip Source"},
-        {key: "phone_pull_date", label: "Pull Date", sortable: true},
-        {key: "phone_upload_date", label: "Upload Date", sortable: true},
-        {key: "phone_last_edit_date", label: "Last Edit Date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
-    phoneNumbers: []
+    phoneNumbers: [],
+    total: 0,
 }
 
 const mutations = {
@@ -26,6 +24,9 @@ const mutations = {
     DELETE_ITEM(state, payload) {
         const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload)
         findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1)
+    },
+    GET_TOTAL(state, payload) {
+        state.total = payload;
     }
 }
 
@@ -54,12 +55,21 @@ const actions = {
             commit('DELETE_ITEM', data)
             return response
         })
+    },
+    async getTotal({ commit }) {
+        return await api.get(`/totals/phones`).then((response) => {
+            if (response && response.count > -1) {
+                commit ('GET_TOTAL', response.count);
+            }
+            return response
+        })
     }
 }
 
 const getters = {
     fields: ({ fields }) => fields,
-    phoneNumbers: ({ phoneNumbers }) => phoneNumbers
+    phoneNumbers: ({ phoneNumbers }) => phoneNumbers,
+    total: ({total}) => total
 }
 
 export default {

@@ -10,12 +10,10 @@ const state = {
         {key:"list_stack", label: "Stack", sortable: true},
         {key:"list_run_month", label: "Run Month", sortable: true},
         {key:"list_run_year", label: "Run Year", sortable: true},
-        {key:"list_pull_date", label: "Pull Date", sortable: true},
-        {key:"list_upload_date", label: "Upload Date", sortable: true},
-        {key:"list_last_edit_date", label: "Last Edit Date", sortable: true},
         {key: "actions", label: "Actions"}
     ],
-    lists: []
+    lists: [],
+    total: 0,
 }
 
 const mutations = {
@@ -29,6 +27,9 @@ const mutations = {
     DELETE_LIST(state, payload) {
         const findIndex = state.lists.findIndex(({ id }) => id === payload)
         findIndex !== -1 && state.lists.splice(findIndex, 1)
+    },
+    GET_TOTAL(state, payload) {
+        state.total = payload;
     }
 }
 
@@ -57,12 +58,21 @@ const actions = {
             commit('DELETE_LIST', data)
             return response
         })
+    },
+    async getTotal({ commit }) {
+        return await api.get(`/totals/lists`).then((response) => {
+            if (response && response.count > -1) {
+                commit ('GET_TOTAL', response.count);
+            }
+            return response
+        })
     }
 }
 
 const getters = {
     fields: ({ fields }) => fields,
-    lists: ({ lists }) => lists
+    lists: ({ lists }) => lists,
+    total: ({total}) => total
 }
 
 export default {

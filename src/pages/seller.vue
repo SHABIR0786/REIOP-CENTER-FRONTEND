@@ -1,6 +1,7 @@
 <template>
     <div :class="`list-page seller main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="seller-table"></b-pagination>-->
+        <div class="mb-4">Total: {{total}}</div>
         <b-table
             id="seller-table"
             small
@@ -33,7 +34,6 @@
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
 import SellerModal from '@/components/seller/SellerModal'
-import { CARDS_ENUM } from '../utils/enum/cards';
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 export default {
@@ -59,12 +59,13 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'sellerModule/fields',
             items: 'sellerModule/sellers',
-            totals: 'homeModule/cards'
+            total: 'sellerModule/total'
         }),
-        rows() { return this.totals && this.totals[CARDS_ENUM.SELLERS] ? this.totals[CARDS_ENUM.SELLERS].counter: 1 }
+        rows() { return this.total ? this.total : 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('sellerModule/getTotal')
         try {
             await this.$store.dispatch("sellerModule/getAllSellers")
             this.$store.dispatch('uxModule/hideLoader')
