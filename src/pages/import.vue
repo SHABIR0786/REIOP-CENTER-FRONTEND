@@ -84,10 +84,11 @@ export default {
             sellerFields: 'importModule/sellerFields',
             subjectFields: 'importModule/subjectFields',
             schemas: 'importModule/schemas',
+            importFields: 'importModule/importFields'
         })
     },
     async created () {
-        await this.$store.dispatch('importModule/loadSchemas')
+        await this.$store.dispatch('importModule/loadImportFields')
     },
     methods: {
         previewFile (e) {
