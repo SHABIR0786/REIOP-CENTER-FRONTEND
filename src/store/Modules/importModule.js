@@ -1,12 +1,48 @@
 import * as api from "../Services/api.js";
 
 export const state = {
-    emailFields: [],
-    goldenAddressFields: [],
-    listFields: [],
-    phoneNumberFields: [],
-    sellerFields: [],
-    subjectFields: [],
+    emailFields: [
+        'seller_id', 'email_address', 'email_validify', 'skip_source'
+    ],
+    goldenAddressFields: [
+        'seller_id', 'golden_address', 'golden_city', 'golden_state', 'golden_zip'
+    ],
+    listFields: [
+        'dept', 'list_type', 'group', 'code', 'source', 'stack'
+    ],
+    phoneNumberFields: [
+        'seller_id', 'phone_number', 'phone_type', 'phone_validity', 'skip_source'
+    ],
+    sellerFields: [
+        'seller_full_name',
+        'seller_first_name',
+        'seller_last_name',
+        'seller_middle_name',
+        'seller_mailing_address',
+        'seller_mailing_city',
+        'seller_mailing_state',
+        'seller_mailing_zip',
+        'seller_company_owned',
+        'seller_total_subject',
+        'phone_number',
+        'phone_type',
+        'phone_validity',
+        'subject_market',
+        'subject_sub_market'
+],
+    subjectFields: [
+        'subject_address',
+        'subject_city',
+        'subject_state',
+        'subject_zip',
+        'subject_county',
+        'market',
+        'sub_market',
+        'subject_age',
+        'subject_type',
+        'total_seller',
+        'list_stack'
+    ],
     mappedHeader: [
         {key: 'fromField', label: 'From', sortable: true},
         {key: 'toField', label: 'To', sortable: true},
@@ -14,7 +50,7 @@ export const state = {
     ],
     uploadedFields: [],
     uploaded: false,
-    importFields: [],
+    schemas: {}
 }
 
 export const mutations = {
@@ -24,38 +60,8 @@ export const mutations = {
     SET_UPLOADED(state, payload) {
         state.uploaded = payload
     },
-    SET_IMPORT_FIELDS(state, payload) {
-        state.importFields = payload;
-
-        state.subjectFields = [];
-        state.sellerFields = [];
-        state.phoneNumberFields = [];
-        state.emailFields = [];
-        state.goldenAddressFields = [];
-        state.listFields = [];
-
-        payload.forEach( item => {
-           switch (item.section) {
-               case 'subject':
-                   state.subjectFields.push(item.field);
-                   break;
-               case  'seller':
-                   state.sellerFields.push(item.field);
-                   break;
-               case 'phone':
-                   state.phoneNumberFields.push(item.field);
-                   break;
-               case 'email':
-                   state.emailFields.push(item.field);
-                   break;
-               case 'golden_address':
-                   state.goldenAddressFields.push(item.field);
-                   break;
-               case 'list':
-                   state.listFields.push(item.field);
-                   break;
-           }
-        });
+    SET_SCHEMAS(state, payload) {
+        state.schemas = payload
     }
 }
 
@@ -90,12 +96,13 @@ export const actions = {
             return response
         })
     },
-    async loadImportFields ({ commit }) {
-        return await api.get('/labels').then((response) => {
-            if (response && response.labels) {
-                commit('SET_IMPORT_FIELDS', response.labels);
-            }
-        });
+
+    async loadSchemas({ commit }) {
+        return await api.get('/schemas').then((response) => {
+            console.log(response);
+            commit('SET_SCHEMAS', true)
+            return response
+        })
     }
 }
 
