@@ -15,34 +15,39 @@
         </b-row>
         <b-row  class="mt-5">
             <b-col cols="12" md="3">
-                <fields-card :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
+                <fields-card class="field-section" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
             </b-col>
             <b-col cols="12" md="2">
-                <b-row class="text-center mt-5">
-                    <b-col>
-                        <b-dropdown text="Select target table" variant="primary">
-                            <b-dropdown-item v-for="(item, index) in tableLabels" :key="index" @click="changeTable(item)">
-                                {{item}}
-                            </b-dropdown-item>
-                        </b-dropdown>
-                    </b-col>
-                </b-row>
-                <b-row class="text-center mt-5">
+<!--                <b-row class="text-center mt-5">-->
+<!--                    <b-col>-->
+<!--                        <b-dropdown text="Select target table" variant="primary">-->
+<!--                            <b-dropdown-item v-for="(item, index) in tableLabels" :key="index" @click="changeTable(item)">-->
+<!--                                {{item}}-->
+<!--                            </b-dropdown-item>-->
+<!--                        </b-dropdown>-->
+<!--                    </b-col>-->
+<!--                </b-row>-->
+                <b-row class="text-center">
                     <b-col>
                         <b-button variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
                     </b-col>
                 </b-row>
-                <b-row class="text-center mt-5">
+<!--                <b-row class="text-center mt-5">-->
+<!--                    <b-col>-->
+<!--                        <b-btn variant="primary" @click="upload">Save</b-btn>-->
+<!--                    </b-col>-->
+<!--                </b-row>-->
+            </b-col>
+            <b-col cols="12" md="3">
+                <fields-card class="field-section" :tableFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
+            </b-col>
+            <b-col cols="12" md="4">
+                <mapped-fields class="mapped-fields" :items="mappedItems" @clearMappedItem="clearMappedItem"></mapped-fields>
+                <b-row class="text-right mt-5">
                     <b-col>
                         <b-btn variant="primary" @click="upload">Save</b-btn>
                     </b-col>
                 </b-row>
-            </b-col>
-            <b-col cols="12" md="3">
-                <fields-card :tableFields="selectedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
-            </b-col>
-            <b-col cols="12" md="4">
-                <mapped-fields :items="mappedItems" @clearMappedItem="clearMappedItem"></mapped-fields>
             </b-col>
         </b-row>
     </b-container>
@@ -71,7 +76,8 @@ export default {
             fromField: '',
             toField: '',
             url: '',
-            mappedItems: []
+            mappedItems: [],
+            importedFields: [],
         }
     },
     computed: {
@@ -84,10 +90,20 @@ export default {
             sellerFields: 'importModule/sellerFields',
             subjectFields: 'importModule/subjectFields',
             schemas: 'importModule/schemas',
+            importFields: 'importModule/importFields'
         })
     },
     async created () {
-        await this.$store.dispatch('importModule/loadSchemas')
+        await this.$store.dispatch('importModule/loadImportFields')
+        this.importedFields = [
+            ...this.emailFields,
+            ...this.goldenAddressFields,
+            ...this.listFields,
+            ...this.phoneNumberFields,
+            ...this.sellerFields,
+            ...this.subjectFields,
+        ]
+        console.log('test', this.importedFields);
     },
     methods: {
         previewFile (e) {
@@ -174,3 +190,13 @@ export default {
     }
 }
 </script>
+<style>
+    .field-section {
+        max-height: 70vh;
+        overflow: auto;
+    }
+    .mapped-fields {
+        max-height: 60vh;
+        overflow: auto;
+    }
+</style>
