@@ -17,7 +17,7 @@
             <b-col cols="12" md="3">
                 <fields-card class="field-section" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
             </b-col>
-            <b-col cols="12" md="2">
+            <b-col cols="12" md="1">
 <!--                <b-row class="text-center mt-5">-->
 <!--                    <b-col>-->
 <!--                        <b-dropdown text="Select target table" variant="primary">-->
@@ -38,8 +38,8 @@
 <!--                    </b-col>-->
 <!--                </b-row>-->
             </b-col>
-            <b-col cols="12" md="3">
-                <fields-card class="field-section" :tableFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
+            <b-col cols="12" md="4">
+                <fields-card class="field-section" :importedFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
             </b-col>
             <b-col cols="12" md="4">
                 <mapped-fields class="mapped-fields" :items="mappedItems" @clearMappedItem="clearMappedItem"></mapped-fields>
@@ -77,7 +77,7 @@ export default {
             toField: '',
             url: '',
             mappedItems: [],
-            importedFields: [],
+            importedFields: {},
         }
     },
     computed: {
@@ -95,15 +95,14 @@ export default {
     },
     async created () {
         await this.$store.dispatch('importModule/loadImportFields')
-        this.importedFields = [
-            ...this.emailFields,
-            ...this.goldenAddressFields,
-            ...this.listFields,
-            ...this.phoneNumberFields,
-            ...this.sellerFields,
-            ...this.subjectFields,
-        ]
-        console.log('test', this.importedFields);
+        this.importedFields = {
+            email: this.emailFields,
+            golden_address: this.goldenAddressFields,
+            list: this.listFields,
+            phone: this.phoneNumberFields,
+            seller: this.sellerFields,
+            subject: this.subjectFields,
+        }
     },
     methods: {
         previewFile (e) {
@@ -169,8 +168,9 @@ export default {
 
             const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
             this.uploadedFields.splice(fromIndex, 1)
-            const toIndex = this.selectedFields.findIndex(item => item === this.toField)
-            this.selectedFields.splice(toIndex, 1)
+            const table = this.toField.split('_')[0];
+            const toIndex = this.importedFields[table].findIndex(item => item === this.toField)
+            this.importedFields[table].splice(toIndex, 1)
             this.fromField = ''
             this.toField = ''
         },
