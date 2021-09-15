@@ -18,25 +18,11 @@
                 <fields-card class="field-section" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
             </b-col>
             <b-col cols="12" md="1">
-<!--                <b-row class="text-center mt-5">-->
-<!--                    <b-col>-->
-<!--                        <b-dropdown text="Select target table" variant="primary">-->
-<!--                            <b-dropdown-item v-for="(item, index) in tableLabels" :key="index" @click="changeTable(item)">-->
-<!--                                {{item}}-->
-<!--                            </b-dropdown-item>-->
-<!--                        </b-dropdown>-->
-<!--                    </b-col>-->
-<!--                </b-row>-->
                 <b-row class="text-center">
                     <b-col>
                         <b-button variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
                     </b-col>
                 </b-row>
-<!--                <b-row class="text-center mt-5">-->
-<!--                    <b-col>-->
-<!--                        <b-btn variant="primary" @click="upload">Save</b-btn>-->
-<!--                    </b-col>-->
-<!--                </b-row>-->
             </b-col>
             <b-col cols="12" md="4">
                 <fields-card class="field-section" :importedFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
@@ -125,38 +111,6 @@ export default {
             };
             reader.readAsArrayBuffer(f);
         },
-        changeTable(item){
-            this.uploadedFields = []
-            this.mappedItems = []
-            if(this.jsonSheet.length > 0)
-                for(let k in this.jsonSheet[0]) this.uploadedFields.push(k)
-
-            switch(item){
-                case 'emails':
-                    this.selectedFields = [...this.emailFields]
-                    this.url = 'emails'
-                    break
-                case 'golden_addresses':
-                    this.selectedFields = [...this.goldenAddressFields]
-                    this.url = 'golden-addresses'
-                    break
-                case 'lists':
-                    this.selectedFields = [...this.listFields]
-                    this.url = 'list'
-                    break
-                case 'phones':
-                    this.selectedFields = [...this.phoneNumberFields]
-                    this.url = 'phones'
-                    break
-                case 'sellers':
-                    this.selectedFields = [...this.sellerFields]
-                    this.url = 'sellers'
-                    break
-                default:
-                    this.selectedFields = [...this.subjectFields]
-                    this.url = 'subjects'
-            }
-        },
         selectUploadedField(field) {
             this.fromField = field
         },
@@ -165,17 +119,21 @@ export default {
         },
         mapFields() {
             this.mappedItems.push({fromField: this.fromField, toField: this.toField, action: ""})
-
             const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
             this.uploadedFields.splice(fromIndex, 1)
-            const table = this.toField.split('_')[0];
+            let table = this.toField.split('_')[0];
+            if (table === 'golden') { table = 'golden_address' }
+
             const toIndex = this.importedFields[table].findIndex(item => item === this.toField)
             this.importedFields[table].splice(toIndex, 1)
+
             this.fromField = ''
             this.toField = ''
         },
         clearMappedItem(index) {
-            const table = this.mappedItems[index].toField.split('_')[0];
+            let table = this.mappedItems[index].toField.split('_')[0];
+            if (table === 'golden') { table = 'golden_address' }
+
             this.uploadedFields.push(this.mappedItems[index].fromField)
             this.importedFields[table].push(this.mappedItems[index].toField)
             this.mappedItems.splice(index, 1)
@@ -186,7 +144,7 @@ export default {
             await this.$store.dispatch('importModule/uploadExcelDataV2', {file: this.file, mappedItems: this.mappedItems, url: this.url})
 
             await this.$store.dispatch('uxModule/hideLoader')
-            this.$router.push({path: this.url}).catch(() => {})
+            this.$router.push({path: '/'}).catch(() => {})
         }
     }
 }

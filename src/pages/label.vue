@@ -1,7 +1,5 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="email-table"></b-pagination>-->
-<!--        <div class="mb-4">Total: {{total}}</div>-->
         <b-table
                 id="email-table"
                 small
@@ -22,11 +20,8 @@
             </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-<!--                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>-->
             </template>
         </b-table>
-        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="email-table"></b-pagination>
-<!--        <email-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></email-modal>-->
         <label-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></label-modal>
     </div>
 </template>
@@ -56,11 +51,8 @@
             ...mapGetters({
                 isCollapsed: 'uxModule/isCollapsed',
                 fields: 'labelModule/fields',
-                items: 'labelModule/labels',
-                // totals: 'homeModule/cards',
-                // total: 'emailModule/total'
-            }),
-            rows() { return this.total ? this.total : 1 }
+                items: 'labelModule/labels'
+            })
         },
         async created () {
             this.$store.dispatch('uxModule/setLoading')
@@ -80,7 +72,7 @@
             },
             save (item) {
                 this.showModal = false
-                this.$store.dispatch('labelModule/editLabel', {...item})
+                this.$store.dispatch('labelModule/editLabel', item)
             },
             deleteItem(item){
                 this.showDeleteModal = true;
@@ -88,16 +80,7 @@
             },
             modalResponse(response) {
                 this.showDeleteModal = false;
-                if (response) {
-                    // this.$store.dispatch('emailModule/deleteEmail', this.itemToDelete.id)
-                }
-            }
-        },
-        watch: {
-            currentPage: {
-                handler: function() {
-                    // this.$store.dispatch('emailModule/getAllEmails', this.currentPage)
-                }
+                console.log(response);
             }
         }
     }

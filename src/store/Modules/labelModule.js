@@ -30,7 +30,7 @@ const actions = {
         });
     },
     async editLabel({ commit }, data) {
-        return await api.put(`/labels/${data.id}`, {...data}).then((response) => {
+        return await api.put(`/labels/${data.id}`, data).then((response) => {
             commit('EDIT_LABEL', data)
             return response
         })

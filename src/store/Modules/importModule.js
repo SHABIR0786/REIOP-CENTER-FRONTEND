@@ -37,7 +37,7 @@ export const mutations = {
         payload.forEach( item => {
            switch (item.section) {
                case 'subject':
-                   state.subjectFields.push(item.field);
+                   state.subjectFields.push(item.field); // label
                    break;
                case  'seller':
                    state.sellerFields.push(item.field);
@@ -91,7 +91,7 @@ export const actions = {
         })
     },
     async loadVisibleFields ({ commit }) {
-        return await api.get('/labels').then((response) => {
+        return await api.get('/visible-labels').then((response) => {
             if (response && response.labels) {
                 commit('SET_IMPORT_FIELDS', response.labels);
             }
