@@ -16,6 +16,27 @@
         </div>
 
         <div v-if="importedFields">
+            <span>Subject</span>
+            <b-form-radio-group
+                    :options="importedFields.subject"
+                    v-model="selected"
+                    stacked
+                    @change="$emit('selectItem', selected)"
+            ></b-form-radio-group>
+            <span>List</span>
+            <b-form-radio-group
+                    :options="importedFields.list"
+                    v-model="selected"
+                    stacked
+                    @change="$emit('selectItem', selected)"
+            ></b-form-radio-group>
+            <span>Seller</span>
+            <b-form-radio-group
+                    :options="importedFields.seller"
+                    v-model="selected"
+                    stacked
+                    @change="$emit('selectItem', selected)"
+            ></b-form-radio-group>
             <span>Email</span>
             <b-form-radio-group
                     :options="importedFields.email"
@@ -30,30 +51,9 @@
                     stacked
                     @change="$emit('selectItem', selected)"
             ></b-form-radio-group>
-            <span>List</span>
-            <b-form-radio-group
-                    :options="importedFields.list"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
             <span>Phone Number</span>
             <b-form-radio-group
                     :options="importedFields.phone"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
-            <span>Seller</span>
-            <b-form-radio-group
-                    :options="importedFields.seller"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
-            <span>Subject</span>
-            <b-form-radio-group
-                    :options="importedFields.subject"
                     v-model="selected"
                     stacked
                     @change="$emit('selectItem', selected)"

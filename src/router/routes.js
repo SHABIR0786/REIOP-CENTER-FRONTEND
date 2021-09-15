@@ -8,6 +8,7 @@ import Email from "../pages/email"
 import GoldenAddress from "../pages/goldenAddress"
 import Properties from "../pages/properties"
 import Login from "../pages/login"
+import Labels from  "../pages/label"
 
 export const routes = [
     {name: "Login", path: "/login", component: Login, title: "Login", isNavbar: false},
@@ -19,5 +20,6 @@ export const routes = [
     {name: "PhoneNumberPage", path: "/phones", component: PhoneNumber, title: "Phone Numbers", icon: "telephone-fill", isNavbar: true, meta: {requireAuth: true}},
     {name: "EmailPage", path: "/emails", component: Email, title: "Emails", icon: "envelope-fill", isNavbar: true, meta: {requireAuth: true}},
     {name: "GoldenAddressPage", path: "/golden-addresses", component: GoldenAddress, title: "Golden Addresses", icon: "geo-alt-fill", isNavbar: true, meta: {requireAuth: true}},
-    {name: "PropertiesPage", path: "/properties", component: Properties, title: "Properties", icon: "gear", isNavbar: true, meta: {requireAuth: true}}
+    {name: "PropertiesPage", path: "/properties", component: Properties, title: "Properties", icon: "gear", isNavbar: true, meta: {requireAuth: true}},
+    {name: "LabelPage", path: "/labels", component: Labels, title: "Labels", isNavbar: false, meta: {requireAuth: true}}
 ]

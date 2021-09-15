@@ -94,7 +94,7 @@ export default {
         })
     },
     async created () {
-        await this.$store.dispatch('importModule/loadImportFields')
+        await this.$store.dispatch('importModule/loadVisibleFields')
         this.importedFields = {
             email: this.emailFields,
             golden_address: this.goldenAddressFields,
@@ -175,8 +175,9 @@ export default {
             this.toField = ''
         },
         clearMappedItem(index) {
+            const table = this.mappedItems[index].toField.split('_')[0];
             this.uploadedFields.push(this.mappedItems[index].fromField)
-            this.selectedFields.push(this.mappedItems[index].toField)
+            this.importedFields[table].push(this.mappedItems[index].toField)
             this.mappedItems.splice(index, 1)
         },
         async upload() {

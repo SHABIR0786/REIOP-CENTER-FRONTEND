@@ -14,7 +14,7 @@ export const state = {
     ],
     uploadedFields: [],
     uploaded: false,
-    importFields: [],
+    importVisibleFields: [],
 }
 
 export const mutations = {
@@ -25,7 +25,7 @@ export const mutations = {
         state.uploaded = payload
     },
     SET_IMPORT_FIELDS(state, payload) {
-        state.importFields = payload;
+        state.importVisibleFields = payload;
 
         state.subjectFields = [];
         state.sellerFields = [];
@@ -90,7 +90,7 @@ export const actions = {
             return response
         })
     },
-    async loadImportFields ({ commit }) {
+    async loadVisibleFields ({ commit }) {
         return await api.get('/labels').then((response) => {
             if (response && response.labels) {
                 commit('SET_IMPORT_FIELDS', response.labels);
