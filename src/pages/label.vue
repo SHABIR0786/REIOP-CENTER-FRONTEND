@@ -75,13 +75,11 @@
         },
         methods: {
             editItem(item) {
-                console.log('esim', item);
                 this.showModal = true
                 this.editedItem = { ...item }
             },
             save (item) {
                 this.showModal = false
-                console.log(item);
                 this.$store.dispatch('labelModule/editLabel', {...item})
             },
             deleteItem(item){
