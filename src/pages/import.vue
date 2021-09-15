@@ -90,11 +90,10 @@ export default {
             sellerFields: 'importModule/sellerFields',
             subjectFields: 'importModule/subjectFields',
             schemas: 'importModule/schemas',
-            importFields: 'importModule/importFields'
         })
     },
     async created () {
-        await this.$store.dispatch('importModule/loadImportFields')
+        await this.$store.dispatch('importModule/loadVisibleFields')
         this.importedFields = [
             ...this.emailFields,
             ...this.goldenAddressFields,
@@ -103,7 +102,6 @@ export default {
             ...this.sellerFields,
             ...this.subjectFields,
         ]
-        console.log('test', this.importedFields);
     },
     methods: {
         previewFile (e) {

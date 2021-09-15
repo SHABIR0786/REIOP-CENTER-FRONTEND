@@ -15,6 +15,7 @@ import listModule from "./Modules/listModule"
 import sellerModule from "./Modules/sellerModule"
 import phoneNumberModule from "./Modules/phoneNumberModule"
 import subjectModule from "./Modules/subjectModule"
+import labelModule from "./Modules/labelModule"
 
 const state = {}
 
@@ -33,7 +34,8 @@ export default new Vuex.Store({
         importModule: importModule,
         sellerModule: sellerModule,
         phoneNumberModule: phoneNumberModule,
-        subjectModule: subjectModule
+        subjectModule: subjectModule,
+        labelModule: labelModule
     },
     state,
     mutations,
