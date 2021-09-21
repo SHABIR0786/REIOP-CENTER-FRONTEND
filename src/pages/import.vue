@@ -58,6 +58,7 @@ export default {
             jsonSheet: [],
             tableLabels: ['emails', 'golden_addresses', 'lists', 'phones', 'sellers', 'subjects'],
             uploadedFields: [],
+            uploadedAllFields: [],
             selectedFields: [],
             fromField: '',
             toField: '',
@@ -105,8 +106,12 @@ export default {
                 let worksheet = workbook.Sheets[sheetName];
                 $this.jsonSheet = XLSX.utils.sheet_to_json(worksheet);
                 this.uploadedFields = []
+                this.uploadedAllFields = []
                 if($this.jsonSheet.length > 0) {
-                    for(let k in $this.jsonSheet[0]) $this.uploadedFields.push(k)
+                    for(let k in $this.jsonSheet[0]) {
+                        $this.uploadedFields.push(k)
+                        $this.uploadedAllFields.push(k)
+                    }
                 }
             };
             reader.readAsArrayBuffer(f);
@@ -118,30 +123,66 @@ export default {
             this.toField = field
         },
         mapFields() {
+            let lastElementId = 0;
+            let status = false;
+            this.mappedItems.forEach(item => {
+                if (item.toField.includes(this.toField)) {
+                    status = true;
+
+                    const sections = item.toField.split('_');
+                    const id = sections[sections.length - 1];
+
+                    if (!isNaN(id) && id > lastElementId) { lastElementId = +id; }
+                }
+            })
+
+            if (status) {
+                let suffix = lastElementId + 1;
+                this.toField = this.toField + '_' + suffix;
+            }
+
             this.mappedItems.push({fromField: this.fromField, toField: this.toField, action: ""})
+
             const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
             this.uploadedFields.splice(fromIndex, 1)
             let table = this.toField.split('_')[0];
             if (table === 'golden') { table = 'golden_address' }
 
-            const toIndex = this.importedFields[table].findIndex(item => item === this.toField)
-            this.importedFields[table].splice(toIndex, 1)
+            if (table !== 'seller' && table !== 'email' && table !== 'phone') {
+                const toIndex = this.importedFields[table].findIndex(item => item === this.toField)
+                this.importedFields[table].splice(toIndex, 1)
+            }
 
-            this.fromField = ''
-            this.toField = ''
+            this.fromField = null
+            this.toField = null
         },
         clearMappedItem(index) {
             let table = this.mappedItems[index].toField.split('_')[0];
             if (table === 'golden') { table = 'golden_address' }
 
             this.uploadedFields.push(this.mappedItems[index].fromField)
-            this.importedFields[table].push(this.mappedItems[index].toField)
+
+            if (table !== 'seller' && table !== 'email' && table !== 'phone') {
+                this.importedFields[table].push(this.mappedItems[index].toField)
+            }
             this.mappedItems.splice(index, 1)
         },
         async upload() {
             await this.$store.dispatch('uxModule/setLoading')
-            // await this.$store.dispatch('importModule/uploadExcelData', {data: data, url: this.url})
-            await this.$store.dispatch('importModule/uploadExcelDataV2', {file: this.file, mappedItems: this.mappedItems, url: this.url})
+
+            const mapping = [];
+            this.uploadedAllFields.forEach(fromF => {
+                let toItem = '';
+                this.mappedItems.forEach(mappedI => {
+                    if (mappedI.fromField === fromF) {
+                        toItem = mappedI.toField;
+                    }
+                })
+
+                mapping.push({fromField: fromF, toField: toItem, action: ""});
+            })
+
+            await this.$store.dispatch('importModule/uploadExcelDataV2', {file: this.file, mappedItems: mapping, url: this.url})
 
             await this.$store.dispatch('uxModule/hideLoader')
             this.$router.push({path: '/'}).catch(() => {})
