@@ -1,7 +1,11 @@
 <template>
-    <b-navbar varint="info" :class="`mb-2 main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <b-navbar-nav
-            class="ml-auto">
+    <b-navbar varint="info" :class="`mb-2 main-content ${isCollapsed ? 'wide-content' : ''}`" class="nav-bar">
+        <b-navbar-brand href="/" left>
+            <div>
+                <img class="logo" src="@/assets/images/REI OPCENTER_v3-02.png">
+            </div>
+        </b-navbar-brand>
+        <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right>
                 <template #button-content> {{ user ? user.name : "User"}}</template>
                 <b-dropdown-item>
@@ -44,5 +48,17 @@ export default {
     }
     .link-label:hover {
         text-decoration: none;
+    }
+</style>
+<style>
+    .nav-bar {
+        width: 100% !important;
+        background-color: #45818E !important;
+    }
+    .logo {
+        width: 230px;
+    }
+    .navbar-expand .navbar-nav .nav-item .nav-link {
+        color: white !important;
     }
 </style>

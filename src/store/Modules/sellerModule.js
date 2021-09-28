@@ -2,9 +2,9 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "seller_full_name", label: "Full Name", sortable: true},
-        {key: "seller_first_name", label: "First Name", sortable: true},
-        {key: "seller_last_name", label: "Last Name", sortable: true},
+        {key: "seller_full_name", stickyColumn: true, label: "Full Name", sortable: true},
+        {key: "seller_first_name", stickyColumn: true, label: "First Name", sortable: true},
+        {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
         {key: "seller_mailing_address", label: "Mailing Address"},
         {key: "seller_mailing_state", label: "Mailing State"},

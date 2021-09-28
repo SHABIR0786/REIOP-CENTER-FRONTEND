@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <div v-if="isLogged">
+      <b-row class="nav-bar">
+        <nav-bar></nav-bar>
+      </b-row>
       <side-bar></side-bar>
-      <nav-bar></nav-bar>
       <Footer></Footer>
       <router-view></router-view>
       <loader></loader>
@@ -42,3 +44,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  .nav-bar {
+    height: 56px;
+  }
+</style>
