@@ -37,22 +37,22 @@ export const mutations = {
         payload.forEach( item => {
            switch (item.section) {
                case 'subject':
-                   state.subjectFields.push(item.field); // label
+                   state.subjectFields.push(item); // label
                    break;
                case  'seller':
-                   state.sellerFields.push(item.field);
+                   state.sellerFields.push(item);
                    break;
                case 'phone':
-                   state.phoneNumberFields.push(item.field);
+                   state.phoneNumberFields.push(item);
                    break;
                case 'email':
-                   state.emailFields.push(item.field);
+                   state.emailFields.push(item);
                    break;
                case 'golden_address':
-                   state.goldenAddressFields.push(item.field);
+                   state.goldenAddressFields.push(item);
                    break;
                case 'list':
-                   state.listFields.push(item.field);
+                   state.listFields.push(item);
                    break;
            }
         });

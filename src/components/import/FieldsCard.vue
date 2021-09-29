@@ -1,71 +1,17 @@
 <template>
-    <b-card
-        header-tag="header"
-        :header="title"
-        header-bg-variant="light"
-        header-text-variant="primary"
-        class="card"
-    >
+    <b-card header-tag="header" :header="title" header-bg-variant="light" header-text-variant="primary" class="card">
         <div v-if="!importedFields">
-            <b-form-radio-group
-                    :options="tableFields"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
+            <b-form-radio-group :options="tableFields" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
         </div>
 
         <div v-if="importedFields">
-            <span class="target-label">Subject</span>
-            <b-form-radio-group
-                    :options="importedFields.subject"
-                    text-field="label"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
-            <span class="target-label">List</span>
-            <b-form-radio-group
-                    :options="importedFields.list"
-                    text-field="label"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
-            <span class="target-label">Seller</span>
-            <b-form-radio-group
-                    :options="importedFields.seller"
-                    text-field="label"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
-            <span class="target-label">Email</span>
-            <b-form-radio-group
-                    :options="importedFields.email"
-                    v-model="selected"
-                    text-field="label"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
-            <span class="target-label">Golden Address</span>
-            <b-form-radio-group
-                    :options="importedFields.golden_address"
-                    text-field="label"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
-            <span class="target-label">Phone Number</span>
-            <b-form-radio-group
-                    :options="importedFields.phone"
-                    text-field="label"
-                    v-model="selected"
-                    stacked
-                    @change="$emit('selectItem', selected)"
-            ></b-form-radio-group>
+            <b-form-radio-group :options="importedFields.subject" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
+            <b-form-radio-group :options="importedFields.list" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
+            <b-form-radio-group :options="importedFields.seller" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
+            <b-form-radio-group :options="importedFields.email" v-model="selected" text-field="label" value-field="field" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
+            <b-form-radio-group :options="importedFields.golden_address" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
+            <b-form-radio-group :options="importedFields.phone" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
         </div>
-
     </b-card>
 </template>
 <script>
