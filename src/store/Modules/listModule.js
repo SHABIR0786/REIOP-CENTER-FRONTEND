@@ -2,15 +2,15 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"dept", label: "Dept", sortable: true},
-        {key:"list_type", label: "List Type", sortable: true},
-        {key:"list_group", label: "Group", sortable: true},
+        {key: "actions", label: "Actions"},
+        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key:"list_type", stickyColumn: true, label: "List Type", sortable: true},
+        {key:"list_group", stickyColumn: true, label: "Group", sortable: true},
         {key:"list_code", label: "Code", sortable: true},
         {key:"list_source", label: "Source", sortable: true},
         {key:"list_stack", label: "Stack", sortable: true},
         {key:"list_run_month", label: "Run Month", sortable: true},
         {key:"list_run_year", label: "Run Year", sortable: true},
-        {key: "actions", label: "Actions"}
     ],
     lists: [],
     total: 0,

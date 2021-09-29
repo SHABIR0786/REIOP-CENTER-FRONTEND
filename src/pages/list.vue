@@ -32,6 +32,9 @@
             </b-row>
         </div>
         <b-table
+            :sticky-header="true"
+            :no-border-collapse="false"
+            responsive
             id="list-table"
             small
             striped
@@ -39,19 +42,42 @@
             :busy="isBusy"
             :fields="fields"
             :items="items"
-            responsive="md"
+
             :per-page="0"
             :current-page="currentPage"
         >
+            <template v-slot:cell(actions)="data">
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+            </template>
             <template #table-busy>
                 <div class="text-center" my-2>
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
             </template>
-            <template v-slot:cell(actions)="data">
-                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+
+            <template #head(list_type)="scope">
+                <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+            </template>
+
+            <template #head(list_group)="scope">
+                <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+            </template>
+
+            <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;"> heading {{ scope.label }}</div>
+            </template>
+
+            <template v-slot:cell(list_type)="data">
+                <div :title="data.item.list_type">
+                    <p class="user-email">{{data.item.list_type}}</p>
+                </div>
+            </template>
+            <template v-slot:cell(list_group)="data">
+                <div :title="data.item.list_group">
+                    <p class="user-email">{{data.item.list_group}}</p>
+                </div>
             </template>
         </b-table>
         <b-row>
@@ -75,7 +101,7 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to 20 of XXXXX entries</p>
+                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
@@ -106,7 +132,9 @@ export default {
             editedItem: {},
             showDeleteModal: false,
             itemToDelete: {},
-            pageOptions: [5, 10, 20]
+            pageOptions: [10, 20, 50],
+            noCollapse: false,
+            text: ''
         }
     },
     computed: {
@@ -119,6 +147,7 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
+        console.log('fields', this.fields);
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('listModule/getTotal')
         try {
@@ -172,11 +201,11 @@ export default {
     }
 
     .total {
-        background-color: #FEB97D;
+        background-color: #F9CB9C;
     }
 
     .latest {
-        background-color: #669966;
+        background-color: #B6D7A8;
         margin-left: 20px;
     }
     .add-seller {

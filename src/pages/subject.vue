@@ -76,12 +76,13 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to 20 of XXXXX entries</p>
+                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
-        </b-row>        <subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></subject-modal>
+        </b-row>
+        <subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></subject-modal>
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     </div>
 </template>
@@ -107,7 +108,7 @@ export default {
             editedItem: {},
             showDeleteModal: false,
             itemToDelete: {},
-            pageOptions: [5, 10, 20]
+            pageOptions: [10, 20, 50]
         }
     },
     computed: {
@@ -172,11 +173,11 @@ export default {
     }
 
     .total {
-        background-color: #FEB97D;
+        background-color: #F9CB9C;
     }
 
     .latest {
-        background-color: #669966;
+        background-color: #B6D7A8;
         margin-left: 20px;
     }
     .add-seller {

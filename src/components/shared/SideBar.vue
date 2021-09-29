@@ -75,16 +75,19 @@
                         <p v-if="!isCollapsed">List</p>
                     </router-link>
                 </li>
-                <li v-b-toggle.collapse-1>
+                <li v-b-toggle.collapse-1 @click="changeCollapseStatus()">
                     <router-link :to="''">
                         <span :title="'Data'">
                             <b-icon :icon="'clipboard-data'"></b-icon>
                         </span>
                         <p v-if="!isCollapsed">Data</p>
+                        <span class="float-right">
+                            <b-icon :icon=collapseIcon></b-icon>
+                        </span>
                     </router-link>
 
                 </li>
-                <b-collapse id="collapse-1">
+                <b-collapse visible id="collapse-1">
                     <ul class="nav navbar-nav">
                         <li :class="$route.name==='SubjectPage' ? 'active-tab' : ''">
                             <router-link :to="'/subjects'">
@@ -168,6 +171,12 @@ export default {
     components: {
         BIcon,
     },
+    data () {
+        return {
+            isCollapseOpen: true,
+            collapseIcon: 'chevron-compact-up'
+        }
+    },
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed'
@@ -190,6 +199,10 @@ export default {
         toggleSidebar () {
             this.$store.dispatch('uxModule/toggleSidebar')
         },
+        changeCollapseStatus () {
+            this.isCollapseOpen = !this.isCollapseOpen;
+            this.collapseIcon = this.isCollapseOpen ? 'chevron-compact-up' : 'chevron-compact-down';
+        }
     }
 }
 </script>
