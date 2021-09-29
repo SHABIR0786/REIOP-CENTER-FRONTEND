@@ -1,6 +1,5 @@
 <template>
-    <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="list-table"></b-pagination>-->
+    <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`" style="margin-bottom: 20px">
         <h3>Lists</h3>
         <div>
             <b-row>
@@ -42,19 +41,21 @@
             :busy="isBusy"
             :fields="fields"
             :items="items"
-
             :per-page="0"
             :current-page="currentPage"
         >
-            <template v-slot:cell(actions)="data">
-                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
-            </template>
             <template #table-busy>
                 <div class="text-center" my-2>
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
+            </template>
+
+            <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
 
             <template #head(list_type)="scope">
@@ -66,9 +67,18 @@
             </template>
 
             <template #head()="scope">
-                <div class="text-nowrap" style="width: 150px;"> heading {{ scope.label }}</div>
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>
 
+            <template v-slot:cell(id)="data">
+                <div :title="data.item.id">
+                    <p class="user-email">{{data.item.id}}</p>
+                </div>
+            </template>
+            <template v-slot:cell(actions)="data">
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+            </template>
             <template v-slot:cell(list_type)="data">
                 <div :title="data.item.list_type">
                     <p class="user-email">{{data.item.list_type}}</p>
@@ -91,13 +101,7 @@
                         label-size="xs"
                         class="mb-0"
                 >
-                    <b-form-select
-                            id="show-select"
-                            v-model="perPage"
-                            :options="pageOptions"
-                            size="xs"
-                            class="ml-3"
-                    ></b-form-select>
+                    <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
@@ -147,16 +151,14 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        console.log('fields', this.fields);
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('listModule/getTotal')
         try {
-            await this.$store.dispatch("listModule/getAllLists")
+            await this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
-        
     },
     methods: {
         editItem(item) {
@@ -181,7 +183,12 @@ export default {
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('listModule/getAllLists', this.currentPage)
+                this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage})
+            }
+        },
+        perPage: {
+            handler: function () {
+                this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: this.perPage})
             }
         }
     }
@@ -216,5 +223,8 @@ export default {
 
     .filter-icon {
         font-size: 25px;
+    }
+    .b-table-sticky-header {
+        max-height: 50vh!important;;
     }
 </style>

@@ -2,8 +2,8 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "actions", label: "Actions"},
         {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key:"actions", stickyColumn: true, label: "Actions"},
         {key:"list_type", stickyColumn: true, label: "List Type", sortable: true},
         {key:"list_group", stickyColumn: true, label: "Group", sortable: true},
         {key:"list_code", label: "Code", sortable: true},
@@ -34,8 +34,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllLists({ commit, dispatch }, data = 1) {
-        return await api.get(`/lists?page=${data}`).then((response) => {
+    async getAllLists({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/lists?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

@@ -108,7 +108,8 @@ export default {
             editedItem: {},
             showDeleteModal: false,
             itemToDelete: {},
-            pageOptions: [10, 20, 50]
+            pageOptions: [10, 20, 50],
+            text: ''
         }
     },
     computed: {
