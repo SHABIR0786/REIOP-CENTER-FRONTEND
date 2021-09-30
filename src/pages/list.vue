@@ -1,5 +1,5 @@
 <template>
-    <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`" style="margin-bottom: 20px">
+    <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
         <h3>Lists</h3>
         <div>
             <b-row>

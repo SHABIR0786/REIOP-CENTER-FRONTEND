@@ -2,9 +2,11 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "seller_full_name", stickyColumn: true, label: "Full Name", sortable: true},
-        {key: "seller_first_name", stickyColumn: true, label: "First Name", sortable: true},
-        {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
+        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key: "actions", stickyColumn: true, label: "Actions"},
+        {key: "seller_full_name",  stickyColumn: true, label: "Full Name", sortable: true},
+        {key: "seller_first_name", label: "First Name", sortable: true},
+        {key: "seller_last_name", label: "Last Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
         {key: "seller_mailing_address", label: "Mailing Address"},
         {key: "seller_mailing_state", label: "Mailing State"},
@@ -15,7 +17,6 @@ const state = {
         {key: "seller_full_mailing_city", label: "Full Mailing City"},
         {key: "seller_full_mailing_state", label: "Full Mailing State"},
         {key: "seller_full_mailing_zip", label: "Full Mailing Zip"},
-        {key: "actions", label: "Actions"}
     ],
     sellers: [],
     total: 0,
@@ -39,8 +40,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllSellers({ commit }, data = 1) {
-        return await api.get(`/sellers?page=${data}`).then((response) => {
+    async getAllSellers({ commit }, {page, perPage}) {
+        return await api.get(`/sellers?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.sellers && response.sellers.data) {
                 commit('SET_ALL_SELLERS', response.sellers.data)
             }

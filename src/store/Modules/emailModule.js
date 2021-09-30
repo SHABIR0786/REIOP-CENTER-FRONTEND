@@ -2,11 +2,12 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "seller", label: "Seller", sortable: true},
+        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key: "actions", stickyColumn: true, label: "Actions"},
+        {key: "seller", stickyColumn: true, label: "Seller", sortable: true},
         {key: "email_address", label: "Email Address", sortable: true},
         {key: "email_validity", label: "Email validity", sortable: true},
         {key: "email_skip_source", label: "Skip Source", sortable: true},
-        {key: "actions", label: "Actions"}
     ],
     emails: [],
     total: 0,
@@ -30,8 +31,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllEmails({ commit, dispatch }, data = 1) {
-        return await api.get(`/emails?page=${data}`).then((response) => {
+    async getAllEmails({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/emails?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

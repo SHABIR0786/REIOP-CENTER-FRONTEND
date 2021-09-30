@@ -1,18 +1,17 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
         <h3>Propeties</h3>
         <div>
             <b-row>
                 <b-col cols="8" class="d-flex">
                     <div class="info total">
                         <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
-                        <div>20</div>
+                        <div>{{total}}</div>
                         <div>Total</div>
                     </div>
                     <div class="info latest">
                         <b-icon class="mr-2 cursor-pointer" icon="arrow-up" variant="primary" @click="editItem(data.item)"></b-icon>
-                        <div>20</div>
+                        <div>{{total}}</div>
                         <div>Added This Month</div>
                     </div>
                 </b-col>
@@ -39,7 +38,7 @@
             :busy="isBusy"
             :fields="fields"
             :items="items"
-            responsive="md"
+            responsive
             :per-page="0"
             :current-page="currentPage"
         >
@@ -107,7 +106,8 @@ export default {
             editedItem: {},
             showDeleteModal: false,
             itemToDelete: {},
-            pageOptions: [10, 20, 50]
+            pageOptions: [10, 20, 50],
+            text: ''
         }
     },
     computed: {
@@ -121,7 +121,7 @@ export default {
     async created () {
         this.$store.dispatch('uxModule/setLoading')
         try {
-            await this.$store.dispatch("subjectModule/getAllSubjects")
+            await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -145,6 +145,18 @@ export default {
             this.showDeleteModal = false;
             if (response) {
                 this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id)
+            }
+        }
+    },
+    watch: {
+        currentPage: {
+            handler: function() {
+                this.$store.dispatch('subjectModule/getAllSubjects', {page: this.currentPage, perPage: this.perPage})
+            }
+        },
+        perPage: {
+            handler: function () {
+                this.$store.dispatch('subjectModule/getAllSubjects', {page: 1, perPage: this.perPage})
             }
         }
     }

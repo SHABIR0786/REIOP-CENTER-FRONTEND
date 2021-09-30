@@ -1,6 +1,5 @@
 <template>
     <div :class="`list-page seller main-content ${isCollapsed ? 'wide-content' : ''}`">
-<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="seller-table"></b-pagination>-->
         <h3>Sellers</h3>
         <div>
             <b-row>
@@ -41,7 +40,7 @@
             :busy="isBusy"
             :fields="fields"
             :items="items"
-            responsive="md"
+            responsive
             :per-page="0"
             :current-page="currentPage"
             :sticky-header="true"
@@ -51,6 +50,15 @@
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
+            </template>
+            <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -127,7 +135,7 @@ export default {
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('sellerModule/getTotal')
         try {
-            await this.$store.dispatch("sellerModule/getAllSellers")
+            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             console.log(error)
@@ -157,7 +165,12 @@ export default {
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('sellerModule/getAllSellers', this.currentPage)
+                this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage})
+            }
+        },
+        perPage: {
+            handler: function () {
+                this.$store.dispatch('sellerModule/getAllSellers', {page: 1, perPage: this.perPage})
             }
         }
     }
@@ -190,5 +203,8 @@ export default {
 
     .filter-icon {
         font-size: 25px;
+    }
+    .b-table-sticky-header {
+        max-height: 50vh!important;
     }
 </style>

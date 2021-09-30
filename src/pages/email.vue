@@ -1,6 +1,5 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="email-table"></b-pagination>-->
         <h3>Emails</h3>
         <div>
             <b-row>
@@ -39,15 +38,25 @@
             :busy="isBusy"
             :fields="fields"
             :items="items"
-            responsive="md"
+            responsive
             :per-page="0"
             :current-page="currentPage"
+            :sticky-header="true"
         >
             <template #table-busy>
                 <div class="text-center" my-2>
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
+            </template>
+            <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -106,7 +115,8 @@ export default {
             editedItem: {},
             showDeleteModal: false,
             itemToDelete: {},
-            pageOptions: [10, 20, 50]
+            pageOptions: [10, 20, 50],
+            text: ''
         }
     },
     computed: {
@@ -114,7 +124,6 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'emailModule/fields',
             items: 'emailModule/emails',
-            // totals: 'homeModule/cards',
             total: 'emailModule/total'
         }),
         rows() { return this.total ? this.total : 1 }
@@ -123,7 +132,7 @@ export default {
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('emailModule/getTotal')
         try {
-            await this.$store.dispatch("emailModule/getAllEmails")
+            await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -153,7 +162,12 @@ export default {
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('emailModule/getAllEmails', this.currentPage)
+                this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage})
+            }
+        },
+        perPage: {
+            handler: function () {
+                this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage})
             }
         }
     }
@@ -186,6 +200,9 @@ export default {
 
     .filter-icon {
         font-size: 25px;
+    }
+    .b-table-sticky-header {
+        max-height: 50vh!important;
     }
 </style>
 

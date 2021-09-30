@@ -2,8 +2,10 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "subject_address", label: "Subject Address", sortable: true},
-        {key: "subject_city", label: "Subject City", sortable: true},
+        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key: "actions", stickyColumn: true, label: "Actions"},
+        {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
+        {key: "subject_city", stickyColumn: true, label: "Subject City", sortable: true},
         {key: "subject_state", label: "Subject State", sortable: true},
         {key: "subject_zip", label: "Subject Zip", sortable: true},
         {key: "subject_country", label: "Subject County", sortable: true},
@@ -11,7 +13,6 @@ const state = {
         {key: "subject_submarket", label: "Submarket", sortable: true},
         {key: "subject_age", label: "Subject Age", sortable: true},
         {key: "subject_type", label: "Subject Type", sortable: true},
-        {key: "actions", label: "Actions"}
     ],
     subjects: [],
     total: 0,
@@ -35,8 +36,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllSubjects({ commit, dispatch }, data = 1) {
-        return await api.get(`/subjects?page=${data}`).then((response) => {
+    async getAllSubjects({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/subjects?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

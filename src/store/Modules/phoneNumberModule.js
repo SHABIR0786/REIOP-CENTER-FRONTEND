@@ -2,12 +2,13 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "seller", label: "Seller", sortable: true},
+        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key: "actions", stickyColumn: true, label: "Actions"},
+        {key: "seller", stickyColumn: true, label: "Seller", sortable: true},
         {key: "phone_number", label: "Phone Number", sortable: true},
         {key: "phone_type", label: "Phone Type", sortable: true},
         {key: "phone_validity", label: "Validity", sortable: true},
         {key: "phone_skip_source", label: "Skip Source"},
-        {key: "actions", label: "Actions"}
     ],
     phoneNumbers: [],
     total: 0,
@@ -31,8 +32,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllPhoneNumbers({ commit, dispatch }, data = 1) {
-        return await api.get(`/phones?page=${data}`).then((response) => {
+    async getAllPhoneNumbers({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/phones?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

@@ -1,6 +1,5 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-<!--        <b-pagination class="float-right" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
         <h3>Subjects</h3>
         <div>
             <b-row>
@@ -40,7 +39,7 @@
             :busy="isBusy"
             :fields="fields"
             :items="items"
-            responsive="md"
+            responsive
             :per-page="0"
             :current-page="currentPage"
         >
@@ -49,6 +48,15 @@
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
+            </template>
+            <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
@@ -125,7 +133,7 @@ export default {
         this.$store.dispatch('subjectModule/getTotal')
         try {
             this.$store.dispatch('uxModule/setLoading')
-            await this.$store.dispatch("subjectModule/getAllSubjects")
+            await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -154,7 +162,12 @@ export default {
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('subjectModule/getAllSubjects', this.currentPage)
+                this.$store.dispatch('subjectModule/getAllSubjects', {page: this.currentPage, perPage: this.perPage})
+            }
+        },
+        perPage: {
+            handler: function () {
+                this.$store.dispatch('subjectModule/getAllSubjects', {page: 1, perPage: this.perPage})
             }
         }
     }
@@ -187,5 +200,8 @@ export default {
 
     .filter-icon {
         font-size: 25px;
+    }
+    .b-table-sticky-header {
+        max-height: 50vh!important;;
     }
 </style>

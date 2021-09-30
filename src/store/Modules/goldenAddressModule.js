@@ -2,12 +2,13 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key: "seller", label: "Seller", sortable: true},
+        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key: "actions", stickyColumn: true, label: "Actions"},
+        {key: "seller", stickyColumn: true, label: "Seller", sortable: true},
         {key: "golden_address_address", label: "Golden Address", sortable: true},
         {key: "golden_address_city", label: "Golden City", sortable: true},
         {key: "golden_address_state", label: "Golden State", sortable: true},
         {key: "golden_address_zip", label: "Golden Zip", sortable: true},
-        {key: "actions", label: "Actions"}
     ],
     goldenAddresses: [],
     total: 0,
@@ -31,8 +32,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllGoldenAddresses({ commit, dispatch }, data = 1) {
-        return await api.get(`/golden-addresses?page=${data}`).then((response) => {
+    async getAllGoldenAddresses({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/golden-addresses?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
