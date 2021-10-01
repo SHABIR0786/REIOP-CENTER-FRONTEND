@@ -31,18 +31,17 @@
             </b-row>
         </div>
         <b-table
-            :sticky-header="true"
-            :no-border-collapse="false"
-            responsive
             id="list-table"
             small
             striped
             hover
+            responsive
             :busy="isBusy"
             :fields="fields"
             :items="items"
             :per-page="0"
             :current-page="currentPage"
+            :sticky-header="true"
         >
             <template #table-busy>
                 <div class="text-center" my-2>

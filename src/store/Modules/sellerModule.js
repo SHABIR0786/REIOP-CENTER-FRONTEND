@@ -2,21 +2,31 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key:"id", stickyColumn: true, label: "ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
-        {key: "seller_full_name",  stickyColumn: true, label: "Full Name", sortable: true},
+
+        {key: "seller_total_subjects", stickyColumn: true, label: "Total Subjects"},
+        {key: "seller_total_phones", stickyColumn: true, label: "Total Phones"},
+        {key: "seller_total_emails", stickyColumn: true, label: "Total Emails"},
+
+
         {key: "seller_first_name", label: "First Name", sortable: true},
-        {key: "seller_last_name", label: "Last Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
+        {key: "seller_last_name", label: "Last Name", sortable: true},
+
         {key: "seller_mailing_address", label: "Mailing Address"},
+        {key: "seller_mailing_address_line2", label: "Mailing Address Line2"},
         {key: "seller_mailing_state", label: "Mailing State"},
         {key: "seller_mailing_city", label: "Mailing City"},
         {key: "seller_mailing_zip", label: "Mailing Zip"},
         {key: "seller_company_owned", label: "Company Owned"},
-        {key: "seller_full_mailing_address", label: "Full Mailing Address"},
-        {key: "seller_full_mailing_city", label: "Full Mailing City"},
-        {key: "seller_full_mailing_state", label: "Full Mailing State"},
-        {key: "seller_full_mailing_zip", label: "Full Mailing Zip"},
+
+        // Custom Fields
+
+        {key:"created_at", label: "Created Date", sortable: true},
+        {key:"updated_at", label: "Updated Date", sortable: true},
+        {key:"user_id", label: "Uploaded By", sortable: true},
+
     ],
     sellers: [],
     total: 0,

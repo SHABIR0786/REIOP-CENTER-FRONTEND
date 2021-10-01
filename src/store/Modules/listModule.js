@@ -2,15 +2,25 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key:"id", stickyColumn: true, label: "ID", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
-        {key:"list_type", stickyColumn: true, label: "List Type", sortable: true},
-        {key:"list_group", stickyColumn: true, label: "Group", sortable: true},
+
+        {key:"list_total_subject", stickyColumn: true, label: "Total Subjects"},
+        {key:"list_total_individual_list", stickyColumn: true, label: "Total Individual Lists"},
+        {key:"list_market", label: "Markets", sortable: true},
+
+        {key:"list_group", label: "Group", sortable: true},
+        {key:"list_type", label: "Type", sortable: true},
         {key:"list_code", label: "Code", sortable: true},
         {key:"list_source", label: "Source", sortable: true},
-        {key:"list_stack", label: "Stack", sortable: true},
-        {key:"list_run_month", label: "Run Month", sortable: true},
-        {key:"list_run_year", label: "Run Year", sortable: true},
+
+        // Custom fields
+        {key:"list_pull_date", label: "Last Pull Date", sortable: true},
+        {key:"list_upload_date", label: "Upload Date", sortable: true},
+        {key:"list_last_edit_date", label: "Last Edit Date", sortable: true},
+        {key:"created_at", label: "Created Date", sortable: true},
+        {key:"updated_at", label: "Updated Date", sortable: true},
+        {key:"user_id", label: "Uploaded By", sortable: true},
     ],
     lists: [],
     total: 0,
