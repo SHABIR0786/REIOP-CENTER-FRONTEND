@@ -2,13 +2,20 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", stickyColumn: true, label: "Id", sortable: true},
+        {key:"id", stickyColumn: true, label: "ID", sortable: true},
+        {key: "seller_id", stickyColumn: true, label: "Seller ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
-        {key: "seller", stickyColumn: true, label: "Seller", sortable: true},
+
         {key: "phone_number", label: "Phone Number", sortable: true},
         {key: "phone_type", label: "Phone Type", sortable: true},
-        {key: "phone_validity", label: "Validity", sortable: true},
-        {key: "phone_skip_source", label: "Skip Source"},
+        {key: "phone_validity", label: "Phone Validity", sortable: true},
+        {key: "phone_skip_source", label: "Phone Skip Source"},
+
+        // Custom Fields
+
+        {key:"created_at", label: "Created Date", sortable: true},
+        {key:"updated_at", label: "Updated Date", sortable: true},
+        {key:"user_id", label: "Uploaded By", sortable: true},
     ],
     phoneNumbers: [],
     total: 0,

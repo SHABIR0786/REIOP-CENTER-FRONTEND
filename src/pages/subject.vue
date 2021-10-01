@@ -42,6 +42,7 @@
             responsive
             :per-page="0"
             :current-page="currentPage"
+            :sticky-header="true"
         >
             <template #table-busy>
                 <div class="text-center" my-2>

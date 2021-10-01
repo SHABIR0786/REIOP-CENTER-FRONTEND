@@ -4,15 +4,30 @@ const state = {
     fields: [
         {key:"id", stickyColumn: true, label: "Id", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
-        {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
-        {key: "subject_city", stickyColumn: true, label: "Subject City", sortable: true},
+        {key: "total_sellers", stickyColumn: true, label: "Total Sellers"},
+        {key: "list_stack", stickyColumn: true, label: "List Stack"},
+
+        {key: "subject_address", label: "Subject Address", sortable: true},
+        {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
+        {key: "subject_city", label: "Subject City", sortable: true},
         {key: "subject_state", label: "Subject State", sortable: true},
         {key: "subject_zip", label: "Subject Zip", sortable: true},
         {key: "subject_country", label: "Subject County", sortable: true},
         {key: "subject_market", label: "Market", sortable: true},
-        {key: "subject_submarket", label: "Submarket", sortable: true},
-        {key: "subject_age", label: "Subject Age", sortable: true},
         {key: "subject_type", label: "Subject Type", sortable: true},
+        {key: "subject_age", label: "Subject Age", sortable: true},
+
+
+        // Custom Fields
+        {key: "subject_last_marked_date", label: "Last Marketed Date", sortable: true},
+        {key: "subject_last_exported_date", label: "Last Exported Date", sortable: true},
+        {key: "subject_pull_date", label: "Pull Date", sortable: true},
+        {key: "subject_skip_trace_date", label: "Skip Trace Date", sortable: true},
+
+        {key:"created_at", label: "Created Date", sortable: true},
+        {key:"updated_at", label: "Updated Date", sortable: true},
+        {key:"user_id", label: "Uploaded By", sortable: true},
+
     ],
     subjects: [],
     total: 0,

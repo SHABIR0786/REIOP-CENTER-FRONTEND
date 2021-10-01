@@ -1,6 +1,6 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <h3>Propeties</h3>
+        <h3>Properties</h3>
         <div>
             <b-row>
                 <b-col cols="8" class="d-flex">
@@ -41,6 +41,7 @@
             responsive
             :per-page="0"
             :current-page="currentPage"
+            :sticky-header="true"
         >
             <template #table-busy>
                 <div class="text-center" my-2>
@@ -112,11 +113,12 @@ export default {
     },
     computed: {
         ...mapGetters({
-            isCollapsed: 'uxModule/isCollapsed',
-            fields: 'subjectModule/fields',
-            items: 'subjectModule/subjects'
+          isCollapsed: 'uxModule/isCollapsed',
+          fields: 'subjectModule/fields',
+          items: 'subjectModule/subjects',
+          total: 'subjectModule/total'
         }),
-        rows() { return this.items.length}
+        rows() { return this.total ? this.total : 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
@@ -126,7 +128,6 @@ export default {
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
-        
     },
     methods: {
         editItem(item) {
@@ -189,6 +190,9 @@ export default {
 
     .filter-icon {
         font-size: 25px;
+    }
+    .b-table-sticky-header {
+      max-height: 50vh!important;;
     }
 </style>
 
