@@ -148,8 +148,9 @@ export default {
             let table = this.toField.split('_')[0];
             if (table === 'golden') { table = 'golden_address' }
 
+
             if (table !== 'seller' && table !== 'email' && table !== 'phone') {
-                const toIndex = this.importedFields[table].findIndex(item => item === this.toField)
+                const toIndex = this.importedFields[table].findIndex(item => item.field === this.toField)
                 this.importedFields[table].splice(toIndex, 1)
             }
 
