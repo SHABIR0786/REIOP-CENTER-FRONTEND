@@ -2,8 +2,8 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", stickyColumn: true, label: "ID", sortable: true},
-        {key: "seller_id", stickyColumn: true, label: "Seller ID", sortable: true},
+        {key:"id", label: "ID", sortable: true},
+        {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
 
         {key: "golden_address_address", label: "Golden Address", sortable: true},
@@ -36,6 +36,10 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
+    },
+    ADD_GOLDEN_ADDRESS(state, payload) {
+        const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1, { ...payload })
     }
 }
 
@@ -56,6 +60,12 @@ const actions = {
     async editGoldenAddress({ commit }, data) {
         return await api.put(`/golden-addresses/${data.id}`, {...data}).then((response) => {
             commit('EDIT_GOLDEN_ADDRESS', data)
+            return response
+        })
+    },
+    async addGoldenAddress({ commit }, data) {
+        return await api.post(`/golden-addresses`, {...data}).then((response) => {
+            commit('ADD_GOLDEN_ADDRESS', data)
             return response
         })
     },

@@ -2,11 +2,11 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", stickyColumn: true, label: "ID", sortable: true},
+        {key:"id", label: "ID", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
 
-        {key:"list_total_subject", stickyColumn: true, label: "Total Subjects"},
-        {key:"list_total_individual_list", stickyColumn: true, label: "Total Individual Lists"},
+        {key:"list_total_subject", label: "Total Subjects"},
+        {key:"list_total_individual_list", label: "Total Individual Lists"},
         {key:"list_market", label: "Markets", sortable: true},
 
         {key:"list_group", label: "Group", sortable: true},
@@ -40,7 +40,11 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
-    }
+    },
+    ADD_LIST(state, payload) {
+        const findIndex = state.lists.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.lists.splice(findIndex, 1, { ...payload })
+    },
 }
 
 const actions = {
@@ -60,6 +64,12 @@ const actions = {
     async editList({ commit }, data) {
         return await api.put(`/lists/${data.id}`, {...data}).then((response) => {
             commit('EDIT_LIST', data)
+            return response
+        })
+    },
+    async addList({ commit }, data) {
+        return await api.post(`/lists`, {...data}).then((response) => {
+            commit('ADD_LIST', data)
             return response
         })
     },

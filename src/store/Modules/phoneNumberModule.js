@@ -2,8 +2,8 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", stickyColumn: true, label: "ID", sortable: true},
-        {key: "seller_id", stickyColumn: true, label: "Seller ID", sortable: true},
+        {key:"id", label: "ID", sortable: true},
+        {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
 
         {key: "phone_number", label: "Phone Number", sortable: true},
@@ -35,7 +35,11 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
-    }
+    },
+    ADD_ITEM(state, payload) {
+        const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1, { ...payload })
+    },
 }
 
 const actions = {
@@ -55,6 +59,12 @@ const actions = {
     async editPhoneNumber({ commit }, data) {
         return await api.put(`/phones/${data.id}`, {...data}).then((response) => {
             commit('EDIT_ITEM', data)
+            return response
+        })
+    },
+    async addPhoneNumber({ commit }, data) {
+        return await api.post(`/phones`, {...data}).then((response) => {
+            commit('ADD_ITEM', data)
             return response
         })
     },

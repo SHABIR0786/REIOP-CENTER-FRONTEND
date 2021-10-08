@@ -2,17 +2,17 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", stickyColumn: true, label: "ID", sortable: true},
-        {key: "actions", stickyColumn: true, label: "Actions"},
+        {key:"id", label: "ID", sortable: true},
+        {key: "actions", label: "Actions"},
 
-        {key: "seller_total_subjects", stickyColumn: true, label: "Total Subjects"},
-        {key: "seller_total_phones", stickyColumn: true, label: "Total Phones"},
-        {key: "seller_total_emails", stickyColumn: true, label: "Total Emails"},
+        {key: "seller_total_subjects", label: "Total Subjects"},
+        {key: "seller_total_phones", label: "Total Phones"},
+        {key: "seller_total_emails", label: "Total Emails"},
 
 
         {key: "seller_first_name", label: "First Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
-        {key: "seller_last_name", label: "Last Name", sortable: true},
+        {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
 
         {key: "seller_mailing_address", label: "Mailing Address"},
         {key: "seller_mailing_address_line2", label: "Mailing Address Line2"},
@@ -46,6 +46,10 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
+    },
+    ADD_SELLER(state, payload) {
+        const findIndex = state.sellers.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.sellers.splice(findIndex, 1, { ...payload })
     }
 }
 
@@ -62,6 +66,12 @@ const actions = {
     async editSeller({ commit }, data) {
         return await api.put(`/sellers/${data.id}`, {...data}).then((response) => {
             commit('EDIT_SELLER', data)
+            return response
+        })
+    },
+    async addSeller({ commit }, data) {
+        return await api.post(`/sellers`, {...data}).then((response) => {
+            commit('ADD_SELLER', data)
             return response
         })
     },

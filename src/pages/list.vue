@@ -16,7 +16,7 @@
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
-                    <b-button variant="primary" class="add-seller">
+                    <b-button variant="primary" class="add-seller" @click="addItem()">
                         <b-icon icon="plus" aria-hidden="true"></b-icon> Add List</b-button>
                 </b-col>
             </b-row>
@@ -109,22 +109,26 @@
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
-        </b-row>        <list-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></list-modal>
+        </b-row>
+        <add-list-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-list-modal>
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <edit-list-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-list-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
-import ListModal from '@/components/list/ListModal'
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
+import AddListModal from "../components/list/AddListModal"
+import EditListModal from "../components/list/EditListModal";
 
 export default {
     name: "List",
     components: {
         BIcon,
-        ListModal,
-        DeleteModal
+        AddListModal,
+        DeleteModal,
+        EditListModal
     },
     data () {
         return {
@@ -137,7 +141,8 @@ export default {
             itemToDelete: {},
             pageOptions: [10, 20, 50],
             noCollapse: false,
-            text: ''
+            text: '',
+            showAddModal: false
         }
     },
     computed: {
@@ -164,9 +169,13 @@ export default {
             this.showModal = true
             this.editedItem = { ...item }
         },
-        save (item) {
-            this.showModal = false
+        save(item) {
+            // this.showModal = false
             this.$store.dispatch('listModule/editList', {...item})
+        },
+        add(item) {
+            this.showAddModal = false
+            this.$store.dispatch('listModule/addList', {...item})
         },
         deleteItem(item){
             this.showDeleteModal = true;
@@ -177,6 +186,9 @@ export default {
             if (response) {
                 this.$store.dispatch('listModule/deleteList', this.itemToDelete.id)
             }
+        },
+        addItem() {
+            this.showAddModal = true;
         }
     },
     watch: {
@@ -224,6 +236,6 @@ export default {
         font-size: 25px;
     }
     .b-table-sticky-header {
-        max-height: 50vh!important;;
+        max-height: calc(100vh - 372px) !important;
     }
 </style>

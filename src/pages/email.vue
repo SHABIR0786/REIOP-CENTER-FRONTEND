@@ -16,7 +16,7 @@
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
-                    <b-button variant="primary" class="add-seller">
+                    <b-button variant="primary" class="add-seller" @click="addItem()">
                         <b-icon icon="plus" aria-hidden="true"></b-icon> Add Email</b-button>
                 </b-col>
             </b-row>
@@ -89,22 +89,26 @@
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
-        </b-row>        <email-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></email-modal>
-        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        </b-row>
+        <edit-email-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-email-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <add-email-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-email-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
-import EmailModal from '@/components/email/EmailModal'
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
+import EditEmailModal from "../components/email/EditEmailModal"
+import AddEmailModal from "../components/email/AddEmailModal";
 
 export default {
     name: "Email",
     components: {
         BIcon,
-        EmailModal,
-        DeleteModal
+        EditEmailModal,
+        DeleteModal,
+        AddEmailModal
     },
     data () {
         return {
@@ -116,7 +120,8 @@ export default {
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
-            text: ''
+            text: '',
+            showAddModal: false
         }
     },
     computed: {
@@ -144,9 +149,13 @@ export default {
             this.showModal = true
             this.editedItem = { ...item }
         },
-        save (item) {
-            this.showModal = false
+        save(item) {
+            // this.showModal = false
             this.$store.dispatch('emailModule/editEmail', {...item})
+        },
+        add(item) {
+            this.showAddModal = false
+            this.$store.dispatch('emailModule/addEmail', {...item})
         },
         deleteItem(item){
             this.showDeleteModal = true;
@@ -157,6 +166,9 @@ export default {
             if (response) {
                 this.$store.dispatch('emailModule/deleteEmail', this.itemToDelete.id)
             }
+        },
+        addItem() {
+            this.showAddModal = true;
         }
     },
     watch: {
@@ -202,7 +214,7 @@ export default {
         font-size: 25px;
     }
     .b-table-sticky-header {
-        max-height: 50vh!important;
+        max-height: calc(100vh - 360px) !important;
     }
 </style>
 
