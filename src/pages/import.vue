@@ -1,5 +1,5 @@
 <template>
-    <b-container fluid :class="`import main-content ${isCollapsed ? 'wide-content' : ''}`">
+    <b-container fluid :class="`import-container import main-content ${isCollapsed ? 'wide-content' : ''}`">
         <b-row>
             <b-col>
                 <b-form-file
@@ -90,6 +90,7 @@ export default {
             seller: this.sellerFields,
             subject: this.subjectFields,
         }
+        console.log(this.importedFields)
     },
     methods: {
         previewFile (e) {
@@ -199,5 +200,8 @@ export default {
     .mapped-fields {
         max-height: 60vh;
         overflow: auto;
+    }
+    .import-container {
+        height: calc(100vh - 56px) !important;
     }
 </style>

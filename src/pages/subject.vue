@@ -16,7 +16,7 @@
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
-                    <b-button variant="primary" class="add-seller">
+                    <b-button variant="primary" class="add-seller" @click="addItem()">
                         <b-icon icon="plus" aria-hidden="true"></b-icon> Add Subject</b-button>
                 </b-col>
             </b-row>
@@ -32,7 +32,7 @@
         </div>
 
         <b-table
-            id="subject-table"
+            id="subject-table"c
             small
             striped
             hover
@@ -91,22 +91,25 @@
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
         </b-row>
-        <subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></subject-modal>
-        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
-import SubjectModal from '@/components/subject/SubjectModal'
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
+import EditSubjectModal from "../components/subject/EditSubjectModal";
+import AddSubjectModal from "../components/subject/AddSubjectModal";
 
 export default {
     name: "Subject",
     components: {
         BIcon,
-        SubjectModal,
-        DeleteModal
+        EditSubjectModal,
+        DeleteModal,
+        AddSubjectModal
     },
     data () {
         return {
@@ -118,7 +121,8 @@ export default {
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
-            text: ''
+            text: '',
+            showAddModal: false
         }
     },
     computed: {
@@ -145,9 +149,13 @@ export default {
             this.showModal = true
             this.editedItem = { ...item }
         },
-        save (item) {
-            this.showModal = false
+        save(item) {
+            // this.showModal = false
             this.$store.dispatch('subjectModule/editSubject', {...item})
+        },
+        add(item) {
+            this.showAddModal = false
+            this.$store.dispatch('subjectModule/addSubject', {...item})
         },
         deleteSubject(item){
             this.showDeleteModal = true;
@@ -158,6 +166,9 @@ export default {
             if (response) {
                 this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id)
             }
+        },
+        addItem() {
+            this.showAddModal = true;
         }
     },
     watch: {
@@ -203,6 +214,6 @@ export default {
         font-size: 25px;
     }
     .b-table-sticky-header {
-        max-height: 50vh!important;;
+        max-height: calc(100vh - 372px) !important;
     }
 </style>

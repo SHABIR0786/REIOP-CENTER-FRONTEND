@@ -2,8 +2,8 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", stickyColumn: true, label: "ID", sortable: true},
-        {key: "seller_id", stickyColumn: true, label: "Seller ID", sortable: true},
+        {key:"id", label: "ID", sortable: true},
+        {key: "seller_id",label: "Seller ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
 
         {key: "email_address", label: "Email Address", sortable: true},
@@ -34,7 +34,11 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
-    }
+    },
+    ADD_EMAIL(state, payload) {
+        const findIndex = state.emails.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.emails.splice(findIndex, 1, { ...payload })
+    },
 }
 
 const actions = {
@@ -54,6 +58,12 @@ const actions = {
     async editEmail({ commit }, data) {
         return await api.put(`/emails/${data.id}`, {...data}).then((response) => {
             commit('EDIT_EMAIL', data)
+            return response
+        })
+    },
+    async addEmail({ commit }, data) {
+        return await api.post(`/emails`, {...data}).then((response) => {
+            commit('ADD_EMAIL', data)
             return response
         })
     },

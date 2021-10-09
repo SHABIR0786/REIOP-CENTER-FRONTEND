@@ -4,19 +4,12 @@
         <div>
             <b-row>
                 <b-col cols="8" class="d-flex">
-                    <div class="info total">
-                        <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
-                        <div>{{total}}</div>
-                        <div>Total</div>
-                    </div>
-                    <div class="info latest">
-                        <b-icon class="mr-2 cursor-pointer" icon="arrow-up" variant="primary" @click="editItem(data.item)"></b-icon>
-                        <div>{{total}}</div>
-                        <div>Added This Month</div>
+                    <div class="info latest d-flex justify-content-center ml-0" @click="exportProperties()">
+                        <div>Export</div>
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
-                    <b-button variant="primary" class="add-seller">
+                    <b-button variant="primary" class="add-seller" @click="addItem()">
                         <b-icon icon="plus" aria-hidden="true"></b-icon> Add Properties</b-button>
                 </b-col>
             </b-row>
@@ -48,6 +41,15 @@
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
+            </template>
+            <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -81,22 +83,25 @@
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
         </b-row>
-        <subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></subject-modal>
+        <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
-import SubjectModal from '@/components/subject/SubjectModal'
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
+import EditSubjectModal from "../components/subject/EditSubjectModal";
+import AddSubjectModal from "../components/subject/AddSubjectModal";
 
 export default {
     name: "Properties",
     components: {
         BIcon,
-        SubjectModal,
-        DeleteModal
+        EditSubjectModal,
+        DeleteModal,
+        AddSubjectModal
     },
     data () {
         return {
@@ -108,22 +113,23 @@ export default {
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
-            text: ''
+            text: '',
+            showAddModal: false
         }
     },
     computed: {
         ...mapGetters({
           isCollapsed: 'uxModule/isCollapsed',
-          fields: 'subjectModule/fields',
-          items: 'subjectModule/subjects',
-          total: 'subjectModule/total'
+          fields: 'propertyModule/fields',
+          items: 'propertyModule/subjects',
+          total: 'propertyModule/total',
         }),
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
         try {
-            await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("propertyModule/getAllSubjects", {page: 1, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -134,9 +140,13 @@ export default {
             this.showModal = true
             this.editedItem = { ...item }
         },
-        save (item) {
-            this.showModal = false
-            this.$store.dispatch('subjectModule/editSubject', {...item})
+        save(item) {
+            // this.showModal = false
+            this.$store.dispatch('propertyModule/editSubject', {...item})
+        },
+        add(item) {
+            this.showAddModal = false
+            this.$store.dispatch('propertyModule/addSubject', {...item})
         },
         deleteItem(item){
             this.showDeleteModal = true;
@@ -145,19 +155,25 @@ export default {
         modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
-                this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id)
+                this.$store.dispatch('propertyModule/deleteSubject', this.itemToDelete.id)
             }
+        },
+        addItem() {
+            this.showAddModal = true;
+        },
+        exportProperties () {
+            console.log('export');
         }
     },
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('subjectModule/getAllSubjects', {page: this.currentPage, perPage: this.perPage})
+                this.$store.dispatch('propertyModule/getAllSubjects', {page: this.currentPage, perPage: this.perPage})
             }
         },
         perPage: {
             handler: function () {
-                this.$store.dispatch('subjectModule/getAllSubjects', {page: 1, perPage: this.perPage})
+                this.$store.dispatch('propertyModule/getAllSubjects', {page: 1, perPage: this.perPage})
             }
         }
     }
@@ -173,16 +189,11 @@ export default {
         padding: 5px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-    }
-
-    .total {
-        background-color: #F9CB9C;
+        cursor: pointer;
     }
 
     .latest {
         background-color: #B6D7A8;
-        margin-left: 20px;
     }
     .add-seller {
         width: 200px;
@@ -192,7 +203,7 @@ export default {
         font-size: 25px;
     }
     .b-table-sticky-header {
-      max-height: 50vh!important;;
+        max-height: calc(100vh - 372px) !important;
     }
 </style>
 

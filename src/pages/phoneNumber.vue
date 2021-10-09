@@ -16,7 +16,7 @@
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
-                    <b-button variant="primary" class="add-seller">
+                    <b-button variant="primary" class="add-seller" @click="addItem()">
                         <b-icon icon="plus" aria-hidden="true"></b-icon> Add Phone</b-button>
                 </b-col>
             </b-row>
@@ -89,22 +89,26 @@
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
-        </b-row>        <phone-number-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></phone-number-modal>
-        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        </b-row>
+        <edit-phone-number-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-phone-number-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <add-phone-number-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-phone-number-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
-import PhoneNumberModal from '@/components/phoneNumber/PhoneNumberModal'
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
+import EditPhoneNumberModal from "../components/phoneNumber/EditPhoneNumberModal"
+import AddPhoneNumberModal from "../components/phoneNumber/AddPhoneNumberModal";
 
 export default {
     name: "phoneNumber",
     components: {
         BIcon,
-        PhoneNumberModal,
-        DeleteModal
+        EditPhoneNumberModal,
+        DeleteModal,
+        AddPhoneNumberModal
     },
     data () {
         return {
@@ -116,7 +120,8 @@ export default {
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
-            text: ''
+            text: '',
+            showAddModal: false
         }
     },
     computed: {
@@ -145,8 +150,12 @@ export default {
             this.editedItem = { ...item }
         },
         save (item) {
-            this.showModal = false
+            // this.showModal = false
             this.$store.dispatch('phoneNumberModule/editPhoneNumber', {...item})
+        },
+        add(item) {
+            this.showAddModal = false
+            this.$store.dispatch('phoneNumberModule/addPhoneNumber', {...item})
         },
         deleteItem(item){
             this.showDeleteModal = true;
@@ -157,6 +166,9 @@ export default {
             if (response) {
                 this.$store.dispatch('phoneNumberModule/deletePhoneNumber', this.itemToDelete.id)
             }
+        },
+        addItem() {
+            this.showAddModal = true;
         }
     },
     watch: {
@@ -202,7 +214,7 @@ export default {
         font-size: 25px;
     }
     .b-table-sticky-header {
-        max-height: 50vh!important;;
+        max-height: calc(100vh - 372px) !important;
     }
 </style>
 

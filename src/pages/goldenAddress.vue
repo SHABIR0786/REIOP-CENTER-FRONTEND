@@ -16,7 +16,7 @@
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
-                    <b-button variant="primary" class="add-seller">
+                    <b-button variant="primary" class="add-seller" @click="addItem()">
                         <b-icon icon="plus" aria-hidden="true"></b-icon> Add Golden Address</b-button>
                 </b-col>
             </b-row>
@@ -90,22 +90,25 @@
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
         </b-row>
-        <golden-address-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></golden-address-modal>
+        <edit-golden-address-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-golden-address-modal>
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <add-golden-address-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-golden-address-modal>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
-import GoldenAddressModal from '@/components/goldenAddress/GoldenAddressModal'
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
+import EditGoldenAddressModal from "../components/goldenAddress/EditGoldenAddressModal";
+import AddGoldenAddressModal from "../components/goldenAddress/AddGoldenAddressModal";
 
 export default {
     name: "Email",
     components: {
         BIcon,
-        GoldenAddressModal,
-        DeleteModal
+        EditGoldenAddressModal,
+        DeleteModal,
+        AddGoldenAddressModal
     },
     data () {
         return {
@@ -117,7 +120,8 @@ export default {
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
-            text: ''
+            text: '',
+            showAddModal: false
         }
     },
     computed: {
@@ -145,9 +149,13 @@ export default {
             this.showModal = true
             this.editedItem = { ...item }
         },
-        save (item) {
-            this.showModal = false
+        save(item) {
+            // this.showModal = false
             this.$store.dispatch('goldenAddressModule/editGoldenAddress', {...item})
+        },
+        add(item) {
+            this.showAddModal = false
+            this.$store.dispatch('goldenAddressModule/addGoldenAddress', {...item})
         },
         deleteItem(item){
             this.showDeleteModal = true;
@@ -158,6 +166,9 @@ export default {
             if (response) {
                 this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', this.itemToDelete.id)
             }
+        },
+        addItem() {
+            this.showAddModal = true;
         }
     },
     watch: {
@@ -203,7 +214,7 @@ export default {
         font-size: 25px;
     }
     .b-table-sticky-header {
-        max-height: 50vh!important;
+        max-height: calc(100vh - 372px) !important;
     }
 </style>
 

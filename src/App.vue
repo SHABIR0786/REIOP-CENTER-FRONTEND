@@ -5,7 +5,7 @@
         <nav-bar></nav-bar>
       </b-row>
       <side-bar></side-bar>
-      <Footer></Footer>
+<!--      <Footer></Footer>-->
       <router-view></router-view>
       <loader></loader>
     </div>
@@ -16,7 +16,7 @@
 <script>
 import SideBar from "@/components/shared/SideBar"
 import NavBar from "@/components/shared/NavBar"
-import Footer from "@/components/shared/Footer"
+// import Footer from "@/components/shared/Footer"
 import Loader from "@/components/shared/Loader"
 import { mapGetters } from "vuex"
 
@@ -25,7 +25,7 @@ export default {
   components: {
     "side-bar": SideBar,
     "nav-bar": NavBar,
-    Footer,
+    // Footer,
     "loader": Loader
   },
   computed: {
