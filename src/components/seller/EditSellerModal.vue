@@ -127,15 +127,115 @@
                 <b-tabs class="w-100" content-class="mt-3" fill>
                     <b-tab title="Related Phones" active>
                         <p>Related Phones</p>
+                        <hr>
+                        <b-table
+                                id="phone-number-table"
+                                small
+                                striped
+                                hover
+                                :busy="isBusy"
+                                :fields="phoneFields"
+                                :items="seller.phones"
+                                responsive
+                                :per-page="0"
+                                :sticky-header="true"
+                        >
+                            <template #table-busy>
+                                <div class="text-center" my-2>
+                                    <b-spinner class="align-middle"></b-spinner>
+                                    <strong>Loading...</strong>
+                                </div>
+                            </template>
+                            <template #head(id)="scope">
+                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                            </template>
+                            <template #head(actions)="scope">
+                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                            </template>
+                            <template #head()="scope">
+                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                            </template>
+                        </b-table>
                     </b-tab>
                     <b-tab title="Related Emails">
                         <p>Related Emails</p>
                     </b-tab>
                     <b-tab title="Related Golden Addresses">
-                        <p>Related Golden Addresses</p>
+                        <p>Related Phones</p>
+                        <hr>
+                        <b-table
+                                id="phone-number-table"
+                                small
+                                striped
+                                hover
+                                :busy="isBusy"
+                                :fields="goldenFields"
+                                :items="seller.golden_addresses"
+                                responsive
+                                :per-page="0"
+                                :sticky-header="true"
+                        >
+                            <template #table-busy>
+                                <div class="text-center" my-2>
+                                    <b-spinner class="align-middle"></b-spinner>
+                                    <strong>Loading...</strong>
+                                </div>
+                            </template>
+                            <template #head(id)="scope">
+                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                            </template>
+                            <template #head(actions)="scope">
+                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                            </template>
+                            <template #head()="scope">
+                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                            </template>
+                        </b-table>
                     </b-tab>
                     <b-tab title="Related Subjects">
                         <p>Related Subjects</p>
+                        <hr>
+
+                        <b-table
+                                id="subject-table"
+                                small
+                                striped
+                                hover
+                                :busy="isBusy"
+                                :fields="subjectFields"
+                                :items="seller.subjects"
+                                responsive
+                                :per-page="0"
+                                :sticky-header="true"
+                        >
+                            <template #table-busy>
+                                <div class="text-center" my-2>
+                                    <b-spinner class="align-middle"></b-spinner>
+                                    <strong>Loading...</strong>
+                                </div>
+                            </template>
+                            <template #head(id)="scope">
+                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                            </template>
+                            <template #head(actions)="scope">
+                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                            </template>
+                            <template #head()="scope">
+                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
+                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
+                            </template>
+                        </b-table>
                     </b-tab>
                 </b-tabs>
             </b-row>
@@ -155,6 +255,8 @@
     </b-modal>
 </template>
 <script>
+import {mapGetters} from "vuex";
+
 export default {
     name: 'EditSellerModal',
     props: {
@@ -188,8 +290,16 @@ export default {
                 user_id: '',
                 subject_id: '',
             },
-            isReadOnly: true
+            isReadOnly: true,
+            isBusy: false
         }
+    },
+    computed: {
+        ...mapGetters({
+            phoneFields: 'phoneNumberModule/fields',
+            goldenFields: 'goldenAddressModule/fields',
+            subjectFields: 'subjectModule/fields',
+        }),
     },
     watch: {
         showModal() {
@@ -203,5 +313,8 @@ export default {
     .close-icon {
         font-size: 30px;
         cursor: pointer;
+    }
+    .b-table-sticky-header {
+        max-height: 10vh !important;
     }
 </style>

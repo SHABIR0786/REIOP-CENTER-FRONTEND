@@ -174,7 +174,6 @@ export default {
     methods: {
         toggleSidebar () {
             this.isSidebarCollapsed = !this.isSidebarCollapsed;
-            console.log('sidebar', this.isSidebarCollapsed);
             this.$store.dispatch('uxModule/toggleSidebar')
         },
         changeCollapseStatus () {

@@ -32,7 +32,7 @@
         </div>
 
         <b-table
-            id="subject-table"
+            id="subject-table"c
             small
             striped
             hover

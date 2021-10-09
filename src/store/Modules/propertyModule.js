@@ -76,7 +76,6 @@ const actions = {
     },
     async addSubject({ commit }, data) {
         return await api.post(`/subjects`, {...data}).then((response) => {
-            console.log('test subject', response);
             commit('ADD_SUBJECT', data)
             return response
         })

@@ -120,6 +120,39 @@
                     <b-tabs class="w-100" content-class="mt-3" fill>
                         <b-tab title="Assigned Sellers" active>
                             <p>Assigned Sellers</p>
+                            <hr>
+                            <b-table
+                                    id="seller-table"
+                                    small
+                                    striped
+                                    hover
+                                    :busy="isBusy"
+                                    :fields="sellerFields"
+                                    :items="subject.sellers"
+                                    responsive
+                                    :per-page="0"
+                                    :sticky-header="true"
+                            >
+                                <template #table-busy>
+                                    <div class="text-center" my-2>
+                                        <b-spinner class="align-middle"></b-spinner>
+                                        <strong>Loading...</strong>
+                                    </div>
+                                </template>
+                                <template #head(id)="scope">
+                                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                                </template>
+                                <template #head(actions)="scope">
+                                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                                </template>
+                                <template #head()="scope">
+                                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                                </template>
+                                <template v-slot:cell(actions)="data">
+                                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                                </template>
+                            </b-table>
                         </b-tab>
                         <b-tab title="Related Lists">
                             <p>Related Lists</p>
@@ -140,6 +173,8 @@
     </b-modal>
 </template>
 <script>
+import {mapGetters} from "vuex";
+
 export default {
     name: 'EditSubjectModal',
     props: {
@@ -173,7 +208,14 @@ export default {
             },
             isReadOnly: true,
             buttonState: 'Edit',
+            isBusy: false
         }
+    },
+    computed: {
+        ...mapGetters({
+            sellerFields: 'sellerModule/fields',
+        }),
+        rows() { return this.total ? this.total : 1 }
     },
     watch: {
         showModal() {
