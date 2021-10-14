@@ -78,7 +78,7 @@
                 this.showDeleteModal = true;
                 this.itemToDelete = item;
             },
-            modalResponse(response) {
+            modalResponse() {
                 this.showDeleteModal = false;
             }
         }
