@@ -4,7 +4,7 @@ const state = {
     fields: [
         {key:"id", label: "Process ID", sortable: true},
 
-        {key:"total_rows", label: "Total Rows"},
+        // {key:"total_rows", label: "Total Rows"},
 
         {key:"is_processing", label: "Is Processing", sortable: true},
         {key:"is_processed", label: "Is Processed", sortable: true},

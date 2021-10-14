@@ -1,20 +1,7 @@
 <template>
     <nav :class="`navbar side-menu ${toggleClass}`">
         <div class="container-fluid">
-<!--            <div-->
-<!--                class="navbar-header"-->
-<!--            >-->
-<!--                <router-link -->
-<!--                    to="/"-->
-<!--                    class="navbar-brand"-->
-<!--                >-->
-<!--                    <img -->
-<!--                        v-if="isCollapsed"-->
-<!--                        src="@/assets/images/collapsed-logo.png">-->
-<!--                    <img v-else-->
-<!--                        src="@/assets/images/logo.png">-->
-<!--                </router-link>-->
-<!--            </div>-->
+
             <ul class="nav navbar-nav" v-if="isCollapsed">
                 <li v-for="(item, index) in routeItems" :key="index" :class="$route.name===item.name ? 'active-tab' : ''">
                     <router-link :to="item.path">
@@ -24,19 +11,19 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav" v-else>
-                <li :class="$route.name==='HomePage' ? 'active-tab' : ''">
+                <li :class="$route.name==='Home' ? 'active-tab' : ''">
                     <router-link :to="'/'">
                         <span :title="'Home'"><b-icon :icon="'house-fill'"></b-icon></span>
                         <p v-if="!isCollapsed">Home</p>
                     </router-link>
                 </li>
-                <li :class="$route.name==='ImportPage' ? 'active-tab' : ''">
+                <li :class="$route.name==='Import' ? 'active-tab' : ''">
                     <router-link :to="'/import'">
                         <span :title="'Import'"><b-icon :icon="'upload'"></b-icon></span>
                         <p v-if="!isCollapsed">Import</p>
                     </router-link>
                 </li>
-                <li :class="$route.name==='PropertiesPage' ? 'active-tab' : ''">
+                <li :class="$route.name==='Properties' ? 'active-tab' : ''">
                     <router-link :to="'/properties'">
                     <span :title="'Properties'">
                         <b-icon :icon="'gear'"></b-icon>
@@ -44,7 +31,7 @@
                         <p v-if="!isCollapsed">Properties</p>
                     </router-link>
                 </li>
-                <li :class="$route.name==='ListPage' ? 'active-tab' : ''">
+                <li :class="$route.name==='List' ? 'active-tab' : ''">
                     <router-link :to="'/list'">
                     <span :title="'List'">
                         <b-icon :icon="'list-ul'"></b-icon>
@@ -66,7 +53,7 @@
                 </li>
                 <b-collapse visible id="collapse-1">
                     <ul class="nav navbar-nav">
-                        <li :class="$route.name==='SubjectPage' ? 'active-tab' : ''">
+                        <li :class="$route.name==='Subject' ? 'active-tab' : ''">
                             <router-link :to="'/subjects'">
                             <span :title="'Subjects'" class="ml-4">
                                 <b-icon :icon="'file-earmark-fill'"></b-icon>
@@ -84,7 +71,7 @@
                             </router-link>
                         </li>
 
-                        <li :class="$route.name==='PhoneNumberPage' ? 'active-tab' : ''">
+                        <li :class="$route.name==='PhoneNumber' ? 'active-tab' : ''">
                             <router-link :to="'/phones'">
                             <span :title="'Phone Numbers'" class="ml-4">
                                 <b-icon :icon="'telephone-fill'"></b-icon>
@@ -93,7 +80,7 @@
                             </router-link>
                         </li>
 
-                        <li :class="$route.name==='EmailPage' ? 'active-tab' : ''">
+                        <li :class="$route.name==='Email' ? 'active-tab' : ''">
                             <router-link :to="'/emails'">
                             <span :title="'Emails'" class="ml-4">
                                 <b-icon :icon="'envelope-fill'"></b-icon>
@@ -102,7 +89,7 @@
                             </router-link>
                         </li>
 
-                        <li :class="$route.name==='GoldenAddressPage' ? 'active-tab' : ''">
+                        <li :class="$route.name==='GoldenAddress' ? 'active-tab' : ''">
                             <router-link :to="'/golden-addresses'">
                             <span :title="'Golden Addresses'" class="ml-4">
                                 <b-icon :icon="'geo-alt-fill'"></b-icon>
@@ -114,27 +101,15 @@
                 </b-collapse>
             </ul>
         </div>
-        <div
-            :class="`collapse-expend2 ${toggleClass}`"
-            @click="toggleSidebar"
-        >
-                <span
-                    class="white-arrow"
-                >
-                    <b-icon
-                        icon="caret-left-fill"
-                    ></b-icon>
+        <div :class="`collapse-expend2 ${toggleClass}`" @click="toggleSidebar">
+                <span class="white-arrow">
+                    <b-icon icon="caret-left-fill"></b-icon>
                 </span>
-                <span
-                    class="coloured-bars"
-                >
-                    <b-icon
-                        icon="list"
-                    ></b-icon>
+                <span class="coloured-bars">
+                    <b-icon icon="list"></b-icon>
                 </span>
         </div>
     </nav>
-    
 </template>
 <script>
 import { BIcon } from "bootstrap-vue"

@@ -80,7 +80,17 @@ const actions = {
         })
     },
     async editSeller({ commit }, data) {
-        return await api.put(`/sellers/${data.id}`, {...data}).then((response) => {
+        const updatedData = Object.assign({}, data);
+        delete updatedData.subjects;
+        delete updatedData.emails;
+        delete updatedData.phones;
+        delete updatedData.golden_addresses;
+        delete updatedData.subject_id;
+        delete updatedData.seller_total_emails;
+        delete updatedData.seller_total_phones;
+        delete updatedData.seller_total_subjects;
+
+        return await api.put(`/sellers/${data.id}`, updatedData).then((response) => {
             commit('EDIT_SELLER', data)
             return response
         })

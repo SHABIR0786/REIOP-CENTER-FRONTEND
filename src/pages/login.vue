@@ -46,14 +46,14 @@ export default {
     },
     mounted () {
         if (this.isLogged) {
-            this.$router.push({name: 'HomePage'}).catch(() => {})
+            this.$router.push({name: 'Home'}).catch(() => {})
         }
     },
     methods: {
         async onSubmit (event) {
             event.preventDefault()
             await this.$store.dispatch('loginModule/login', {vm : this, ...this.form})
-            if (this.isLogged) { this.$router.push({name: 'HomePage'}).catch(() => {}) }
+            if (this.isLogged) { this.$router.push({name: 'Home'}).catch(() => {}) }
         }
     }
 }
