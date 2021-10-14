@@ -4,7 +4,7 @@
         class="loader"
     >
         
-        <p>{{loaderText}}</p>
+<!--        <p>{{loaderText}}</p>-->
     </div>
 </template>
 <script>

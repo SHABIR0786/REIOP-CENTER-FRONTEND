@@ -57,6 +57,19 @@ const actions = {
             return response
         })
     },
+    async searchGoldenAddresses({ commit, dispatch }, {page, perPage, search}) {
+        return await api.get(`/golden-addresses?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.goldenAddresses && response.goldenAddresses.data) {
+                commit('SET_ALL_GOLDEN_ADDRESSES', response.goldenAddresses.data)
+            }
+
+            return response
+        })
+    },
     async editGoldenAddress({ commit }, data) {
         return await api.put(`/golden-addresses/${data.id}`, {...data}).then((response) => {
             commit('EDIT_GOLDEN_ADDRESS', data)

@@ -11,6 +11,9 @@
                 <b-dropdown-item>
                     <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Labels</router-link>
                 </b-dropdown-item>
+                <b-dropdown-item>
+                    <router-link class="link-label" to="/background-processes"><b-icon icon="gear-fill"></b-icon> Background Processes</router-link>
+                </b-dropdown-item>
                 <b-dropdown-item @click="logout"><b-icon icon="power"></b-icon> Logout</b-dropdown-item>
             </b-nav-item-dropdown>
         </b-navbar-nav>

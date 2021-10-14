@@ -34,7 +34,13 @@ const state = {
 
 const mutations = {
     SET_ALL_SELLERS(state, payload) {
-        state.sellers = [...payload]
+        const data = [...payload]
+        data.forEach(e => {
+            e.seller_total_phones = e.phones.length;
+            e.seller_total_emails = e.emails.length;
+            e.seller_total_subjects = e.subjects.length;
+        })
+        state.sellers = [...data]
     },
     EDIT_SELLER(state, payload) {
         const findIndex = state.sellers.findIndex(({ id }) => id === payload.id)
@@ -59,6 +65,16 @@ const actions = {
             if (response && response.sellers && response.sellers.data) {
                 commit('SET_ALL_SELLERS', response.sellers.data)
             }
+
+            return response
+        })
+    },
+    async searchSellers({ commit }, {page, perPage, search}) {
+        return await api.get(`/sellers?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+            if (response && response.sellers && response.sellers.data) {
+                commit('SET_ALL_SELLERS', response.sellers.data)
+            }
+
 
             return response
         })

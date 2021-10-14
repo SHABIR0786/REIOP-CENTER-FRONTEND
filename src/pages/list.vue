@@ -26,7 +26,7 @@
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
                 </b-col>
                 <b-col cols="4">
-                    <b-form-input v-model="text" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchList" placeholder="Search"></b-form-input>
                 </b-col>
             </b-row>
         </div>
@@ -141,7 +141,7 @@ export default {
             itemToDelete: {},
             pageOptions: [10, 20, 50],
             noCollapse: false,
-            text: '',
+            searchList: '',
             showAddModal: false
         }
     },
@@ -200,6 +200,11 @@ export default {
         perPage: {
             handler: function () {
                 this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: this.perPage})
+            }
+        },
+        searchList: {
+            handler: function () {
+                this.$store.dispatch('listModule/searchLists', {page: this.currentPage, perPage: this.perPage, search: this.searchList});
             }
         }
     }

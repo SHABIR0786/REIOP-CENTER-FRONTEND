@@ -35,7 +35,11 @@ const state = {
 
 const mutations = {
     SET_ALL_SUBJECTS(state, payload) {
-        state.subjects = [...payload]
+        const data = [...payload]
+        data.forEach(e => {
+            e.total_sellers = e.sellers.length
+        })
+        state.subjects = [...data]
     },
     EDIT_SUBJECT(state, payload) {
         const findIndex = state.subjects.findIndex(({ id }) => id === payload.id)
@@ -57,6 +61,19 @@ const mutations = {
 const actions = {
     async getAllSubjects({ commit, dispatch }, {page, perPage}) {
         return await api.get(`/subjects?page=${page}&perPage=${perPage}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if(response && response.subjects && response.subjects.data) {
+                commit('SET_ALL_SUBJECTS', response.subjects.data)
+            }
+
+            return response
+        })
+    },
+    async searchSubjects({ commit, dispatch }, {page, perPage, search}) {
+        return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

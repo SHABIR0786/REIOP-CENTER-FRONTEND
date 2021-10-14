@@ -27,7 +27,7 @@
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
                 </b-col>
                 <b-col cols="4">
-                    <b-form-input v-model="text" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
                 </b-col>
             </b-row>
         </div>
@@ -123,7 +123,7 @@ export default {
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
-            text: '',
+            searchSeller: '',
             showAddModal: false
         }
     },
@@ -143,7 +143,6 @@ export default {
             await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
-            console.log(error)
             this.$store.dispatch('uxModule/hideLoader')
         }
     },
@@ -177,12 +176,17 @@ export default {
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage})
+                this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
             }
         },
         perPage: {
             handler: function () {
-                this.$store.dispatch('sellerModule/getAllSellers', {page: 1, perPage: this.perPage})
+                this.$store.dispatch('sellerModule/getAllSellers', {page: 1, perPage: this.perPage, search: this.searchSeller})
+            }
+        },
+        searchSeller: {
+            handler: function () {
+                this.$store.dispatch('sellerModule/searchSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
             }
         }
     }

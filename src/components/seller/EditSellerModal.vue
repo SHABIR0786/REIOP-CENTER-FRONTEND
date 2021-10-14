@@ -114,7 +114,7 @@
                         </b-row>
                         <b-row>
                             <b-col cols="12">
-                                <b-input-group prepend="Seller Id" class="mb-2">
+                                <b-input-group prepend="Subject Id" class="mb-2">
                                     <b-form-input readonly v-model="seller.subject_id"></b-form-input>
                                 </b-input-group>
                             </b-col>
@@ -126,15 +126,13 @@
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
                     <b-tab title="Related Phones" active>
-                        <p>Related Phones</p>
-                        <hr>
                         <b-table
                                 id="phone-number-table"
                                 small
                                 striped
                                 hover
                                 :busy="isBusy"
-                                :fields="phoneFields"
+                                :fields="phoneTableFields"
                                 :items="seller.phones"
                                 responsive
                                 :per-page="0"
@@ -162,18 +160,47 @@
                         </b-table>
                     </b-tab>
                     <b-tab title="Related Emails">
-                        <p>Related Emails</p>
+                        <b-table
+                                id="email-table"
+                                small
+                                striped
+                                hover
+                                :busy="isBusy"
+                                :fields="emailTableFields"
+                                :items="seller.emails"
+                                responsive
+                                :per-page="0"
+                                :sticky-header="true"
+                        >
+                            <template #table-busy>
+                                <div class="text-center" my-2>
+                                    <b-spinner class="align-middle"></b-spinner>
+                                    <strong>Loading...</strong>
+                                </div>
+                            </template>
+                            <template #head(id)="scope">
+                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                            </template>
+                            <template #head(actions)="scope">
+                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                            </template>
+                            <template #head()="scope">
+                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                            </template>
+                        </b-table>
                     </b-tab>
                     <b-tab title="Related Golden Addresses">
-                        <p>Related Phones</p>
-                        <hr>
                         <b-table
                                 id="phone-number-table"
                                 small
                                 striped
                                 hover
                                 :busy="isBusy"
-                                :fields="goldenFields"
+                                :fields="goldenTableFields"
                                 :items="seller.golden_addresses"
                                 responsive
                                 :per-page="0"
@@ -201,16 +228,13 @@
                         </b-table>
                     </b-tab>
                     <b-tab title="Related Subjects">
-                        <p>Related Subjects</p>
-                        <hr>
-
                         <b-table
                                 id="subject-table"
                                 small
                                 striped
                                 hover
                                 :busy="isBusy"
-                                :fields="subjectFields"
+                                :fields="subjectTableFields"
                                 :items="seller.subjects"
                                 responsive
                                 :per-page="0"
@@ -291,7 +315,11 @@ export default {
                 subject_id: '',
             },
             isReadOnly: true,
-            isBusy: false
+            isBusy: false,
+            phoneTableFields: null,
+            emailTableFields: null,
+            goldenTableFields: null,
+            subjectTableFields: null
         }
     },
     computed: {
@@ -299,7 +327,14 @@ export default {
             phoneFields: 'phoneNumberModule/fields',
             goldenFields: 'goldenAddressModule/fields',
             subjectFields: 'subjectModule/fields',
+            emailFields: 'emailModule/fields',
         }),
+    },
+    mounted () {
+        this.phoneTableFields = this.phoneFields.filter(s => s.key !== 'actions')
+        this.emailTableFields = this.emailFields.filter(s => s.key !== 'actions')
+        this.goldenTableFields = this.goldenFields.filter(s => s.key !== 'actions')
+        this.subjectTableFields = this.subjectFields.filter(s => s.key !== 'actions')
     },
     watch: {
         showModal() {
