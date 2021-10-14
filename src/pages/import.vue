@@ -90,7 +90,6 @@ export default {
             seller: this.sellerFields,
             subject: this.subjectFields,
         }
-        console.log(this.importedFields)
     },
     methods: {
         previewFile (e) {

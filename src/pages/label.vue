@@ -31,7 +31,7 @@
     import LabelModal from "../components/label/LabelModal";
 
     export default {
-        name: "Email",
+        name: "Label",
         components: {
             BIcon,
             LabelModal
@@ -78,9 +78,8 @@
                 this.showDeleteModal = true;
                 this.itemToDelete = item;
             },
-            modalResponse(response) {
+            modalResponse() {
                 this.showDeleteModal = false;
-                console.log(response);
             }
         }
     }

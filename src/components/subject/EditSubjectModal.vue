@@ -119,15 +119,13 @@
             <b-row class="mt-5">
                     <b-tabs class="w-100" content-class="mt-3" fill>
                         <b-tab title="Assigned Sellers" active>
-                            <p>Assigned Sellers</p>
-                            <hr>
                             <b-table
                                     id="seller-table"
                                     small
                                     striped
                                     hover
                                     :busy="isBusy"
-                                    :fields="sellerFields"
+                                    :fields="sellerTableFields"
                                     :items="subject.sellers"
                                     responsive
                                     :per-page="0"
@@ -155,10 +153,8 @@
                             </b-table>
                         </b-tab>
                         <b-tab title="Related Lists">
-                            <p>Related Lists</p>
                         </b-tab>
                         <b-tab title="Related Running Lists">
-                            <p>Related Running Lists</p>
                         </b-tab>
                     </b-tabs>
             </b-row>
@@ -208,7 +204,8 @@ export default {
             },
             isReadOnly: true,
             buttonState: 'Edit',
-            isBusy: false
+            isBusy: false,
+            sellerTableFields: null
         }
     },
     computed: {
@@ -216,6 +213,9 @@ export default {
             sellerFields: 'sellerModule/fields',
         }),
         rows() { return this.total ? this.total : 1 }
+    },
+    mounted () {
+        this.sellerTableFields = this.sellerFields.filter(s => s.key !== 'actions')
     },
     watch: {
         showModal() {

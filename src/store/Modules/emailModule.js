@@ -55,6 +55,19 @@ const actions = {
             return response
         })
     },
+    async searchEmails({ commit, dispatch }, {page, perPage, search}) {
+        return await api.get(`/emails?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.emails && response.emails.data) {
+                commit('SET_ALL_EMAILS', response.emails.data)
+            }
+
+            return response
+        })
+    },
     async editEmail({ commit }, data) {
         return await api.put(`/emails/${data.id}`, {...data}).then((response) => {
             commit('EDIT_EMAIL', data)
