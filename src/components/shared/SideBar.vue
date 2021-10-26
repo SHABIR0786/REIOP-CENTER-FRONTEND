@@ -102,7 +102,7 @@
             </ul>
         </div>
         <div :class="`collapse-expend2 ${toggleClass}`" @click="toggleSidebar">
-                <span class="white-arrow">
+                <span class="white-arrow" :class="{'arrow-collapsed': isCollapsed}">
                     <b-icon icon="caret-left-fill"></b-icon>
                 </span>
                 <span class="coloured-bars">
@@ -162,5 +162,8 @@ export default {
 <style>
     .side-menu {
         background-color: #A2C4C9 !important;
+    }
+    .arrow-collapsed {
+        display: none;
     }
 </style>

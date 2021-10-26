@@ -65,6 +65,14 @@
                 <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
             </template>
 
+            <template #head(list_code)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+
+            <template #head(list_total_subject)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+
             <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>

@@ -57,6 +57,30 @@
             <template #head(actions)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
+            <template #head(seller_total_subjects)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_total_phones)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_total_emails)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_first_name)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_middle_name)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_last_name)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_mailing_state)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_mailing_zip)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
             <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>

@@ -13,8 +13,8 @@
     border-radius: unset;
     transition: 0.2s;
     &.collapsemenu {
-        min-width: 80px;
-        max-width: 80px;
+        min-width: 44px;
+        max-width: 44px;
         transition: 0.2s;
     }
     .container-fluid{
@@ -31,12 +31,13 @@
             margin: 0;
             padding: 0;
             li {
+                width: 100%;
                 list-style: none;
                 text-align: left;
                 border-left: 4px solid transparent;
-                padding: 5px 0 5px 9px;
+                padding: 5px 0 5px 0;
                 a {
-                    padding: 10px 15px;
+                    padding: 10px 10px;
                     line-height: 20px;
                     width: 100%;
                 }
