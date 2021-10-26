@@ -24,7 +24,12 @@ const state = {
 
 const mutations = {
     SET_ALL_GOLDEN_ADDRESSES(state, payload) {
-        state.goldenAddresses = [...payload]
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.goldenAddresses = [...data]
     },
     EDIT_GOLDEN_ADDRESS(state, payload) {
         const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload.id)

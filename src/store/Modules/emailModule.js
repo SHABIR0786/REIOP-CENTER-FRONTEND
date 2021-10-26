@@ -22,7 +22,12 @@ const state = {
 
 const mutations = {
     SET_ALL_EMAILS(state, payload) {
-        state.emails = [...payload]
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.emails = [...data]
     },
     EDIT_EMAIL(state, payload) {
         const findIndex = state.emails.findIndex(({ id }) => id === payload.id)

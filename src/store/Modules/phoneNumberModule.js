@@ -23,7 +23,12 @@ const state = {
 
 const mutations = {
     SET_ALL_ITEMS(state, payload) {
-        state.phoneNumbers = [...payload]
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.phoneNumbers = [...data]
     },
     EDIT_ITEM(state, payload) {
         const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload.id)

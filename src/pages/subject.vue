@@ -71,6 +71,12 @@
             <template #head(user_id)="scope">
                 <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
             </template>
+            <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(updated_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
             <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>

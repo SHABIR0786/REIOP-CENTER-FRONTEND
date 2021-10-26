@@ -36,6 +36,8 @@ const mutations = {
     SET_ALL_SELLERS(state, payload) {
         const data = [...payload]
         data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
             e.seller_total_phones = e.phones.length;
             e.seller_total_emails = e.emails.length;
             e.seller_total_subjects = e.subjects.length;
