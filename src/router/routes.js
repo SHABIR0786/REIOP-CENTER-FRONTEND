@@ -1,5 +1,5 @@
 import Home from "../pages/home"
-import Import from "../pages/import"
+// import Import from "../pages/import"
 import List from "../pages/list"
 import Subject from "../pages/subject"
 import Seller from "../pages/seller"
@@ -10,11 +10,12 @@ import Properties from "../pages/properties"
 import Login from "../pages/login"
 import Labels from  "../pages/label"
 import BackgroundProcesses from "../pages/backgroundProcesses"
+import ImportV2 from "../pages/importV2"
 
 export const routes = [
     {name: "Login", path: "/login", component: Login, title: "Login", isNavbar: false},
     {name: "Home", path: "/", component: Home, title: "Home", icon: "house-fill", isNavbar: true, meta: {requireAuth: true}},
-    {name: "Import", path: "/import", component: Import, title: "Import", icon: "upload", isNavbar: true, meta: {requireAuth: true}},
+    {name: "Import", path: "/import", component: ImportV2, title: "Import", icon: "upload", isNavbar: true, meta: {requireAuth: true}},
     {name: "List", path: "/list", component: List, title: "List", icon: "list-ul", isNavbar: true, meta: {requireAuth: true}},
     {name: "Subject", path: "/subjects", component: Subject, title: "Subjects", icon: "file-earmark-fill", isNavbar: true, meta: {requireAuth: true}},
     {name: "Seller", path: "/sellers", component: Seller, title: "Sellers", icon: "graph-up", isNavbar: true, meta: {requireAuth: true}},
