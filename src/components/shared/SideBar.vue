@@ -17,6 +17,12 @@
                         <p v-if="!isCollapsed">Home</p>
                     </router-link>
                 </li>
+                <li :class="$route.name==='ImportV2' ? 'active-tab' : ''">
+                    <router-link :to="'/import-v2'">
+                        <span :title="'ImportV2'"><b-icon :icon="'upload'"></b-icon></span>
+                        <p v-if="!isCollapsed">Import V2</p>
+                    </router-link>
+                </li>
                 <li :class="$route.name==='Import' ? 'active-tab' : ''">
                     <router-link :to="'/import'">
                         <span :title="'Import'"><b-icon :icon="'upload'"></b-icon></span>
