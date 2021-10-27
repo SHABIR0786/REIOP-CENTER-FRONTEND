@@ -1,11 +1,11 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <div v-if="!importDetails.file">
+        <div v-if="showImportTable">
             <h3>Previous Imports</h3>
             <div>
                 <b-row>
                     <b-col class="d-flex justify-content-end">
-                        <b-button variant="primary" class="add-seller" @click="showImportModal = true">
+                        <b-button variant="primary" class="add-seller" @click="step_1 = true, showImportTable = false">
                             <b-icon icon="plus" aria-hidden="true"></b-icon> Start A New Import</b-button>
                     </b-col>
                 </b-row>
@@ -57,7 +57,7 @@
                 </template>
                 <template v-slot:cell(actions)="data">
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                    <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="showImportModal = true"></b-icon>
                 </template>
                 <template v-slot:cell(list_type)="data">
                     <div :title="data.item.list_type">
@@ -85,30 +85,41 @@
                     </b-form-group>
                 </b-col>
                 <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to 20 of100 entries</p>
+                    <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
                 </b-col>
-    <!--            <b-col class="d-flex justify-content-end">-->
-    <!--                <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
-    <!--            </b-col>-->
+                <b-col class="d-flex justify-content-end">
+                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                </b-col>
             </b-row>
             <import-downloads :showModal ="showImportModal" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
-        <div v-if="importDetails.file">
-            <step1></step1>
-        </div>
+<!--        <div v-if="importDetails.file">-->
+<!--            <import_step1 />-->
+<!--        </div>-->
+<!--        <component is="import_step1"></component>-->
+        <import-type v-if="step_1" @importResponse="importTypeResponse"></import-type>
+        <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse"></upload-type>
+        <pull-settings v-if="step_3" @pullSettingsResponse="pullSettingsResponse"></pull-settings>
+        <map-fields v-if="step_4"></map-fields>
     </div>
 </template>
 
 <script>
 import {mapGetters} from "vuex";
 import ImportDownloads from "../components/import/ImportDownloads";
-import Step1 from "../components/import/Step1";
+import ImportType from "../components/import/ImportType";
+import UploadType from "../components/import/UploadType";
+import PullSettings from "../components/import/PullSettings";
+import MapFields from "../components/import/MapFields";
 
 export default {
     name: "importV2",
     components: {
+        ImportType,
         ImportDownloads,
-        Step1
+        UploadType,
+        PullSettings,
+        MapFields
     },
     data () {
         return {
@@ -117,7 +128,23 @@ export default {
             perPage: 20,
             isBusy: false,
             showImportModal: false,
-            importDetails: {}
+            importDetails: {},
+            step_1: false,
+            step_2: false,
+            step_3: false,
+            step_4: false,
+            currentPage: 2,
+            download_type: '',
+            showImportTable: true,
+        }
+    },
+    async created () {
+        this.$store.dispatch('uxModule/setLoading')
+        try {
+            await this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: this.perPage})
+            this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
         }
     },
     computed: {
@@ -125,18 +152,67 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'importV2Module/fields',
             items: 'importV2Module/imports',
-            // total: 'listModule/total'
+            // isCollapsed: 'uxModule/isCollapsed',
+            // fields: 'backgroundProcessesModule/fields',
+            // items: 'backgroundProcessesModule/processes'
+            total: 'listModule/total'
         }),
         rows() { return this.total ? this.total : 1 }
     },
     methods: {
         modalResponse(response) {
+            console.log('modalResponse', response);
             this.showImportModal = false;
             if (response) {
-                this.importDetails.file = response;
-                console.log('response', response);
+                this.download_type = response;
+                // this.step_1 = true;
+                // this.step_2 = false;
+                // this.step_3 = false;
+                // this.step_4 = false;
+                //
+                // console.log('response', response);
             }
         },
+        importTypeResponse(response) {
+            console.log('importTypeResponse', response);
+           if(response) {
+               this.importDetails.import_type = response;
+
+               this.step_1 = false;
+               this.step_2 = true;
+               this.step_3 = false;
+               this.step_4 = false;
+
+               console.log(this.importDetails);
+           }
+        },
+        uploadTypeResponse (response) {
+            console.log('uploadTypeResponse', response);
+            if(response) {
+                this.importDetails.upload_type = response;
+
+                this.step_1 = false;
+                this.step_2 = false;
+                this.step_3 = true;
+                this.step_4 = false;
+
+                console.log('response', response, this.importDetails);
+            }
+        },
+        pullSettingsResponse (response) {
+            if(response) {
+                this.importDetails.pull_settings = response;
+
+                this.step_1 = false;
+                this.step_2 = false;
+                this.step_3 = false;
+                this.step_4 = true;
+
+                console.log(response);
+                console.log(this.importDetails);
+
+            }
+        }
     }
 }
 </script>
