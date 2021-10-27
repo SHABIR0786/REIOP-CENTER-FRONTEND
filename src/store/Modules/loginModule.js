@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage, clearLocalStorage } from '../../utils/localStorage'
+import { getLocalStorage, setLocalStorage, clearLocalStorage, clearSessionStorage } from '../../utils/localStorage'
 import * as api from "../Services/api"
 
 export const state = {
@@ -20,6 +20,7 @@ export const mutations = {
         state.authUser = null;
         state.accessToken = '';
         clearLocalStorage();
+        clearSessionStorage();
     }
 }
 
