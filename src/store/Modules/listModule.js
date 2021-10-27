@@ -28,7 +28,12 @@ const state = {
 
 const mutations = {
     SET_ALL_LISTS(state, payload) {
-        state.lists = [...payload]
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.lists = [...data]
     },
     EDIT_LIST(state, payload) {
         const findIndex = state.lists.findIndex(({ id }) => id === payload.id)

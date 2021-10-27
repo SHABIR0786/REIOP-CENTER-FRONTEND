@@ -44,10 +44,31 @@
                 </div>
             </template>
             <template #head(id)="scope">
-                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(actions)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(total_sellers)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_state)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_zip)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_address)="scope">
+                <div class="text-nowrap" style="width: 250px;">{{scope.label}}</div>
+            </template>
+            <template #head(user_id)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+            </template>
+            <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(updated_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
             <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>

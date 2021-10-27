@@ -65,6 +65,14 @@
                 <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
             </template>
 
+            <template #head(list_code)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+
+            <template #head(list_total_subject)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+
             <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>
@@ -77,6 +85,12 @@
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+            </template>
+            <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(updated_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
             <template v-slot:cell(list_type)="data">
                 <div :title="data.item.list_type">
