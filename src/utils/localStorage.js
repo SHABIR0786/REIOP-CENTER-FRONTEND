@@ -36,3 +36,12 @@ export const clearLocalStorage = () => {
         warn(`Error on clearing localStorage!`)
     }
 };
+
+export const clearSessionStorage = () => {
+    try {
+        memoryStorage = {};
+        sessionStorage.clear();
+    } catch (e) {
+        warn(`Error on clearing sessionStorage!`)
+    }
+};

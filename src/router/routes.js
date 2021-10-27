@@ -10,6 +10,7 @@ import Properties from "../pages/properties"
 import Login from "../pages/login"
 import Labels from  "../pages/label"
 import BackgroundProcesses from "../pages/backgroundProcesses"
+import Error from "../pages/error"
 import ImportV2 from "../pages/importV2"
 
 export const routes = [
@@ -25,5 +26,6 @@ export const routes = [
     {name: "GoldenAddress", path: "/golden-addresses", component: GoldenAddress, title: "Golden Addresses", icon: "geo-alt-fill", isNavbar: true, meta: {requireAuth: true}},
     {name: "Properties", path: "/properties", component: Properties, title: "Properties", icon: "gear", isNavbar: true, meta: {requireAuth: true}},
     {name: "Label", path: "/labels", component: Labels, title: "Labels", isNavbar: false, meta: {requireAuth: true}},
-    {name: "BackgroundProcesses", path: "/background-processes", component: BackgroundProcesses, title: "Background Processes", isNavbar: false, meta: {requireAuth: true}}
+    {name: "BackgroundProcesses", path: "/background-processes", component: BackgroundProcesses, title: "Background Processes", isNavbar: false, meta: {requireAuth: true}},
+    {name: "Error", path: "/errors", component: Error, title: "Errors", isNavbar: false, meta: {requireAuth: true}}
 ]

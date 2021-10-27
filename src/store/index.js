@@ -16,9 +16,11 @@ import sellerModule from "./Modules/sellerModule"
 import phoneNumberModule from "./Modules/phoneNumberModule"
 import subjectModule from "./Modules/subjectModule"
 import labelModule from "./Modules/labelModule"
-import propertyModule from "./Modules/propertyModule";
-import backgroundProcesses from "./Modules/backgroundProcessesModule"
+import propertyModule from "./Modules/propertyModule"
+import backgroundProcessesModule from "./Modules/backgroundProcessesModule"
+import errorModule from "./Modules/errorModule"
 import importV2Module from "./Modules/importV2Module";
+
 const state = {}
 
 const mutations = {}
@@ -39,7 +41,8 @@ export default new Vuex.Store({
         subjectModule: subjectModule,
         labelModule: labelModule,
         propertyModule: propertyModule,
-        backgroundProcessesModule: backgroundProcesses,
+        backgroundProcessesModule: backgroundProcessesModule,
+        errorModule: errorModule,
         importV2Module: importV2Module
     },
     state,
