@@ -12,7 +12,7 @@ const state = {
         {key:"error_lines", label: "Error Lines", sortable: true},
 
         {key:"created_at", label: "Created Date", sortable: true},
-        {key:"process_id", label: "Process ID", sortable: true},
+        {key:"id", label: "Process ID", sortable: true},
     ],
     imports: [],
     total: 0,
@@ -20,22 +20,27 @@ const state = {
 
 const mutations = {
     SET_ALL_PROCESSES(state, payload) {
-        const process = {
-            file_name: '',
-            id: '',
-            total_rows: '',
-            is_processing: '',
-            process_id: '',
-            created_at: ''
-        }
         const readyData = [];
         payload.forEach(e => {
-            process.process_id = e.id;
+            const process = {
+                file_name: '',
+                id: '',
+                total_rows: '',
+                is_processing: '',
+                process_id: '',
+                error_lines: '',
+                created_at: ''
+            }
+
+            const date = e.created_at;
+            process.id = e.id;
+            process.process_id = e.process_id
+            process.error_lines = e.error;
             process.total_rows = e.total_jobs;
             process.is_processing = e.pending_jobs;
             process.is_processed = e.total_jobs - e.pending_jobs;
             process.file_name = e.file_name;
-            process.created_at = new Date(e.created_at * 1000).toLocaleString();
+            process.created_at = new Date(date * 1000).toLocaleString();
             readyData.push(process);
         })
         state.imports = [...readyData]
