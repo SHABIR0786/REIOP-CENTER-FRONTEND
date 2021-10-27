@@ -18,7 +18,7 @@ import subjectModule from "./Modules/subjectModule"
 import labelModule from "./Modules/labelModule"
 import propertyModule from "./Modules/propertyModule";
 import backgroundProcesses from "./Modules/backgroundProcessesModule"
-
+import importV2Module from "./Modules/importV2Module";
 const state = {}
 
 const mutations = {}
@@ -39,7 +39,8 @@ export default new Vuex.Store({
         subjectModule: subjectModule,
         labelModule: labelModule,
         propertyModule: propertyModule,
-        backgroundProcessesModule: backgroundProcesses
+        backgroundProcessesModule: backgroundProcesses,
+        importV2Module: importV2Module
     },
     state,
     mutations,
