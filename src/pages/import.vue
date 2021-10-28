@@ -106,19 +106,22 @@ export default {
 
             let reader = new FileReader()
             reader.onload = (e) => {
-                var data = new Uint8Array(e.target.result);
-                var workbook = XLSX.read(data, {type: 'array'});
-                let sheetName = workbook.SheetNames[0]
+              var data = new Uint8Array(e.target.result);
+              var workbook = XLSX.read(data, {type: 'array'});
+              let sheetName = workbook.SheetNames[0]
 
-                let worksheet = workbook.Sheets[sheetName];
-                $this.jsonSheet = XLSX.utils.sheet_to_json(worksheet);
-                this.uploadedFields = []
-                this.uploadedAllFields = []
-                if($this.jsonSheet.length > 0) {
-                    for(let k in $this.jsonSheet[0]) {
-                        $this.uploadedFields.push(k)
-                        $this.uploadedAllFields.push(k)
-                    }
+              let sheetsList = workbook.SheetNames
+              let sheetDataV2 = XLSX.utils.sheet_to_json(workbook.Sheets[sheetsList[0]], {header: 1, defval: '', blankrows: true});
+
+              let worksheet = workbook.Sheets[sheetName];
+              $this.jsonSheet = XLSX.utils.sheet_to_json(worksheet);
+              this.uploadedFields = []
+              this.uploadedAllFields = []
+              if (sheetDataV2 && sheetDataV2[0] && sheetDataV2[0].length > 0) {
+                   for(let i = 0; i < sheetDataV2[0].length; i++) {
+                      $this.uploadedFields.push(sheetDataV2[0][i])
+                      $this.uploadedAllFields.push(sheetDataV2[0][i])
+                  }
                 }
             };
             reader.readAsArrayBuffer(f);
