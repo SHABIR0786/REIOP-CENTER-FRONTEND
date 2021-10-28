@@ -16,6 +16,7 @@ const state = {
     ],
     imports: [],
     total: 0,
+    lists: [],
 }
 
 const mutations = {
@@ -47,7 +48,16 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
-    }
+    },
+    SET_ALL_LISTS(state, payload) {
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.lists = [...data]
+        console.log('lists from import',  state.lists);
+    },
 }
 
 const actions = {
@@ -71,12 +81,26 @@ const actions = {
             }
             return response
         })
-    }
+    },
+    async getAllLists({ commit, dispatch }) {
+        return await api.get(`/lists`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.lists && response.lists.data) {
+                commit('SET_ALL_LISTS', response.lists.data)
+            }
+
+            return response
+        })
+    },
 }
 
 const getters = {
     fields: ({ fields }) => fields,
     imports: ({ imports }) => imports,
+    lists: ({ lists }) => lists,
 }
 
 export default {

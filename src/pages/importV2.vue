@@ -46,6 +46,14 @@
                     <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
                 </template>
 
+                <template #head(is_processing)="scope">
+                    <div class="text-nowrap" style="width: 90px;">{{scope.label}}</div>
+                </template>
+
+                <template #head(is_processed)="scope">
+                    <div class="text-nowrap" style="width: 90px;">{{scope.label}}</div>
+                </template>
+
                 <template #head()="scope">
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                 </template>
@@ -57,7 +65,7 @@
                 </template>
                 <template v-slot:cell(actions)="data">
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                    <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="showImportModal = true"></b-icon>
+                    <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
                 </template>
                 <template v-slot:cell(list_type)="data">
                     <div :title="data.item.list_type">
@@ -91,7 +99,7 @@
                     <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
                 </b-col>
             </b-row>
-            <import-downloads :showModal ="showImportModal" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
+            <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
 <!--        <div v-if="importDetails.file">-->
 <!--            <import_step1 />-->
@@ -99,8 +107,8 @@
 <!--        <component is="import_step1"></component>-->
         <import-type v-if="step_1" @importResponse="importTypeResponse"></import-type>
         <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse"></upload-type>
-        <pull-settings v-if="step_3" @pullSettingsResponse="pullSettingsResponse"></pull-settings>
-        <map-fields v-if="step_4"></map-fields>
+        <pull-settings v-if="step_3" :lists="lists" @pullSettingsResponse="pullSettingsResponse"></pull-settings>
+        <map-fields :upload_type="importDetails.upload_type" v-if="step_4"></map-fields>
     </div>
 </template>
 
@@ -136,12 +144,15 @@ export default {
             currentPage: 2,
             download_type: '',
             showImportTable: true,
+            download_data: {},
+            pull_list: {},
         }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('importV2Module/getAllLists')
         try {
-            await this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("importV2Module/getAllProcesses")
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -152,6 +163,7 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'importV2Module/fields',
             items: 'importV2Module/imports',
+            lists: 'importV2Module/lists',
             // isCollapsed: 'uxModule/isCollapsed',
             // fields: 'backgroundProcessesModule/fields',
             // items: 'backgroundProcessesModule/processes'
@@ -161,7 +173,6 @@ export default {
     },
     methods: {
         modalResponse(response) {
-            console.log('modalResponse', response);
             this.showImportModal = false;
             if (response) {
                 this.download_type = response;
@@ -170,11 +181,9 @@ export default {
                 // this.step_3 = false;
                 // this.step_4 = false;
                 //
-                // console.log('response', response);
             }
         },
         importTypeResponse(response) {
-            console.log('importTypeResponse', response);
            if(response) {
                this.importDetails.import_type = response;
 
@@ -183,20 +192,16 @@ export default {
                this.step_3 = false;
                this.step_4 = false;
 
-               console.log(this.importDetails);
            }
         },
         uploadTypeResponse (response) {
-            console.log('uploadTypeResponse', response);
             if(response) {
                 this.importDetails.upload_type = response;
-
                 this.step_1 = false;
                 this.step_2 = false;
                 this.step_3 = true;
                 this.step_4 = false;
 
-                console.log('response', response, this.importDetails);
             }
         },
         pullSettingsResponse (response) {
@@ -208,10 +213,11 @@ export default {
                 this.step_3 = false;
                 this.step_4 = true;
 
-                console.log(response);
-                console.log(this.importDetails);
-
             }
+        },
+        importModal(item) {
+            this.showImportModal = true;
+            this.download_data = {...item}
         }
     }
 }

@@ -111,6 +111,9 @@ const actions = {
             }
             return response
         })
+    },
+    async exportProperties() {
+        return await api.get('/properties/export').then(() => {console.log('success')});
     }
 }
 

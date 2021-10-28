@@ -12,20 +12,31 @@
         <b-row class="text-center">
             <b-col class="d-flex justify-content-end flex-column align-items-center">
                 <b-button
-                        variant="primary"
-                        class="data-type"
-                        @click="$emit('importResponse', 'new')"
-
+                        class="data-type-btn"
+                        @click="import_type='new'"
+                        :class="{'active-data-type': import_type === 'new'}"
                 >
                     Are you uploading new data?
                 </b-button>
                 or
                 <b-button
-                        variant="primary"
-                        class="data-type"
-                        @click="$emit('importResponse', 'existing')"
+                        class="data-type-btn"
+                        @click="import_type = 'existing'"
+                        :class="{'active-data-type': import_type === 'existing'}"
                 >
                     Are you updating existing records?
+                </b-button>
+            </b-col>
+        </b-row>
+
+        <b-row>
+            <b-col cols="12" class="next-btn">
+                <b-button
+                        class="data-type"
+                        @click="setImportType()"
+                        :disabled="!import_type.length"
+                >
+                    Next
                 </b-button>
             </b-col>
         </b-row>
@@ -39,21 +50,29 @@
 
         data () {
             return {
-
+                import_type: ''
             }
+        },
+        methods: {
+            setImportType() {
+                this.$emit('importResponse', this.import_type);
+            },
         }
     }
 </script>
 
 <style>
-    .data-type {
-        background-color: #45818E !important;
+    .data-type-btn {
+        background-color: #808080;
         color: white;
+    }
+    .active-data-type {
+        background-color: #45818E !important;
     }
     .type-container {
         background-color: #45818E;
         color: white;
-        padding: 15px 0;
+        padding: 15px 15px;
         border-top: 0.5px solid black;
         border-bottom: 0.5px solid black;
     }
