@@ -47,6 +47,7 @@ import MappedFields from '../components/import/MappedFields.vue'
 
 export default {
     name: "Import",
+    props: ['upload_type'],
     components: {
         FieldsCard,
         MappedFields
@@ -72,7 +73,6 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             emailFields: 'importModule/emailFields',
             goldenAddressFields: 'importModule/goldenAddressFields',
-            listFields: 'importModule/listFields',
             phoneNumberFields: 'importModule/phoneNumberFields',
             sellerFields: 'importModule/sellerFields',
             subjectFields: 'importModule/subjectFields',
@@ -82,14 +82,21 @@ export default {
     },
     async created () {
         await this.$store.dispatch('importModule/loadVisibleFields')
-        this.importedFields = {
-            email: this.emailFields,
-            golden_address: this.goldenAddressFields,
-            list: this.listFields,
-            phone: this.phoneNumberFields,
-            seller: this.sellerFields,
-            subject: this.subjectFields,
+        if(this.upload_type === 'single') {
+            this.importedFields = {
+                seller: this.sellerFields,
+                subject: this.subjectFields,
+            }
+        } else {
+            this.importedFields = {
+                email: this.emailFields,
+                golden_address: this.goldenAddressFields,
+                phone: this.phoneNumberFields,
+                seller: this.sellerFields,
+                subject: this.subjectFields,
+            }
         }
+
     },
     methods: {
         previewFile (e) {

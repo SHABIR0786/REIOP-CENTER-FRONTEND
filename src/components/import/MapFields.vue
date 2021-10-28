@@ -9,32 +9,19 @@
             <p>Description of step for user: To be filled out later.</p>
         </div>
         <hr>
-        <b-row class="text-center">
-            <b-col class="d-flex justify-content-end flex-column align-items-center">
-                <p class="map-text">Map fields UI without subject_market or list fields. These will be set by step 3 and populated for each upload.
-                    Also no need to show email, golden address, or phone fields.</p>
-            </b-col>
-        </b-row>
-
-        <b-row>
-            <b-col cols="12" class="next-btn">
-                <b-button
-                        variant="primary"
-                        class="data-type"
-                        @click="$emit('mapFieldsResponse')"
-                >
-                    Next
-                </b-button>
-            </b-col>
-        </b-row>
+            <import :upload_type="upload_type" class="w-100"></import>
     </div>
 </template>
 
 
 <script>
+    import Import from '../../pages/import'
     export default {
         name: "MapFields",
-
+        props: ['upload_type'],
+        components: {
+            Import
+        },
         data () {
             return {
 
@@ -51,7 +38,7 @@
     .type-container {
         background-color: #45818E;
         color: white;
-        padding: 15px 0;
+        padding: 15px 15px;
         border-top: 0.5px solid black;
         border-bottom: 0.5px solid black;
     }

@@ -12,19 +12,31 @@
         <b-row class="text-center">
             <b-col class="d-flex justify-content-end flex-column align-items-center">
                 <b-button
-                        variant="primary"
-                        class="data-type"
-                        @click="$emit('uploadResponse', 'single')"
+                        class="upload-type"
+                        @click="upload_type = 'single'"
+                        :class="{'active-upload-type': upload_type === 'single'}"
                 >
                     Is this a single pull from a provider with Raw Data?
                 </b-button>
                 or
                 <b-button
-                        variant="primary"
-                        class="data-type"
-                        @click="$emit('uploadResponse', 'combined')"
+                        class="upload-type"
+                        @click="upload_type = 'combined'"
+                        :class="{'active-upload-type': upload_type === 'combined'}"
                 >
                     Is this a combined upload with data from multiple providers and lists?
+                </b-button>
+            </b-col>
+        </b-row>
+
+        <b-row>
+            <b-col cols="12" class="next-btn">
+                <b-button
+                        variant="primary"
+                        @click="setUploadType()"
+                        :disabled="!upload_type.length"
+                >
+                    Next
                 </b-button>
             </b-col>
         </b-row>
@@ -38,21 +50,31 @@
 
         data () {
             return {
-
+                upload_type: '',
+            }
+        },
+        methods: {
+            setUploadType() {
+                this.$emit('uploadResponse', this.upload_type);
             }
         }
     }
 </script>
 
 <style>
-    .data-type {
-        background-color: #45818E !important;
+    .upload-type {
+        background-color: #808080;
         color: white;
     }
+
+    .active-upload-type {
+        background-color: #45818E !important;
+    }
+
     .type-container {
         background-color: #45818E;
         color: white;
-        padding: 15px 0;
+        padding: 15px 15px;
         border-top: 0.5px solid black;
         border-bottom: 0.5px solid black;
     }

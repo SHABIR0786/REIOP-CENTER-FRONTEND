@@ -65,13 +65,14 @@
                 //     subject_age: '',
                 //     subject_type: '',
                 // },
+                download_data: {}
             }
         },
-        // watch: {
-        //     showModal() {
-        //         this.subject = {...this.propsData}
-        //     }
-        // }
+        watch: {
+            showModal() {
+                this.download_data = {...this.propsData}
+            }
+        }
 
     }
 </script>

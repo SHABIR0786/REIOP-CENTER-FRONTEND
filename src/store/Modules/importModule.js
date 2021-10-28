@@ -102,7 +102,6 @@ export const actions = {
 export const getters = {
     emailFields: ({ emailFields }) => emailFields,
     goldenAddressFields: ({ goldenAddressFields }) => goldenAddressFields,
-    listFields: ({ listFields }) => listFields,
     phoneNumberFields: ({ phoneNumberFields }) => phoneNumberFields,
     sellerFields: ({ sellerFields }) => sellerFields,
     subjectFields: ({ subjectFields }) => subjectFields,

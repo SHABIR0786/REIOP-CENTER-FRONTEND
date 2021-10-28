@@ -184,7 +184,7 @@ export default {
             this.showAddModal = true;
         },
         exportProperties () {
-            console.log('export');
+            this.$store.dispatch('propertyModule/exportProperties');
         }
     },
     watch: {

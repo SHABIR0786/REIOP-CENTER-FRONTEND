@@ -12,37 +12,52 @@ const state = {
         {key:"error_lines", label: "Error Lines", sortable: true},
 
         {key:"created_at", label: "Created Date", sortable: true},
-        {key:"process_id", label: "Process ID", sortable: true},
+        {key:"id", label: "Process ID", sortable: true},
     ],
     imports: [],
     total: 0,
+    lists: [],
 }
 
 const mutations = {
     SET_ALL_PROCESSES(state, payload) {
-        const process = {
-            file_name: '',
-            id: '',
-            total_rows: '',
-            is_processing: '',
-            process_id: '',
-            created_at: ''
-        }
         const readyData = [];
         payload.forEach(e => {
-            process.process_id = e.id;
+            const process = {
+                file_name: '',
+                id: '',
+                total_rows: '',
+                is_processing: '',
+                process_id: '',
+                error_lines: '',
+                created_at: ''
+            }
+
+            const date = e.created_at;
+            process.id = e.id;
+            process.process_id = e.process_id
+            process.error_lines = e.error;
             process.total_rows = e.total_jobs;
             process.is_processing = e.pending_jobs;
             process.is_processed = e.total_jobs - e.pending_jobs;
             process.file_name = e.file_name;
-            process.created_at = new Date(e.created_at * 1000).toLocaleString();
+            process.created_at = new Date(date * 1000).toLocaleString();
             readyData.push(process);
         })
         state.imports = [...readyData]
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
-    }
+    },
+    SET_ALL_LISTS(state, payload) {
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.lists = [...data]
+        console.log('lists from import',  state.lists);
+    },
 }
 
 const actions = {
@@ -66,12 +81,26 @@ const actions = {
             }
             return response
         })
-    }
+    },
+    async getAllLists({ commit, dispatch }) {
+        return await api.get(`/lists`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.lists && response.lists.data) {
+                commit('SET_ALL_LISTS', response.lists.data)
+            }
+
+            return response
+        })
+    },
 }
 
 const getters = {
     fields: ({ fields }) => fields,
     imports: ({ imports }) => imports,
+    lists: ({ lists }) => lists,
 }
 
 export default {
