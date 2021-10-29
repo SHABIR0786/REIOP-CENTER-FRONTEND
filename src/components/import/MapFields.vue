@@ -30,7 +30,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .data-type {
         background-color: #45818E !important;
         color: white;

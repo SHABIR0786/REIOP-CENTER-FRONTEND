@@ -77,7 +77,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .cancel-btn {
         background-color: #45818E !important;
     }
