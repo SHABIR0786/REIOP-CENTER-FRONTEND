@@ -43,15 +43,9 @@ const mutations = {
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
-    // SET_ALL_LISTS(state, payload) {
-    //     const data = [...payload]
-    //     data.forEach(e => {
-    //         e.created_at = e.created_at.split('T')[0];
-    //         e.updated_at = e.updated_at.split('T')[0];
-    //     })
-    //     state.lists = [...data]
-    //     console.log('lists from import',  state.lists);
-    // },
+    EXPORTED(state, payload) {
+        console.log('payload',  payload);
+    },
 }
 
 const actions = {
@@ -76,25 +70,18 @@ const actions = {
             return response
         })
     },
-    // async getAllLists({ commit, dispatch }) {
-    //     return await api.get(`/lists`).then((response) => {
-    //         if (response && response.response && response.response.status === 401) {
-    //             dispatch('loginModule/logout', null, {root: true})
-    //         }
-    //
-    //         if (response && response.lists && response.lists.data) {
-    //             commit('SET_ALL_LISTS', response.lists.data)
-    //         }
-    //
-    //         return response
-    //     })
-    // },
+    async exportFile({ commit }, data) {
+        return await api.post(`/export`, {...data}).then((response) => {
+            alert('Exported');
+            commit('EXPORTED', response)
+            console.log(response);
+        })
+    },
 }
 
 const getters = {
     fields: ({ fields }) => fields,
-    imports: ({ imports }) => imports,
-    // lists: ({ lists }) => lists,
+    imports: ({ imports }) => imports
 }
 
 export default {
