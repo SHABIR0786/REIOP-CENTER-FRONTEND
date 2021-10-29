@@ -67,16 +67,7 @@
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                     <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
                 </template>
-                <template v-slot:cell(list_type)="data">
-                    <div :title="data.item.list_type">
-                        <p class="user-email">{{data.item.list_type}}</p>
-                    </div>
-                </template>
-                <template v-slot:cell(list_group)="data">
-                    <div :title="data.item.list_group">
-                        <p class="user-email">{{data.item.list_group}}</p>
-                    </div>
-                </template>
+
             </b-table>
             <b-row>
                 <b-col class="d-flex align-items-center">
@@ -150,9 +141,9 @@ export default {
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
-        this.$store.dispatch('importV2Module/getAllLists')
+        this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: 10000})
+        this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: 10000})
         try {
-            await this.$store.dispatch("importV2Module/getAllProcesses")
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -163,10 +154,7 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'importV2Module/fields',
             items: 'importV2Module/imports',
-            lists: 'importV2Module/lists',
-            // isCollapsed: 'uxModule/isCollapsed',
-            // fields: 'backgroundProcessesModule/fields',
-            // items: 'backgroundProcessesModule/processes'
+            lists: 'listModule/lists',
             total: 'listModule/total'
         }),
         rows() { return this.total ? this.total : 1 }

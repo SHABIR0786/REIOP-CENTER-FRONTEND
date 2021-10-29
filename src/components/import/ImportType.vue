@@ -61,7 +61,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .data-type-btn {
         background-color: #808080;
         color: white;

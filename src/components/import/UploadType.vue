@@ -61,7 +61,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .upload-type {
         background-color: #808080;
         color: white;
