@@ -12,14 +12,14 @@
         <b-container fluid>
             <b-row class="d-flex justify-content-center">
                 <b-col class="d-flex justify-content-end flex-column">
-<!--                    <b-row class="mb-2">-->
-<!--                        <b-col cols="9" class="mx-auto">-->
-<!--                            <b-input-group prepend="Market">-->
-<!--                                <b-form-input v-model="list.market"></b-form-input>-->
-<!--                                <b-form-select v-model="list.market" :options="market"></b-form-select>-->
-<!--                            </b-input-group>-->
-<!--                        </b-col>-->
-<!--                    </b-row>-->
+                    <b-row class="mb-2">
+                        <b-col cols="9" class="mx-auto">
+                            <b-input-group prepend="Market">
+                                <b-form-input v-model="list.list_market"></b-form-input>
+                                <b-form-select v-model="list.list_market" :options="market"></b-form-select>
+                            </b-input-group>
+                        </b-col>
+                    </b-row>
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Group">
@@ -85,6 +85,7 @@
                     list_pull_date: ''
                 },
                 // market: [],
+                market:[],
                 group: [],
                 type: [],
                 source: [],
@@ -93,7 +94,7 @@
         },
         mounted() {
             this.lists.forEach(e => {
-                // this.market.push(e.)
+                this.market.push(e.list_market)
                 this.group.push(e.list_group);
                 this.type.push(e.list_type);
                 this.source.push(e.list_source);
@@ -103,6 +104,7 @@
         methods: {
             checkUpdateList() {
                 let obj = this.lists.find(e =>
+                    e.list_market === this.list.list_market &&
                     e.list_group === this.list.list_group &&
                     e.list_type === this.list.list_type &&
                     e.list_source === this.list.list_source &&

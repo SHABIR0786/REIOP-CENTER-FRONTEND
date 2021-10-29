@@ -37,7 +37,9 @@ export const mutations = {
         payload.forEach( item => {
            switch (item.section) {
                case 'subject':
-                   state.subjectFields.push(item); // label
+                   if(item.field !== 'subject_market'){
+                       state.subjectFields.push(item); // label
+                   }
                    break;
                case  'seller':
                    state.sellerFields.push(item);
