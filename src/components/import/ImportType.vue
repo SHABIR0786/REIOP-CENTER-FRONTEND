@@ -87,4 +87,7 @@
         margin-bottom: 0 !important;
         font-weight: bold;
     }
+    .next-btn {
+        text-align: right;
+    }
 </style>

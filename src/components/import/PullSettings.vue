@@ -72,17 +72,22 @@
 
 
 <script>
+    import {mapGetters} from "vuex";
+
     export default {
         name: "PullSettings",
         props: ['lists'],
         data () {
             return {
                 list: {
-                    // market: '',
+                    list_market: '',
                     list_group: '',
                     list_type: '',
                     list_source: '',
-                    list_pull_date: ''
+                    list_pull_date: '',
+                    list_hash: '',
+                    user_id: '',
+                    team_id: '',
                 },
                 // market: [],
                 market:[],
@@ -101,19 +106,17 @@
                 this.pull_date.push(e.list_pull_date);
             });
         },
+        computed: {
+            ...mapGetters({
+                user: 'loginModule/getAuthUser'
+            })
+        },
         methods: {
             checkUpdateList() {
-                let obj = this.lists.find(e =>
-                    e.list_market === this.list.list_market &&
-                    e.list_group === this.list.list_group &&
-                    e.list_type === this.list.list_type &&
-                    e.list_source === this.list.list_source &&
-                    e.list_pull_date === this.list.list_pull_date
-                );
-
-                if(!obj) {
-                    this.$store.dispatch('listModule/addList', this.list)
-                }
+                this.list.user_id = this.user.id;
+                this.list.team_id = this.user.team_id;
+                this.list.list_hash = this.list.list_market + '_' + this.list.list_type + ' ' +  this.list.list_group + ' ' + this.list.list_source
+                this.$store.dispatch('listModule/addList', this.list)
 
                 this.$emit('pullSettingsResponse', this.list);
             }
