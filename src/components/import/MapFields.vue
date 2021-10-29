@@ -9,7 +9,7 @@
             <p>Description of step for user: To be filled out later.</p>
         </div>
         <hr>
-            <import :upload_type="upload_type" class="w-100"></import>
+            <import :upload_type="upload_type" class="w-100 import-map"></import>
     </div>
 </template>
 
@@ -58,5 +58,8 @@
     }
     .next-btn {
         margin-top: 60px;
+    }
+    .import-map {
+        width: 100% !important;
     }
 </style>
