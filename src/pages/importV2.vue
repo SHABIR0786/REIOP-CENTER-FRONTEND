@@ -31,7 +31,6 @@
                     :per-page="0"
                     :sticky-header="true"
             >
-    <!--            :current-page="currentPage"-->
                 <template #table-busy>
                     <div class="text-center" my-2>
                         <b-spinner class="align-middle"></b-spinner>
@@ -39,9 +38,6 @@
                     </div>
                 </template>
 
-    <!--            <template #head(id)="scope">-->
-    <!--                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>-->
-    <!--            </template>-->
                 <template #head(actions)="scope">
                     <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
                 </template>
@@ -92,10 +88,7 @@
             </b-row>
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
-<!--        <div v-if="importDetails.file">-->
-<!--            <import_step1 />-->
-<!--        </div>-->
-<!--        <component is="import_step1"></component>-->
+
         <import-type v-if="step_1" @importResponse="importTypeResponse"></import-type>
         <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse"></upload-type>
         <pull-settings v-if="step_3" :lists="lists" @pullSettingsResponse="pullSettingsResponse"></pull-settings>
@@ -163,12 +156,8 @@ export default {
         modalResponse(response) {
             this.showImportModal = false;
             if (response) {
-                this.download_type = response;
-                // this.step_1 = true;
-                // this.step_2 = false;
-                // this.step_3 = false;
-                // this.step_4 = false;
-                //
+              this.download_type = response;
+              this.$store.dispatch("importV2Module/exportFile", {type: response, file: this.download_data})
             }
         },
         importTypeResponse(response) {
