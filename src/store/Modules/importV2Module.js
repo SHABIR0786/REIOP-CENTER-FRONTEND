@@ -72,7 +72,6 @@ const actions = {
     },
     async exportFile({ commit }, data) {
         return await api.post(`/export`, {...data}).then((response) => {
-            alert('Exported');
             commit('EXPORTED', response)
             console.log(response);
         })
