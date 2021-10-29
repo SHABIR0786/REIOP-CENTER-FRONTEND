@@ -9,11 +9,11 @@
                     drop-placeholder="Drop file here"
                     accept=".xls, .xlsx, .csv"
                     variant="primary"
-                    class="mt-5"
+                    class="mt-2"
                 ></b-form-file>
             </b-col>
         </b-row>
-        <b-row  class="mt-5">
+        <b-row  class="mt-4">
             <b-col cols="12" md="3">
                 <fields-card class="field-section" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
             </b-col>

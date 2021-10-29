@@ -11,7 +11,6 @@ const state = {
 
         {key:"list_group", label: "Group", sortable: true},
         {key:"list_type", label: "Type", sortable: true},
-        {key:"list_code", label: "Code", sortable: true},
         {key:"list_source", label: "Source", sortable: true},
 
         // Custom fields

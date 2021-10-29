@@ -33,6 +33,7 @@
             <b-col cols="12" class="next-btn">
                 <b-button
                         class="data-type"
+                        variant="primary"
                         @click="setImportType()"
                         :disabled="!import_type.length"
                 >
