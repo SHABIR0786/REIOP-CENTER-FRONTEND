@@ -119,6 +119,11 @@
             <b-row class="mt-5">
                     <b-tabs class="w-100" content-class="mt-3" fill>
                         <b-tab title="Assigned Sellers" active>
+                            <b-row>
+                                <b-col class="assign-btn">
+                                    <b-button class="mb-2" variant="primary">Assign Existing Seller</b-button>
+                                </b-col>
+                            </b-row>
                             <b-table
                                     id="seller-table"
                                     small
@@ -165,11 +170,13 @@
                     Cancel
                 </b-button>
             </div>
+            <edit-seller-details :showModal="showDetailsModal" :propsSeller="editedItem" @cancel="showDetailsModal=false" @save="save"></edit-seller-details>
         </template>
     </b-modal>
 </template>
 <script>
 import {mapGetters} from "vuex";
+import EditSellerDetails from "./EditSellerDetails";
 
 export default {
     name: 'EditSubjectModal',
@@ -181,10 +188,22 @@ export default {
             type: Object
         }
     },
+    components: {
+        EditSellerDetails
+    },
     methods: {
         edit() {
             this.isReadOnly = true;
             this.$emit('save', this.subject);
+        },
+        editItem(item) {
+            console.log('item', item);
+            this.showDetailsModal = true
+            this.editedItem = { ...item }
+        },
+        save(item) {
+            console.log(item);
+            this.$store.dispatch('sellerModule/editSeller', {...item})
         }
     },
     data() {
@@ -205,7 +224,9 @@ export default {
             isReadOnly: true,
             buttonState: 'Edit',
             isBusy: false,
-            sellerTableFields: null
+            sellerTableFields: null,
+            editedItem: {},
+            showDetailsModal: false,
         }
     },
     computed: {
@@ -215,7 +236,10 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     mounted () {
-        this.sellerTableFields = this.sellerFields.filter(s => s.key !== 'actions')
+        this.sellerTableFields = this.sellerFields.filter(s => s.key !== 'seller_total_subjects' &&
+            s.key !== 'seller_total_subjects' && s.key !== 'seller_total_phones' && s.key !== 'seller_total_emails' &&
+            s.key !== 'seller_mailing_address_line2' && s.key !== 'seller_company_owned' && s.key !== 'created_at' &&
+            s.key !== 'updated_at' && s.key !== 'user_id')
     },
     watch: {
         showModal() {
@@ -229,5 +253,8 @@ export default {
     .close-icon {
         font-size: 30px;
         cursor: pointer;
+    }
+    .assign-btn {
+        text-align: end;
     }
 </style>
