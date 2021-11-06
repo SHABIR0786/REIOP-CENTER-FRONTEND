@@ -123,7 +123,7 @@
         <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-        <custom-view :showModal="showCustomModalView" @cancel="showCustomModalView=false"></custom-view>
+        <custom-view :showModal="showCustomModalView" @cancel="showCustomModalView=false" @save="saveCustomView"></custom-view>
         <filter-properties :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-properties>
     </div>
 </template>
@@ -209,6 +209,15 @@ export default {
         },
         exportProperties () {
             this.$store.dispatch('propertyModule/exportProperties');
+        },
+        saveCustomView(template, type) {
+          console.log('tem', template);
+          console.log('type', type);
+
+
+          if (type === 'saveAndMakeTemplate') {
+            this.$store.dispatch('propertyModule/createTemplate', template);
+          }
         }
     },
     watch: {
