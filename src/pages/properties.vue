@@ -2,10 +2,25 @@
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
         <h3>Properties</h3>
         <div>
+            <b-row class="text-end">
+                <b-col cols="12" class="d-flex justify-content-end">
+                    <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
+                        <b-icon icon="filter" aria-hidden="true"></b-icon> Filter</b-button>
+                    <b-button variant="outline-primary" class="filter d-flex align-items-center">
+                        <b-icon icon="x" aria-hidden="true"></b-icon> Reset</b-button>
+                </b-col>
+                <b-col cols="12" class="d-flex justify-content-end">
+                    <b-button variant="primary" class="filter d-flex align-items-center mt-2" @click="showCustomModalView = true">Custom View</b-button>
+                </b-col>
+            </b-row>
             <b-row>
-                <b-col cols="8" class="d-flex">
-                    <div class="info latest d-flex justify-content-center ml-0" @click="exportProperties()">
+                <b-col cols="8">
+                    <div class="info latest d-flex justify-content-center ml-0" @click="showFileType = !showFileType">
                         <div>Export</div>
+                    </div>
+                    <div v-if="showFileType" class="mt-2">
+                        <b-button variant="primary" class="mr-2" @click="exportProperties()">Excel</b-button>
+                        <b-button variant="primary" @click="exportProperties()">CSV</b-button>
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
@@ -108,6 +123,8 @@
         <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
+        <custom-view :showModal="showCustomModalView" @cancel="showCustomModalView=false"></custom-view>
+        <filter-properties :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-properties>
     </div>
 </template>
 <script>
@@ -116,6 +133,8 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 import AddSubjectModal from "../components/subject/AddSubjectModal";
+import CustomView from "../components/properties/CustomView";
+import FilterProperties from "../components/properties/FilterProperties";
 
 export default {
     name: "Properties",
@@ -123,7 +142,9 @@ export default {
         BIcon,
         EditSubjectModal,
         DeleteModal,
-        AddSubjectModal
+        AddSubjectModal,
+        CustomView,
+        FilterProperties
     },
     data () {
         return {
@@ -136,7 +157,10 @@ export default {
             itemToDelete: {},
             pageOptions: [10, 20, 50],
             searchProperty: '',
-            showAddModal: false
+            showAddModal: false,
+            showCustomModalView: false,
+            showFilterPropertiesModal: false,
+            showFileType: false,
         }
     },
     computed: {
@@ -231,6 +255,9 @@ export default {
     }
     .b-table-sticky-header {
         max-height: calc(100vh - 372px) !important;
+    }
+    .filter-container {
+        text-align: end;
     }
 </style>
 
