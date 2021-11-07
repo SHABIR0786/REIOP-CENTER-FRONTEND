@@ -75,7 +75,7 @@
                 <b-row class="w-100 mt-5">
                     <b-col>
                         <p>Market</p>
-                        <b-form-select  v-model="selected" :options="list_option"></b-form-select>
+                        <b-form-select  v-model="filter.list_market" :options="list_market_option"></b-form-select>
                     </b-col>
                     <b-col>
                         <p>SubMarket</p>
@@ -143,7 +143,7 @@
                         variant="primary"
                         size="sm"
                         class="float-right mr-2"
-                        @click="$emit('save', subject)"
+                        @click="$emit('save', filter)"
                 >
                     Save
                 </b-button>
@@ -171,7 +171,14 @@
         data() {
             return {
                 selected: false,
+              filter: {
+                list_market: '',
+                list_group: ''
+              },
                 list_option: [],
+              list_market_option: [
+                  'q', 'a', 'Random' // Market Options
+              ],
                 perPage: 9999,
                 condition: '',
                 conditionalFilter: [

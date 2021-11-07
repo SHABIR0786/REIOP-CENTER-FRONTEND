@@ -117,8 +117,16 @@ const actions = {
             return response
         })
     },
-    async exportProperties() {
-        return await api.get('/properties/export?type=csv').then(() => {console.log('success')});
+    // eslint-disable-next-line no-empty-pattern
+    async exportProperties({}, data) {
+        let params = '?type=csv';
+        if (data && data.filter) {
+            const keys = Object.keys(data.filter);
+            keys.forEach(key => {
+                params = params + '&' + key + '=' + data.filter[key];
+            })
+        }
+        return await api.get(`/properties/export${params}`).then(() => {console.log('success')});
     },
 
     async createTemplate({ commit }, template) {

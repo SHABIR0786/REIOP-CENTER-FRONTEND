@@ -1,15 +1,15 @@
 <template>
     <div>
-        <h3>New Import</h3>
-        <hr>
-        <div class="type-container">
-            <h3>Step 4: Map Fields</h3>
-        </div>
-        <div class="info-text">
-            <p>Description of step for user: To be filled out later.</p>
-        </div>
-        <hr>
-            <import :upload_type="upload_type" class="w-100 import-map"></import>
+      <h3>New Import</h3>
+      <hr>
+      <div class="type-container">
+          <h3>Step 4: Map Fields</h3>
+      </div>
+      <div class="info-text">
+          <p>Description of step for user: To be filled out later.</p>
+      </div>
+      <hr>
+      <import :upload_type="upload_type" :list_settings="list_settings" class="w-100 import-map"></import>
     </div>
 </template>
 
@@ -18,14 +18,12 @@
     import Import from '../../pages/import'
     export default {
         name: "MapFields",
-        props: ['upload_type'],
+        props: ['upload_type', 'list_settings'],
         components: {
             Import
         },
         data () {
-            return {
-
-            }
+            return { }
         }
     }
 </script>
