@@ -92,7 +92,7 @@
         <import-type v-if="step_1" @importResponse="importTypeResponse"></import-type>
         <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse"></upload-type>
         <pull-settings v-if="step_3" :lists="lists" @pullSettingsResponse="pullSettingsResponse"></pull-settings>
-        <map-fields :upload_type="importDetails.upload_type" v-if="step_4"></map-fields>
+        <map-fields :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" v-if="step_4"></map-fields>
     </div>
 </template>
 
@@ -168,7 +168,6 @@ export default {
                this.step_2 = true;
                this.step_3 = false;
                this.step_4 = false;
-
            }
         },
         uploadTypeResponse (response) {

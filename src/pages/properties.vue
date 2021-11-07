@@ -124,7 +124,7 @@
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
         <custom-view :showModal="showCustomModalView" @cancel="showCustomModalView=false" @save="saveCustomView"></custom-view>
-        <filter-properties :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-properties>
+        <filter-properties :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" @save="triggerFilter"></filter-properties>
     </div>
 </template>
 <script>
@@ -208,7 +208,7 @@ export default {
             this.showAddModal = true;
         },
         exportProperties () {
-            this.$store.dispatch('propertyModule/exportProperties');
+            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter});
         },
         saveCustomView(template, type) {
           console.log('tem', template);
@@ -218,6 +218,20 @@ export default {
           if (type === 'saveAndMakeTemplate') {
             this.$store.dispatch('propertyModule/createTemplate', template);
           }
+        },
+        triggerFilter(filter) {
+          console.log('filter', filter);
+          // console.log('type', type);
+          //
+          //
+          // if (type === 'saveAndMakeTemplate') {
+          //   this.$store.dispatch('propertyModule/createTemplate', template);
+          // }
+
+          this.filter = {subject_address: '37318 Oak St'};
+
+          // TODO update filter object: it's just for testing (Checking API)!!!
+          this.$store.dispatch("propertyModule/getAllSubjects", {page: 1, perPage: this.perPage, filter: this.filter})
         }
     },
     watch: {

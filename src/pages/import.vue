@@ -47,7 +47,7 @@ import MappedFields from '../components/import/MappedFields.vue'
 
 export default {
     name: "Import",
-    props: ['upload_type'],
+    props: ['upload_type', 'list_settings'],
     components: {
         FieldsCard,
         MappedFields
@@ -96,7 +96,6 @@ export default {
                 subject: this.subjectFields,
             }
         }
-
     },
     methods: {
         previewFile (e) {
@@ -193,7 +192,12 @@ export default {
                 mapping.push({fromField: fromF, toField: toItem, action: ""});
             })
 
-            await this.$store.dispatch('importModule/uploadExcelDataV2', {file: this.file, mappedItems: mapping, url: this.url})
+            await this.$store.dispatch('importModule/uploadExcelDataV2', {
+              file: this.file,
+              mappedItems: mapping,
+              url: this.url,
+              list: this.list_settings
+            })
 
             await this.$store.dispatch('uxModule/hideLoader')
             this.$router.push({path: '/'}).catch(() => {})
