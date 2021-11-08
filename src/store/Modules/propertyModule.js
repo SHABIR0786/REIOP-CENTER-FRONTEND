@@ -56,6 +56,11 @@ const mutations = {
     ADD_SUBJECT(state, payload) {
         const findIndex = state.subjects.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.subjects.splice(findIndex, 1, { ...payload })
+    },
+    ADD_TEMPLATE(state, payload) {
+        console.log(state, payload);
+        // const findIndex = state.subjects.findIndex(({ id }) => id === payload.id)
+        // findIndex !== -1 && state.subjects.splice(findIndex, 1, { ...payload })
     }
 }
 
@@ -112,8 +117,27 @@ const actions = {
             return response
         })
     },
-    async exportProperties() {
-        return await api.get('/properties/export').then(() => {console.log('success')});
+    // eslint-disable-next-line no-empty-pattern
+    async exportProperties({}, data) {
+        let params = '?type=csv';
+        if (data && data.filter) {
+            const keys = Object.keys(data.filter);
+            keys.forEach(key => {
+                params = params + '&' + key + '=' + data.filter[key];
+            })
+        }
+        return await api.get(`/properties/export${params}`).then(() => {console.log('success')});
+    },
+
+    async createTemplate({ commit }, template) {
+        const data = {
+            name: template.name | 'Template',
+            configuration: JSON.stringify(template)
+        }
+        return await api.post(`/templates`, {...data}).then((response) => {
+            commit('ADD_TEMPLATE', data)
+            return response
+        })
     }
 }
 

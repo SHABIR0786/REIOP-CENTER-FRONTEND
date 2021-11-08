@@ -115,8 +115,8 @@
             checkUpdateList() {
                 this.list.user_id = this.user.id;
                 this.list.team_id = this.user.team_id;
-                this.list.list_hash = this.list.list_market + '_' + this.list.list_type + ' ' +  this.list.list_group + ' ' + this.list.list_source
-                this.$store.dispatch('listModule/addList', this.list)
+                this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source
+                // this.$store.dispatch('listModule/addList', this.list)
 
                 this.$emit('pullSettingsResponse', this.list);
             }
