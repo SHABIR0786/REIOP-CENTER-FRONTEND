@@ -121,7 +121,7 @@
                         <b-tab title="Assigned Sellers" active>
                             <b-row>
                                 <b-col class="assign-btn">
-                                    <b-button class="mb-2" variant="primary">Assign Existing Seller</b-button>
+                                    <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
                                 </b-col>
                             </b-row>
                             <b-table
@@ -158,6 +158,7 @@
                             </b-table>
                         </b-tab>
                         <b-tab title="Related Lists">
+
                         </b-tab>
                         <b-tab title="Related Running Lists">
                         </b-tab>
@@ -171,12 +172,14 @@
                 </b-button>
             </div>
             <edit-seller-details :showModal="showDetailsModal" :propsSeller="editedItem" @cancel="showDetailsModal=false" @save="save"></edit-seller-details>
+            <assign-existing-seller :showModal="showAssignSellerModal" @cancel="showAssignSellerModal = false"></assign-existing-seller>
         </template>
     </b-modal>
 </template>
 <script>
 import {mapGetters} from "vuex";
 import EditSellerDetails from "./EditSellerDetails";
+import AssignExistingSeller from "./AssignExistingSeller";
 
 export default {
     name: 'EditSubjectModal',
@@ -189,7 +192,8 @@ export default {
         }
     },
     components: {
-        EditSellerDetails
+        EditSellerDetails,
+        AssignExistingSeller
     },
     methods: {
         edit() {
@@ -197,12 +201,10 @@ export default {
             this.$emit('save', this.subject);
         },
         editItem(item) {
-            console.log('item', item);
             this.showDetailsModal = true
             this.editedItem = { ...item }
         },
         save(item) {
-            console.log(item);
             this.$store.dispatch('sellerModule/editSeller', {...item})
         }
     },
@@ -227,6 +229,7 @@ export default {
             sellerTableFields: null,
             editedItem: {},
             showDetailsModal: false,
+            showAssignSellerModal: false,
         }
     },
     computed: {

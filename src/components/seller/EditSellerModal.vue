@@ -132,7 +132,7 @@
                                 striped
                                 hover
                                 :busy="isBusy"
-                                :fields="phoneTableFields"
+                                :fields="phoneFields"
                                 :items="seller.phones"
                                 responsive
                                 :per-page="0"
@@ -154,8 +154,8 @@
                                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editPhone(data.item)"></b-icon>
+                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon>
                             </template>
                         </b-table>
                     </b-tab>
@@ -166,7 +166,7 @@
                                 striped
                                 hover
                                 :busy="isBusy"
-                                :fields="emailTableFields"
+                                :fields="emailFields"
                                 :items="seller.emails"
                                 responsive
                                 :per-page="0"
@@ -188,8 +188,8 @@
                                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editEmail(data.item)"></b-icon>
+                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteEmail(data.item)"></b-icon>
                             </template>
                         </b-table>
                     </b-tab>
@@ -200,7 +200,7 @@
                                 striped
                                 hover
                                 :busy="isBusy"
-                                :fields="goldenTableFields"
+                                :fields="goldenFields"
                                 :items="seller.golden_addresses"
                                 responsive
                                 :per-page="0"
@@ -222,8 +222,8 @@
                                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editGoldenAddress(data.item)"></b-icon>
+                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteGoldenAddress(data.item)"></b-icon>
                             </template>
                         </b-table>
                     </b-tab>
@@ -234,7 +234,7 @@
                                 striped
                                 hover
                                 :busy="isBusy"
-                                :fields="subjectTableFields"
+                                :fields="subjectFields"
                                 :items="seller.subjects"
                                 responsive
                                 :per-page="0"
@@ -276,13 +276,23 @@
                 </b-button>
             </div>
         </template>
+        <edit-phone-number-modal :showModal="showEditPhoneModal" :propsData="editedItem" @cancel="showEditPhoneModal = false"></edit-phone-number-modal>
+        <edit-email-modal :showModal="showEditEmailModal" :propsData="editedItem" @cancel="showEditEmailModal = false"></edit-email-modal>
+        <edit-golden-address-modal :showModal="showGoldenAddressModal" :propsData="editedItem" @cancel="showGoldenAddressModal= false"></edit-golden-address-modal>
     </b-modal>
 </template>
 <script>
-import {mapGetters} from "vuex";
+import EditPhoneNumberModal from "../phoneNumber/EditPhoneNumberModal";
+import EditEmailModal from "../email/EditEmailModal";
+import EditGoldenAddressModal from "../goldenAddress/EditGoldenAddressModal";
 
 export default {
     name: 'EditSellerModal',
+    components: {
+        EditPhoneNumberModal,
+        EditEmailModal,
+        EditGoldenAddressModal
+    },
     props: {
         showModal: {
             type: Boolean
@@ -295,6 +305,27 @@ export default {
         edit() {
             this.isReadOnly = true;
             this.$emit('save', this.seller);
+        },
+        editPhone(item) {
+            this.editedItem = { ...item }
+            this.showEditPhoneModal = true;
+        },
+        deletePhone(item) {
+            this.$store.dispatch('phoneNumberModule/deletePhoneNumber', item.id)
+        },
+        editEmail(item) {
+            this.editedItem = { ...item }
+            this.showEditEmailModal = true;
+        },
+        deleteEmail(item) {
+            this.$store.dispatch('emailModule/deleteEmail', item.id);
+        },
+        editGoldenAddress(item) {
+            this.editedItem = { ...item }
+            this.showGoldenAddressModal = true;
+        },
+        deleteGoldenAddress(item) {
+            this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', item.id)
         }
     },
     data() {
@@ -319,22 +350,55 @@ export default {
             phoneTableFields: null,
             emailTableFields: null,
             goldenTableFields: null,
-            subjectTableFields: null
+            subjectTableFields: null,
+            phoneFields: [
+                {key:"id", label: "ID", sortable: true},
+                {key: "phone_number", label: "Phone Number", sortable: true},
+                {key: "phone_type", label: "Phone Type", sortable: true},
+                {key: "phone_validity", label: "Phone Validity", sortable: true},
+                {key: "phone_skip_source", label: "Phone Skip Source"},
+                {key:"created_at", label: "Created Date", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
+
+            ],
+            emailFields: [
+                {key:"id", label: "ID", sortable: true},
+                {key: "email_address", label: "Email Address", sortable: true},
+                {key: "email_validity", label: "Email Validity", sortable: true},
+                {key: "email_skip_source", label: "Skip Source", sortable: true},
+                {key:"created_at", label: "Created Date", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
+            ],
+            goldenFields: [
+                {key:"id", label: "ID", sortable: true},
+                {key: "golden_address_address", label: "Golden Address", sortable: true},
+                {key: "golden_address_city", label: "Golden City", sortable: true},
+                {key: "golden_address_state", label: "Golden State", sortable: true},
+                {key: "golden_address_zip", label: "Golden Zip", sortable: true},
+                {key:"created_at", label: "Created Date", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
+            ],
+            subjectFields: [
+                {key:"id", label: "Id", sortable: true},
+                {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
+                {key: "subject_city", label: "Subject City", sortable: true},
+                {key: "subject_state", label: "Subject State", sortable: true},
+                {key: "subject_zip", label: "Subject Zip", sortable: true},
+                {key: "subject_country", label: "Subject County", sortable: true},
+                {key: "subject_market", label: "Market", sortable: true},
+                {key: "subject_age", label: "Subject Age", sortable: true},
+                {key: "subject_type", label: "Subject Type", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
+            ],
+            showEditPhoneModal: false,
+            showEditEmailModal: false,
+            showGoldenAddressModal: false,
+            editedItem: {},
         }
     },
     computed: {
-        ...mapGetters({
-            phoneFields: 'phoneNumberModule/fields',
-            goldenFields: 'goldenAddressModule/fields',
-            subjectFields: 'subjectModule/fields',
-            emailFields: 'emailModule/fields',
-        }),
     },
     mounted () {
-        this.phoneTableFields = this.phoneFields.filter(s => s.key !== 'actions')
-        this.emailTableFields = this.emailFields.filter(s => s.key !== 'actions')
-        this.goldenTableFields = this.goldenFields.filter(s => s.key !== 'actions')
-        this.subjectTableFields = this.subjectFields.filter(s => s.key !== 'actions')
     },
     watch: {
         showModal() {
