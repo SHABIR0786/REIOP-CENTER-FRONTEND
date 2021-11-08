@@ -119,12 +119,15 @@ const actions = {
     },
     // eslint-disable-next-line no-empty-pattern
     async exportProperties({}, data) {
-        let params = '?type=csv';
-        if (data && data.filter) {
-            const keys = Object.keys(data.filter);
-            keys.forEach(key => {
-                params = params + '&' + key + '=' + data.filter[key];
-            })
+        let params = '?type=' + data.fileType;
+        if (data) {
+            // params = '?type=' + data.fileType
+            if (data.filter) {
+                const keys = Object.keys(data.filter);
+                keys.forEach(key => {
+                    params = params + '&' + key + '=' + data.filter[key];
+                })
+            }
         }
         return await api.get(`/properties/export${params}`).then(() => {console.log('success')});
     },
