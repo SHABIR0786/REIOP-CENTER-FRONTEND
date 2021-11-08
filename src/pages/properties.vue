@@ -207,7 +207,7 @@ export default {
         addItem() {
             this.showAddModal = true;
         },
-        exportProperties (fileType) {
+        exportProperties (fileType = 'csv') {
             this.showFileType = false;
             this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, fileType: fileType});
         },
