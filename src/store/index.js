@@ -20,6 +20,7 @@ import propertyModule from "./Modules/propertyModule"
 import backgroundProcessesModule from "./Modules/backgroundProcessesModule"
 import errorModule from "./Modules/errorModule"
 import importV2Module from "./Modules/importV2Module";
+import templatesModule from "./Modules/templatesModule";
 
 const state = {}
 
@@ -43,7 +44,9 @@ export default new Vuex.Store({
         propertyModule: propertyModule,
         backgroundProcessesModule: backgroundProcessesModule,
         errorModule: errorModule,
-        importV2Module: importV2Module
+        importV2Module: importV2Module,
+        templatesModule: templatesModule,
+
     },
     state,
     mutations,

@@ -217,7 +217,7 @@ export default {
 
 
           if (type === 'saveAndMakeTemplate') {
-            this.$store.dispatch('propertyModule/createTemplate', template);
+            this.$store.dispatch('templatesModule/createTemplate', template);
           }
         },
         triggerFilter(filter) {
