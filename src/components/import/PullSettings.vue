@@ -15,7 +15,7 @@
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Market">
-                                <b-form-input v-model="list.list_market"></b-form-input>
+                                <b-form-input :state="list.list_market.length > 0" v-model="list.list_market"></b-form-input>
                                 <b-form-select v-model="list.list_market" :options="market"></b-form-select>
                             </b-input-group>
                         </b-col>
@@ -23,7 +23,7 @@
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Group">
-                                <b-form-input v-model="list.list_group"></b-form-input>
+                                <b-form-input :state="list.list_group.length > 0" v-model="list.list_group"></b-form-input>
                                 <b-form-select v-model="list.list_group" :options="group"></b-form-select>
                             </b-input-group>
                         </b-col>
@@ -31,7 +31,7 @@
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Type">
-                                <b-form-input v-model="list.list_type"></b-form-input>
+                                <b-form-input :state="list.list_type.length > 0" v-model="list.list_type"></b-form-input>
                                 <b-form-select v-model="list.list_type" :options="type"></b-form-select>
                             </b-input-group>
                         </b-col>
@@ -39,7 +39,7 @@
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Source">
-                                <b-form-input v-model="list.list_source"></b-form-input>
+                                <b-form-input :state="list.list_source.length > 0" v-model="list.list_source"></b-form-input>
                                 <b-form-select v-model="list.list_source" :options="source"></b-form-select>
                             </b-input-group>
                         </b-col>
@@ -61,6 +61,7 @@
                 <b-button
                         variant="primary"
                         class="data-type"
+                        :disabled='list.list_market.length === 0 || list.list_group.length === 0 || list.list_type.length === 0 || list.list_source.length === 0'
                         @click="checkUpdateList()"
                 >
                     Next

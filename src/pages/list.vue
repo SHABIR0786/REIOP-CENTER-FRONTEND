@@ -185,6 +185,9 @@ export default {
         },
         save(item) {
             // this.showModal = false
+            if (item.subjects) {
+                delete item.subjects
+            }
             this.$store.dispatch('listModule/editList', {...item})
         },
         add(item) {

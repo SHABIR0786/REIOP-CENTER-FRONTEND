@@ -29,6 +29,7 @@ const mutations = {
     SET_ALL_LISTS(state, payload) {
         const data = [...payload]
         data.forEach(e => {
+            e.list_total_subject = e.subjects.length;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })

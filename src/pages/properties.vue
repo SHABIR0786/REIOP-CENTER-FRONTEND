@@ -19,8 +19,8 @@
                         <div>Export</div>
                     </div>
                     <div v-if="showFileType" class="mt-2">
-                        <b-button variant="primary" class="mr-2" @click="exportProperties()">Excel</b-button>
-                        <b-button variant="primary" @click="exportProperties()">CSV</b-button>
+                        <b-button variant="primary" class="mr-2" @click="exportProperties('xlsx')">Excel</b-button>
+                        <b-button variant="primary" @click="exportProperties('csv')">CSV</b-button>
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
@@ -207,8 +207,9 @@ export default {
         addItem() {
             this.showAddModal = true;
         },
-        exportProperties () {
-            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter});
+        exportProperties (fileType = 'csv') {
+            this.showFileType = false;
+            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, fileType: fileType});
         },
         saveCustomView(template, type) {
           console.log('tem', template);
@@ -216,7 +217,7 @@ export default {
 
 
           if (type === 'saveAndMakeTemplate') {
-            this.$store.dispatch('propertyModule/createTemplate', template);
+            this.$store.dispatch('templatesModule/createTemplate', template);
           }
         },
         triggerFilter(filter) {
