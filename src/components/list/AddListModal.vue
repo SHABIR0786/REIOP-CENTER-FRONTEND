@@ -30,8 +30,8 @@
                 </b-row>
                 <b-row>
                     <b-col cols="12">
-                        <b-input-group prepend="Code" class="mb-2">
-                            <b-form-input v-model="list.list_code"></b-form-input>
+                        <b-input-group prepend="Market" class="mb-2">
+                            <b-form-input v-model="list.list_market"></b-form-input>
                         </b-input-group>
                     </b-col>
                 </b-row>
@@ -79,7 +79,7 @@
                 list: {
                     list_type: '',
                     list_group: '',
-                    list_code: '',
+                    list_market: '',
                     list_source: '',
                     list_stack: '',
                 },

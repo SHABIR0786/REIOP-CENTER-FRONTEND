@@ -16,74 +16,66 @@
                         <b-form-radio v-model="selected" name="some-radios" value="true">Included</b-form-radio>
                         <div class="d-flex align-items-center mt-4">
                             <p class="mr-1">List Dept:</p>
-                            <b-form-select class="select" v-model="selected" :options="list_option"></b-form-select>
+                            <b-form-select disabled class="select" v-model="selected" :options="list_option"></b-form-select>
                         </div>
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Group:</p>
-                            <b-form-select class="select"  v-model="selected" :options="list_option"></b-form-select>
+                            <b-form-select class="select"  v-model="filter.list_group" :options="list_group_option"></b-form-select>
                         </div>
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Source:</p>
-                            <b-form-select class="select"  v-model="selected" :options="list_option"></b-form-select>
+                            <b-form-select class="select"  v-model="filter.list_source" :options="list_source_option"></b-form-select>
                         </div>
                     </b-col>
                     <b-col cols="4" class="d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Type:</p>
-                            <b-form-select class="select"  v-model="selected" :options="list_option"></b-form-select>
-                        </div>
-                        <div class="d-flex align-items-center mt-2">
-                            <p class="mr-1">List Code:</p>
-                            <b-form-select class="select"  v-model="selected" :options="list_option"></b-form-select>
+                            <b-form-select class="select"  v-model="filter.list_type" :options="list_type_option"></b-form-select>
                         </div>
                     </b-col>
                     <b-col cols="4">
                         <h5>Running List</h5>
-                        <b-form-radio v-model="selected" name="some-radios" value="true">Included</b-form-radio>
+                        <b-form-radio v-model="running_list.included" name="some-radios" value="true">Included</b-form-radio>
                         <b-form-select class="mt-4"  v-model="selected" :options="list_option"></b-form-select>
-                        <b-form-radio v-model="selected" class="mt-4" name="some-radios" value="true">Excluded</b-form-radio>
+                        <b-form-radio v-model="running_list.included" class="mt-4" name="some-radios" value="true">Excluded</b-form-radio>
                         <b-form-select class="mt-4"  v-model="selected" :options="list_option"></b-form-select>
                     </b-col>
                 </b-row>
                 <b-row class="w-100">
                     <b-col cols="4">
-                        <b-form-radio v-model="selected" class="mt-4" name="some-radios" value="true">Excluded</b-form-radio>
+                        <b-form-radio v-model="selected" disabled class="mt-4" name="some-radios" value="true">Excluded</b-form-radio>
                         <div class="d-flex align-items-center mt-4">
                             <p class="mr-1">List Dept:</p>
-                            <b-form-select class="select" v-model="selected" :options="list_option"></b-form-select>
+                            <b-form-select disabled class="select" v-model="selected" :options="list_option"></b-form-select>
                         </div>
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Group:</p>
-                            <b-form-select class="select"  v-model="selected" :options="list_option"></b-form-select>
+                            <b-form-select disabled class="select" v-model="selected" :options="list_option"></b-form-select>
                         </div>
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Source:</p>
-                            <b-form-select class="select"  v-model="selected" :options="list_option"></b-form-select>
+                            <b-form-select disabled class="select"  v-model="selected" :options="list_option"></b-form-select>
                         </div>
                     </b-col>
                     <b-col cols="4" class="d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Type:</p>
-                            <b-form-select class="select"  v-model="selected" :options="list_option"></b-form-select>
-                        </div>
-                        <div class="d-flex align-items-center mt-2">
-                            <p class="mr-1">List Code:</p>
-                            <b-form-select class="select"  v-model="selected" :options="list_option"></b-form-select>
+                            <b-form-select disabled class="select"  v-model="selected" :options="list_option"></b-form-select>
                         </div>
                     </b-col>
                 </b-row>
                 <b-row class="w-100 mt-5">
                     <b-col>
                         <p>Market</p>
-                        <b-form-select  v-model="filter.list_market" :options="list_market_option"></b-form-select>
+                        <b-form-select v-model="filter.list_market" :options="list_market_option"></b-form-select>
                     </b-col>
                     <b-col>
                         <p>SubMarket</p>
-                        <b-form-select  v-model="selected" :options="list_option"></b-form-select>
+                        <b-form-select disabled v-model="filter.submarket" :options="submarket_options"></b-form-select>
                     </b-col>
                     <b-col>
                         <p>Subject County</p>
-                        <b-form-select  v-model="selected" :options="list_option"></b-form-select>
+                        <b-form-select disabled v-model="selected" :options="list_option"></b-form-select>
                     </b-col>
                 </b-row>
                 <b-row class="w-100">
@@ -119,34 +111,26 @@
                         </div>
                     </b-col>
                 </b-row>
-                <b-row class="mt-4">
-                    <b-col cols="12" class="d-flex justify-content-end">
-                        <b-button variant="outline-primary" class="filter d-flex align-items-center mr-2">
-                            <b-icon icon="x" aria-hidden="true"></b-icon> Reset</b-button>
-                        <b-button variant="primary" class="filter d-flex align-items-center">
-                            <b-icon icon="filter" aria-hidden="true"></b-icon>Apply Filter</b-button>
-                    </b-col>
-                </b-row>
+<!--                <b-row class="mt-4">-->
+<!--                    <b-col cols="12" class="d-flex justify-content-end">-->
+<!--                        <b-button variant="outline-primary" @click="resetFilter()" class="filter d-flex align-items-center mr-2">-->
+<!--                            <b-icon icon="x" aria-hidden="true"></b-icon> Reset</b-button>-->
+<!--                        <b-button variant="primary" @click="$emit('save', filter)" class="filter d-flex align-items-center">-->
+<!--                            <b-icon icon="filter" aria-hidden="true"></b-icon>Apply Filter</b-button>-->
+<!--                    </b-col>-->
+<!--                </b-row>-->
             </b-row>
         </b-container>
         <template #modal-footer>
             <div class="w-100">
-                <b-button
-                        variant="primary"
-                        size="sm"
-                        class="float-right"
-                        @click="$emit('cancel')"
-                >
-                    Cancel
-                </b-button>
-                <b-button
-                        variant="primary"
-                        size="sm"
-                        class="float-right mr-2"
-                        @click="$emit('save', filter)"
-                >
-                    Save
-                </b-button>
+                <b-row>
+                    <b-col cols="12" class="d-flex justify-content-end">
+                        <b-button variant="outline-primary" @click="resetFilter()" class="filter d-flex align-items-center mr-2">
+                            <b-icon icon="x" aria-hidden="true"></b-icon> Reset</b-button>
+                        <b-button variant="primary" @click="$emit('save', filter)" class="filter d-flex align-items-center">
+                            <b-icon icon="filter" aria-hidden="true"></b-icon>Apply Filter</b-button>
+                    </b-col>
+                </b-row>
             </div>
         </template>
     </b-modal>
@@ -167,18 +151,36 @@
         },
         mounted() {
             this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
+            if (this.lists) {
+                this.lists.forEach(e => {
+                   this.list_group_option.push(e.list_group);
+                   this.list_source_option.push(e.list_source);
+                   this.list_type_option.push(e.list_type);
+                   this.list_market_option.push(e.list_market);
+                });
+            }
         },
         data() {
             return {
                 selected: false,
-              filter: {
-                list_market: '',
-                list_group: ''
-              },
+                filter: {
+                    list_market: '',
+                    list_group: '',
+                    list_source: '',
+                    list_type: '',
+                    submarket: [],
+                },
+                running_list: {
+                    included: false,
+                    excluded: false,
+                },
                 list_option: [],
-              list_market_option: [
-                  'q', 'a', 'Random' // Market Options
-              ],
+                list_dept_option: [],
+                list_group_option: [],
+                list_source_option: [],
+                list_type_option: [],
+                list_market_option: [],
+                submarket_options: [],
                 perPage: 9999,
                 condition: '',
                 conditionalFilter: [
@@ -210,6 +212,14 @@
                 const indexOfFilter = this.conditionalFilter.findIndex(elemennt => elemennt.index === response);
                 this.conditionalFilter.splice(indexOfFilter, 1);
                 this.filterCount--;
+            },
+            resetFilter () {
+                this.filter.list_market = '';
+                this.filter.list_group = '';
+                this.filter.list_source = '';
+                this.filter.list_type = '';
+                this.running_list.included = false;
+                this.running_list.excluded = false;
             }
         }
     }

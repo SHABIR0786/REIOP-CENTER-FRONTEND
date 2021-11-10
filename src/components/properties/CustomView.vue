@@ -143,7 +143,7 @@
                             List Group
                         </b-form-checkbox>
                         <b-form-checkbox id="list_market" v-model="template.list_market" name="list_market" value="accepted">
-                            List Code
+                            List Market
                         </b-form-checkbox>
                         <b-form-checkbox id="list_source" v-model="template.list_source" name="list_source" value="accepted">
                             List Source
