@@ -6,7 +6,6 @@ const state = {
 
 const mutations = {
     ADD_TEMPLATE(state, payload) {
-        console.log('test test 2', state, payload);
         const findIndex = state.templates.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.templates.splice(findIndex, 1, { ...payload })
     },
@@ -24,7 +23,7 @@ const actions = {
             }
 
             if (response && response.templates) {
-                commit('TEMPLATES_LIST', response.templates.data)
+                commit('TEMPLATES_LIST', response.templates)
             }
 
             return response
@@ -32,7 +31,7 @@ const actions = {
     },
     async createTemplate({ commit }, template) {
         const data = {
-            name: template.name | 'Template',
+            name: template.name || 'Template',
             configuration: JSON.stringify(template)
         }
         return await api.post(`/templates`, {...data}).then((response) => {

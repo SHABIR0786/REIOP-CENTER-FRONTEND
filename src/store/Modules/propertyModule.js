@@ -114,7 +114,7 @@ const actions = {
     },
     // eslint-disable-next-line no-empty-pattern
     async exportProperties({}, data) {
-        let params = '?type=' + data.fileType;
+        let params = '?type=' + data.fileType + '&template_id=' + data.templateId;
         if (data && data.filter) {
                 const keys = Object.keys(data.filter);
                 keys.forEach(key => {

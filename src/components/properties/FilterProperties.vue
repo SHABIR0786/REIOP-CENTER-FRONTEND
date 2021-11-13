@@ -20,25 +20,25 @@
                         </div>
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Group:</p>
-                            <b-form-select class="select"  v-model="filter.list_group" :options="list_group_option"></b-form-select>
+                            <b-form-select class="select" @change="detectListSelectChange('list_group')"  v-model="filter.list_group" :options="list_group_option"></b-form-select>
                         </div>
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Source:</p>
-                            <b-form-select class="select"  v-model="filter.list_source" :options="list_source_option"></b-form-select>
+                            <b-form-select class="select" @change="detectListSelectChange('list_source')"  v-model="filter.list_source" :options="list_source_option"></b-form-select>
                         </div>
                     </b-col>
                     <b-col cols="4" class="d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Type:</p>
-                            <b-form-select class="select"  v-model="filter.list_type" :options="list_type_option"></b-form-select>
+                            <b-form-select class="select" @change="detectListSelectChange('list_type')" v-model="filter.list_type" :options="list_type_option"></b-form-select>
                         </div>
                     </b-col>
                     <b-col cols="4">
                         <h5>Running List</h5>
-                        <b-form-radio v-model="running_list.included" name="some-radios" value="true">Included</b-form-radio>
-                        <b-form-select class="mt-4"  v-model="selected" :options="list_option"></b-form-select>
-                        <b-form-radio v-model="running_list.included" class="mt-4" name="some-radios" value="true">Excluded</b-form-radio>
-                        <b-form-select class="mt-4"  v-model="selected" :options="list_option"></b-form-select>
+                        <b-form-radio disabled v-model="running_list.included" name="some-radios" value="true">Included</b-form-radio>
+                        <b-form-select disabled class="mt-4"  v-model="selected" :options="list_option"></b-form-select>
+                        <b-form-radio disabled v-model="running_list.included" class="mt-4" name="some-radios" value="true">Excluded</b-form-radio>
+                        <b-form-select disabled class="mt-4"  v-model="selected" :options="list_option"></b-form-select>
                     </b-col>
                 </b-row>
                 <b-row class="w-100">
@@ -67,7 +67,7 @@
                 <b-row class="w-100 mt-5">
                     <b-col>
                         <p>Market</p>
-                        <b-form-select v-model="filter.list_market" :options="list_market_option"></b-form-select>
+                        <b-form-select @change="detectListSelectChange('list_market')" v-model="filter.list_market" :options="list_market_option"></b-form-select>
                     </b-col>
                     <b-col>
                         <p>SubMarket</p>
@@ -111,14 +111,6 @@
                         </div>
                     </b-col>
                 </b-row>
-<!--                <b-row class="mt-4">-->
-<!--                    <b-col cols="12" class="d-flex justify-content-end">-->
-<!--                        <b-button variant="outline-primary" @click="resetFilter()" class="filter d-flex align-items-center mr-2">-->
-<!--                            <b-icon icon="x" aria-hidden="true"></b-icon> Reset</b-button>-->
-<!--                        <b-button variant="primary" @click="$emit('save', filter)" class="filter d-flex align-items-center">-->
-<!--                            <b-icon icon="filter" aria-hidden="true"></b-icon>Apply Filter</b-button>-->
-<!--                    </b-col>-->
-<!--                </b-row>-->
             </b-row>
         </b-container>
         <template #modal-footer>
@@ -153,21 +145,22 @@
             this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
             if (this.lists) {
                 this.lists.forEach(e => {
-                   this.list_group_option.push(e.list_group);
-                   this.list_source_option.push(e.list_source);
-                   this.list_type_option.push(e.list_type);
-                   this.list_market_option.push(e.list_market);
+                    this.list_group_option.push({ value: e.list_group, text: e.list_group });
+                    this.list_source_option.push({ value: e.list_source, text: e.list_source });
+                    this.list_type_option.push({ value: e.list_type, text: e.list_type });
+                    this.list_market_option.push({ value: e.list_market, text: e.list_market });
                 });
-            }
-        },
+            }        },
         data() {
             return {
                 selected: false,
+                firstSelectedFilter: '',
+                firstSelectedFilterValue: '',
                 filter: {
-                    list_market: '',
-                    list_group: '',
-                    list_source: '',
-                    list_type: '',
+                    list_market: null,
+                    list_group: null,
+                    list_source: null,
+                    list_type: null,
                     submarket: [],
                 },
                 running_list: {
@@ -176,10 +169,10 @@
                 },
                 list_option: [],
                 list_dept_option: [],
-                list_group_option: [],
-                list_source_option: [],
-                list_type_option: [],
-                list_market_option: [],
+                list_group_option: [{ value: null, text: 'Leave Unassigned' }],
+                list_source_option: [{ value: null, text: 'Leave Unassigned' }],
+                list_type_option: [{ value: null, text: 'Leave Unassigned' }],
+                list_market_option: [{ value: null, text: 'Leave Unassigned' }],
                 submarket_options: [],
                 perPage: 9999,
                 condition: '',
@@ -187,6 +180,7 @@
                     {index: 1}
                 ],
                 filterCount: 1,
+                optionsArray: ['list_group', 'list_source', 'list_type', 'list_market']
             }
         },
         computed: {
@@ -214,12 +208,31 @@
                 this.filterCount--;
             },
             resetFilter () {
-                this.filter.list_market = '';
-                this.filter.list_group = '';
-                this.filter.list_source = '';
-                this.filter.list_type = '';
+                this.filter.list_market = null;
+                this.filter.list_group = null;
+                this.filter.list_source = null;
+                this.filter.list_type = null;
                 this.running_list.included = false;
                 this.running_list.excluded = false;
+            },
+            detectListSelectChange(filter) {
+                if (this.firstSelectedFilter === '' || (this.firstSelectedFilter === filter && this.firstSelectedFilterValue !== this.filter[filter])) {
+                    const filteredList = this.lists.filter(list => list[filter] === this.filter[filter]);
+                    this.optionsArray.forEach(item => {
+                        if(item !== filter) {
+                            this[item + '_option'].length = [];
+                        }
+                    })
+                    filteredList.forEach(e => {
+                           this.optionsArray.forEach(item => {
+                               if(item !== filter) {
+                                   this[item + '_option'].push({ value: e[item], text: e[item] })
+                               }
+                           })
+                    });
+                    this.firstSelectedFilter = filter;
+                    this.firstSelectedFilterValue = this.filter[filter];
+                }
             }
         }
     }
@@ -242,8 +255,4 @@
         cursor: pointer;
         margin-bottom: 18px;
     }
-    /*.container-row {*/
-    /*    height: 100%;*/
-    /*    overflow-x: hidden;*/
-    /*}*/
 </style>
