@@ -181,7 +181,7 @@ export default {
     async created () {
         this.$store.dispatch('uxModule/setLoading')
         try {
-            await this.$store.dispatch("propertyModule/getAllSubjects", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage})
             await this.$store.dispatch("templatesModule/getAllTemplates")
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
