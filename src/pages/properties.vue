@@ -225,17 +225,18 @@ export default {
           }
         },
         triggerFilter(filter) {
-          console.log('filter', filter);
-          // console.log('type', type);
-          //
-          //
-          // if (type === 'saveAndMakeTemplate') {
-          //   this.$store.dispatch('propertyModule/createTemplate', template);
-          // }
+          this.filter = {};
+          this.showFilterPropertiesModal = false;
 
-          this.filter = {subject_address: '37318 Oak St'};
+          if (filter) {
+            const keys = Object.keys(filter);
+            keys.filter(key => {
+              if (filter[key]) {
+                this.filter[key] = filter[key];
+              }
+            })
+          }
 
-          // TODO update filter object: it's just for testing (Checking API)!!!
           this.$store.dispatch("propertyModule/getAllSubjects", {page: 1, perPage: this.perPage, filter: this.filter})
         }
     },

@@ -60,8 +60,16 @@ const mutations = {
 }
 
 const actions = {
-    async getAllSubjects({ commit, dispatch }, {page, perPage}) {
-        return await api.get(`/subjects?page=${page}&perPage=${perPage}`).then((response) => {
+    async getAllSubjects({ commit, dispatch }, {page, perPage, filter}) {
+        let params = '?page=' + page + '&perPage=' + perPage;
+        if (filter) {
+            const keys = Object.keys(filter);
+            keys.forEach(key => {
+                params = params + '&' + key + '=' + filter[key];
+            })
+        }
+
+        return await api.get(`/subjects${params}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
