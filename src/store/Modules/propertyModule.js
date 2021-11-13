@@ -60,16 +60,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllSubjects({ commit, dispatch }, {page, perPage, filter}) {
-        let params = '?page=' + page + '&perPage=' + perPage;
-        if (filter) {
-            const keys = Object.keys(filter);
-            keys.forEach(key => {
-                params = params + '&' + key + '=' + filter[key];
-            })
-        }
-
-        return await api.get(`/subjects${params}`).then((response) => {
+    async getAllSubjects({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/subjects?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
@@ -81,8 +73,16 @@ const actions = {
             return response
         })
     },
-    async getAllSubjectsV2({ commit, dispatch }, {page, perPage}) {
-        return await api.get(`/subjectsV2?page=${page}&perPage=${perPage}`).then((response) => {
+    async getAllSubjectsV2({ commit, dispatch }, {page, perPage, filter}) {
+        let params = '?page=' + page + '&perPage=' + perPage;
+        if (filter) {
+            const keys = Object.keys(filter);
+            keys.forEach(key => {
+                params = params + '&' + key + '=' + filter[key];
+            })
+        }
+
+        return await api.get(`/subjectsV2${params}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
@@ -93,7 +93,8 @@ const actions = {
 
             return response
         })
-    },    async searchSubjects({ commit, dispatch }, {page, perPage, search}) {
+    },
+    async searchSubjects({ commit, dispatch }, {page, perPage, search}) {
         return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
@@ -134,7 +135,8 @@ const actions = {
     },
     // eslint-disable-next-line no-empty-pattern
     async exportProperties({}, data) {
-        let params = '?type=' + data.fileType + '&template_id=' + data.templateId;
+        let params = '?type=' + data.fileType;
+        if (data.templateId) {  params = params + '&template_id=' + data.templateId; }
         if (data && data.filter) {
                 const keys = Object.keys(data.filter);
                 keys.forEach(key => {

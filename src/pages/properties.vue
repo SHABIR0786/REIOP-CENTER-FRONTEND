@@ -237,7 +237,7 @@ export default {
             })
           }
 
-          this.$store.dispatch("propertyModule/getAllSubjects", {page: 1, perPage: this.perPage, filter: this.filter})
+          this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage, filter: this.filter})
         }
     },
     mounted() {
