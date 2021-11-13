@@ -1,5 +1,5 @@
 <template>
-    <b-modal size="xl" v-model="showModal" scrollable no-close-on-backdrop>
+    <b-modal size="xl" v-model="showModal" class="my-modal" scrollable no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
                 TABLE CONFIGURATION
@@ -66,10 +66,10 @@
                     <div>
                         <h6>Seller</h6>
                         <hr>
-                        <b-form-checkbox id="seller_full_name" v-model="status" name="seller_full_name" value="accepted">
+                        <b-form-checkbox id="seller_full_name" v-model="template.seller_full_name" name="seller_full_name" value="accepted">
                             Seller Full Name
                         </b-form-checkbox>
-                        <b-form-checkbox id="seller_first_name" v-model="status" name="seller_first_name" value="accepted">
+                        <b-form-checkbox id="seller_first_name" v-model="template.seller_first_name" name="seller_first_name" value="accepted">
                             Seller First Name
                         </b-form-checkbox>
                         <b-form-checkbox id="seller_last_name" v-model="template.seller_last_name" name="seller_last_name" value="accepted">
@@ -176,7 +176,7 @@
                                 variant="primary"
                                 size="sm"
                                 class="mr-2"
-                                @click="$emit('cancel')"
+                                @click="$emit('cancel'); resetData()"
                         >
                             Cancel
                         </b-button>
@@ -185,7 +185,7 @@
                                 variant="primary"
                                 size="sm"
                                 class="mr-2"
-                                @click="$emit('save', template, 'save')"
+                                @click="$emit('save', template, 'save'); resetData()"
                         >
                             Save
                         </b-button>
@@ -193,7 +193,7 @@
                         <b-button
                                 variant="primary"
                                 size="sm"
-                                @click="$emit('save', template, 'saveAndMakeTemplate')"
+                                @click="$emit('save', template, 'saveAndMakeTemplate'); resetData()"
                         >
                             Save and Create Template
                         </b-button>
@@ -225,6 +225,8 @@
                   list_run_year: false,
 
                   // seller
+                  seller_full_name: false,
+                  seller_first_name: false,
                   seller_last_name: false,
                   seller_middle_name: false,
                   seller_mailing_address: false,
@@ -246,8 +248,26 @@
                   subject_liststack: false,
                   total_sellers: false,
                 },
-              status: '',
             }
         },
+        methods: {
+            resetData () {
+                for(let key in this.template) {
+                    if(key !== 'name') {
+                        this.template[key] = false;
+                    } else {
+                        this.template.name = 'Template ' + Math.floor(1000 + Math.random() * 9000);
+                    }
+                }
+            }
+        }
     }
 </script>
+
+<style scoped>
+    @media (min-width: 1200px) {
+        .modal-xl {
+            max-width: 90% !important;
+        }
+    }
+</style>

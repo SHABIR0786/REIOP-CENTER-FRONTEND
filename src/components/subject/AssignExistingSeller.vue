@@ -132,13 +132,10 @@
             showModal: {
                 type: Boolean
             },
-            propsSeller: {
-                type: Object
-            }
+            propsSeller: {}
         },
         methods: {
             AssignSeller(item) {
-                console.log(item);
             }
         },
         data() {

@@ -13,18 +13,19 @@
                     <b-button variant="primary" class="filter d-flex align-items-center mt-2" @click="showCustomModalView = true">Custom View</b-button>
                 </b-col>
             </b-row>
-            <b-row>
+            <b-row class="mt-2">
                 <b-col cols="8">
-                    <div class="info latest d-flex justify-content-center ml-0" @click="showFileType = !showFileType">
-                        <div>Export</div>
-                    </div>
+                        <div class="info latest d-flex justify-content-center ml-0" @click="showFileType = !showFileType">
+                            <div>Export</div>
+                        </div>
                     <div v-if="showFileType" class="mt-2">
                         <b-button variant="primary" class="mr-2" @click="exportProperties('xlsx')">Excel</b-button>
                         <b-button variant="primary" @click="exportProperties('csv')">CSV</b-button>
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
-<!--                    <b-button variant="primary" class="add-seller" @click="addItem()">-->
+                    <b-form-select class="select-template mr-2" v-model="selectedTemplate" :options="templatesToExport"></b-form-select>
+                    <!--                    <b-button variant="primary" class="add-seller" @click="addItem()">-->
 <!--                      <b-icon icon="plus" aria-hidden="true"></b-icon> Add Properties-->
 <!--                    </b-button>-->
                 </b-col>
@@ -161,6 +162,10 @@ export default {
             showCustomModalView: false,
             showFilterPropertiesModal: false,
             showFileType: false,
+            selectedTemplate: null,
+            templatesToExport: [
+                { value: null, text: 'Select Template' }
+            ],
         }
     },
     computed: {
@@ -169,6 +174,7 @@ export default {
           fields: 'propertyModule/fields',
           items: 'propertyModule/subjects',
           total: 'propertyModule/total',
+          templates: 'templatesModule/templates'
         }),
         rows() { return this.total ? this.total : 1 }
     },
@@ -176,6 +182,7 @@ export default {
         this.$store.dispatch('uxModule/setLoading')
         try {
             await this.$store.dispatch("propertyModule/getAllSubjects", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("templatesModule/getAllTemplates")
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -209,13 +216,10 @@ export default {
         },
         exportProperties (fileType = 'csv') {
             this.showFileType = false;
-            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, fileType: fileType});
+            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, fileType: fileType, templateId: this.selectedTemplate});
         },
         saveCustomView(template, type) {
-          console.log('tem', template);
-          console.log('type', type);
-
-
+          this.showCustomModalView = false;
           if (type === 'saveAndMakeTemplate') {
             this.$store.dispatch('templatesModule/createTemplate', template);
           }
@@ -233,6 +237,19 @@ export default {
 
           // TODO update filter object: it's just for testing (Checking API)!!!
           this.$store.dispatch("propertyModule/getAllSubjects", {page: 1, perPage: this.perPage, filter: this.filter})
+        }
+    },
+    mounted() {
+        if(this.templates) {
+            this.templates.forEach(e => {
+                const template = {
+                    value: '',
+                    text: '',
+                }
+                template.value = e.id;
+                template.text = e.name;
+                this.templatesToExport.push(template);
+            })
         }
     },
     watch: {
@@ -277,11 +294,17 @@ export default {
     .filter-icon {
         font-size: 25px;
     }
+
     .b-table-sticky-header {
         max-height: calc(100vh - 372px) !important;
     }
+
     .filter-container {
         text-align: end;
+    }
+
+    .select-template {
+        width: 80% !important;
     }
 </style>
 
