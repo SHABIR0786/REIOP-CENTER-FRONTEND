@@ -73,7 +73,19 @@ const actions = {
             return response
         })
     },
-    async searchSubjects({ commit, dispatch }, {page, perPage, search}) {
+    async getAllSubjectsV2({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/subjectsV2?page=${page}&perPage=${perPage}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if(response && response.subjects && response.subjects.data) {
+                commit('SET_ALL_SUBJECTS', response.subjects.data)
+            }
+
+            return response
+        })
+    },    async searchSubjects({ commit, dispatch }, {page, perPage, search}) {
         return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})

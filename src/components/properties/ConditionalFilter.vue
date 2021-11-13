@@ -4,10 +4,10 @@
             <b-form-select class="select" v-model="fieldToFilter" :options="field_options"></b-form-select>
         </b-col>
         <b-col cols="3">
-            <b-form-select v-if="selected" v-model="containOption" :options="contains_options" class="select"></b-form-select>
+            <b-form-select v-if="fieldToFilter" v-model="containOption" :options="contains_options" class="select"></b-form-select>
         </b-col>
         <b-col cols="3">
-            <b-form-input v-if="selected" class="select"></b-form-input>
+            <b-form-input v-if="fieldToFilter" class="select"></b-form-input>
 <!--            <b-form-select v-if="selected" class="select"></b-form-select>-->
         </b-col>
         <b-col cols="1" class="d-flex align-items-center">

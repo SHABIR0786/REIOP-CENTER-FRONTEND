@@ -136,6 +136,7 @@
         },
         methods: {
             AssignSeller(item) {
+                console.log(item);
             }
         },
         data() {
