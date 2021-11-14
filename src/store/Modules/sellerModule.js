@@ -116,6 +116,12 @@ const actions = {
             }
             return response
         })
+    },
+    // eslint-disable-next-line no-empty-pattern
+    async attachment({}, {subject_id, seller_id}) {
+        return await api.post(`/attach`, {subject_id, seller_id}).then((response) => {
+           console.log('attached', response);
+        })
     }
 }
 

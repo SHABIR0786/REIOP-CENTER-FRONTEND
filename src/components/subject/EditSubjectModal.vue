@@ -172,7 +172,7 @@
                 </b-button>
             </div>
             <edit-seller-details :showModal="showDetailsModal" :propsSeller="editedItem" @cancel="showDetailsModal=false" @save="save"></edit-seller-details>
-            <assign-existing-seller :showModal="showAssignSellerModal" :propsSeller="subject.sellers" @cancel="showAssignSellerModal = false"></assign-existing-seller>
+            <assign-existing-seller :showModal="showAssignSellerModal" :subjectId="subject.id" :propsSeller="subject.sellers" @cancel="showAssignSellerModal = false"></assign-existing-seller>
         </template>
     </b-modal>
 </template>

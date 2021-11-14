@@ -25,9 +25,6 @@
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
                     <b-form-select class="select-template mr-2" v-model="selectedTemplate" :options="templatesToExport"></b-form-select>
-                    <!--                    <b-button variant="primary" class="add-seller" @click="addItem()">-->
-<!--                      <b-icon icon="plus" aria-hidden="true"></b-icon> Add Properties-->
-<!--                    </b-button>-->
                 </b-col>
             </b-row>
             <hr>
@@ -180,6 +177,7 @@ export default {
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('propertyModule/getTotal')
         try {
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage})
             await this.$store.dispatch("templatesModule/getAllTemplates")
@@ -225,18 +223,19 @@ export default {
           }
         },
         triggerFilter(filter) {
-          console.log('filter', filter);
-          // console.log('type', type);
-          //
-          //
-          // if (type === 'saveAndMakeTemplate') {
-          //   this.$store.dispatch('propertyModule/createTemplate', template);
-          // }
+          this.filter = {};
+          this.showFilterPropertiesModal = false;
 
-          this.filter = {subject_address: '37318 Oak St'};
+          if (filter) {
+            const keys = Object.keys(filter);
+            keys.filter(key => {
+              if (filter[key]) {
+                this.filter[key] = filter[key];
+              }
+            })
+          }
 
-          // TODO update filter object: it's just for testing (Checking API)!!!
-          this.$store.dispatch("propertyModule/getAllSubjects", {page: 1, perPage: this.perPage, filter: this.filter})
+          this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage, filter: this.filter})
         }
     },
     mounted() {
