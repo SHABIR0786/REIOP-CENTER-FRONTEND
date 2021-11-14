@@ -21,6 +21,7 @@ import backgroundProcessesModule from "./Modules/backgroundProcessesModule"
 import errorModule from "./Modules/errorModule"
 import importV2Module from "./Modules/importV2Module";
 import templatesModule from "./Modules/templatesModule";
+import teamModule from "./Modules/teamModule";
 
 const state = {}
 
@@ -46,7 +47,7 @@ export default new Vuex.Store({
         errorModule: errorModule,
         importV2Module: importV2Module,
         templatesModule: templatesModule,
-
+        teamModule: teamModule
     },
     state,
     mutations,

@@ -25,9 +25,6 @@
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
                     <b-form-select class="select-template mr-2" v-model="selectedTemplate" :options="templatesToExport"></b-form-select>
-                    <!--                    <b-button variant="primary" class="add-seller" @click="addItem()">-->
-<!--                      <b-icon icon="plus" aria-hidden="true"></b-icon> Add Properties-->
-<!--                    </b-button>-->
                 </b-col>
             </b-row>
             <hr>
@@ -180,6 +177,7 @@ export default {
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('propertyModule/getTotal')
         try {
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage})
             await this.$store.dispatch("templatesModule/getAllTemplates")

@@ -78,7 +78,7 @@
                 <template v-slot:cell(actions)="data">
 <!--                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>-->
 <!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>-->
-                    <b-btn variant="primary" @click="AssignSeller(data.item)">Assign</b-btn>
+                    <b-btn variant="primary" @click="assignSeller(data.item)">Assign</b-btn>
                 </template>
             </b-table>
             <b-row>
@@ -132,11 +132,12 @@
             showModal: {
                 type: Boolean
             },
-            propsSeller: {}
+            propsSeller: {},
+            subjectId: {},
         },
         methods: {
-            AssignSeller(item) {
-                console.log(item);
+            assignSeller(item) {
+              this.$store.dispatch("sellerModule/attachment", {subject_id: this.subjectId, seller_id: item.id})
             }
         },
         data() {
