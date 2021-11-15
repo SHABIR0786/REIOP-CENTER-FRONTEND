@@ -77,7 +77,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .input-helper {
         text-align: start;
     }

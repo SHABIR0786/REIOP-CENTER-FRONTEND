@@ -86,7 +86,7 @@
 
     }
 </script>
-<style>
+<style scoped>
     .close-icon {
         font-size: 30px;
         cursor: pointer;

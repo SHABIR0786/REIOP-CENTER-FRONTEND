@@ -144,7 +144,6 @@ export default {
   },
   methods: {
     editItem(item) {
-      console.log(item);
       this.showEditModal = true
       delete item.users
       delete item.total_users
