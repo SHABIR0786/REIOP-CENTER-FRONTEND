@@ -5,7 +5,7 @@
       <div>
         <b-row>
           <b-col class="d-flex justify-content-end">
-            <b-button variant="primary" class="add-seller">
+            <b-button variant="primary" class="add-seller" @click="showAddModal=true">
               <b-icon icon="plus" aria-hidden="true"></b-icon>Create a New Team</b-button>
           </b-col>
         </b-row>
@@ -87,17 +87,26 @@
         </b-col>
       </b-row>
     </div>
+    <add-team-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-team-modal>
+    <edit-team-modal :showModal="showEditModal" :propsData="editedItem" @cancel="showEditModal=false" @save="save"></edit-team-modal>
+    <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
   </div>
 </template>
 
 <script>
 import {BIcon} from "bootstrap-vue";
 import {mapGetters} from "vuex";
+import AddTeamModal from "../components/teams/AddTeamModal";
+import EditTeamModal from "../components/teams/EditTeamModal";
+import DeleteModal from "../components/deleteModal/DeleteModal";
 
 export default {
   name: "Teams",
   components: {
-    BIcon
+    BIcon,
+    AddTeamModal,
+    EditTeamModal,
+    DeleteModal
   },
   data () {
     return {
@@ -110,6 +119,8 @@ export default {
       itemToDelete: {},
       pageOptions: [10, 20, 50],
       search: '',
+      showAddModal: false,
+      showEditModal: false,
     }
   },
   computed: {
@@ -133,7 +144,10 @@ export default {
   },
   methods: {
     editItem(item) {
-      this.showModal = true
+      console.log(item);
+      this.showEditModal = true
+      delete item.users
+      delete item.total_users
       this.editedItem = { ...item }
     },
     save(item) {
@@ -147,7 +161,13 @@ export default {
     deleteItem(item){
       this.showDeleteModal = true;
       this.itemToDelete = item;
-    }
+    },
+    modalResponse(response) {
+      this.showDeleteModal = false;
+      if (response) {
+        this.$store.dispatch('teamModule/deleteTeam', this.itemToDelete.id)
+      }
+    },
   },
   mounted() {},
   watch: {
