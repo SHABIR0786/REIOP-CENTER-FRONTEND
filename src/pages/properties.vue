@@ -24,7 +24,7 @@
                     </div>
                 </b-col>
                 <b-col cols="4" class="d-flex justify-content-end">
-                    <b-form-select class="select-template mr-2" v-model="selectedTemplate" :options="templatesToExport"></b-form-select>
+                    <b-form-select class="select-template mr-2" v-model="selectedTemplate" @change="getTemplate($event)" :options="templatesToExport"></b-form-select>
                 </b-col>
             </b-row>
             <hr>
@@ -214,7 +214,7 @@ export default {
         },
         exportProperties (fileType = 'csv') {
             this.showFileType = false;
-            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, fileType: fileType, templateId: this.selectedTemplate});
+            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, fileType: fileType});
         },
         saveCustomView(template, type) {
           this.showCustomModalView = false;
@@ -236,6 +236,9 @@ export default {
           }
 
           this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage, filter: this.filter})
+        },
+        getTemplate (event) {
+                this.$store.dispatch("propertyModule/getTemplate", {id: event})
         }
     },
     mounted() {
@@ -254,12 +257,12 @@ export default {
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('propertyModule/getAllSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty})
+                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty})
             }
         },
         perPage: {
             handler: function () {
-                this.$store.dispatch('propertyModule/getAllSubjects', {page: 1, perPage: this.perPage, search: this.searchProperty})
+                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: 1, perPage: this.perPage, search: this.searchProperty})
             }
         },
         searchProperty: {

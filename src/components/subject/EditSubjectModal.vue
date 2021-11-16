@@ -1,5 +1,5 @@
 <template>
-    <b-modal v-model="showModal" size="xl" centered no-close-on-backdrop>
+    <b-modal size="huge" v-model="showModal" centered no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
                 Edit Subject

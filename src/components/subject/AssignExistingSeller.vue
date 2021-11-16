@@ -1,5 +1,5 @@
 <template>
-    <b-modal v-model="showModal" size="xl" centered no-close-on-backdrop>
+    <b-modal v-model="showModal" size="large" centered no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
                 Assign Sellers
