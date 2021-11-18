@@ -1,5 +1,5 @@
 <template>
-    <b-modal v-model="showModal" size="xl" centered no-close-on-backdrop>
+    <b-modal v-model="showModal" size="huge" centered no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
                 Edit Seller
@@ -126,6 +126,11 @@
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
                     <b-tab title="Related Phones" active>
+                        <b-row>
+                            <b-col class="assign-btn">
+                                <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>
+                            </b-col>
+                        </b-row>
                         <b-table
                                 id="phone-number-table"
                                 small
@@ -160,6 +165,11 @@
                         </b-table>
                     </b-tab>
                     <b-tab title="Related Emails">
+                        <b-row>
+                            <b-col class="assign-btn">
+                                <b-button class="mb-2" variant="primary" @click="showAddEmailModal = true">Add New Email Address</b-button>
+                            </b-col>
+                        </b-row>
                         <b-table
                                 id="email-table"
                                 small
@@ -194,6 +204,11 @@
                         </b-table>
                     </b-tab>
                     <b-tab title="Related Golden Addresses">
+                        <b-row>
+                            <b-col class="assign-btn">
+                                <b-button class="mb-2" variant="primary" @click="showAddAddressModal = true">Add New Golden Address</b-button>
+                            </b-col>
+                        </b-row>
                         <b-table
                                 id="phone-number-table"
                                 small
@@ -228,6 +243,11 @@
                         </b-table>
                     </b-tab>
                     <b-tab title="Related Subjects">
+                        <b-row>
+                            <b-col class="assign-btn">
+                                <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>
+                            </b-col>
+                        </b-row>
                         <b-table
                                 id="subject-table"
                                 small
@@ -279,19 +299,31 @@
         <edit-phone-number-modal :showModal="showEditPhoneModal" :propsData="editedItem" @cancel="showEditPhoneModal = false"></edit-phone-number-modal>
         <edit-email-modal :showModal="showEditEmailModal" :propsData="editedItem" @cancel="showEditEmailModal = false"></edit-email-modal>
         <edit-golden-address-modal :showModal="showGoldenAddressModal" :propsData="editedItem" @cancel="showGoldenAddressModal= false"></edit-golden-address-modal>
+        <assign-existing-subject :showModal="showAssignSubjectModal" :sellerId="seller.id" :propsSubjects="seller.subjects" @cancel="showAssignSubjectModal = false"></assign-existing-subject>
+        <add-phone-number-modal :showModal="showAddPhoneModal" @cancel="showAddPhoneModal = false" @save="addPhone"></add-phone-number-modal>
+        <add-email-modal :showModal="showAddEmailModal" @cancel="showAddEmailModal = false" @save="addEmail"></add-email-modal>
+        <add-golden-address-modal :showModal="showAddAddressModal" @cancel="showAddAddressModal = false" @save="addAddress"></add-golden-address-modal>
     </b-modal>
 </template>
 <script>
 import EditPhoneNumberModal from "../phoneNumber/EditPhoneNumberModal";
 import EditEmailModal from "../email/EditEmailModal";
 import EditGoldenAddressModal from "../goldenAddress/EditGoldenAddressModal";
+import AssignExistingSubject from "./AssignExistingSubject";
+import AddPhoneNumberModal from "../phoneNumber/AddPhoneNumberModal";
+import AddEmailModal from "../email/AddEmailModal";
+import AddGoldenAddressModal from "../goldenAddress/AddGoldenAddressModal";
 
 export default {
     name: 'EditSellerModal',
     components: {
         EditPhoneNumberModal,
         EditEmailModal,
-        EditGoldenAddressModal
+        EditGoldenAddressModal,
+        AssignExistingSubject,
+        AddPhoneNumberModal,
+        AddEmailModal,
+        AddGoldenAddressModal
     },
     props: {
         showModal: {
@@ -326,6 +358,22 @@ export default {
         },
         deleteGoldenAddress(item) {
             this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', item.id)
+        },
+        addPhone (item) {
+            this.showAddPhoneModal = false
+            item.seller_id = this.seller.id
+            this.$store.dispatch('phoneNumberModule/addPhoneNumber', {...item})
+        },
+        addEmail(item) {
+            this.showAddEmailModal = false
+            item.seller_id = this.seller.id
+            this.$store.dispatch('emailModule/addEmail', {...item})
+
+        },
+        addAddress(item) {
+            this.showAddAddressModal = false
+            item.seller_id = this.seller.id
+            this.$store.dispatch('goldenAddressModule/addGoldenAddress', {...item})
         }
     },
     data() {
@@ -394,6 +442,10 @@ export default {
             showEditEmailModal: false,
             showGoldenAddressModal: false,
             editedItem: {},
+            showAssignSubjectModal: false,
+            showAddPhoneModal: false,
+            showAddEmailModal: false,
+            showAddAddressModal: false,
         }
     },
     computed: {
@@ -408,12 +460,15 @@ export default {
 
 }
 </script>
-<style>
+<style scoped>
     .close-icon {
         font-size: 30px;
         cursor: pointer;
     }
     .b-table-sticky-header {
         max-height: 10vh !important;
+    }
+    .assign-btn {
+        text-align: end;
     }
 </style>

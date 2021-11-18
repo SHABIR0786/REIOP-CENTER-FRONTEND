@@ -29,9 +29,9 @@
                         <b-form-checkbox id="subject_country" v-model="template.subject_country" name="subject_country" value="accepted">
                             Subject County
                         </b-form-checkbox>
-                        <b-form-checkbox id="subject_market" v-model="template.subject_market" name="subject_market" value="accepted">
-                            Market
-                        </b-form-checkbox>
+<!--                        <b-form-checkbox id="subject_market" v-model="template.subject_market" name="subject_market" value="accepted">-->
+<!--                            Market-->
+<!--                        </b-form-checkbox>-->
                         <b-form-checkbox id="subject_age" v-model="template.subject_age" name="subject_age" value="accepted">
                             Subject Age
                         </b-form-checkbox>
@@ -90,12 +90,12 @@
                         <b-form-checkbox id="seller_mailing_zip" v-model="template.seller_mailing_zip" name="seller_mailing_zip" value="accepted">
                             Seller Mailing Zip
                         </b-form-checkbox>
-                        <b-form-checkbox id="seller_company_owned" v-model="template.seller_company_owned" name="seller_company_owned" value="accepted">
-                            Seller Company Owned
-                        </b-form-checkbox>
-                        <b-form-checkbox id="seller_total_subjects" v-model="template.seller_total_subjects" name="seller_total_subjects" value="accepted">
-                            Total Subject
-                        </b-form-checkbox>
+<!--                        <b-form-checkbox id="seller_company_owned" v-model="template.seller_company_owned" name="seller_company_owned" value="accepted">-->
+<!--                            Seller Company Owned-->
+<!--                        </b-form-checkbox>-->
+<!--                        <b-form-checkbox id="seller_total_subjects" v-model="template.seller_total_subjects" name="seller_total_subjects" value="accepted">-->
+<!--                            Total Subject-->
+<!--                        </b-form-checkbox>-->
                     </div>
                 </b-col>
             </b-row>
@@ -133,9 +133,9 @@
                     <div class="mt-3">
                         <h6>List</h6>
                         <hr>
-                        <b-form-checkbox id="list_dept" v-model="template.list_dept" name="list_dept" value="accepted">
-                            List Dept
-                        </b-form-checkbox>
+<!--                        <b-form-checkbox id="list_dept" v-model="template.list_dept" name="list_dept" value="accepted">-->
+<!--                            List Dept-->
+<!--                        </b-form-checkbox>-->
                         <b-form-checkbox id="list_type" v-model="template.list_type" name="list_type" value="accepted">
                             List Type
                         </b-form-checkbox>
@@ -154,10 +154,10 @@
                     <div class="mt-3">
                         <h6>Running List</h6>
                         <hr>
-                        <b-form-checkbox id="list_run_month" v-model="template.list_run_month" name="list_run_month" value="accepted">
+                        <b-form-checkbox id="list_run_month" disabled v-model="template.list_run_month" name="list_run_month" value="accepted">
                             List Run Month
                         </b-form-checkbox>
-                        <b-form-checkbox id="list_run_year" v-model="template.list_run_year" name="list_run_year" value="accepted">
+                        <b-form-checkbox id="list_run_year" disabled v-model="template.list_run_year" name="list_run_year" value="accepted">
                             List Run Year
                         </b-form-checkbox>
                     </div>

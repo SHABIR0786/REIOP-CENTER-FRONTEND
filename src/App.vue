@@ -49,4 +49,12 @@ export default {
   .nav-bar {
     height: 56px;
   }
+  .modal .modal-huge {
+    max-width: 90%;
+    width: 90%;
+  }
+  .modal .modal-large {
+    max-width: 80%;
+    width: 80%;
+  }
 </style>
