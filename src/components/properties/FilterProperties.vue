@@ -15,22 +15,22 @@
                         <h5>List</h5>
                         <b-form-radio v-model="selected" name="some-radios" value="true">Included</b-form-radio>
                         <div class="d-flex align-items-center mt-4">
-                            <p class="mr-1">List Dept:</p>
-                            <b-form-select disabled class="select" v-model="selected" :options="list_option"></b-form-select>
+                            <p class="mr-1">List</p>
+                            <b-form-select class="select" v-model="filter.list" :options="list_name_option"></b-form-select>
                         </div>
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Group:</p>
-                            <b-form-select class="select" @change="detectListSelectChange('list_group')"  v-model="filter.list_group" :options="list_group_option"></b-form-select>
+                            <b-form-select class="select" disabled @change="detectListSelectChange('list_group')"  v-model="filter.list_group" :options="list_group_option"></b-form-select>
                         </div>
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Source:</p>
-                            <b-form-select class="select" @change="detectListSelectChange('list_source')"  v-model="filter.list_source" :options="list_source_option"></b-form-select>
+                            <b-form-select class="select" disabled @change="detectListSelectChange('list_source')"  v-model="filter.list_source" :options="list_source_option"></b-form-select>
                         </div>
                     </b-col>
                     <b-col cols="4" class="d-flex flex-column justify-content-center">
                         <div class="d-flex align-items-center mt-2">
                             <p class="mr-1">List Type:</p>
-                            <b-form-select class="select" @change="detectListSelectChange('list_type')" v-model="filter.list_type" :options="list_type_option"></b-form-select>
+                            <b-form-select class="select" disabled   @change="detectListSelectChange('list_type')" v-model="filter.list_type" :options="list_type_option"></b-form-select>
                         </div>
                     </b-col>
                     <b-col cols="4">
@@ -67,7 +67,7 @@
                 <b-row class="w-100 mt-5">
                     <b-col>
                         <p>Market</p>
-                        <b-form-select @change="detectListSelectChange('list_market')" v-model="filter.list_market" :options="list_market_option"></b-form-select>
+                        <b-form-select disabled @change="detectListSelectChange('list_market')" v-model="filter.list_market" :options="list_market_option"></b-form-select>
                     </b-col>
                     <b-col>
                         <p>SubMarket</p>
@@ -145,6 +145,8 @@
             this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
             if (this.lists) {
                 this.lists.forEach(e => {
+                    console.log(e.id);
+                    this.list_name_option.push({value: e.id, text: e.list_hash});
                     this.list_group_option.push({ value: e.list_group, text: e.list_group });
                     this.list_source_option.push({ value: e.list_source, text: e.list_source });
                     this.list_type_option.push({ value: e.list_type, text: e.list_type });
@@ -160,14 +162,15 @@
                     list_market: null,
                     list_group: null,
                     list_source: null,
-                    list_type: null
+                    list_type: null,
+                    list: null,
                 },
                 running_list: {
                     included: false,
                     excluded: false,
                 },
                 list_option: [],
-                list_dept_option: [],
+                list_name_option: [{ value: null, text: 'N/A' }],
                 list_group_option: [{ value: null, text: 'N/A' }],
                 list_source_option: [{ value: null, text: 'N/A' }],
                 list_type_option: [{ value: null, text: 'N/A' }],

@@ -78,7 +78,8 @@
                 <template v-slot:cell(actions)="data">
 <!--                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>-->
 <!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>-->
-                    <b-btn variant="primary" @click="assignSeller(data.item)">Assign</b-btn>
+                    <b-btn v-if="isSellerAssigned(data.item.id)" variant="primary" disabled >Assigned</b-btn>
+                    <b-btn v-else variant="primary" @click="assignSeller(data.item)">Assign</b-btn>
                 </template>
             </b-table>
             <b-row>
@@ -138,6 +139,11 @@
         methods: {
             assignSeller(item) {
               this.$store.dispatch("sellerModule/attachment", {subject_id: this.subjectId, seller_id: item.id})
+            },
+            isSellerAssigned(seller_id) {
+                if(this.propsSeller.find(element => element.id === seller_id) !== undefined) {
+                    return true
+                }
             }
         },
         data() {
@@ -169,10 +175,6 @@
             }),
             rows() { return this.total ? this.total : 1 }
         },
-        // mounted () {
-        //     this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
-        //     console.log('test from assign', this.items);
-        // },
         async created () {
             this.$store.dispatch('uxModule/setLoading')
             this.$store.dispatch('sellerModule/getTotal')
