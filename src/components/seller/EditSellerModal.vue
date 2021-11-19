@@ -296,9 +296,9 @@
                 </b-button>
             </div>
         </template>
-        <edit-phone-number-modal :showModal="showEditPhoneModal" :propsData="editedItem" @cancel="showEditPhoneModal = false"></edit-phone-number-modal>
-        <edit-email-modal :showModal="showEditEmailModal" :propsData="editedItem" @cancel="showEditEmailModal = false"></edit-email-modal>
-        <edit-golden-address-modal :showModal="showGoldenAddressModal" :propsData="editedItem" @cancel="showGoldenAddressModal= false"></edit-golden-address-modal>
+        <edit-phone-number-modal :showModal="showEditPhoneModal" :propsData="editedItem" @cancel="showEditPhoneModal = false" @save="editPhoneSave"></edit-phone-number-modal>
+        <edit-email-modal :showModal="showEditEmailModal" :propsData="editedItem" @cancel="showEditEmailModal = false" @save="editEmailSave"></edit-email-modal>
+        <edit-golden-address-modal :showModal="showGoldenAddressModal" :propsData="editedItem" @cancel="showGoldenAddressModal= false" @save="editAddressSave"></edit-golden-address-modal>
         <assign-existing-subject :showModal="showAssignSubjectModal" :sellerId="seller.id" :propsSubjects="seller.subjects" @cancel="showAssignSubjectModal = false"></assign-existing-subject>
         <add-phone-number-modal :showModal="showAddPhoneModal" @cancel="showAddPhoneModal = false" @save="addPhone"></add-phone-number-modal>
         <add-email-modal :showModal="showAddEmailModal" @cancel="showAddEmailModal = false" @save="addEmail"></add-email-modal>
@@ -341,6 +341,15 @@ export default {
         editPhone(item) {
             this.editedItem = { ...item }
             this.showEditPhoneModal = true;
+        },
+        editPhoneSave (item) {
+            this.$store.dispatch('phoneNumberModule/editPhoneNumber', {...item})
+        },
+        editEmailSave (item) {
+            this.$store.dispatch('emailModule/editEmail', {...item})
+        },
+        editAddressSave (item) {
+            this.$store.dispatch('goldenAddressModule/editGoldenAddress', {...item})
         },
         deletePhone(item) {
             this.$store.dispatch('phoneNumberModule/deletePhoneNumber', item.id)

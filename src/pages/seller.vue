@@ -223,7 +223,7 @@ export default {
 }
 </script>
 
-<style>-
+<style>
     .info {
         border: 1px solid black;
         border-radius: 5px;
