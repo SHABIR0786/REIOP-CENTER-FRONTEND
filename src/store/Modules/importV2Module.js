@@ -48,7 +48,8 @@ const mutations = {
     },
     DELETE_PROCESS(state, payload) {
         const findIndex = state.imports.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.imports.splice(findIndex, 1)    }
+        findIndex !== -1 && state.imports.splice(findIndex, 1)
+    }
 }
 
 const actions = {
@@ -79,8 +80,8 @@ const actions = {
         })
     },
     async deleteProcess({ commit }, data) {
-        return await api.post(`/batches`, {...data}).then((response) => {
-            commit('DELETE_PROCESS', data.id)
+        return await api.deleteAPI(`/batches/${data}`).then((response) => {
+            commit('DELETE_PROCESS', data)
             return response
         })
     },
