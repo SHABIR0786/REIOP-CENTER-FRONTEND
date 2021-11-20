@@ -60,6 +60,7 @@
                     </div>
                 </template>
                 <template v-slot:cell(actions)="data">
+                    <b-icon icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)"></b-icon>
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                     <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
                 </template>
@@ -93,6 +94,7 @@
         <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse"></upload-type>
         <pull-settings v-if="step_3" :lists="lists" @pullSettingsResponse="pullSettingsResponse"></pull-settings>
         <map-fields :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" v-if="step_4"></map-fields>
+        <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
     </div>
 </template>
 
@@ -103,6 +105,7 @@ import ImportType from "../components/import/ImportType";
 import UploadType from "../components/import/UploadType";
 import PullSettings from "../components/import/PullSettings";
 import MapFields from "../components/import/MapFields";
+import DeleteModal from "../components/deleteModal/DeleteModal";
 
 export default {
     name: "importV2",
@@ -111,7 +114,8 @@ export default {
         ImportDownloads,
         UploadType,
         PullSettings,
-        MapFields
+        MapFields,
+        DeleteModal
     },
     data () {
         return {
@@ -130,6 +134,8 @@ export default {
             showImportTable: true,
             download_data: {},
             pull_list: {},
+            itemToRollback: {},
+            showDeleteModal: false,
         }
     },
     async created () {
@@ -194,6 +200,16 @@ export default {
         importModal(item) {
             this.showImportModal = true;
             this.download_data = {...item}
+        },
+        rollback(item) {
+            this.showDeleteModal = true;
+            this.itemToRollback = {...item}
+        },
+        rollbackImport (response) {
+            this.showDeleteModal = false;
+            if(response) {
+                this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+            }
         }
     }
 }

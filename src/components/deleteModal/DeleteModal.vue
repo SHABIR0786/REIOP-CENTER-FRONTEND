@@ -1,7 +1,9 @@
 <template>
-    <b-modal v-model="showModal" no-close-on-backdrop>
+    <b-modal v-model="showModal">
         <template #modal-header>
-        <!--<div class="w-100">Delete</div>-->
+            <div class="w-100">
+                Delete
+            </div>
         </template>
         <b-container fluid>
             <h4>Are you sure You want to delete this item?</h4>
