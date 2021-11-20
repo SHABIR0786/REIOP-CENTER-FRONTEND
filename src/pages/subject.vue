@@ -172,6 +172,8 @@ export default {
         },
         save(item) {
             // this.showModal = false
+            delete item.lists
+            delete item.list_stack
             this.$store.dispatch('subjectModule/editSubject', {...item})
         },
         add(item) {
