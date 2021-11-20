@@ -214,12 +214,20 @@ export default {
         },
         exportProperties (fileType = 'csv') {
             this.showFileType = false;
-            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, fileType: fileType});
+            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, template: this.selectedTemplate, fileType: fileType});
         },
         saveCustomView(template, type) {
           this.showCustomModalView = false;
-          if (type === 'saveAndMakeTemplate') {
-            this.$store.dispatch('templatesModule/createTemplate', template);
+          if (type === 'saveAndMakeTemplate' && template) {
+            const templateDuplication = Object.assign({}, template);
+            const keys = Object.keys(templateDuplication);
+            keys.forEach(key => {
+              if (!templateDuplication[key]) {
+                delete templateDuplication[key];
+              }
+            })
+
+            this.$store.dispatch('templatesModule/createTemplate', templateDuplication);
           }
         },
         triggerFilter(filter) {
@@ -238,7 +246,7 @@ export default {
           this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage, filter: this.filter})
         },
         getTemplate (event) {
-                this.$store.dispatch("propertyModule/getTemplate", {id: event})
+          this.$store.dispatch("propertyModule/getTemplate", {id: event})
         }
     },
     mounted() {
