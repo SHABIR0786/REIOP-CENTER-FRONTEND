@@ -114,6 +114,8 @@ const mutations = {
             }
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
+            e.list_stack = e.lists.length;
+            e.total_sellers = e.sellers.length;
         })
         state.subjects = [...data]
     },
@@ -229,7 +231,7 @@ const actions = {
     // eslint-disable-next-line no-empty-pattern
     async exportProperties({}, data) {
         let params = '?type=' + data.fileType;
-        if (data.templateId) {  params = params + '&template_id=' + data.templateId; }
+        if (data.template) {  params = params + '&template_id=' + data.template; }
         if (data && data.filter) {
                 const keys = Object.keys(data.filter);
                 keys.forEach(key => {

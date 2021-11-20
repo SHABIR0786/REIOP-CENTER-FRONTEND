@@ -145,7 +145,6 @@
             this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
             if (this.lists) {
                 this.lists.forEach(e => {
-                    console.log(e.id);
                     this.list_name_option.push({value: e.id, text: e.list_hash});
                     this.list_group_option.push({ value: e.list_group, text: e.list_group });
                     this.list_source_option.push({ value: e.list_source, text: e.list_source });

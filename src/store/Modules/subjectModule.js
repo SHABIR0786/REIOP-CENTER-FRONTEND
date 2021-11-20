@@ -38,7 +38,6 @@ const mutations = {
         const data = [...payload]
         data.forEach(e => {
             e.list_stack = e.lists.length;
-            // console.log(e.created_at.split('T')[0]);
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
             e.total_sellers = e.sellers.length;

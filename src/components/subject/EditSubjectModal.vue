@@ -247,7 +247,6 @@ export default {
     watch: {
         showModal() {
             this.subject = {...this.propsData}
-            console.log(this.subject);
         }
     }
 
