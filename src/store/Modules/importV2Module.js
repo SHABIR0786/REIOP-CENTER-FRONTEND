@@ -46,6 +46,9 @@ const mutations = {
     EXPORTED(state, payload) {
         console.log('payload',  payload);
     },
+    DELETE_PROCESS(state, payload) {
+        const findIndex = state.imports.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && state.imports.splice(findIndex, 1)    }
 }
 
 const actions = {
@@ -73,6 +76,12 @@ const actions = {
     async exportFile({ commit }, data) {
         return await api.post(`/export`, {...data}).then((response) => {
             commit('EXPORTED', response)
+        })
+    },
+    async deleteProcess({ commit }, data) {
+        return await api.post(`/batches`, {...data}).then((response) => {
+            commit('DELETE_PROCESS', data.id)
+            return response
         })
     },
 }
