@@ -226,15 +226,16 @@
             }
           },
           resetFilter () {
-              this.filter.list_market = null;
-              this.filter.list_group = null;
-              this.filter.list_source = null;
-              this.filter.list_type = null;
-              this.filter.list_id = null;
-              this.running_list.included = false;
-              this.running_list.excluded = false;
+            this.filter.list_market = null;
+            this.filter.list_group = null;
+            this.filter.list_source = null;
+            this.filter.list_type = null;
+            this.filter.list_id = null;
+            this.running_list.included = false;
+            this.running_list.excluded = false;
 
-              this.handleListOptions();
+            this.handleListOptions();
+            this.firstSelectedFilter = '';
           },
           detectListSelectChange(filter) {
             if (this.firstSelectedFilter === '' || (this.firstSelectedFilter === filter && this.firstSelectedFilterValue !== this.filter[filter])) {

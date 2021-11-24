@@ -26,10 +26,10 @@
               fieldToFilter: '',
               fieldToFilterValue: '',
               field_options: [
-                  // { value: 'list_type', text: 'List Type' },
-                  // { value: 'list_group', text: 'List Group' },
-                  // { value: 'list_market', text: 'List Market' },
-                  // { value: 'list_source', text: 'List Source' },
+                  { value: 'list_type', text: 'List Type' },
+                  { value: 'list_group', text: 'List Group' },
+                  { value: 'list_market', text: 'List Market' },
+                  { value: 'list_source', text: 'List Source' },
                   // { value: 'subject_address', text: 'Subject Address' },
                   // { value: 'subject_address_line2', text: 'Subject Address Line 2' },
                   // { value: 'subject_city', text: 'Subject City' },
@@ -39,9 +39,13 @@
                   // { value: 'subject_market', text: 'Subject Market' },
                   // { value: 'subject_age', text: 'Subject Age' },
                   // { value: 'subject_type', text: 'Subject Type' },
-                  { value: 'seller_first_name', text: 'seller_first_name' },
-                  { value: 'seller_last_name', text: 'seller_last_name' },
-                  { value: 'seller_mailing_address', text: 'seller_mailing_address' },
+                  { value: 'seller_first_name', text: 'Seller First Name' },
+                  { value: 'seller_last_name', text: 'Seller Last Name' },
+                  { value: 'seller_middle_name', text: 'Seller Middle Name' },
+                  { value: 'seller_mailing_address', text: 'Seller Mailing Address' },
+                  { value: 'seller_mailing_state', text: 'Seller Mailing State' },
+                  { value: 'seller_mailing_city', text: 'Seller Mailing City' },
+                  { value: 'seller_mailing_zip', text: 'Seller Mailing Zip' }
               ],
               test: 'Hello world',
               contains_options: [
@@ -63,7 +67,6 @@
       },
       watch: {
         fieldToFilterValue(value) {
-          console.log(value);
           this.$emit('triggerConditionalFilter', {key: this.fieldToFilter, condition: 'contains', value: value})
         }
       }
