@@ -31,6 +31,7 @@ const state = {
     ],
     subjects: [],
     total: 0,
+    subject: {},
 }
 
 const mutations = {
@@ -58,6 +59,9 @@ const mutations = {
     ADD_SUBJECT(state, payload) {
         const findIndex = state.subjects.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.subjects.splice(findIndex, 1, { ...payload })
+    },
+    SET_SUBJECT(state, payload) {
+        state.subject = {...payload};
     }
 }
 
@@ -70,6 +74,15 @@ const actions = {
 
             if(response && response.subjects && response.subjects.data) {
                 commit('SET_ALL_SUBJECTS', response.subjects.data)
+            }
+
+            return response
+        })
+    },
+    async getSubject({commit}, data) {
+        return await api.get(`/subjects/full/${data}`).then((response) => {
+            if (response && response.subject) {
+                commit('SET_SUBJECT', response.subject)
             }
 
             return response
@@ -123,7 +136,8 @@ const actions = {
 const getters = {
     fields: ({ fields }) => fields,
     subjects: ({ subjects }) => subjects,
-    total: ({total}) => total
+    total: ({total}) => total,
+    subject: ({subject}) => subject
 }
 
 export default {

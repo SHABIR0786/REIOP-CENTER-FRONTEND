@@ -383,6 +383,11 @@ export default {
             this.showAddAddressModal = false
             item.seller_id = this.seller.id
             this.$store.dispatch('goldenAddressModule/addGoldenAddress', {...item})
+        },
+        editSubject (item) {
+            const route = '/subjects?subject_id=' + item.id;
+            let routeData = this.$router.resolve({path: route});
+            window.open(routeData.href, '_blank');
         }
     },
     data() {

@@ -143,7 +143,8 @@ export default {
             itemToDelete: {},
             pageOptions: [10, 20, 50],
             searchSubject: '',
-            showAddModal: false
+            showAddModal: false,
+
         }
     },
     computed: {
@@ -151,7 +152,8 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'subjectModule/fields',
             items: 'subjectModule/subjects',
-            total: 'subjectModule/total'
+            total: 'subjectModule/total',
+            selectedSubject: 'subjectModule/subject'
         }),
         rows() { return this.total ? this.total : 1}
     },
@@ -163,6 +165,12 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
+        }
+        if (this.$route.query.subject_id) {
+            this.$store.dispatch('subjectModule/getSubject', this.$route.query.subject_id).then(() => {
+                this.editedItem = this.selectedSubject
+                this.showModal = true
+            });
         }
     },
     methods: {
