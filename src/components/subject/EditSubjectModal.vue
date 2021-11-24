@@ -158,7 +158,83 @@
                             </b-table>
                         </b-tab>
                         <b-tab title="Related Lists">
+                            <b-row>
+                                <b-col class="assign-btn">
+                                    <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing List</b-button>
+                                </b-col>
+                            </b-row>
+                            <b-table
+                                    id="list-table"
+                                    small
+                                    striped
+                                    hover
+                                    responsive
+                                    :busy="isBusy"
+                                    :fields="listFields"
+                                    :items="subject.lists"
+                                    :per-page="0"
+                                    :sticky-header="true"
+                            >
+                                <template #table-busy>
+                                    <div class="text-center" my-2>
+                                        <b-spinner class="align-middle"></b-spinner>
+                                        <strong>Loading...</strong>
+                                    </div>
+                                </template>
 
+                                <template #head(id)="scope">
+                                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                                </template>
+                                <template #head(actions)="scope">
+                                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                                </template>
+
+                                <template #head(list_type)="scope">
+                                    <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+                                </template>
+
+                                <template #head(list_group)="scope">
+                                    <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+                                </template>
+
+                                <template #head(list_marjet)="scope">
+                                    <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                                </template>
+
+                                <template #head(list_total_subject)="scope">
+                                    <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                                </template>
+
+                                <template #head()="scope">
+                                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                                </template>
+
+                                <template v-slot:cell(id)="data">
+                                    <div :title="data.item.id">
+                                        <p class="user-email">{{data.item.id}}</p>
+                                    </div>
+                                </template>
+<!--                                <template v-slot:cell(actions)="data">-->
+<!--                                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>-->
+<!--                                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>-->
+<!--                                </template>-->
+                                <template #head(created_at)="scope">
+                                    <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                                </template>
+                                <template #head(updated_at)="scope">
+                                    <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                                </template>
+                                <template v-slot:cell(list_type)="data">
+                                    <div :title="data.item.list_type">
+                                        <p class="user-email">{{data.item.list_type}}</p>
+                                    </div>
+                                </template>
+                                <template v-slot:cell(list_group)="data">
+                                    <div :title="data.item.list_group">
+                                        <p class="user-email">{{data.item.list_group}}</p>
+                                    </div>
+                                </template>
+                            </b-table>
                         </b-tab>
                         <b-tab title="Related Running Lists">
                         </b-tab>
@@ -237,6 +313,7 @@ export default {
     computed: {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
+            listFields: 'listModule/fields',
         }),
         rows() { return this.total ? this.total : 1 }
     },
