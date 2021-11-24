@@ -30,6 +30,7 @@ const state = {
     ],
     sellers: [],
     total: 0,
+    seller: {}
 }
 
 const mutations = {
@@ -58,6 +59,9 @@ const mutations = {
     ADD_SELLER(state, payload) {
         const findIndex = state.sellers.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.sellers.splice(findIndex, 1, { ...payload })
+    },
+    SET_SELLER(state, payload) {
+        state.seller = {...payload[0]};
     }
 }
 
@@ -71,12 +75,20 @@ const actions = {
             return response
         })
     },
+    async getSeller({commit}, data) {
+        return await api.get(`/sellers/full/${data}`).then((response) => {
+            if (response && response.seller) {
+                commit('SET_SELLER', response.seller)
+            }
+
+            return response
+        })
+    },
     async searchSellers({ commit }, {page, perPage, search}) {
         return await api.get(`/sellers?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
             if (response && response.sellers && response.sellers.data) {
                 commit('SET_ALL_SELLERS', response.sellers.data)
             }
-
 
             return response
         })
@@ -128,7 +140,8 @@ const actions = {
 const getters = {
     fields: ({ fields }) => fields,
     sellers: ({ sellers }) => sellers,
-    total: ({total}) => total
+    total: ({total}) => total,
+    seller: ({seller}) => seller
 }
 
 export default {

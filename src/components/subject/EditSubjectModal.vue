@@ -201,8 +201,10 @@ export default {
             this.$emit('save', this.subject);
         },
         editItem(item) {
-            this.showDetailsModal = true
+            const route = '/sellers?seller_id=' + item.id;
             this.editedItem = { ...item }
+            let routeData = this.$router.resolve({path: route});
+            window.open(routeData.href, '_blank');
         },
         save(item) {
             this.$store.dispatch('sellerModule/editSeller', {...item})
