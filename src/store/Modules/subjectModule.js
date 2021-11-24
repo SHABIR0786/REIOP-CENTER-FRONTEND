@@ -61,7 +61,7 @@ const mutations = {
         findIndex !== -1 && state.subjects.splice(findIndex, 1, { ...payload })
     },
     SET_SUBJECT(state, payload) {
-        state.subject = {...payload[0]};
+        state.subject = {...payload};
     }
 }
 
