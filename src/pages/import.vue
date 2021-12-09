@@ -152,8 +152,8 @@ export default {
 
             this.mappedItems.push({fromField: this.fromField, toField: this.toField, action: ""})
 
-            const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
-            this.uploadedFields.splice(fromIndex, 1)
+            // const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
+            // this.uploadedFields.splice(fromIndex, 1)
             let table = this.toField.split('_')[0];
             if (table === 'golden') { table = 'golden_address' }
 
