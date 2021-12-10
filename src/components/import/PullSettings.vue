@@ -57,6 +57,16 @@
         </b-container>
 
         <b-row>
+          <b-col cols="12" class="prev-btn">
+            <b-button
+                class="data-type"
+                variant="primary"
+                @click="goBack()"
+            >
+              Prev
+            </b-button>
+          </b-col>
+
             <b-col cols="12" class="next-btn">
                 <b-button
                         variant="primary"
@@ -76,52 +86,59 @@
     import {mapGetters} from "vuex";
 
     export default {
-        name: "PullSettings",
-        props: ['lists'],
-        data () {
-            return {
-                list: {
-                    list_market: '',
-                    list_group: '',
-                    list_type: '',
-                    list_source: '',
-                    list_pull_date: '',
-                    list_hash: '',
-                    user_id: '',
-                    team_id: '',
-                },
-                // market: [],
-                market:[],
-                group: [],
-                type: [],
-                source: [],
-                pull_date: [],
-            }
-        },
-        mounted() {
-            this.lists.forEach(e => {
-                this.market.push(e.list_market)
-                this.group.push(e.list_group);
-                this.type.push(e.list_type);
-                this.source.push(e.list_source);
-                this.pull_date.push(e.list_pull_date);
-            });
-        },
-        computed: {
-            ...mapGetters({
-                user: 'loginModule/getAuthUser'
-            })
-        },
-        methods: {
-            checkUpdateList() {
-                this.list.user_id = this.user.id;
-                this.list.team_id = this.user.team_id;
-                this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source
-                // this.$store.dispatch('listModule/addList', this.list)
-
-                this.$emit('pullSettingsResponse', this.list);
-            }
+      name: "PullSettings",
+      props: ['lists', 'importDetails'],
+      data () {
+        return {
+            list: {
+                list_market: '',
+                list_group: '',
+                list_type: '',
+                list_source: '',
+                list_pull_date: '',
+                list_hash: '',
+                user_id: '',
+                team_id: '',
+            },
+            // market: [],
+            market:[],
+            group: [],
+            type: [],
+            source: [],
+            pull_date: [],
         }
+      },
+      mounted() {
+        this.lists.forEach(e => {
+            this.market.push(e.list_market)
+            this.group.push(e.list_group);
+            this.type.push(e.list_type);
+            this.source.push(e.list_source);
+            this.pull_date.push(e.list_pull_date);
+        });
+
+        if (this.importDetails && this.importDetails.pull_settings) {
+          this.list = this.importDetails.pull_settings;
+        }
+      },
+      computed: {
+        ...mapGetters({
+            user: 'loginModule/getAuthUser'
+        })
+      },
+      methods: {
+        checkUpdateList() {
+          this.list.user_id = this.user.id;
+          this.list.team_id = this.user.team_id;
+          this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source
+          // this.$store.dispatch('listModule/addList', this.list)
+
+          this.$emit('pullSettingsResponse', this.list);
+        },
+        goBack() {
+          this.$emit('goBack', 'PullSettings');
+        }
+      }
     }
 </script>
 
@@ -146,6 +163,9 @@
     p {
         margin-bottom: 0 !important;
         font-weight: bold;
+    }
+    .next-btn {
+      text-align: left;
     }
     .next-btn {
         text-align: end !important;

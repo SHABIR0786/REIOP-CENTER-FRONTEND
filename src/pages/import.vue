@@ -152,8 +152,8 @@ export default {
 
             this.mappedItems.push({fromField: this.fromField, toField: this.toField, action: ""})
 
-            const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
-            this.uploadedFields.splice(fromIndex, 1)
+            // const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
+            // this.uploadedFields.splice(fromIndex, 1)
             let table = this.toField.split('_')[0];
             if (table === 'golden') { table = 'golden_address' }
 
@@ -178,29 +178,29 @@ export default {
             this.mappedItems.splice(index, 1)
         },
         async upload() {
-            await this.$store.dispatch('uxModule/setLoading')
+          await this.$store.dispatch('uxModule/setLoading')
 
-            const mapping = [];
-            this.uploadedAllFields.forEach(fromF => {
-                let toItem = '';
-                this.mappedItems.forEach(mappedI => {
-                    if (mappedI.fromField === fromF) {
-                        toItem = mappedI.toField;
-                    }
-                })
-
-                mapping.push({fromField: fromF, toField: toItem, action: ""});
+          const mapping = [];
+          this.uploadedAllFields.forEach(fromF => {
+            let toItem = '';
+            this.mappedItems.forEach(mappedI => {
+              if (mappedI.fromField === fromF) {
+                  toItem = mappedI.toField;
+              }
             })
 
-            await this.$store.dispatch('importModule/uploadExcelDataV2', {
-              file: this.file,
-              mappedItems: mapping,
-              url: this.url,
-              list: this.list_settings
-            })
+            mapping.push({fromField: fromF, toField: toItem, action: ""});
+          })
 
-            await this.$store.dispatch('uxModule/hideLoader')
-            this.$router.push({path: '/'}).catch(() => {})
+          await this.$store.dispatch('importModule/uploadExcelDataV2', {
+            file: this.file,
+            mappedItems: mapping,
+            url: this.url,
+            list: this.list_settings
+          })
+
+          await this.$store.dispatch('uxModule/hideLoader')
+          this.$router.push({path: '/'}).catch(() => {})
         }
     }
 }

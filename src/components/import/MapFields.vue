@@ -10,6 +10,18 @@
       </div>
       <hr>
       <import :upload_type="upload_type" :list_settings="list_settings" class="w-100 import-map"></import>
+
+      <b-row>
+        <b-col cols="12" class="prev-btn">
+          <b-button
+              class="data-type"
+              variant="primary"
+              @click="goBack()"
+          >
+            Prev
+          </b-button>
+        </b-col>
+      </b-row>
     </div>
 </template>
 
@@ -17,14 +29,28 @@
 <script>
     import Import from '../../pages/import'
     export default {
-        name: "MapFields",
-        props: ['upload_type', 'list_settings'],
-        components: {
-            Import
-        },
-        data () {
-            return { }
+      name: "MapFields",
+      props: ['upload_type', 'list_settings', 'importDetails'],
+      components: {
+          Import
+      },
+      data () {
+          return { }
+      },
+      mounted() {
+        if (this.importDetails && this.importDetails.list_settings) {
+          this.list_settings = this.importDetails.list_settings;
         }
+
+        if (this.importDetails && this.importDetails.upload_type) {
+          this.upload_type = this.importDetails.upload_type;
+        }
+      },
+      methods: {
+        goBack() {
+          this.$emit('goBack', 'MapFields');
+        }
+      }
     }
 </script>
 

@@ -30,65 +30,86 @@
         </b-row>
 
         <b-row>
-            <b-col cols="12" class="next-btn">
-                <b-button
-                        variant="primary"
-                        @click="setUploadType()"
-                        :disabled="!upload_type.length"
-                >
-                    Next
-                </b-button>
-            </b-col>
+          <b-col cols="12" class="prev-btn">
+            <b-button
+                class="data-type"
+                variant="primary"
+                @click="goBack()"
+            >
+              Prev
+            </b-button>
+          </b-col>
+
+          <b-col cols="12" class="next-btn">
+              <b-button
+                      variant="primary"
+                      @click="setUploadType()"
+                      :disabled="!upload_type.length"
+              >
+                  Next
+              </b-button>
+          </b-col>
         </b-row>
     </div>
 </template>
 
 
 <script>
-    export default {
-        name: "UploadType",
-
-        data () {
-            return {
-                upload_type: '',
-            }
-        },
-        methods: {
-            setUploadType() {
-                this.$emit('uploadResponse', this.upload_type);
-            }
-        }
+  export default {
+    name: "UploadType",
+    props: ['importDetails'],
+    data () {
+      return {
+          upload_type: '',
+      }
+    },
+    mounted() {
+      if (this.importDetails && this.importDetails.upload_type) {
+        this.upload_type = this.importDetails.upload_type;
+      }
+    },
+    methods: {
+      setUploadType() {
+          this.$emit('uploadResponse', this.upload_type);
+      },
+      goBack() {
+        this.$emit('goBack', 'UploadType');
+      }
     }
+  }
 </script>
 
 <style scoped>
-    .upload-type {
-        background-color: #808080;
-        color: white;
-    }
+  .upload-type {
+      background-color: #808080;
+      color: white;
+  }
 
-    .active-upload-type {
-        background-color: #45818E !important;
-    }
+  .active-upload-type {
+      background-color: #45818E !important;
+  }
 
-    .type-container {
-        background-color: #45818E;
-        color: white;
-        padding: 15px 15px;
-        border-top: 0.5px solid black;
-        border-bottom: 0.5px solid black;
-    }
-    h3 {
-        margin: 0 !important;
-    }
-    .info-text {
-        padding: 20px 10px 0 10px;
-    }
-    p {
-        margin-bottom: 0 !important;
-        font-weight: bold;
-    }
-    .next-btn {
-        text-align: right;
-    }
+  .type-container {
+      background-color: #45818E;
+      color: white;
+      padding: 15px 15px;
+      border-top: 0.5px solid black;
+      border-bottom: 0.5px solid black;
+  }
+  h3 {
+      margin: 0 !important;
+  }
+  .info-text {
+      padding: 20px 10px 0 10px;
+  }
+  p {
+      margin-bottom: 0 !important;
+      font-weight: bold;
+  }
+  .next-btn {
+    text-align: left;
+  }
+  .next-btn {
+      text-align: right;
+  }
 </style>
