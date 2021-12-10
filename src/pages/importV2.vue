@@ -90,10 +90,10 @@
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
 
-        <import-type v-if="step_1" @importResponse="importTypeResponse"></import-type>
-        <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse"></upload-type>
-        <pull-settings v-if="step_3" :lists="lists" @pullSettingsResponse="pullSettingsResponse"></pull-settings>
-        <map-fields :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" v-if="step_4"></map-fields>
+        <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
+        <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
+        <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
+        <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails" @goBack="goBack"></map-fields>
         <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
     </div>
 </template>
@@ -110,33 +110,33 @@ import DeleteModal from "../components/deleteModal/DeleteModal";
 export default {
     name: "importV2",
     components: {
-        ImportType,
-        ImportDownloads,
-        UploadType,
-        PullSettings,
-        MapFields,
-        DeleteModal
+      ImportType,
+      ImportDownloads,
+      UploadType,
+      PullSettings,
+      MapFields,
+      DeleteModal
     },
     data () {
-        return {
-            searchImport: '',
-            pageOptions: [10, 20, 50],
-            perPage: 20,
-            isBusy: false,
-            showImportModal: false,
-            importDetails: {},
-            step_1: false,
-            step_2: false,
-            step_3: false,
-            step_4: false,
-            currentPage: 2,
-            download_type: '',
-            showImportTable: true,
-            download_data: {},
-            pull_list: {},
-            itemToRollback: {},
-            showDeleteModal: false,
-        }
+      return {
+        searchImport: '',
+        pageOptions: [10, 20, 50],
+        perPage: 20,
+        isBusy: false,
+        showImportModal: false,
+        importDetails: {},
+        step_1: false,
+        step_2: false,
+        step_3: false,
+        step_4: false,
+        currentPage: 2,
+        download_type: '',
+        showImportTable: true,
+        download_data: {},
+        pull_list: {},
+        itemToRollback: {},
+        showDeleteModal: false,
+      }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
@@ -149,66 +149,85 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
-            isCollapsed: 'uxModule/isCollapsed',
-            fields: 'importV2Module/fields',
-            items: 'importV2Module/imports',
-            lists: 'listModule/lists',
-            total: 'listModule/total'
-        }),
-        rows() { return this.total ? this.total : 1 }
+      ...mapGetters({
+          isCollapsed: 'uxModule/isCollapsed',
+          fields: 'importV2Module/fields',
+          items: 'importV2Module/imports',
+          lists: 'listModule/lists',
+          total: 'listModule/total'
+      }),
+      rows() { return this.total ? this.total : 1 }
     },
     methods: {
-        modalResponse(response) {
-            this.showImportModal = false;
-            if (response) {
-              this.download_type = response;
-              this.$store.dispatch("importV2Module/exportFile", {type: response, file: this.download_data})
-            }
-        },
-        importTypeResponse(response) {
-           if(response) {
-               this.importDetails.import_type = response;
-
-               this.step_1 = false;
-               this.step_2 = true;
-               this.step_3 = false;
-               this.step_4 = false;
-           }
-        },
-        uploadTypeResponse (response) {
-            if(response) {
-                this.importDetails.upload_type = response;
-                this.step_1 = false;
-                this.step_2 = false;
-                this.step_3 = true;
-                this.step_4 = false;
-            }
-        },
-        pullSettingsResponse (response) {
-            if(response) {
-                this.importDetails.pull_settings = response;
-
-                this.step_1 = false;
-                this.step_2 = false;
-                this.step_3 = false;
-                this.step_4 = true;
-            }
-        },
-        importModal(item) {
-            this.showImportModal = true;
-            this.download_data = {...item}
-        },
-        rollback(item) {
-            this.showDeleteModal = true;
-            this.itemToRollback = {...item}
-        },
-        rollbackImport (response) {
-            this.showDeleteModal = false;
-            if(response) {
-                this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
-            }
+      modalResponse(response) {
+        this.showImportModal = false;
+        if (response) {
+          this.download_type = response;
+          this.$store.dispatch("importV2Module/exportFile", {type: response, file: this.download_data})
         }
+      },
+      importTypeResponse(response) {
+       if(response) {
+         this.importDetails.import_type = response;
+
+         this.step_1 = false;
+         this.step_2 = true;
+         this.step_3 = false;
+         this.step_4 = false;
+       }
+      },
+      uploadTypeResponse (response) {
+        if(response) {
+          this.importDetails.upload_type = response;
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_3 = true;
+          this.step_4 = false;
+        }
+      },
+      goBack(response) {
+        console.log(response);
+        if (response === 'UploadType') {
+          this.step_1 = true;
+          this.step_2 = false;
+          this.step_3 = false;
+          this.step_4 = false;
+        } else if (response === 'PullSettings') {
+          this.step_1 = false;
+          this.step_2 = true;
+          this.step_3 = false;
+          this.step_4 = false;
+        } else if (response === 'MapFields') {
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_3 = true;
+          this.step_4 = false;
+        }
+      },
+      pullSettingsResponse (response) {
+        if(response) {
+          this.importDetails.pull_settings = response;
+
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_3 = false;
+          this.step_4 = true;
+        }
+      },
+      importModal(item) {
+        this.showImportModal = true;
+        this.download_data = {...item}
+      },
+      rollback(item) {
+        this.showDeleteModal = true;
+        this.itemToRollback = {...item}
+      },
+      rollbackImport (response) {
+        this.showDeleteModal = false;
+        if(response) {
+            this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+        }
+      }
     }
 }
 </script>

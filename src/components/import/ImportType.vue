@@ -47,18 +47,23 @@
 
 <script>
     export default {
-        name: "ImportType",
-
-        data () {
-            return {
-                import_type: ''
-            }
-        },
-        methods: {
-            setImportType() {
-                this.$emit('importResponse', this.import_type);
-            },
+      name: "ImportType",
+      props: ['importDetails'],
+      data () {
+        return {
+            import_type: ''
         }
+      },
+      mounted() {
+        if (this.importDetails && this.importDetails.import_type) {
+          this.import_type = this.importDetails.import_type;
+        }
+      },
+      methods: {
+        setImportType() {
+            this.$emit('importResponse', this.import_type);
+        },
+      }
     }
 </script>
 
