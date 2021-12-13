@@ -37,6 +37,12 @@
                 </b-col>
             </b-row>
         </div>
+        <hr>
+        <div class="d-flex align-items-center mb-4">
+            <b-form-checkbox  @change="selectAll" v-model='allSelected'></b-form-checkbox>
+            <b-button variant="primary" :disabled='!bulkDeleteItems.length' class="filter d-flex align-items-center" @click="bulkDelete">
+                <b-icon icon="trash" aria-hidden="true"></b-icon>Delete Selected</b-button>
+        </div>
         <b-table
             id="subject-table"
             small
@@ -55,6 +61,14 @@
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
+            </template>
+            <template #head(delete)="scope">
+                <div class="text-nowrap" style="width: 30px;">{{scope.label}}</div>
+            </template>
+            <template v-slot:cell(delete)="data">
+                <b-form-checkbox :value='data.item.id' v-model='bulkDeleteItems'></b-form-checkbox>
+<!--                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>-->
+<!--                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>-->
             </template>
             <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
@@ -163,6 +177,8 @@ export default {
             templatesToExport: [
                 { value: null, text: 'Select Template' }
             ],
+            bulkDeleteItems: [],
+            allSelected: false,
         }
     },
     computed: {
@@ -247,6 +263,22 @@ export default {
         },
         getTemplate (event) {
           this.$store.dispatch("propertyModule/getTemplate", {id: event})
+        },
+        bulkDelete () {
+            console.log(this.bulkDeleteItems);
+            this.$store.dispatch('propertyModule/deleteMultipleSubjects', this.bulkDeleteItems).then(
+                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty})
+            )
+        },
+        selectAll () {
+            this.bulkDeleteItems = [];
+            if (this.allSelected) {
+                this.items.forEach(e => {
+                    this.bulkDeleteItems.push(e.id);
+                });
+            }
+
+            console.log(this.bulkDeleteItems);
         }
     },
     mounted() {
