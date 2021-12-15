@@ -2,6 +2,7 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
+        {key:"delete", label: ""},
         {key:"id", label: "ID", sortable: true},
         {key: "actions", label: "Actions"},
 
@@ -62,6 +63,10 @@ const mutations = {
     },
     SET_SELLER(state, payload) {
         state.seller = {...payload};
+    },
+    DELETE_MULTIPLE_SELLERS(state, payload) {
+        const findIndex = state.sellers.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && state.sellers.splice(findIndex, 1)
     }
 }
 
@@ -118,6 +123,12 @@ const actions = {
     async deleteSeller({ commit }, data) {
         return await api.deleteAPI(`/sellers/${data}`).then((response) => {
             commit('DELETE_SELLER', data)
+            return response
+        })
+    },
+    async deleteMultipleSellers({ commit }, data) {
+        return await api.deleteAPI(`/sellers/deleteAll/${data}`).then((response) => {
+            commit('DELETE_MULTIPLE_SELLERS', data)
             return response
         })
     },

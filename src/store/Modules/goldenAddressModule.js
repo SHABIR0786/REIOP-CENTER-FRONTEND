@@ -2,6 +2,7 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
+        {key:"delete", label: ""},
         {key:"id", label: "ID", sortable: true},
         {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
@@ -45,6 +46,10 @@ const mutations = {
     ADD_GOLDEN_ADDRESS(state, payload) {
         const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1, { ...payload })
+    },
+    DELETE_MULTIPLE_GOLDEN_ADDRESS(state, payload) {
+        const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1)
     }
 }
 
@@ -90,6 +95,12 @@ const actions = {
     async deleteGoldenAddress({ commit }, data) {
         return await api.deleteAPI(`/golden-addresses/${data}`).then((response) => {
             commit('DELETE_GOLDEN_ADDRESS', data)
+            return response
+        })
+    },
+    async deleteMultipleGoldenAddress({ commit }, data) {
+        return await api.deleteAPI(`/golden-addresses/deleteAll/${data}`).then((response) => {
+            commit('DELETE_MULTIPLE_GOLDEN_ADDRESS', data)
             return response
         })
     },

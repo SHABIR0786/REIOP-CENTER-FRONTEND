@@ -153,7 +153,6 @@ const mutations = {
         }
     },
     DELETE_MULTIPLE_SUBJECTS(state, payload) {
-        console.log(payload);
         const findIndex = state.subjects.findIndex(({ id }) => id === payload)
         findIndex !== -1 && state.subjects.splice(findIndex, 1)
     }
