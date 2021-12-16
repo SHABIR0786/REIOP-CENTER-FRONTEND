@@ -30,6 +30,11 @@
                 </b-col>
             </b-row>
         </div>
+        <div class="d-flex align-items-center mb-4">
+            <b-form-checkbox  @change="selectAll" v-model='allSelected'></b-form-checkbox>
+            <b-button variant="primary" :disabled='!bulkDeleteItems.length' class="filter d-flex align-items-center" @click="bulkDelete">
+                <b-icon icon="trash" aria-hidden="true"></b-icon>Delete Selected</b-button>
+        </div>
         <b-table
             id="email-table"
             small
@@ -48,6 +53,12 @@
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
+            </template>
+            <template #head(delete)="scope">
+                <div class="text-nowrap" style="width: 30px;">{{scope.label}}</div>
+            </template>
+            <template v-slot:cell(delete)="data">
+                <b-form-checkbox :value='data.item.id' v-model='bulkDeleteItems'></b-form-checkbox>
             </template>
             <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
@@ -128,6 +139,8 @@ export default {
             pageOptions: [10, 20, 50],
             searchEmail: '',
             showAddModal: false,
+            bulkDeleteItems: [],
+            allSelected: false,
         }
     },
     computed: {
@@ -175,6 +188,19 @@ export default {
         },
         addItem() {
             this.showAddModal = true;
+        },
+        bulkDelete () {
+            this.$store.dispatch('emailModule/deleteMultipleEmails', this.bulkDeleteItems).then(
+                this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
+            )
+        },
+        selectAll () {
+            this.bulkDeleteItems = [];
+            if (this.allSelected) {
+                this.items.forEach(e => {
+                    this.bulkDeleteItems.push(e.id);
+                });
+            }
         }
     },
     watch: {

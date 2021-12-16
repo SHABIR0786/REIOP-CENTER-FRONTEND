@@ -2,6 +2,7 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
+        {key:"delete", label: ""},
         {key:"id", label: "ID", sortable: true},
         {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
@@ -45,6 +46,10 @@ const mutations = {
         const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1, { ...payload })
     },
+    DELETE_MULTIPLE_ITEMS(state, payload) {
+        const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1)
+    }
 }
 
 const actions = {
@@ -99,7 +104,13 @@ const actions = {
             }
             return response
         })
-    }
+    },
+    async deleteMultiplePhoneNumber({ commit }, data) {
+        return await api.deleteAPI(`/phones/deleteAll/${data}`).then((response) => {
+            commit('DELETE_MULTIPLE_ITEMS', data)
+            return response
+        })
+    },
 }
 
 const getters = {
