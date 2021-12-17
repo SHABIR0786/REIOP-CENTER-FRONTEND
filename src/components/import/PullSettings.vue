@@ -15,32 +15,32 @@
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Market">
-                                <b-form-input :state="list.list_market.length > 0" v-model="list.list_market"></b-form-input>
-                                <b-form-select v-model="list.list_market" :options="market"></b-form-select>
+<!--                                <b-form-input :state="list.list_market.length > 0" v-model="list.list_market"></b-form-input>-->
+                                <b-form-select v-model="list.list_market" :options="market" @change="addNewField($event)"></b-form-select>
                             </b-input-group>
                         </b-col>
                     </b-row>
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Group">
-                                <b-form-input :state="list.list_group.length > 0" v-model="list.list_group"></b-form-input>
-                                <b-form-select v-model="list.list_group" :options="group"></b-form-select>
+<!--                                <b-form-input :state="list.list_group.length > 0" v-model="list.list_group"></b-form-input>-->
+                                <b-form-select v-model="list.list_group" :options="group" @change="addNewField($event)"></b-form-select>
                             </b-input-group>
                         </b-col>
                     </b-row>
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Type">
-                                <b-form-input :state="list.list_type.length > 0" v-model="list.list_type"></b-form-input>
-                                <b-form-select v-model="list.list_type" :options="type"></b-form-select>
+<!--                                <b-form-input :state="list.list_type.length > 0" v-model="list.list_type"></b-form-input>-->
+                                <b-form-select v-model="list.list_type" :options="type" @change="addNewField($event)"></b-form-select>
                             </b-input-group>
                         </b-col>
                     </b-row>
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Source">
-                                <b-form-input :state="list.list_source.length > 0" v-model="list.list_source"></b-form-input>
-                                <b-form-select v-model="list.list_source" :options="source"></b-form-select>
+<!--                                <b-form-input :state="list.list_source.length > 0" v-model="list.list_source"></b-form-input>-->
+                                <b-form-select v-model="list.list_source" :options="source" @change="addNewField($event)"></b-form-select>
                             </b-input-group>
                         </b-col>
                     </b-row>
@@ -78,15 +78,18 @@
                 </b-button>
             </b-col>
         </b-row>
+        <AddListSettingsModal :showModal="showSettingsModal" :propsData="settingSection" @cancel="showSettingsModal=false" @save="add"></AddListSettingsModal>
     </div>
 </template>
 
 
 <script>
     import {mapGetters} from "vuex";
+    import AddListSettingsModal from "../list/AddListSettingsModal";
 
     export default {
       name: "PullSettings",
+      components: {AddListSettingsModal},
       props: ['lists', 'importDetails'],
       data () {
         return {
@@ -106,6 +109,8 @@
             type: [],
             source: [],
             pull_date: [],
+            showSettingsModal: false,
+            settingSection: '',
         }
       },
       mounted() {
@@ -116,6 +121,11 @@
             this.source.push(e.list_source);
             this.pull_date.push(e.list_pull_date);
         });
+
+        this.market.push('Add a new Market')
+        this.group.push('Add a new Group')
+        this.type.push('Add a new Type')
+        this.source.push('Add a new Source')
 
         if (this.importDetails && this.importDetails.pull_settings) {
           this.list = this.importDetails.pull_settings;
@@ -137,6 +147,47 @@
         },
         goBack() {
           this.$emit('goBack', 'PullSettings');
+        },
+        addNewField(event) {
+            switch (event) {
+                case 'Add a new Market':
+                    this.settingSection = 'Market';
+                    this.showSettingsModal = true;
+                    break
+                case 'Add a new Group':
+                    this.settingSection = 'Group';
+                    this.showSettingsModal = true;
+                    break
+                case 'Add a new Type':
+                    this.settingSection = 'Type';
+                    this.showSettingsModal = true;
+                    break
+                case 'Add a new Source':
+                    this.settingSection = 'Source';
+                    this.showSettingsModal = true;
+                    break
+            }
+        },
+        add (response) {
+            switch (this.settingSection) {
+                case "Market":
+                    this.market.push(response);
+                    this.list.list_market = response;
+                    break
+                case "Group":
+                    this.group.push(response)
+                    this.list.list_group = response;
+                    break
+                case "Type":
+                    this.type.push(response)
+                    this.list.list_type = response;
+                    break
+                case "Source":
+                    this.source.push(response);
+                    this.list.list_source = response;
+                    break
+            }
+            this.showSettingsModal = false;
         }
       }
     }
