@@ -6,9 +6,9 @@ const state = {
         {key:"id", label: "ID", sortable: true},
         {key: "actions", label: "Actions"},
 
-        {key: "seller_total_subjects", label: "Total Subjects"},
-        {key: "seller_total_phones", label: "Total Phones"},
-        {key: "seller_total_emails", label: "Total Emails"},
+        {key: "seller_total_subjects", label: "Total Subjects", sortable: true},
+        {key: "seller_total_phones", label: "Total Phones", sortable: true},
+        {key: "seller_total_emails", label: "Total Emails", sortable: true},
 
 
         {key: "seller_first_name", label: "First Name", sortable: true},
