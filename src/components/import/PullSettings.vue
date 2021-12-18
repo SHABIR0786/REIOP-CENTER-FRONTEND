@@ -171,19 +171,19 @@
         add (response) {
             switch (this.settingSection) {
                 case "Market":
-                    this.market.push(response);
+                    this.market.splice(this.market.length -1, 0, response);
                     this.list.list_market = response;
                     break
                 case "Group":
-                    this.group.push(response)
+                    this.group.splice(this.group.length -1, 0, response);
                     this.list.list_group = response;
                     break
                 case "Type":
-                    this.type.push(response)
+                    this.type.splice(this.type.length -1, 0, response);
                     this.list.list_type = response;
                     break
                 case "Source":
-                    this.source.push(response);
+                    this.source.splice(this.source.length -1, 0, response);
                     this.list.list_source = response;
                     break
             }
