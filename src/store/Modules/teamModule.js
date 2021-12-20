@@ -39,6 +39,14 @@ const mutations = {
     ADD_TEAM(state, payload) {
         const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+    },
+    ADD_TEAM_MEMBER(state, payload) {
+        const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+    },
+    DELETE_TEAM_MEMBER(state, payload) {
+        const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
     }
 }
 
@@ -84,6 +92,18 @@ const actions = {
     async deleteTeam({ commit }, data) {
         return await api.deleteAPI(`/teams/${data}`).then((response) => {
             commit('DELETE_TEAM', data)
+            return response
+        })
+    },
+    async addTeamMember({commit}, data) {
+        return await api.post(`/teams/add-member`, {...data}).then((response) => {
+            commit('ADD_TEAM_MEMBER', data)
+            return response
+        })
+    },
+    async deleteTeamMember({commit}, data) {
+        return await api.deleteAPI(`/teams/delete-member/${data}`).then((response) => {
+            commit('DELETE_TEAM_MEMBER', data)
             return response
         })
     },

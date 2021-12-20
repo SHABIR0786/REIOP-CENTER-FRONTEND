@@ -145,8 +145,6 @@ export default {
   methods: {
     editItem(item) {
       this.showEditModal = true
-      delete item.users
-      delete item.total_users
       this.editedItem = { ...item }
     },
     save(item) {
