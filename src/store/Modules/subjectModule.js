@@ -5,7 +5,7 @@ const state = {
         {key:"delete", label: ""},
         {key:"id", label: "Id", sortable: true},
         {key: "actions", label: "Actions"},
-        {key: "total_sellers", label: "Total Sellers"},
+        {key: "total_sellers", label: "Total Sellers", sortable: true},
         {key: "list_stack", label: "List Stack"},
 
         {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
