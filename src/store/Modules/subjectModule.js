@@ -6,7 +6,7 @@ const state = {
         {key:"id", label: "Id", sortable: true},
         {key: "actions", label: "Actions"},
         {key: "total_sellers", label: "Total Sellers", sortable: true},
-        {key: "list_stack", label: "List Stack"},
+        {key: "list_stack", label: "List Stack", sortable: true},
 
         {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
         {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},

@@ -7,7 +7,7 @@ const state = {
         {key:"actions", stickyColumn: true, label: "Actions"},
 
         {key:"list_total_subject", label: "Total Subjects", sortable: true},
-        {key:"list_total_individual_list", label: "Total Individual Lists"},
+        {key:"list_total_individual_list", label: "Total Individual Lists", sortable: true},
         {key:"list_market", label: "Markets", sortable: true},
 
         {key:"list_group", label: "Group", sortable: true},

@@ -199,9 +199,10 @@ export default {
             this.showAddModal = true;
         },
         bulkDelete () {
-            this.$store.dispatch('goldenAddressModule/deleteMultipleGoldenAddress', this.bulkDeleteItems).then(
-                this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
-            )
+            this.$store.dispatch('goldenAddressModule/deleteMultipleGoldenAddress', this.bulkDeleteItems).then(() => {
+              this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
+              this.$store.dispatch('goldenAddressModule/getTotal')
+            })
         },
         selectAll () {
             this.bulkDeleteItems = [];

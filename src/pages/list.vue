@@ -220,9 +220,10 @@ export default {
             this.showAddModal = true;
         },
         bulkDelete () {
-            this.$store.dispatch('listModule/deleteMultipleLists', this.bulkDeleteItems).then(
-                this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage})
-            )
+            this.$store.dispatch('listModule/deleteMultipleLists', this.bulkDeleteItems).then(() => {
+              this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage})
+              this.$store.dispatch('listModule/getTotal')
+            })
         },
         selectAll () {
             this.bulkDeleteItems = [];

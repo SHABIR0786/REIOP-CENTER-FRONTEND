@@ -4,8 +4,8 @@ const defaultFields = [
     {key:"delete", label: ""},
     {key:"id", label: "Id", sortable: true},
     {key: "actions", label: "Actions"},
-    {key: "total_sellers", label: "Total Sellers"},
-    {key: "list_stack", label: "List Stack"},
+    {key: "total_sellers", label: "Total Sellers", sortable: true},
+    {key: "list_stack", label: "List Stack", sortable: true},
 
     {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true, visible: false},
     // {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
@@ -27,8 +27,8 @@ const state = {
         //Subject
         {key:"id", label: "Id", sortable: true},
         {key: "actions", label: "Actions"},
-        {key: "total_sellers", label: "Total Sellers"},
-        {key: "list_stack", label: "List Stack"},
+        {key: "total_sellers", label: "Total Sellers", sortable: true},
+        {key: "list_stack", label: "List Stack", sortable: true},
 
         {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true, visible: false},
         // {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},

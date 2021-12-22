@@ -190,9 +190,10 @@ export default {
             this.showAddModal = true;
         },
         bulkDelete () {
-            this.$store.dispatch('emailModule/deleteMultipleEmails', this.bulkDeleteItems).then(
-                this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
-            )
+            this.$store.dispatch('emailModule/deleteMultipleEmails', this.bulkDeleteItems).then(() => {
+              this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
+              this.$store.dispatch('emailModule/getTotal')
+            })
         },
         selectAll () {
             this.bulkDeleteItems = [];

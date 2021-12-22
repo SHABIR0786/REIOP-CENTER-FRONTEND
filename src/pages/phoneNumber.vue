@@ -190,12 +190,10 @@ export default {
             this.showAddModal = true;
         },
         bulkDelete () {
-            this.$store.dispatch('phoneNumberModule/deleteMultiplePhoneNumber', this.bulkDeleteItems).then(
-                this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {
-                    page: this.currentPage,
-                    perPage: this.perPage,
-                    search: this.searchPhone
-                }))
+            this.$store.dispatch('phoneNumberModule/deleteMultiplePhoneNumber', this.bulkDeleteItems).then(() => {
+              this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {page: this.currentPage, perPage: this.perPage, search: this.searchPhone})
+              this.$store.dispatch('phoneNumberModule/getTotal')
+            })
         },
         selectAll () {
             this.bulkDeleteItems = [];

@@ -222,9 +222,10 @@ export default {
             this.showAddModal = true;
         },
         bulkDelete () {
-            this.$store.dispatch('sellerModule/deleteMultipleSellers', this.bulkDeleteItems).then(
-                this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
-            )
+            this.$store.dispatch('sellerModule/deleteMultipleSellers', this.bulkDeleteItems).then(() => {
+              this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+              this.$store.dispatch('sellerModule/getTotal')
+            })
         },
         selectAll () {
             this.bulkDeleteItems = [];
