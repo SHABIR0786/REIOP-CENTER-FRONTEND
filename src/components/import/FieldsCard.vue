@@ -5,12 +5,12 @@
         </div>
 
         <div v-if="importedFields">
-            <b-form-radio-group :options="importedFields.subject" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
-            <b-form-radio-group :options="importedFields.list" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
-            <b-form-radio-group :options="importedFields.seller" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
-            <b-form-radio-group :options="importedFields.email" v-model="selected" text-field="label" value-field="field" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
-            <b-form-radio-group :options="importedFields.golden_address" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group><br>
-            <b-form-radio-group :options="importedFields.phone" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
+            <b-form-radio-group class="mt-3" :options="importedFields.subject" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
+            <b-form-radio-group class="mt-3" :options="importedFields.list" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
+            <b-form-radio-group class="mt-3" :options="importedFields.seller" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
+            <b-form-radio-group class="mt-3" :options="importedFields.email" v-model="selected" text-field="label" value-field="field" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
+            <b-form-radio-group class="mt-3" :options="importedFields.golden_address" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
+            <b-form-radio-group class="mt-3" :options="importedFields.phone" text-field="label" value-field="field" v-model="selected" stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
         </div>
     </b-card>
 </template>

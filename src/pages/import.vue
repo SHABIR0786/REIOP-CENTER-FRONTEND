@@ -87,6 +87,12 @@ export default {
                 seller: this.sellerFields,
                 subject: this.subjectFields,
             }
+        } else if(this.upload_type === 'appended') {
+            this.importedFields = {
+                seller: this.sellerFields,
+                subject: this.subjectFields,
+                phone: this.phoneNumberFields,
+            }
         } else {
             this.importedFields = {
                 email: this.emailFields,

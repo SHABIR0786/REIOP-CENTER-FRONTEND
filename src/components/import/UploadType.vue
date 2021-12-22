@@ -26,6 +26,14 @@
                 >
                     Is this a combined upload with data from multiple providers and lists?
                 </b-button>
+                or
+                <b-button
+                        class="upload-type"
+                        @click="upload_type = 'appended'"
+                        :class="{'active-upload-type': upload_type === 'appended'}"
+                >
+                    Is this a single pull from a provider with Appended Data?
+                </b-button>
             </b-col>
         </b-row>
 
