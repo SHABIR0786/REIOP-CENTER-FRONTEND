@@ -95,6 +95,7 @@
         <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
         <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails" @goBack="goBack"></map-fields>
         <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
+        <select-skip-data-source v-if="step_2_skip" @skipResponse="setSkipSource" @goBack="goBack"></select-skip-data-source>
     </div>
 </template>
 
@@ -106,10 +107,12 @@ import UploadType from "../components/import/UploadType";
 import PullSettings from "../components/import/PullSettings";
 import MapFields from "../components/import/MapFields";
 import DeleteModal from "../components/deleteModal/DeleteModal";
+import SelectSkipDataSource from "../components/import/SelectSkipDataSource";
 
 export default {
     name: "importV2",
     components: {
+      SelectSkipDataSource,
       ImportType,
       ImportDownloads,
       UploadType,
@@ -127,6 +130,7 @@ export default {
         importDetails: {},
         step_1: false,
         step_2: false,
+        step_2_skip: false,
         step_3: false,
         step_4: false,
         currentPage: 2,
@@ -169,11 +173,19 @@ export default {
       importTypeResponse(response) {
        if(response) {
          this.importDetails.import_type = response;
-
-         this.step_1 = false;
-         this.step_2 = true;
-         this.step_3 = false;
-         this.step_4 = false;
+         if (response === 'existing') {
+             this.step_1 = false;
+             this.step_2 = false;
+             this.step_2_skip = true;
+             this.step_3 = false;
+             this.step_4 = false;
+         } else {
+             this.step_1 = false;
+             this.step_2 = true;
+             this.step_2_skip = false;
+             this.step_3 = false;
+             this.step_4 = false;
+         }
        }
       },
       uploadTypeResponse (response) {
@@ -186,22 +198,30 @@ export default {
         }
       },
       goBack(response) {
-        console.log(response);
         if (response === 'UploadType') {
           this.step_1 = true;
           this.step_2 = false;
+          this.step_2_skip = false
           this.step_3 = false;
           this.step_4 = false;
         } else if (response === 'PullSettings') {
           this.step_1 = false;
           this.step_2 = true;
+          this.step_2_skip = false
           this.step_3 = false;
           this.step_4 = false;
         } else if (response === 'MapFields') {
           this.step_1 = false;
           this.step_2 = false;
+          this.step_2_skip = false
           this.step_3 = true;
           this.step_4 = false;
+        } else if (response === 'SkipSource') {
+            this.step_1 = true;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3 = false;
+            this.step_4 = false;
         }
       },
       pullSettingsResponse (response) {
@@ -213,6 +233,17 @@ export default {
           this.step_3 = false;
           this.step_4 = true;
         }
+      },
+      setSkipSource (response) {
+          if(response) {
+              this.importDetails.skip_source = response;
+
+              this.step_1 = false;
+              this.step_2 = false;
+              this.step_2_skip = false
+              this.step_3 = false;
+              this.step_4 = true;
+          }
       },
       importModal(item) {
         this.showImportModal = true;
