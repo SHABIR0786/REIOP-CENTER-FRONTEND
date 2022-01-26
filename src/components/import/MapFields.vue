@@ -9,7 +9,7 @@
           <p>Description of step for user: To be filled out later.</p>
       </div>
       <hr>
-      <import :upload_type="upload_type" :list_settings="list_settings" class="w-100 import-map"></import>
+      <import :upload_type="upload_type" :list_settings="list_settings" :skip_source="this.skip_source" class="w-100 import-map"></import>
 
       <b-row>
         <b-col cols="12" class="prev-btn">
@@ -35,16 +35,24 @@
           Import
       },
       data () {
-          return { }
+          return {
+              skip_source: '',
+          }
       },
       mounted() {
-        if (this.importDetails && this.importDetails.list_settings) {
-          this.list_settings = this.importDetails.list_settings;
-        }
+          if (this.importDetails) {
+              if (this.importDetails.list_settings) {
+                  this.list_settings = this.importDetails.list_settings;
+              }
 
-        if (this.importDetails && this.importDetails.upload_type) {
-          this.upload_type = this.importDetails.upload_type;
-        }
+              if(this.importDetails.upload_type) {
+                  this.upload_type = this.importDetails.upload_type;
+              }
+
+              if(this.importDetails.upload_type) {
+                  this.list_settings = this.importDetails.list_settings;
+              }
+          }
       },
       methods: {
         goBack() {
