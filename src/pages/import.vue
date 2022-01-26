@@ -47,7 +47,7 @@ import MappedFields from '../components/import/MappedFields.vue'
 
 export default {
     name: "Import",
-    props: ['upload_type', 'list_settings'],
+    props: ['upload_type', 'list_settings', 'skip_source'],
     components: {
         FieldsCard,
         MappedFields
@@ -82,24 +82,32 @@ export default {
     },
     async created () {
         await this.$store.dispatch('importModule/loadVisibleFields')
-        if(this.upload_type === 'single') {
-            this.importedFields = {
-                seller: this.sellerFields,
-                subject: this.subjectFields,
+        if (this.upload_type) {
+            if(this.upload_type === 'single') {
+                this.importedFields = {
+                    seller: this.sellerFields,
+                    subject: this.subjectFields,
+                }
+            } else if(this.upload_type === 'appended') {
+                this.importedFields = {
+                    seller: this.sellerFields,
+                    subject: this.subjectFields,
+                    phone: this.phoneNumberFields,
+                }
+            } else {
+                this.importedFields = {
+                    email: this.emailFields,
+                    golden_address: this.goldenAddressFields,
+                    phone: this.phoneNumberFields,
+                    seller: this.sellerFields,
+                    subject: this.subjectFields,
+                }
             }
-        } else if(this.upload_type === 'appended') {
-            this.importedFields = {
-                seller: this.sellerFields,
-                subject: this.subjectFields,
-                phone: this.phoneNumberFields,
-            }
-        } else {
+        } else if (this.skip_source) {
             this.importedFields = {
                 email: this.emailFields,
                 golden_address: this.goldenAddressFields,
                 phone: this.phoneNumberFields,
-                seller: this.sellerFields,
-                subject: this.subjectFields,
             }
         }
     },
@@ -202,7 +210,8 @@ export default {
             file: this.file,
             mappedItems: mapping,
             url: this.url,
-            list: this.list_settings
+            list: this.list_settings,
+            skipSource: this.skip_source,
           })
 
           await this.$store.dispatch('uxModule/hideLoader')
