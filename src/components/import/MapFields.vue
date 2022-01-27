@@ -42,15 +42,16 @@
       mounted() {
           if (this.importDetails) {
               if (this.importDetails.list_settings) {
-                  this.list_settings = this.importDetails.list_settings;
+                  this.list_settings = this.importDetails.pull_settings;
               }
 
               if(this.importDetails.upload_type) {
                   this.upload_type = this.importDetails.upload_type;
               }
 
-              if(this.importDetails.upload_type) {
-                  this.list_settings = this.importDetails.list_settings;
+              if(this.importDetails.skip_source) {
+                  this.skip_source = this.importDetails.skip_source;
+                  this.list_settings = 'update_existing';
               }
           }
       },
