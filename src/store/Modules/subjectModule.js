@@ -27,7 +27,7 @@ const state = {
 
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
 
     ],
     subjects: [],
@@ -110,7 +110,7 @@ const actions = {
         const updatedData = Object.assign({}, data);
         delete updatedData.sellers;
         delete updatedData.total_sellers;
-
+        delete updatedData.user_name;
         return await api.put(`/subjects/${data.id}`, updatedData).then((response) => {
             commit('EDIT_SUBJECT', data)
             return response

@@ -26,7 +26,7 @@ const state = {
 
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
 
     ],
     sellers: [],
@@ -108,6 +108,7 @@ const actions = {
         delete updatedData.seller_total_emails;
         delete updatedData.seller_total_phones;
         delete updatedData.seller_total_subjects;
+        delete updatedData.user_name;
 
         return await api.put(`/sellers/${data.id}`, updatedData).then((response) => {
             commit('EDIT_SELLER', data)

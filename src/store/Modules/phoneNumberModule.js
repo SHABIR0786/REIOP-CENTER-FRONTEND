@@ -16,7 +16,7 @@ const state = {
 
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
     ],
     phoneNumbers: [],
     total: 0,
@@ -80,6 +80,7 @@ const actions = {
         })
     },
     async editPhoneNumber({ commit }, data) {
+        delete data.user_name;
         return await api.put(`/phones/${data.id}`, {...data}).then((response) => {
             commit('EDIT_ITEM', data)
             return response

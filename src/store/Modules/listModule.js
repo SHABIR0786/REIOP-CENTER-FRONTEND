@@ -20,7 +20,7 @@ const state = {
         {key:"list_last_edit_date", label: "Last Edit Date", sortable: true},
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
     ],
     lists: [],
     total: 0,
@@ -85,6 +85,8 @@ const actions = {
         })
     },
     async editList({ commit }, data) {
+        delete data.user_name;
+        delete data.list_total_subject;
         return await api.put(`/lists/${data.id}`, {...data}).then((response) => {
             commit('EDIT_LIST', data)
             return response
