@@ -26,7 +26,7 @@ const state = {
         {key: "subject_skip_trace_date", label: "Skip Trace Date", sortable: true},
 
         {key:"created_at", label: "Created Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
 
     ],
     phone_fields: [
@@ -44,7 +44,7 @@ const state = {
         // Custom Fields
 
         {key:"created_at", label: "Created Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
     ],
     email_fields: [
         {key:"id", label: "ID", sortable: true},
@@ -60,7 +60,7 @@ const state = {
         // Custom Fields
 
         {key:"created_at", label: "Created Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
     ],
     subjects: [],
     emails: [],

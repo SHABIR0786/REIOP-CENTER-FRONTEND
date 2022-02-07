@@ -15,7 +15,7 @@ const state = {
 
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
     ],
     emails: [],
     total: 0,
@@ -79,6 +79,7 @@ const actions = {
         })
     },
     async editEmail({ commit }, data) {
+        delete data.user_name;
         return await api.put(`/emails/${data.id}`, {...data}).then((response) => {
             commit('EDIT_EMAIL', data)
             return response

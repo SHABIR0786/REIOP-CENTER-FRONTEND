@@ -58,8 +58,8 @@
                     <b-col>
                         <b-row>
                             <b-col cols="12">
-                                <b-input-group prepend="User Id" class="mb-2">
-                                    <b-form-input readonly v-model="email.user_id"></b-form-input>
+                                <b-input-group prepend="User Name" class="mb-2">
+                                    <b-form-input readonly v-model="email.user_name"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>

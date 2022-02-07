@@ -17,7 +17,7 @@ const state = {
 
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
-        {key:"user_id", label: "Uploaded By", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
     ],
     goldenAddresses: [],
     total: 0,
@@ -81,6 +81,7 @@ const actions = {
         })
     },
     async editGoldenAddress({ commit }, data) {
+        delete data.user_name;
         return await api.put(`/golden-addresses/${data.id}`, {...data}).then((response) => {
             commit('EDIT_GOLDEN_ADDRESS', data)
             return response
