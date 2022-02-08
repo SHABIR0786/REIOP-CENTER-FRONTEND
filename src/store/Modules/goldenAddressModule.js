@@ -30,26 +30,30 @@ const mutations = {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
-        state.goldenAddresses = [...data]
+        state.goldenAddresses = JSON.stringify(data);
     },
     EDIT_GOLDEN_ADDRESS(state, payload) {
-        const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1, { ...payload })
+        const ADDRESS = JSON.parse(state.goldenAddresses)
+        const findIndex = ADDRESS.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && ADDRESS.splice(findIndex, 1, { ...payload })
     },
     DELETE_GOLDEN_ADDRESS(state, payload) {
-        const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1)
+        const ADDRESS = JSON.parse(state.goldenAddresses)
+        const findIndex = ADDRESS.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && ADDRESS.splice(findIndex, 1)
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
     ADD_GOLDEN_ADDRESS(state, payload) {
-        const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1, { ...payload })
+        const ADDRESS = JSON.parse(state.goldenAddresses)
+        const findIndex = ADDRESS.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && ADDRESS.splice(findIndex, 1, { ...payload })
     },
     DELETE_MULTIPLE_GOLDEN_ADDRESS(state, payload) {
-        const findIndex = state.goldenAddresses.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.goldenAddresses.splice(findIndex, 1)
+        const ADDRESS = JSON.parse(state.goldenAddresses)
+        const findIndex = ADDRESS.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && ADDRESS.splice(findIndex, 1)
     }
 }
 
@@ -117,7 +121,7 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    goldenAddresses: ({ goldenAddresses }) => goldenAddresses,
+    goldenAddresses: ({ goldenAddresses }) => {return JSON.parse(goldenAddresses)},
     total: ({total}) => total
 }
 

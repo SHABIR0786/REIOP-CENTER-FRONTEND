@@ -29,26 +29,30 @@ const mutations = {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
-        state.phoneNumbers = [...data]
+        state.phoneNumbers = JSON.stringify(data);
     },
     EDIT_ITEM(state, payload) {
-        const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1, { ...payload })
+        const PHONE = JSON.parse(state.phoneNumbers)
+        const findIndex = PHONE.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && PHONE.splice(findIndex, 1, { ...payload })
     },
     DELETE_ITEM(state, payload) {
-        const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1)
+        const PHONE = JSON.parse(state.phoneNumbers)
+        const findIndex = PHONE.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && PHONE.splice(findIndex, 1)
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
     ADD_ITEM(state, payload) {
-        const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1, { ...payload })
+        const PHONE = JSON.parse(state.phoneNumbers)
+        const findIndex = PHONE.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && PHONE.splice(findIndex, 1, { ...payload })
     },
     DELETE_MULTIPLE_ITEMS(state, payload) {
-        const findIndex = state.phoneNumbers.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.phoneNumbers.splice(findIndex, 1)
+        const PHONE = JSON.parse(state.phoneNumbers)
+        const findIndex =PHONE.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && PHONE.splice(findIndex, 1)
     }
 }
 
@@ -116,7 +120,7 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    phoneNumbers: ({ phoneNumbers }) => phoneNumbers,
+    phoneNumbers: ({ phoneNumbers }) => {return JSON.parse(phoneNumbers)},
     total: ({total}) => total
 }
 

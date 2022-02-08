@@ -44,29 +44,33 @@ const mutations = {
             e.seller_total_emails = e.emails.length;
             e.seller_total_subjects = e.subjects.length;
         })
-        state.sellers = [...data]
+        state.sellers = JSON.stringify(data);
     },
     EDIT_SELLER(state, payload) {
-        const findIndex = state.sellers.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.sellers.splice(findIndex, 1, { ...payload })
+        const SELLER = JSON.parse(state.sellers)
+        const findIndex = SELLER.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && SELLER.splice(findIndex, 1, { ...payload })
     },
     DELETE_SELLER(state, payload) {
-        const findIndex = state.sellers.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.sellers.splice(findIndex, 1)
+        const SELLER = JSON.parse(state.sellers)
+        const findIndex = SELLER.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && SELLER.splice(findIndex, 1)
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
     ADD_SELLER(state, payload) {
-        const findIndex = state.sellers.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.sellers.splice(findIndex, 1, { ...payload })
+        const SELLER = JSON.parse(state.sellers)
+        const findIndex = SELLER.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && SELLER.splice(findIndex, 1, { ...payload })
     },
     SET_SELLER(state, payload) {
-        state.seller = {...payload};
+        state.seller = JSON.stringify(payload);
     },
     DELETE_MULTIPLE_SELLERS(state, payload) {
-        const findIndex = state.sellers.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.sellers.splice(findIndex, 1)
+        const SELLER = JSON.parse(state.sellers)
+        const findIndex = SELLER.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && SELLER.splice(findIndex, 1)
     }
 }
 
@@ -151,7 +155,7 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    sellers: ({ sellers }) => sellers,
+    sellers: ({ sellers }) => { return JSON.parse(sellers) },
     total: ({total}) => total,
     seller: ({seller}) => seller
 }

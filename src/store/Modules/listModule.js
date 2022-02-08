@@ -34,26 +34,30 @@ const mutations = {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
-        state.lists = [...data]
+        state.lists = JSON.stringify(data);
     },
     EDIT_LIST(state, payload) {
-        const findIndex = state.lists.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.lists.splice(findIndex, 1, { ...payload })
+        const LIST = JSON.parse(state.lists)
+        const findIndex = LIST.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && LIST.splice(findIndex, 1, { ...payload })
     },
     DELETE_LIST(state, payload) {
-        const findIndex = state.lists.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.lists.splice(findIndex, 1)
+        const LIST = JSON.parse(state.lists)
+        const findIndex = LIST.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && LIST.splice(findIndex, 1)
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
     ADD_LIST(state, payload) {
-        const findIndex = state.lists.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.lists.splice(findIndex, 1, { ...payload })
+        const LIST = JSON.parse(state.lists)
+        const findIndex = LIST.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && LIST.splice(findIndex, 1, { ...payload })
     },
     DELETE_MULTIPLE_LISTS(state, payload) {
-        const findIndex = state.lists.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.lists.splice(findIndex, 1)
+        const LIST = JSON.parse(state.lists)
+        const findIndex = LIST.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && LIST.splice(findIndex, 1)
     }
 }
 
@@ -122,7 +126,7 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    lists: ({ lists }) => lists,
+    lists: ({ lists }) => {return JSON.parse(lists)},
     total: ({total}) => total
 }
 

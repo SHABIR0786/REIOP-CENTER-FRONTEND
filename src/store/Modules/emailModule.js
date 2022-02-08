@@ -28,26 +28,30 @@ const mutations = {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
-        state.emails = [...data]
+        state.emails = JSON.stringify(data);
     },
     EDIT_EMAIL(state, payload) {
-        const findIndex = state.emails.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.emails.splice(findIndex, 1, { ...payload })
+        const EMAIL = JSON.parse(state.emails)
+        const findIndex = EMAIL.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && EMAIL.splice(findIndex, 1, { ...payload })
     },
     DELETE_EMAIL(state, payload) {
-        const findIndex = state.emails.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.emails.splice(findIndex, 1)
+        const EMAIL = JSON.parse(state.emails)
+        const findIndex = EMAIL.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && EMAIL.splice(findIndex, 1)
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
     ADD_EMAIL(state, payload) {
-        const findIndex = state.emails.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.emails.splice(findIndex, 1, { ...payload })
+        const EMAIL = JSON.parse(state.emails)
+        const findIndex = EMAIL.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && EMAIL.splice(findIndex, 1, { ...payload })
     },
     DELETE_MULTIPLE_EMAILS(state, payload) {
-        const findIndex = state.emails.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.emails.splice(findIndex, 1)
+        const EMAIL = JSON.parse(state.emails)
+        const findIndex = EMAIL.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && EMAIL.splice(findIndex, 1)
     }
 }
 
@@ -115,7 +119,7 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    emails: ({ emails }) => emails,
+    emails: ({ emails }) => {return JSON.parse(emails)},
     total: ({total}) => total
 }
 

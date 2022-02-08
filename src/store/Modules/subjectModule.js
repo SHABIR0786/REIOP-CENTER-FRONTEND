@@ -44,29 +44,33 @@ const mutations = {
             e.updated_at = e.updated_at.split('T')[0];
             e.total_sellers = e.sellers.length;
         })
-        state.subjects = [...data]
+        state.subjects = JSON.stringify(data);
     },
     EDIT_SUBJECT(state, payload) {
-        const findIndex = state.subjects.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.subjects.splice(findIndex, 1, { ...payload })
+        const SUBJECTS = JSON.parse(state.subjects)
+        const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && SUBJECTS.splice(findIndex, 1, { ...payload })
     },
     DELETE_SUBJECT(state, payload) {
-        const findIndex = state.subjects.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.subjects.splice(findIndex, 1)
+        const SUBJECTS = JSON.parse(state.subjects)
+        const findIndex = SUBJECTS.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && SUBJECTS.splice(findIndex, 1)
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
     ADD_SUBJECT(state, payload) {
-        const findIndex = state.subjects.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.subjects.splice(findIndex, 1, { ...payload })
+        const SUBJECTS = JSON.parse(state.subjects)
+        const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && SUBJECTS.splice(findIndex, 1, { ...payload })
     },
     SET_SUBJECT(state, payload) {
         state.subject = {...payload};
     },
     DELETE_MULTIPLE_SUBJECTS(state, payload) {
-        const findIndex = state.subjects.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.subjects.splice(findIndex, 1)
+        const SUBJECTS = JSON.parse(state.subjects)
+        const findIndex = SUBJECTS.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && SUBJECTS.splice(findIndex, 1)
     }
 }
 
@@ -146,7 +150,7 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    subjects: ({ subjects }) => subjects,
+    subjects: ({ subjects }) => {return JSON.parse(subjects)},
     total: ({total}) => total,
     subject: ({subject}) => subject
 }
