@@ -9,7 +9,7 @@ const state = {
         {key:"is_processed", label: "Is Processed"},
         {key:"created_records", label: "Created Records", sortable: true},
 
-        {key:"error_lines", label: "Error Lines", sortable: true},
+        {key:"error_number", label: "Error Lines", sortable: true},
         {key:"total_row_number", label: "Total Lines", sortable: true},
 
         {key:"created_at", label: "Created Date", sortable: true},
@@ -17,11 +17,11 @@ const state = {
     ],
     imports: [],
     total: 0,
-    lists: [],
 }
 
 const mutations = {
     SET_ALL_PROCESSES(state, payload) {
+        console.log(payload)
         const readyData = [];
         payload.forEach(e => {
             const process = {}
@@ -29,12 +29,13 @@ const mutations = {
             const date = e.created_at;
             process.id = e.id;
             process.process_id = e.process_id
-            process.error_lines = e.error_number;
+            process.error_number = e.error_number;
             process.total_row_number = e.total_row_number;
-            process.total_rows = e.total_jobs;
+            //process.total_rows = e.total_jobs;
             process.is_processing = e.pending_jobs;
             process.is_processed = e.total_jobs - e.pending_jobs;
             process.file_name = e.file_name;
+            process.user_id = e.user_id;
             process.extension = e.extension;
             process.created_at = new Date(date * 1000).toLocaleString();
             readyData.push(process);
@@ -43,6 +44,10 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
+    },
+    EDIT_IMPORT(state, payload) {
+        const findIndex = state.imports.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.imports.splice(findIndex, 1, { ...payload })
     },
     EXPORTED(state, payload) {
         console.log('payload',  payload);
@@ -64,6 +69,17 @@ const actions = {
                 commit('SET_ALL_PROCESSES', response.batch)
             }
 
+            return response
+        })
+    },
+    async editImport({ commit }, data) {
+        delete data.is_processing;
+        delete data.is_processed;
+        // delete data.updated_at;
+        //delete data.created_at;
+
+        return await api.put(`/batches/${data.id}`, {...data}).then((response) => {
+            commit('EDIT_IMPORT', data)
             return response
         })
     },

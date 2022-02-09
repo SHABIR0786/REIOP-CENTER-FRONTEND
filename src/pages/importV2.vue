@@ -90,6 +90,8 @@
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
 
+
+        <edit-import-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-import-modal>
         <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
         <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
         <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
@@ -108,6 +110,7 @@ import PullSettings from "../components/import/PullSettings";
 import MapFields from "../components/import/MapFields";
 import DeleteModal from "../components/deleteModal/DeleteModal";
 import SelectSkipDataSource from "../components/import/SelectSkipDataSource";
+import EditImportModal from "@/components/import/EditImportModal";
 
 export default {
     name: "importV2",
@@ -118,7 +121,8 @@ export default {
       UploadType,
       PullSettings,
       MapFields,
-      DeleteModal
+      DeleteModal,
+      EditImportModal
     },
     data () {
       return {
@@ -140,6 +144,8 @@ export default {
         pull_list: {},
         itemToRollback: {},
         showDeleteModal: false,
+        showModal: false,
+        editedItem:{}
       }
     },
     async created () {
@@ -158,11 +164,22 @@ export default {
           fields: 'importV2Module/fields',
           items: 'importV2Module/imports',
           lists: 'listModule/lists',
-          total: 'listModule/total'
+          total: 'listModule/total',
       }),
       rows() { return this.total ? this.total : 1 }
     },
     methods: {
+      editItem(item) {
+        this.showModal = true
+        this.editedItem = { ...item }
+      },
+      save(item) {
+        // this.showModal = false
+        // if (item.subjects) {
+        //   delete item.subjects
+        // }
+        this.$store.dispatch('importV2Module/editImport', {...item})
+      },
       modalResponse(response) {
         this.showImportModal = false;
         if (response) {
