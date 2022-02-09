@@ -150,7 +150,13 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    subjects: ({ subjects }) => {return JSON.parse(subjects)},
+    subjects: ({ subjects }) => {
+        if (typeof subjects === 'string') {
+            return JSON.parse(subjects);
+        }
+
+        return [];
+    },
     total: ({total}) => total,
     subject: ({subject}) => subject
 }

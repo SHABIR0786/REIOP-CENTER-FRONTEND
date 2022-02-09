@@ -126,7 +126,13 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    lists: ({ lists }) => {return JSON.parse(lists)},
+    lists: ({ lists }) => {
+        if (typeof lists === 'string') {
+            return JSON.parse(lists);
+        }
+
+        return [];
+    },
     total: ({total}) => total
 }
 

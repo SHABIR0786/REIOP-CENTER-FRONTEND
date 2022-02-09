@@ -121,7 +121,13 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    goldenAddresses: ({ goldenAddresses }) => {return JSON.parse(goldenAddresses)},
+    goldenAddresses: ({ goldenAddresses }) => {
+        if (typeof goldenAddresses === 'string') {
+            return JSON.parse(goldenAddresses);
+        }
+
+        return [];
+    },
     total: ({total}) => total
 }
 

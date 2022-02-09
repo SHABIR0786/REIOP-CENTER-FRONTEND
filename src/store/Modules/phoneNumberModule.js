@@ -120,7 +120,13 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    phoneNumbers: ({ phoneNumbers }) => {return JSON.parse(phoneNumbers)},
+    phoneNumbers: ({ phoneNumbers }) => {
+        if (typeof phoneNumbers === 'string') {
+            return JSON.parse(phoneNumbers);
+        }
+
+        return [];
+    },
     total: ({total}) => total
 }
 

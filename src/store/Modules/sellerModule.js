@@ -155,7 +155,13 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    sellers: ({ sellers }) => { return JSON.parse(sellers) },
+    sellers: ({ sellers }) => {
+        if (typeof sellers === 'string') {
+            return JSON.parse(sellers);
+        }
+
+        return [];
+    },
     total: ({total}) => total,
     seller: ({seller}) => seller
 }
