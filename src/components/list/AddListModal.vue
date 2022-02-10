@@ -64,6 +64,7 @@
     </b-modal>
 </template>
 <script>
+
     export default {
         name: 'AddListModal',
         props: {

@@ -24,6 +24,7 @@ const state = {
     ],
     lists: [],
     total: 0,
+    sellers: []
 }
 
 const mutations = {
@@ -53,6 +54,9 @@ const mutations = {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && LIST.splice(findIndex, 1, { ...payload })
+    },
+    ONLY_SELLERS(state, payload) {
+        state.sellers = payload
     },
     DELETE_MULTIPLE_LISTS(state, payload) {
         const LIST = JSON.parse(state.lists)
@@ -102,6 +106,15 @@ const actions = {
             return response
         })
     },
+
+    async modalSellers({ commit }, {data, page, perPage}) {
+        return await api.get(`/lists/showSeller?listId=${data}&page=${page}&perPage=${perPage}`, {...data}).then((response) => {
+            commit('ONLY_SELLERS', response.sellers)
+            return response
+        })
+    },
+
+
     async deleteList({ commit }, data) {
         return await api.deleteAPI(`/lists/${data}`).then((response) => {
             commit('DELETE_LIST', data)
@@ -133,7 +146,8 @@ const getters = {
 
         return [];
     },
-    total: ({total}) => total
+    total: ({total}) => total,
+    sellers: state => state.sellers
 }
 
 export default {
