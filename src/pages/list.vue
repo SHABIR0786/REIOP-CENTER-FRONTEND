@@ -93,7 +93,7 @@
                 </div>
             </template>
             <template v-slot:cell(actions)="data">
-                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item) "></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
             </template>
             <template #head(created_at)="scope">

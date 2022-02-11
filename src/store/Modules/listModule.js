@@ -24,6 +24,7 @@ const state = {
     ],
     lists: [],
     total: 0,
+    sellers: [],
 }
 
 const mutations = {
@@ -53,6 +54,9 @@ const mutations = {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && LIST.splice(findIndex, 1, { ...payload })
+    },
+    SHOW_TABS(state, payload) {
+        state.tabData = payload
     },
     DELETE_MULTIPLE_LISTS(state, payload) {
         const LIST = JSON.parse(state.lists)
@@ -91,6 +95,15 @@ const actions = {
     async editList({ commit }, data) {
         delete data.user_name;
         delete data.list_total_subject;
+        delete data.subjects_count;
+        delete data.sellers_count;
+        delete data.phones_count;
+        delete data.golden_addresses_count;
+        delete data.emails_count;
+        delete data.phones;
+        delete data.golden_addresses;
+        delete data.emails;
+        delete data.sellers;
         return await api.put(`/lists/${data.id}`, {...data}).then((response) => {
             commit('EDIT_LIST', data)
             return response
@@ -102,6 +115,15 @@ const actions = {
             return response
         })
     },
+
+    async currentModal({ commit }, {data, page, perPage, modalName, tableName}) {
+        return await api.get(`/lists/modal/${modalName}/${tableName}?listId=${data}&page=${page}&perPage=${perPage}`, {...data}).then((response) => {
+            commit('SHOW_TABS', response.tabData)
+            return response
+        })
+    },
+
+
     async deleteList({ commit }, data) {
         return await api.deleteAPI(`/lists/${data}`).then((response) => {
             commit('DELETE_LIST', data)
@@ -133,7 +155,8 @@ const getters = {
 
         return [];
     },
-    total: ({total}) => total
+    total: ({total}) => total,
+    tabData: state => state.tabData
 }
 
 export default {
