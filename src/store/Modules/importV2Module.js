@@ -21,7 +21,6 @@ const state = {
 
 const mutations = {
     SET_ALL_PROCESSES(state, payload) {
-        console.log(payload)
         const readyData = [];
         payload.forEach(e => {
             const process = {}
@@ -75,9 +74,6 @@ const actions = {
     async editImport({ commit }, data) {
         delete data.is_processing;
         delete data.is_processed;
-        // delete data.updated_at;
-        //delete data.created_at;
-
         return await api.put(`/batches/${data.id}`, {...data}).then((response) => {
             commit('EDIT_IMPORT', data)
             return response

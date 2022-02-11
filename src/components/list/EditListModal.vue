@@ -138,7 +138,7 @@
             </b-row>
           <b-row class="mt-5">
             <b-tabs class="w-100" content-class="mt-3" fill>
-              <b-tab title="Related Sellers" active>
+              <b-tab title="Related Sellers" active @click="currentModal('sellers','Seller')">
                 <!--                <b-row>-->
                 <!--                  <b-col class="assign-btn">-->
                 <!--                    <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>-->
@@ -151,7 +151,7 @@
                     hover
                     :busy="isBusy"
                     :fields="sellerTableFields"
-                    :items="sellers.data"
+                    :items="tabData.data"
                     responsive
                     :per-page="0"
                     :sticky-header="true"
@@ -191,14 +191,14 @@
                     </b-form-group>
                   </b-col>
                   <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to {{perPage}} of {{sellers.total}} entries</p>
+                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
                   </b-col>
                   <b-col class="d-flex justify-content-end">
                     <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
                   </b-col>
                 </b-row>
               </b-tab>
-              <b-tab title="Related Phones">
+              <b-tab title="Related Phones" @click="currentModal('phones','Phone')">
 <!--                <b-row>-->
 <!--                  <b-col class="assign-btn">-->
 <!--                    <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>-->
@@ -211,7 +211,7 @@
                     hover
                     :busy="isBusy"
                     :fields="phoneFields"
-                    :items="list.phones"
+                    :items="tabData.data"
                     responsive
                     :per-page="0"
                     :sticky-header="true"
@@ -236,9 +236,29 @@
                     <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon>
                   </template>
                 </b-table>
-
+                <b-row>
+                  <b-col class="d-flex align-items-center">
+                    <b-form-group
+                        label="Show"
+                        label-for="show-select"
+                        label-cols-sm="6"
+                        label-cols-md="4"
+                        label-cols-lg="3"
+                        label-size="xs"
+                        class="mb-0"
+                    >
+                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
+                    </b-form-group>
+                  </b-col>
+                  <b-col class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
+                  </b-col>
+                  <b-col class="d-flex justify-content-end">
+                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                  </b-col>
+                </b-row>
               </b-tab>
-              <b-tab title="Related Emails">
+              <b-tab title="Related Emails" @click="currentModal('emails','Email')">
 <!--                <b-row>-->
 <!--                  <b-col class="assign-btn">-->
 <!--                    <b-button class="mb-2" variant="primary" @click="showAddEmailModal = true">Add New Email Address</b-button>-->
@@ -251,7 +271,7 @@
                     hover
                     :busy="isBusy"
                     :fields="emailFields"
-                    :items="list.emails"
+                    :items="tabData.data"
                     responsive
                     :per-page="0"
                     :sticky-header="true"
@@ -276,8 +296,29 @@
                     <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteEmail(data.item)"></b-icon>
                   </template>
                 </b-table>
+                <b-row>
+                  <b-col class="d-flex align-items-center">
+                    <b-form-group
+                        label="Show"
+                        label-for="show-select"
+                        label-cols-sm="6"
+                        label-cols-md="4"
+                        label-cols-lg="3"
+                        label-size="xs"
+                        class="mb-0"
+                    >
+                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
+                    </b-form-group>
+                  </b-col>
+                  <b-col class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
+                  </b-col>
+                  <b-col class="d-flex justify-content-end">
+                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                  </b-col>
+                </b-row>
               </b-tab>
-              <b-tab title="Related Golden Addresses">
+              <b-tab title="Related Golden Addresses" @click="currentModal('golden_addresses','GoldenAddress')">
 <!--                <b-row>-->
 <!--                  <b-col class="assign-btn">-->
 <!--                    <b-button class="mb-2" variant="primary" @click="showAddAddressModal = true">Add New Golden Address</b-button>-->
@@ -290,7 +331,7 @@
                     hover
                     :busy="isBusy"
                     :fields="goldenFields"
-                    :items="list.golden_addresses"
+                    :items="tabData.data"
                     responsive
                     :per-page="0"
                     :sticky-header="true"
@@ -315,8 +356,29 @@
                     <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteGoldenAddress(data.item)"></b-icon>
                   </template>
                 </b-table>
+                <b-row>
+                  <b-col class="d-flex align-items-center">
+                    <b-form-group
+                        label="Show"
+                        label-for="show-select"
+                        label-cols-sm="6"
+                        label-cols-md="4"
+                        label-cols-lg="3"
+                        label-size="xs"
+                        class="mb-0"
+                    >
+                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
+                    </b-form-group>
+                  </b-col>
+                  <b-col class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
+                  </b-col>
+                  <b-col class="d-flex justify-content-end">
+                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                  </b-col>
+                </b-row>
               </b-tab>
-              <b-tab title="Related Subjects">
+              <b-tab title="Related Subjects"  @click="currentModal('subjects', 'Subject')">
 <!--                <b-row>-->
 <!--                  <b-col class="assign-btn">-->
 <!--                    <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>-->
@@ -329,7 +391,7 @@
                     hover
                     :busy="isBusy"
                     :fields="subjectFields"
-                    :items="list.subjects"
+                    :items="tabData.data"
                     responsive
                     :per-page="0"
                     :sticky-header="true"
@@ -354,6 +416,27 @@
 <!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>-->
 <!--                  </template>-->
                 </b-table>
+                <b-row>
+                  <b-col class="d-flex align-items-center">
+                    <b-form-group
+                        label="Show"
+                        label-for="show-select"
+                        label-cols-sm="6"
+                        label-cols-md="4"
+                        label-cols-lg="3"
+                        label-size="xs"
+                        class="mb-0"
+                    >
+                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
+                    </b-form-group>
+                  </b-col>
+                  <b-col class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
+                  </b-col>
+                  <b-col class="d-flex justify-content-end">
+                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                  </b-col>
+                </b-row>
               </b-tab>
             </b-tabs>
           </b-row>
@@ -385,6 +468,12 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.list);
         },
+      currentModal(modalName,tableName){
+        this.modalName  = modalName;
+        this.tableName  = tableName;
+        this.currentPage = 1;
+        this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.id, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
+      },
       editSubject (item) {
         const route = '/subjects?subject_id=' + item.id;
         let routeData = this.$router.resolve({path: route});
@@ -422,6 +511,8 @@ export default {
           goldenTableFields: null,
           subjectTableFields: null,
           sellerTableFields: null,
+          modalName:'sellers',
+          tableName:'Seller',
           phoneFields: [
             {key:"id", label: "ID", sortable: true},
             {key: "phone_number", label: "Phone Number", sortable: true},
@@ -447,6 +538,7 @@ export default {
             {key: "golden_address_state", label: "Golden State", sortable: true},
             {key: "golden_address_zip", label: "Golden Zip", sortable: true},
             {key:"created_at", label: "Created Date", sortable: true},
+            {key:"user_name", label: "Uploaded By", sortable: true},
             // {key: "actions", stickyColumn: true, label: "Actions"},
           ],
           subjectFields: [
@@ -466,10 +558,10 @@ export default {
     computed: {
       ...mapGetters({
         sellerFields: 'sellerModule/fields',
-        sellers: 'listModule/sellers',
+        tabData: 'listModule/tabData',
         total: 'listModule/total'
       }),
-      rows() { return this.sellers.total ? this.sellers.total : 1 }
+      rows() { return this.tabData.total ? this.tabData.total : 1 }
     },
     mounted () {
       this.sellerTableFields = this.sellerFields.filter(s => s.key !== 'seller_total_subjects' &&
@@ -479,17 +571,17 @@ export default {
     },
     watch: {
         showModal() {
-          this.$store.dispatch('listModule/modalSellers',{data:this.propsData.id, page: 1, perPage:this.perPage})
+          this.$store.dispatch('listModule/currentModal',{data:this.propsData.id, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
           this.list= {...this.propsData}
         },
       currentPage: {
         handler: function() {
-          this.$store.dispatch('listModule/modalSellers', {data:this.propsData.id, page:this.currentPage, perPage:this.perPage})
+          this.$store.dispatch('listModule/currentModal', {data:this.propsData.id, page:this.currentPage, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
         }
       },
       perPage: {
         handler: function () {
-          this.$store.dispatch('listModule/modalSellers', {data:this.propsData.id, page:this.currentPage, perPage:this.perPage})
+          this.$store.dispatch('listModule/currentModal', {data:this.propsData.id, page:this.currentPage, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
         }
       },
     }
