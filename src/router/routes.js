@@ -13,6 +13,7 @@ import BackgroundProcesses from "../pages/backgroundProcesses"
 import Error from "../pages/error"
 import Import from "../pages/importV2"
 import Team from "../pages/team"
+import phoneTypes from "@/pages/phoneTypes";
 
 export const routes = [
     {name: "Login", path: "/login", component: Login, title: "Login", isNavbar: false},
@@ -29,5 +30,6 @@ export const routes = [
     {name: "Label", path: "/labels", component: Labels, title: "Labels", isNavbar: false, meta: {requireAuth: true}},
     {name: "BackgroundProcesses", path: "/background-processes", component: BackgroundProcesses, title: "Background Processes", isNavbar: false, meta: {requireAuth: true}},
     {name: "Error", path: "/errors", component: Error, title: "Errors", isNavbar: false, meta: {requireAuth: true}},
-    {name: "Teams", path: "/teams", component: Team, title: "Teams", isNavbar: false, meta: {requireAuth: true}}
+    {name: "Teams", path: "/teams", component: Team, title: "Teams", isNavbar: false, meta: {requireAuth: true}},
+    {name: "PhoneTypes", path: "/phoneTypes", component: phoneTypes, title: "Phone Types", isNavbar: false, meta: {requireAuth: true}}
 ]
