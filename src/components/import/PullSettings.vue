@@ -115,11 +115,21 @@
       },
       mounted() {
         this.lists.forEach(e => {
-            this.market.push(e.list_market)
-            this.group.push(e.list_group);
-            this.type.push(e.list_type);
-            this.source.push(e.list_source);
-            this.pull_date.push(e.list_pull_date);
+            if((this.market.indexOf(e.list_market)) === -1){
+              this.market.push(e.list_market)
+            }
+            if((this.group.indexOf(e.list_group)) === -1){
+              this.group.push(e.list_group);
+            }
+            if((this.type.indexOf(e.list_type)) === -1){
+              this.type.push(e.list_type);
+            }
+            if((this.source.indexOf(e.list_source)) === -1){
+              this.source.push(e.list_source);
+            }
+            if((this.pull_date.indexOf(e.list_pull_date)) === -1){
+              this.pull_date.push(e.list_pull_date);
+            }
         });
 
         this.market.push('Add a new Market')
@@ -169,25 +179,33 @@
             }
         },
         add (response) {
-            switch (this.settingSection) {
-                case "Market":
-                    this.market.splice(this.market.length -1, 0, response);
-                    this.list.list_market = response;
-                    break
-                case "Group":
-                    this.group.splice(this.group.length -1, 0, response);
-                    this.list.list_group = response;
-                    break
-                case "Type":
-                    this.type.splice(this.type.length -1, 0, response);
-                    this.list.list_type = response;
-                    break
-                case "Source":
-                    this.source.splice(this.source.length -1, 0, response);
-                    this.list.list_source = response;
-                    break
-            }
-            this.showSettingsModal = false;
+          switch (this.settingSection) {
+            case "Market":
+              if((this.market.indexOf(response)) === -1){
+               this.market.splice(this.market.length -1, 0, response);
+              }
+              this.list.list_market = response;
+              break
+            case "Group":
+              if(this.group.indexOf(response) === -1){
+                this.group.splice(this.group.length -1, 0, response);
+              }
+              this.list.list_group = response;
+              break
+            case "Type":
+              if(this.type.indexOf(response) === -1){
+                this.type.splice(this.type.length -1, 0, response);
+              }
+              this.list.list_type = response;
+              break
+            case "Source":
+              if(this.source.indexOf(response) === -1){
+                this.source.splice(this.source.length -1, 0, response);
+              }
+              this.list.list_source = response;
+              break
+          }
+          this.showSettingsModal = false;
         }
       }
     }
