@@ -40,10 +40,10 @@
                             </b-input-group>
                           </b-col>
                         </b-row>
-                      <b-row class="mb-1 text-center">
-                        <b-col cols="12">
-                          <b-input-group prepend="Type In Web" class="mb-2">
-                            <b-form-input :readonly="isReadOnly" v-model="types.type_in_web"></b-form-input>
+                      <b-row >
+                        <b-col :readonly="isReadOnly"  cols="12">
+                          <b-input-group  prepend="Type In Web" >
+                            <b-form-select :disabled="isReadOnly" v-model="types.type_in_web" :options="options" ></b-form-select>
                           </b-input-group>
                         </b-col>
                       </b-row>
@@ -83,11 +83,15 @@
         },
         data() {
             return {
+                options:[
+                  { value: 1, text: 'Please select one', disabled: true },
+                  { value: 'Home', text: 'Home' },
+                  { value: 'Mobile', text: 'Mobile' },
+                ],
                 types: {
                     name: ''
                 },
                 isReadOnly: true,
-                // showAddMemberModal: false,
             }
         },
         watch: {
@@ -102,8 +106,5 @@
     .close-icon {
         font-size: 30px;
         cursor: pointer;
-    }
-    .add-member {
-        width: 250px;
     }
 </style>

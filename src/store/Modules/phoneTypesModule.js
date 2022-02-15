@@ -7,7 +7,6 @@ const state = {
         {key: "type_in_file", label: "Type In File", sortable: true},
         {key: "type_in_web", label: "Type In Web", sortable: true},
         {key: "user_name", label: "Uploaded By"},
-        //{key: "total_users", label: "Members Number"},
 
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
@@ -22,7 +21,6 @@ const mutations = {
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
-           //e.total_users = e.users.length;
         });
 
         state.types = [...data]
@@ -91,7 +89,7 @@ const actions = {
     },
 
     async getTotal({ commit }) {
-        return await api.get(`/totals/teams`).then((response) => {
+        return await api.get(`/totals/types`).then((response) => {
             if (response && response.count > -1) {
                 commit ('GET_TOTAL', response.count);
             }
