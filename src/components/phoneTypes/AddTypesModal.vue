@@ -7,20 +7,20 @@
         </template>
         <b-container fluid>
             <b-row class="text-center">
-                <b-row class="mb-1 text-center">
+                <b-row class="mb-1 text-center col-12">
                     <b-col cols="12">
                         <b-input-group prepend="Type In File" class="mb-2">
                             <b-form-input v-model="types.type_in_file"></b-form-input>
                         </b-input-group>
                     </b-col>
                 </b-row>
-                <b-row class="mb-1 text-center">
-                    <b-col cols="12">
-                        <b-input-group prepend="Type In Web" class="mb-2">
-                            <b-form-input  v-model="types.type_in_web"></b-form-input>
-                        </b-input-group>
-                    </b-col>
-                </b-row>
+              <b-row class="mb-1 text-center col-12">
+                <b-col  cols="12">
+                  <b-input-group  prepend="Type In Web" >
+                    <b-form-select  v-model="types.type_in_web" :options="options" ></b-form-select>
+                  </b-input-group>
+                </b-col>
+              </b-row>
             </b-row>
         </b-container>
         <template #modal-footer>
@@ -58,6 +58,11 @@
         },
         data() {
             return {
+              options:[
+                { value: 1, text: 'Please select one', disabled: true },
+                { value: 'Home', text: 'Home' },
+                { value: 'Mobile', text: 'Mobile' },
+              ],
                 types: {
                     type_in_file: '',
                     type_in_web: '',

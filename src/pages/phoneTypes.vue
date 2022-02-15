@@ -1,7 +1,7 @@
 <template>
   <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
     <div>
-      <h3>Types</h3>
+      <h3>Phone Types</h3>
       <div>
         <b-row>
           <b-col class="d-flex justify-content-end">

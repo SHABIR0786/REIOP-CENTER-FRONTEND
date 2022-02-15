@@ -39,6 +39,12 @@ const mutations = {
     ADD_TYPE(state, payload) {
         const findIndex = state.types.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.types.splice(findIndex, 1, { ...payload })
+        const data = [payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        });
+        state.types.push(data[0])
     },
 }
 
@@ -77,7 +83,7 @@ const actions = {
     },
     async addType({ commit }, data) {
         return await api.post(`/types`, {...data}).then((response) => {
-            commit('ADD_TYPE', data)
+            commit('ADD_TYPE', response.types)
             return response
         })
     },

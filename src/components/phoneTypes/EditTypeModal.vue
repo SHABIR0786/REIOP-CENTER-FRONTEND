@@ -89,7 +89,8 @@
                   { value: 'Mobile', text: 'Mobile' },
                 ],
                 types: {
-                    name: ''
+                  type_in_file: '',
+                  type_in_web: '',
                 },
                 isReadOnly: true,
             }
