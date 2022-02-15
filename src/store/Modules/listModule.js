@@ -25,6 +25,7 @@ const state = {
     lists: [],
     total: 0,
     sellers: [],
+    tabData: [],
 }
 
 const mutations = {
