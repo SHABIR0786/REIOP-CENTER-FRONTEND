@@ -80,7 +80,7 @@ export const actions = {
         data.append('file', file);
         data.append('section', url);
         data.append('list', JSON.stringify(list));
-        data.append('skipSource', skipSource);
+        data.append(skipSource.type, skipSource.value);
 
         const mapObject = {};
         mappedItems.forEach(map => {
