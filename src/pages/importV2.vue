@@ -90,14 +90,13 @@
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
 
-
-        <edit-import-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-import-modal>
-        <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
-        <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
-        <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
-        <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails" @goBack="goBack"></map-fields>
-        <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
-        <select-skip-data-source v-if="step_2_skip" @skipResponse="setSkipSource" @goBack="goBack"></select-skip-data-source>
+          <edit-import-modal v-if="!isReload" :data="editData" :showModal="showModal"  @cancel="showModal=false" @save="save"></edit-import-modal>
+          <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
+          <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
+          <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
+          <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails" @goBack="goBack"></map-fields>
+          <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
+          <select-skip-data-source v-if="step_2_skip" @skipResponse="setSkipSource" @goBack="goBack"></select-skip-data-source>
     </div>
 </template>
 
@@ -145,13 +144,15 @@ export default {
         itemToRollback: {},
         showDeleteModal: false,
         showModal: false,
-        editedItem:{}
+        editedItem:{},
+        isReload: false,
+
       }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
-        this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: 10000})
-        this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: 10000})
+        this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: 50})
+        this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: 50})
         try {
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -165,19 +166,21 @@ export default {
           items: 'importV2Module/imports',
           lists: 'listModule/lists',
           total: 'listModule/total',
+          editData: 'importV2Module/editData'
       }),
-      rows() { return this.total ? this.total : 1 }
+      rows() { return this.total ? this.total : 1 },
     },
     methods: {
       editItem(item) {
+        this.$store.dispatch('importV2Module/showEditModal', {...item})
+        this.isReload = true
         this.showModal = true
-        this.editedItem = { ...item }
+        this.$nextTick(() => {
+          this.isReload = false
+        })
+
       },
       save(item) {
-        // this.showModal = false
-        // if (item.subjects) {
-        //   delete item.subjects
-        // }
         this.$store.dispatch('importV2Module/editImport', {...item})
       },
       modalResponse(response) {
