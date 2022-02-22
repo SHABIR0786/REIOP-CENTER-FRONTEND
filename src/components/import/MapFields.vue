@@ -49,15 +49,15 @@
                   this.upload_type = this.importDetails.upload_type;
               }
 
-              if(this.importDetails.skip_source) {
-                  this.skip_source = this.importDetails.skip_source;
+              if(this.importDetails.skip) {
+                  this.skip_source = this.importDetails.skip;
                   this.list_settings = 'update_existing';
               }
           }
       },
       methods: {
         goBack() {
-          this.$emit('goBack', 'MapFields');
+          this.$emit('goBack', 'MapFields' );
         }
       }
     }

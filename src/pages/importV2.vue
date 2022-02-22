@@ -231,11 +231,19 @@ export default {
           this.step_3 = false;
           this.step_4 = false;
         } else if (response === 'MapFields') {
-          this.step_1 = false;
-          this.step_2 = false;
-          this.step_2_skip = false
-          this.step_3 = true;
-          this.step_4 = false;
+          if(this.importDetails.import_type === 'existing') {
+              this.step_1 = false;
+              this.step_2 = false;
+              this.step_2_skip = true
+              this.step_3 = false;
+              this.step_4 = false;
+          } else {
+              this.step_1 = false;
+              this.step_2 = false;
+              this.step_2_skip = false
+              this.step_3 = true;
+              this.step_4 = false;
+          }
         } else if (response === 'SkipSource') {
             this.step_1 = true;
             this.step_2 = false;
@@ -256,7 +264,7 @@ export default {
       },
       setSkipSource (response) {
           if(response) {
-              this.importDetails.skip_source = response;
+              this.importDetails.skip = response;
 
               this.step_1 = false;
               this.step_2 = false;
