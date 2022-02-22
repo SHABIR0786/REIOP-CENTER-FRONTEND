@@ -17,6 +17,7 @@ const state = {
     ],
     imports: [],
     total: 0,
+    editData: {},
 }
 
 const mutations = {
@@ -30,7 +31,6 @@ const mutations = {
             process.process_id = e.process_id
             process.error_number = e.error_number;
             process.total_row_number = e.total_row_number;
-            //process.total_rows = e.total_jobs;
             process.is_processing = e.pending_jobs;
             process.is_processed = e.total_jobs - e.pending_jobs;
             process.file_name = e.file_name;
@@ -45,9 +45,20 @@ const mutations = {
         state.total = payload;
     },
     EDIT_IMPORT(state, payload) {
+        payload.is_processing =  payload.pending_jobs;
+        payload.is_processed = payload.total_jobs - payload.pending_jobs;
         const findIndex = state.imports.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.imports.splice(findIndex, 1, { ...payload })
     },
+
+    SHOW_EDIT_MODAL(state, payload) {
+        const date = payload.created_at;
+        payload.created_at = new Date(date * 1000).toLocaleString();
+        payload.is_processed = payload.total_jobs - payload.pending_jobs;
+        state.editData = payload
+    },
+
+
     EXPORTED(state, payload) {
         console.log('payload',  payload);
     },
@@ -74,11 +85,25 @@ const actions = {
     async editImport({ commit }, data) {
         delete data.is_processing;
         delete data.is_processed;
+        delete data.error_emails;
+        delete data.error_subjects;
+        delete data.error_phones;
+        delete data.emails_count;
+        delete data.phones_count;
+        delete data.subjects_count;
         return await api.put(`/batches/${data.id}`, {...data}).then((response) => {
             commit('EDIT_IMPORT', data)
             return response
         })
     },
+
+    async showEditModal({ commit }, data) {
+        return await api.get(`/editModal/${data.id}`).then((response) => {
+            commit('SHOW_EDIT_MODAL', response.editData)
+            return response
+        })
+    },
+
     async getTotal({ commit }) {
         return await api.get(`/totals/lists`).then((response) => {
             if (response && response.count > -1) {
@@ -102,7 +127,8 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    imports: ({ imports }) => imports
+    imports: ({ imports }) => imports,
+    editData: ({ editData }) => editData,
 }
 
 export default {

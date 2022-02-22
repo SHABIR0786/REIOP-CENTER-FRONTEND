@@ -16,7 +16,7 @@
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Market">
 <!--                                <b-form-input :state="list.list_market.length > 0" v-model="list.list_market"></b-form-input>-->
-                                <b-form-select v-model="list.list_market" :options="market" @change="addNewField($event)"></b-form-select>
+                                <b-form-select  v-model="list.list_market" :options="market" @change="addNewField($event) " ></b-form-select>
                             </b-input-group>
                         </b-col>
                     </b-row>
@@ -119,7 +119,6 @@
                 team_id: '',
                 isListSameAsSkipSource: true,
             },
-            // market: [],
             market:[],
             group: [],
             type: [],
@@ -130,6 +129,18 @@
         }
       },
       mounted() {
+        if (this.marketList.length > 0) {
+          this.market = this.marketList
+        }
+        if (this.groupList.length > 0) {
+          this.group = this.groupList
+        }
+        if (this.typeList.length > 0) {
+          this.type = this.typeList
+        }
+        if (this.sourceList.length > 0) {
+          this.source = this.sourceList
+        }
         this.lists.forEach(e => {
             if((this.market.indexOf(e.list_market)) === -1){
               this.market.push(e.list_market)
@@ -147,11 +158,18 @@
               this.pull_date.push(e.list_pull_date);
             }
         });
-
-        this.market.push('Add a new Market')
-        this.group.push('Add a new Group')
-        this.type.push('Add a new Type')
-        this.source.push('Add a new Source')
+        if (!this.market.includes('Add a new Market')){
+          this.market.push('Add a new Market')
+        }
+        if (!this.group.includes('Add a new Group')){
+          this.group.push('Add a new Group')
+        }
+        if (!this.type.includes('Add a new Type')){
+          this.type.push('Add a new Type')
+        }
+        if (!this.source.includes('Add a new Source')){
+          this.source.push('Add a new Source')
+        }
 
         if (this.importDetails && this.importDetails.pull_settings) {
           this.list = this.importDetails.pull_settings;
@@ -159,38 +177,48 @@
       },
       computed: {
         ...mapGetters({
-            user: 'loginModule/getAuthUser'
+            user: 'loginModule/getAuthUser',
+            marketList: 'listModule/marketList',
+            groupList: 'listModule/groupList',
+            typeList: 'listModule/typeList',
+            sourceList: 'listModule/sourceList',
         })
       },
       methods: {
         checkUpdateList() {
           this.list.user_id = this.user.id;
           this.list.team_id = this.user.team_id;
+
           this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source + '_' + this.list.isListSameAsSkipSource
           // this.$store.dispatch('listModule/addList', this.list)
 
           this.$emit('pullSettingsResponse', this.list);
         },
         goBack() {
+          this.$emit('pullSettingsResponse', this.list);
           this.$emit('goBack', 'PullSettings');
         },
         addNewField(event) {
-            switch (event) {
+             switch (event) {
                 case 'Add a new Market':
                     this.settingSection = 'Market';
                     this.showSettingsModal = true;
+                    this.list.list_market = '';
                     break
                 case 'Add a new Group':
                     this.settingSection = 'Group';
                     this.showSettingsModal = true;
+                    this.list.list_group = '';
                     break
                 case 'Add a new Type':
                     this.settingSection = 'Type';
                     this.showSettingsModal = true;
+                    this.list.list_type = '';
                     break
                 case 'Add a new Source':
                     this.settingSection = 'Source';
                     this.showSettingsModal = true;
+                    this.list.list_source = '';
                     break
             }
         },
@@ -198,25 +226,29 @@
           switch (this.settingSection) {
             case "Market":
               if((this.market.indexOf(response)) === -1){
-               this.market.splice(this.market.length -1, 0, response);
+                this.market.splice(this.market.length -1, 0, response);
+                this.$store.dispatch('listModule/saveMarketList', this.market)
               }
               this.list.list_market = response;
               break
             case "Group":
               if(this.group.indexOf(response) === -1){
                 this.group.splice(this.group.length -1, 0, response);
+                this.$store.dispatch('listModule/saveGroupList', this.group)
               }
               this.list.list_group = response;
               break
             case "Type":
               if(this.type.indexOf(response) === -1){
                 this.type.splice(this.type.length -1, 0, response);
+                this.$store.dispatch('listModule/saveTypeList', this.type)
               }
               this.list.list_type = response;
               break
             case "Source":
               if(this.source.indexOf(response) === -1){
                 this.source.splice(this.source.length -1, 0, response);
+                this.$store.dispatch('listModule/saveSourceList', this.source)
               }
               this.list.list_source = response;
               break

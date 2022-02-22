@@ -25,6 +25,11 @@ const state = {
     lists: [],
     total: 0,
     sellers: [],
+    tabData: [],
+    marketList: [],
+    groupList: [],
+    typeList: [],
+    sourceList: [],
 }
 
 const mutations = {
@@ -62,10 +67,34 @@ const mutations = {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload)
         findIndex !== -1 && LIST.splice(findIndex, 1)
-    }
+    },
+    SET_MARKET_LIST(state, payload) {
+        state.marketList = payload
+    },
+    SET_GROUP_LIST(state, payload) {
+        state.groupList = payload
+    },
+    SET_TYPE_LIST(state, payload) {
+        state.typeList = payload
+    },
+    SET_SOYRCE_LIST(state, payload) {
+        state.sourceList = payload
+    },
 }
 
 const actions = {
+    saveMarketList({ commit }, payload) {
+        commit('SET_MARKET_LIST', payload)
+    },
+    saveGroupList({ commit }, payload) {
+        commit('SET_GROUP_LIST', payload)
+    },
+    saveTypeList({ commit }, payload) {
+        commit('SET_TYPE_LIST', payload)
+    },
+    saveSourceList({ commit }, payload) {
+        commit('SET_SOYRCE_LIST', payload)
+    },
     async getAllLists({ commit, dispatch }, {page, perPage}) {
         return await api.get(`/lists?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
@@ -156,7 +185,11 @@ const getters = {
         return [];
     },
     total: ({total}) => total,
-    tabData: state => state.tabData
+    tabData: state => state.tabData,
+    marketList: state => state.marketList,
+    groupList: state => state.groupList,
+    typeList: state => state.typeList,
+    sourceList: state => state.sourceList,
 }
 
 export default {

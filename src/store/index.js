@@ -22,6 +22,10 @@ import errorModule from "./Modules/errorModule"
 import importV2Module from "./Modules/importV2Module";
 import templatesModule from "./Modules/templatesModule";
 import teamModule from "./Modules/teamModule";
+import phoneTypesModule from "./Modules/phoneTypesModule";
+import subjectTypesModule from "./Modules/subjectTypesModule";
+import companyTypesModule from "./Modules/companyTypesModule";
+
 
 const state = {}
 
@@ -47,7 +51,11 @@ export default new Vuex.Store({
         errorModule: errorModule,
         importV2Module: importV2Module,
         templatesModule: templatesModule,
-        teamModule: teamModule
+        teamModule: teamModule,
+        phoneTypesModule: phoneTypesModule,
+        subjectTypesModule: subjectTypesModule,
+        companyTypesModule: companyTypesModule,
+
     },
     state,
     mutations,
