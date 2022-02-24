@@ -79,6 +79,13 @@
                     </b-row>
                     <b-row>
                       <b-col cols="12">
+                        <b-input-group prepend="Imported Sellers" class="mb-2">
+                          <b-form-input readonly v-model="editData.sellers_count"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
                         <b-input-group prepend="Imported Phones" class="mb-2">
                           <b-form-input readonly v-model="editData.phones_count"></b-form-input>
                         </b-input-group>
@@ -98,6 +105,8 @@
                         </b-input-group>
                       </b-col>
                     </b-row>
+                  </b-col>
+                  <b-col>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group prepend="Is Processed" class="mb-2">
@@ -105,8 +114,6 @@
                         </b-input-group>
                       </b-col>
                     </b-row>
-                  </b-col>
-                  <b-col>
                     <b-row>
                         <b-col cols="12">
                             <b-input-group prepend="File Name" class="mb-2">
