@@ -213,7 +213,9 @@ export default {
             list: this.list_settings,
             skipSource: this.skip_source,
           })
-          location.reload()
+
+          await this.$store.dispatch('uxModule/hideLoader')
+          this.$router.push({path: '/'}).catch(() => {})
         }
     }
 }
