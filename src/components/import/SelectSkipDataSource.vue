@@ -10,41 +10,12 @@
         </div>
         <hr>
         <b-container fluid>
-            <b-row class="text-center" v-if="isOptionSelected === false">
-                <b-col class="d-flex justify-content-end flex-column align-items-center">
-                    <b-button
-                            class="data-type-btn"
-                            @click="selectUpdateOption('skip')"
-                    >
-                        Adding skip trace
-                    </b-button>
-                    or
-                    <b-button
-                            class="data-type-btn"
-                            @click="selectUpdateOption('validate')"
-                    >
-                        Validity updates
-                    </b-button>
-                </b-col>
-            </b-row>
-
-            <b-row class="d-flex justify-content-center" v-if="isOptionSelected === true">
-                <b-col class="d-flex justify-content-end flex-column" v-if="selectedOption === 'skip'">
+            <b-row class="d-flex justify-content-center">
+                <b-col class="d-flex justify-content-end flex-column">
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
                             <b-input-group prepend="Skip Source">
                                 <b-input v-model="skip_source"></b-input>
-                            </b-input-group>
-                        </b-col>
-                    </b-row>
-                </b-col>
-                <b-col class="d-flex justify-content-end flex-column" v-if="selectedOption === 'validate'">
-                    <b-row class="mb-2">
-                        <b-col cols="9" class="mx-auto">
-                            <h4>Select validity type and input</h4>
-                            <b-input-group>
-                                <b-form-select v-model="validityType" :options="options"></b-form-select>
-                                <b-form-input v-model="validityValue"></b-form-input>
                             </b-input-group>
                         </b-col>
                     </b-row>
@@ -67,7 +38,7 @@
                 <b-button
                         variant="primary"
                         @click="setSkipSource()"
-                        :disabled="!skip_source.length && !validityValue.length"
+                        :disabled="!skip_source.length"
                 >
                     Next
                 </b-button>
@@ -83,38 +54,14 @@
         data () {
             return {
                 skip_source: '',
-                isOptionSelected: false,
-                selectedOption: '',
-                options: [
-                    {value: 'phone_validity', text: 'Phone Validity'},
-                    {value: 'email_validity', text: 'Email Validity'}
-                ],
-                validityType: '',
-                validityValue: '',
-                // updateData: {},
             }
         },
         methods: {
             setSkipSource() {
-                this.updateData = {};
-                if (this.validityType && this.validityValue) {
-                    this.$emit('skipResponse', {type: this.validityType, value: this.validityValue});
-                } else if (this.skip_source) {
-                    this.$emit('skipResponse', {type: 'skip_source', value: this.skip_source});
-                }
+                this.$emit('skipResponse', this.skip_source);
             },
             goBack() {
-                if(this.isOptionSelected === true) {
-                    this.validityValue = '';
-                    this.skip_source = '';
-                    this.isOptionSelected = false
-                } else {
-                    this.$emit('goBack', 'SkipSource');
-                }
-            },
-            selectUpdateOption(option) {
-                this.isOptionSelected =  true;
-                this.selectedOption = option;
+                this.$emit('goBack', 'SkipSource');
             }
         }
     }
