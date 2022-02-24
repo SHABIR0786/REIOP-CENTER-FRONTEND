@@ -42,8 +42,8 @@
                         </b-row>
                       <b-row >
                         <b-col :readonly="isReadOnly"  cols="12">
-                          <b-input-group  prepend="Type In Web" >
-                            <b-form-select :disabled="isReadOnly" v-model="subjectTypes.type_in_web" :options="options" ></b-form-select>
+                          <b-input-group  prepend="Type In Web">
+                            <b-form-input :readonly="isReadOnly" v-model="subjectTypes.type_in_web"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
@@ -83,11 +83,6 @@
         },
         data() {
             return {
-              options:[
-                { value: 1, text: 'Please select one', disabled: true },
-                { value: 'Home', text: 'Home' },
-                { value: 'Apartment', text: 'Apartment' },
-              ],
               subjectTypes: {
                     name: ''
                 },
