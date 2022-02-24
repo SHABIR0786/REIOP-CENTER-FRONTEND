@@ -112,6 +112,20 @@ const actions = {
             return response
         })
     },
+    async searchImpots({ commit, dispatch }, {page, perPage, search}) {
+        return await api.get(`/batches?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.batch) {
+                commit('SET_ALL_PROCESSES', response.batch)
+            }
+
+            return response
+        })
+    },
+
     async exportFile({ commit }, data) {
         return await api.post(`/export`, {...data}).then((response) => {
             commit('EXPORTED', response)

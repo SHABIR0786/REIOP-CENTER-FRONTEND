@@ -278,7 +278,18 @@ export default {
         if(response) {
             this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
         }
+      },
+    },
+  watch: {
+    searchImport: {
+      handler: function () {
+        this.$store.dispatch('importV2Module/searchImpots', {
+          page: this.currentPage,
+          perPage: this.perPage,
+          search: this.searchImport
+        })
       }
     }
+  }
 }
 </script>
