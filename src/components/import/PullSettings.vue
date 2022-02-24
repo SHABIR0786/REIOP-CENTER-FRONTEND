@@ -52,21 +52,6 @@
                             </b-input-group>
                         </b-col>
                     </b-row>
-                    <b-row class="mb-2">
-                        <b-col cols="9" class="mx-auto">
-                            <b-form-group label="Is your list source the same as your skip source?" v-slot="{ ariaDescribedby }">
-                                <b-form-radio-group
-                                        id="radio-group-2"
-                                        v-model="list.isListSameAsSkipSource"
-                                        :aria-describedby="ariaDescribedby"
-                                        name="radio-sub-component"
-                                >
-                                    <b-form-radio :value="true">Yes</b-form-radio>
-                                    <b-form-radio :value="false">No</b-form-radio>
-                                </b-form-radio-group>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
                 </b-col>
             </b-row>
         </b-container>
@@ -117,7 +102,6 @@
                 list_hash: '',
                 user_id: '',
                 team_id: '',
-                isListSameAsSkipSource: true,
             },
             market:[],
             group: [],
@@ -188,10 +172,8 @@
         checkUpdateList() {
           this.list.user_id = this.user.id;
           this.list.team_id = this.user.team_id;
-
-          this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source + '_' + this.list.isListSameAsSkipSource
-          // this.$store.dispatch('listModule/addList', this.list)
-
+          this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source
+          //this.$store.dispatch('listModule/addList', this.list)
           this.$emit('pullSettingsResponse', this.list);
         },
         goBack() {
