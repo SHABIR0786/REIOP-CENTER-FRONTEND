@@ -74,6 +74,8 @@
                             <b-col cols="12">
                                 <b-input-group prepend="Seller Id" class="mb-2">
                                     <b-form-input readonly v-model="phoneNumber.seller_id"></b-form-input>
+<!--                                  <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>-->
+                                    <b-button variant="primary" size="md" class="ml-3" @click="showSeller(phoneNumber)"> Show Seller </b-button>
                                 </b-input-group>
                             </b-col>
                         </b-row>
@@ -92,6 +94,7 @@
                     Cancel
                 </b-button>
             </div>
+<!--          <edit-seller-details :showModal="showDetailsModal" :propsSeller="editedItem" @cancel="showDetailsModal=false" @save="save"></edit-seller-details>-->
         </template>
     </b-modal>
 </template>
@@ -110,6 +113,13 @@ export default {
         edit() {
             this.isReadOnly = true;
             this.$emit('save', this.phoneNumber);
+        },
+      showSeller(item) {
+        console.log('item',item.seller_id)
+          const route = '/sellers?seller_id=' + item.seller_id;
+          this.editedItem = { ...item }
+          let routeData = this.$router.resolve({path: route});
+          window.open(routeData.href, '_blank');
         }
     },
     data() {
