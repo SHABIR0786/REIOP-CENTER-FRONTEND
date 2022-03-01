@@ -11,8 +11,11 @@ const state = {
         {key: "email_validity", label: "Email Validity", sortable: true},
         {key: "email_skip_source", label: "Skip Source", sortable: true},
 
-        // Custom Fields
+        // Errors
+        {key: "error", label: "Error", sortable: true},
+        {key: "error_type", label: "Error Type", sortable: true},
 
+        // Custom Fields
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},

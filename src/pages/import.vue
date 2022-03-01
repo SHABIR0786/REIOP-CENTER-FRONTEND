@@ -15,7 +15,7 @@
         </b-row>
         <b-row  class="mt-4">
             <b-col cols="12" md="3">
-                <fields-card class="field-section" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
+                <fields-card class="field-section" :fromField="fromField" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
             </b-col>
             <b-col cols="12" md="1">
                 <b-row class="text-center">
@@ -25,7 +25,7 @@
                 </b-row>
             </b-col>
             <b-col cols="12" md="4">
-                <fields-card class="field-section" :importedFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
+                <fields-card class="field-section" :toField="toField" :importedFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
             </b-col>
             <b-col cols="12" md="4">
                 <mapped-fields class="mapped-fields" :items="mappedItems" @clearMappedItem="clearMappedItem"></mapped-fields>

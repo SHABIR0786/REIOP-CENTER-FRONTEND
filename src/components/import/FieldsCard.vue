@@ -26,13 +26,34 @@ export default {
         },
         importedFields: {
             type: Object
-        }
+        },
+      fromField:{
+          type:String,
+          default: ""
+      },
+      toField:{
+        type:String,
+        default: ""
+      }
     },
     data () {
         return {
             selected: ''
         }
+    },
+  watch:{
+    fromField(){
+      if (!this.fromField) {
+        this.selected = ""
+      }
+    },
+    toField(){
+      if (!this.toField) {
+        this.selected = ""
+      }
     }
+
+  }
 }
 </script>
 <style>
