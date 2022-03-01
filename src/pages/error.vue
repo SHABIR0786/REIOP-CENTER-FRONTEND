@@ -1,161 +1,243 @@
 <template>
   <div class="error-sections">
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-      <div>
-        <h3>Subject Errors</h3>
-        <div></div>
 
-        <b-table
-            id="subject-table"
-            small
-            striped
-            hover
-            :busy="isBusy"
-            :fields="subject_fields"
-            :items="subjects"
-            responsive
-            :per-page="0"
-            :current-page="currentPage"
-            :sticky-header="true"
-        >
-          <template #table-busy>
-            <div class="text-center" my-2>
-              <b-spinner class="align-middle"></b-spinner>
-              <strong>Loading...</strong>
-            </div>
-          </template>
-          <template #head(id)="scope">
-            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-          </template>
-          <template #head(actions)="scope">
-            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-          </template>
-          <template #head(total_sellers)="scope">
-            <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
-          </template>
-          <template #head(subject_state)="scope">
-            <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
-          </template>
-          <template #head(subject_zip)="scope">
-            <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
-          </template>
-          <template #head(subject_address)="scope">
-            <div class="text-nowrap" style="width: 250px;">{{scope.label}}</div>
-          </template>
-          <template #head(user_id)="scope">
-            <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
-          </template>
-          <template #head(created_at)="scope">
-            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-          </template>
-          <template #head(updated_at)="scope">
-            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-          </template>
-          <template #head()="scope">
-            <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-          </template>
-          <template v-slot:cell(actions)="data">
-            <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
-          </template>
-        </b-table>
-      </div>
-
-      <div>
-        <h3>Phone Errors</h3>
-        <div></div>
-
-        <b-table
-            id="phone-table"
-            small
-            striped
-            hover
-            :busy="isBusy"
-            :fields="phone_fields"
-            :items="phones"
-            responsive
-            :per-page="0"
-            :current-page="currentPage"
-            :sticky-header="true"
-        >
-          <template #table-busy>
-            <div class="text-center" my-2>
-              <b-spinner class="align-middle"></b-spinner>
-              <strong>Loading...</strong>
-            </div>
-          </template>
-          <template #head(id)="scope">
-            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-          </template>
-          <template #head(actions)="scope">
-            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-          </template>
-          <template #head(user_id)="scope">
-            <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
-          </template>
-          <template #head(created_at)="scope">
-            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-          </template>
-          <template #head(updated_at)="scope">
-            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-          </template>
-          <template #head()="scope">
-            <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-          </template>
-          <template v-slot:cell(actions)="data">
-            <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
-          </template>
-        </b-table>
-      </div>
-
-      <div>
-        <h3>Email Errors</h3>
-        <div></div>
-
-        <b-table
-            id="email-table"
-            small
-            striped
-            hover
-            :busy="isBusy"
-            :fields="email_fields"
-            :items="emails"
-            responsive
-            :per-page="0"
-            :current-page="currentPage"
-            :sticky-header="true"
-        >
-          <template #table-busy>
-            <div class="text-center" my-2>
-              <b-spinner class="align-middle"></b-spinner>
-              <strong>Loading...</strong>
-            </div>
-          </template>
-          <template #head(id)="scope">
-            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-          </template>
-          <template #head(actions)="scope">
-            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-          </template>
-          <template #head(user_id)="scope">
-            <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
-          </template>
-          <template #head(created_at)="scope">
-            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-          </template>
-          <template #head(updated_at)="scope">
-            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-          </template>
-          <template #head()="scope">
-            <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-          </template>
-          <template v-slot:cell(actions)="data">
-            <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
-          </template>
-        </b-table>
-      </div>
+      <b-row class="mt-5">
+        <b-tabs class="w-100" content-class="mt-3" fill>
+          <b-tab title="Subject Errors" active>
+            <b-table
+                id="subject-table"
+                small
+                striped
+                hover
+                :busy="isBusy"
+                :fields="subject_fields"
+                :items="subjects"
+                responsive
+                :per-page="0"
+                :current-page="currentPage"
+                :sticky-header="true"
+            >
+              <template #table-busy>
+                <div class="text-center" my-2>
+                  <b-spinner class="align-middle"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+              </template>
+              <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(total_sellers)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_state)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_zip)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_address)="scope">
+                <div class="text-nowrap" style="width: 250px;">{{scope.label}}</div>
+              </template>
+              <template #head(user_id)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              </template>
+              <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(updated_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+              </template>
+              <template v-slot:cell(actions)="data">
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
+              </template>
+            </b-table>
+          </b-tab>
+          <b-tab title="Phone Errors">
+            <b-table
+                id="phone-table"
+                small
+                striped
+                hover
+                :busy="isBusy"
+                :fields="phone_fields"
+                :items="phones"
+                responsive
+                :per-page="0"
+                :current-page="currentPage"
+                :sticky-header="true"
+            >
+              <template #table-busy>
+                <div class="text-center" my-2>
+                  <b-spinner class="align-middle"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+              </template>
+              <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(user_id)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              </template>
+              <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(updated_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+              </template>
+              <template v-slot:cell(actions)="data">
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
+              </template>
+            </b-table>
+          </b-tab>
+          <b-tab title="Email Errors">
+            <b-table
+                id="email-table"
+                small
+                striped
+                hover
+                :busy="isBusy"
+                :fields="email_fields"
+                :items="emails"
+                responsive
+                :per-page="0"
+                :current-page="currentPage"
+                :sticky-header="true"
+            >
+              <template #table-busy>
+                <div class="text-center" my-2>
+                  <b-spinner class="align-middle"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+              </template>
+              <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(user_id)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              </template>
+              <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(updated_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+              </template>
+              <template v-slot:cell(actions)="data">
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
+              </template>
+            </b-table>
+          </b-tab>
+          <b-tab title="Seller Errors">
+            <b-table
+                id="seller-table"
+                small
+                striped
+                hover
+                :busy="isBusy"
+                :fields="seller_fields"
+                :items="sellers"
+                responsive
+                :per-page="0"
+                :current-page="currentPage"
+                :sticky-header="true"
+            >
+              <template #table-busy>
+                <div class="text-center" my-2>
+                  <b-spinner class="align-middle"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+              </template>
+              <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(user_id)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              </template>
+              <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(updated_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+              </template>
+              <template v-slot:cell(actions)="data">
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
+              </template>
+            </b-table>
+          </b-tab>
+          <b-tab title="Golden Addresses Errors">
+            <b-table
+                id="golden-table"
+                small
+                striped
+                hover
+                :busy="isBusy"
+                :fields="golden_fields"
+                :items="goldens"
+                responsive
+                :per-page="0"
+                :current-page="currentPage"
+                :sticky-header="true"
+            >
+              <template #table-busy>
+                <div class="text-center" my-2>
+                  <b-spinner class="align-middle"></b-spinner>
+                  <strong>Loading...</strong>
+                </div>
+              </template>
+              <template #head(id)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(actions)="scope">
+                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(user_id)="scope">
+                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              </template>
+              <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(updated_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head()="scope">
+                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+              </template>
+              <template v-slot:cell(actions)="data">
+                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
+              </template>
+            </b-table>
+          </b-tab>
+        </b-tabs>
+      </b-row>
     </div>
   </div>
 </template>
@@ -188,9 +270,13 @@ export default {
       subject_fields: 'errorModule/subject_fields',
       phone_fields: 'errorModule/phone_fields',
       email_fields: 'errorModule/email_fields',
+      seller_fields: 'errorModule/seller_fields',
+      golden_fields: 'errorModule/golden_fields',
       subjects: 'errorModule/subjects',
       emails: 'errorModule/emails',
       phones: 'errorModule/phones',
+      sellers: 'errorModule/sellers',
+      goldens: 'errorModule/goldens',
       total: 'errorModule/total'
     }),
     rows() { return this.total ? this.total : 1}

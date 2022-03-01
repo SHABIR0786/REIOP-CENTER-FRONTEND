@@ -13,6 +13,10 @@ const state = {
         {key: "golden_address_state", label: "Golden State", sortable: true},
         {key: "golden_address_zip", label: "Golden Zip", sortable: true},
 
+        // Errors
+        {key: "error", label: "Error", sortable: true},
+        {key: "error_type", label: "Error Type", sortable: true},
+
         // Custom Fields
 
         {key:"created_at", label: "Created Date", sortable: true},

@@ -68,26 +68,19 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="Mailing State" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="seller.seller_mailing_state"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
                     </b-col>
                     <b-col>
+                        <b-row>
+                        <b-col cols="12">
+                          <b-input-group prepend="Mailing State" class="mb-2">
+                            <b-form-input :readonly="isReadOnly" v-model="seller.seller_mailing_state"></b-form-input>
+                          </b-input-group>
+                        </b-col>
+                      </b-row>
                         <b-row>
                             <b-col cols="12">
                                 <b-input-group prepend="Mailing Zip" class="mb-2">
                                     <b-form-input :readonly="isReadOnly" v-model="seller.seller_mailing_zip"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="Company Owned" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="seller.seller_company_owned"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>
@@ -109,13 +102,6 @@
                             <b-col cols="12">
                                 <b-input-group prepend="User Name" class="mb-2">
                                     <b-form-input readonly v-model="seller.user_name"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="Subject Id" class="mb-2">
-                                    <b-form-input readonly v-model="seller.subject_id"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>

@@ -25,6 +25,10 @@ const state = {
         {key: "subject_pull_date", label: "Pull Date", sortable: true},
         {key: "subject_skip_trace_date", label: "Skip Trace Date", sortable: true},
 
+        // Errors
+        {key: "error", label: "Error", sortable: true},
+        {key: "error_type", label: "Error Type", sortable: true},
+
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},

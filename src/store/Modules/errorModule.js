@@ -3,11 +3,8 @@ import * as api from "../Services/api"
 const state = {
     subject_fields: [
         {key:"id", label: "Id", sortable: true},
-        {key: "error", label: "Error"},
+        {key: "error_type", label: "Error"},
         {key: "file_name", label: "File Name"},
-        // {key: "actions", label: "Actions"},
-        {key: "list_stack", label: "List Stack"},
-
         {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
         {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
         {key: "subject_city", label: "Subject City", sortable: true},
@@ -31,11 +28,9 @@ const state = {
     ],
     phone_fields: [
         {key:"id", label: "ID", sortable: true},
-        {key: "error", label: "Error"},
+        {key: "error_type", label: "Error"},
         {key: "file_name", label: "File Name"},
         {key: "seller_id", label: "Seller ID", sortable: true},
-        // {key: "actions", stickyColumn: true, label: "Actions"},
-
         {key: "phone_number", label: "Phone Number", sortable: true},
         {key: "phone_type", label: "Phone Type", sortable: true},
         {key: "phone_validity", label: "Phone Validity", sortable: true},
@@ -48,11 +43,9 @@ const state = {
     ],
     email_fields: [
         {key:"id", label: "ID", sortable: true},
-        {key: "error", label: "Error"},
+        {key: "error_type", label: "Error"},
         {key: "file_name", label: "File Name"},
         {key: "seller_id",label: "Seller ID", sortable: true},
-        // {key: "actions", stickyColumn: true, label: "Actions"},
-
         {key: "email_address", label: "Email Address", sortable: true},
         {key: "email_validity", label: "Email Validity", sortable: true},
         {key: "email_skip_source", label: "Skip Source", sortable: true},
@@ -62,9 +55,50 @@ const state = {
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},
     ],
+    seller_fields: [
+        {key: "id", label: "ID", sortable: true},
+        {key: "error_type", label: "Error Type", sortable: true},
+        {key: "file_name", label: "File Name"},
+        // {key: "seller_total_subjects", label: "Total Subjects", sortable: true},
+        // {key: "seller_total_phones", label: "Total Phones", sortable: true},
+        // {key: "seller_total_emails", label: "Total Emails", sortable: true},
+        {key: "seller_first_name", label: "First Name", sortable: true},
+        {key: "seller_middle_name", label: "Middle Name", sortable: true},
+        {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
+        {key: "seller_mailing_address", label: "Mailing Address"},
+        {key: "seller_mailing_address_line2", label: "Mailing Address Line2"},
+        {key: "seller_mailing_state", label: "Mailing State"},
+        {key: "seller_mailing_city", label: "Mailing City"},
+        {key: "seller_mailing_zip", label: "Mailing Zip"},
+        // {key: "seller_company_owned", label: "Company Owned"},
+
+
+        // Custom Fields
+        {key:"created_at", label: "Created Date", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
+
+    ],
+    golden_fields: [
+        {key: "id", label: "ID", sortable: true},
+        {key: "error_type", label: "Error Type", sortable: true},
+        {key: "file_name", label: "File Name"},
+        {key: "seller_id", label: "Seller ID", sortable: true},
+        {key: "golden_address_address", label: "Golden Address", sortable: true},
+        {key: "golden_address_city",  label: "Golden City", sortable: true},
+        {key: "golden_address_state", label: "Golden State"},
+        {key: "golden_address_zip", label: "Golden Zip"},
+        {key: "golden_address_address_line2", label: "Golden Address Line2"},
+
+        // Custom Fields
+        {key:"created_at", label: "Created Date", sortable: true},
+        {key:"user_name", label: "Uploaded By", sortable: true},
+
+    ],
     subjects: [],
     emails: [],
-    phones: []
+    phones: [],
+    sellers: [],
+    goldens:[]
 }
 
 const mutations = {
@@ -91,6 +125,23 @@ const mutations = {
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.phones = [...data]
+    },
+
+    SET_ALL_SELLERS(state, payload) {
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.sellers = [...data]
+    },
+    SET_ALL_GOLDENS(state, payload) {
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.goldens = [...data]
     }
 }
 
@@ -102,61 +153,22 @@ const actions = {
             }
 
             if(response && response.subjects) {
-                const subjectErrors = response.subjects.map(item => {
-                    if (item.data) { item["data"] = JSON.parse(item.data); }
-                    if (item.full_data) { item["full_data"] = JSON.parse(item.full_data); }
-                    if (item.full_header) { item["full_header"] = JSON.parse(item.full_header); }
-                    if (item.full_map_header) { item["full_map_header"] = JSON.parse(item.full_map_header); }
-
-                    const fullInfo = {};
-                    if (item.full_data && item.full_header && item.full_data.length && item.full_header.length) {
-                        for (let i = 0; i < item.full_header.length; i++) {
-                            fullInfo[item.full_header[i]] = item.full_data[i];
-                        }
-                    }
-                    return {...item, ...fullInfo, error: item.type};
-                });
-
-                commit('SET_ALL_SUBJECTS', subjectErrors)
+                commit('SET_ALL_SUBJECTS', response.subjects)
             }
 
             if(response && response.emails) {
-                const emailErrors = response.emails.map(item => {
-                    if (item.data) { item["data"] = JSON.parse(item.data); }
-                    if (item.full_data) { item["full_data"] = JSON.parse(item.full_data); }
-                    if (item.full_header) { item["full_header"] = JSON.parse(item.full_header); }
-                    if (item.full_map_header) { item["full_map_header"] = JSON.parse(item.full_map_header); }
-
-                    const fullInfo = {};
-                    if (item.full_data && item.full_header && item.full_data.length && item.full_header.length) {
-                        for (let i = 0; i < item.full_header.length; i++) {
-                            fullInfo[item.full_header[i]] = item.full_data[i];
-                        }
-                    }
-
-                    return {...item, ...fullInfo, error: item.type};
-                });
-
-                commit('SET_ALL_EMAILS', emailErrors)
+                commit('SET_ALL_EMAILS', response.emails)
             }
 
             if(response && response.phones) {
-                const phoneErrors = response.phones.map(item => {
-                    if (item.data) { item["data"] = JSON.parse(item.data); }
-                    if (item.full_data) { item["full_data"] = JSON.parse(item.full_data); }
-                    if (item.full_header) { item["full_header"] = JSON.parse(item.full_header); }
-                    if (item.full_map_header) { item["full_map_header"] = JSON.parse(item.full_map_header); }
+                commit('SET_ALL_PHONES', response.phones)
+            }
 
-                    const fullInfo = {};
-                    if (item.full_data && item.full_header && item.full_data.length && item.full_header.length) {
-                        for (let i = 0; i < item.full_header.length; i++) {
-                            fullInfo[item.full_header[i]] = item.full_data[i];
-                        }
-                    }
-                    return {...item, ...fullInfo, error: item.type};
-                });
-
-                commit('SET_ALL_PHONES', phoneErrors)
+            if(response && response.sellers) {
+                commit('SET_ALL_SELLERS', response.sellers)
+            }
+            if(response && response.goldens) {
+                commit('SET_ALL_GOLDENS', response.goldens)
             }
 
             return response
@@ -168,9 +180,14 @@ const getters = {
     subject_fields: ({ subject_fields }) => subject_fields,
     phone_fields: ({ phone_fields }) => phone_fields,
     email_fields: ({ email_fields }) => email_fields,
+    seller_fields: ({ seller_fields }) => seller_fields,
+    golden_fields: ({ golden_fields }) => golden_fields,
     subjects: ({ subjects }) => subjects,
     emails: ({ emails }) => emails,
-    phones: ({ phones }) => phones
+    phones: ({ phones }) => phones,
+    sellers: ({ sellers }) => sellers,
+    goldens:({ goldens }) => goldens,
+
 }
 
 export default {

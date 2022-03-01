@@ -12,8 +12,11 @@ const state = {
         {key: "phone_validity", label: "Phone Validity", sortable: true},
         {key: "phone_skip_source", label: "Phone Skip Source"},
 
-        // Custom Fields
+        // Errors
+        {key: "error", label: "Error", sortable: true},
+        {key: "error_type", label: "Error Type", sortable: true},
 
+        // Custom Fields
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},
