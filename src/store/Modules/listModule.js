@@ -16,10 +16,10 @@ const state = {
 
         // Custom fields
         {key:"list_pull_date", label: "Last Pull Date", sortable: true},
-        {key:"list_upload_date", label: "Upload Date", sortable: true},
-        {key:"list_last_edit_date", label: "Last Edit Date", sortable: true},
-        {key:"created_at", label: "Created Date", sortable: true},
-        {key:"updated_at", label: "Updated Date", sortable: true},
+        // {key:"list_upload_date", label: "Upload Date", sortable: true},
+        // {key:"list_last_edit_date", label: "Last Edit Date", sortable: true},
+        {key:"created_at", label: "Upload Date", sortable: true},
+        {key:"updated_at", label: "Last Edit Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},
     ],
     lists: [],
