@@ -162,7 +162,6 @@ const getters = {
         if (typeof sellers === 'string') {
             return JSON.parse(sellers);
         }
-
         return [];
     },
     total: ({total}) => total,

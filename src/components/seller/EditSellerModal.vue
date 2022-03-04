@@ -10,7 +10,7 @@
         </template>
         <b-container fluid>
             <b-row class="d-flex flex-column">
-                <b-row class="mb-1 text-center text-center d-flex align-items-center p-3">
+                <b-row class="mb-1 text-center d-flex align-items-center p-3">
                     <div>Seller Details</div>
                     <b-button
                             v-if="isReadOnly"
@@ -111,7 +111,82 @@
 
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab title="Related Phones" active>
+                    <b-tab title="Related Lists" active>
+<!--                    <b-row>-->
+<!--                      <b-col class="assign-btn">-->
+<!--                        <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing List</b-button>-->
+<!--                      </b-col>-->
+<!--                    </b-row>-->
+                    <b-table
+                        id="list-table"
+                        small
+                        striped
+                        hover
+                        responsive
+                        :busy="isBusy"
+                        :fields="listFields"
+                        :items="seller.lists"
+                        :per-page="0"
+                        :sticky-header="true"
+                    >
+                      <template #table-busy>
+                        <div class="text-center" my-2>
+                          <b-spinner class="align-middle"></b-spinner>
+                          <strong>Loading...</strong>
+                        </div>
+                      </template>
+
+                      <template #head(id)="scope">
+                        <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                      </template>
+                      <template #head(actions)="scope">
+                        <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                      </template>
+
+                      <template #head(list_type)="scope">
+                        <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+                      </template>
+
+                      <template #head(list_group)="scope">
+                        <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+                      </template>
+
+                      <template #head(list_marjet)="scope">
+                        <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                      </template>
+
+                      <template #head(list_total_subject)="scope">
+                        <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                      </template>
+
+                      <template #head()="scope">
+                        <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                      </template>
+
+                      <template v-slot:cell(id)="data">
+                        <div :title="data.item.id">
+                          <p class="user-email">{{data.item.id}}</p>
+                        </div>
+                      </template>
+                      <template #head(created_at)="scope">
+                        <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                      </template>
+                      <template #head(updated_at)="scope">
+                        <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                      </template>
+                      <template v-slot:cell(list_type)="data">
+                        <div :title="data.item.list_type">
+                          <p class="user-email">{{data.item.list_type}}</p>
+                        </div>
+                      </template>
+                      <template v-slot:cell(list_group)="data">
+                        <div :title="data.item.list_group">
+                          <p class="user-email">{{data.item.list_group}}</p>
+                        </div>
+                      </template>
+                    </b-table>
+                  </b-tab>
+                    <b-tab title="Related Phones">
                         <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>
@@ -285,7 +360,7 @@
         <edit-phone-number-modal :showModal="showEditPhoneModal" :propsData="editedItem" @cancel="showEditPhoneModal = false" @save="editPhoneSave"></edit-phone-number-modal>
         <edit-email-modal :showModal="showEditEmailModal" :propsData="editedItem" @cancel="showEditEmailModal = false" @save="editEmailSave"></edit-email-modal>
         <edit-golden-address-modal :showModal="showGoldenAddressModal" :propsData="editedItem" @cancel="showGoldenAddressModal= false" @save="editAddressSave"></edit-golden-address-modal>
-        <assign-existing-subject :showModal="showAssignSubjectModal" :sellerId="seller.id" :propsSubjects="seller.subjects" @cancel="showAssignSubjectModal = false"></assign-existing-subject>
+<!--        <assign-existing-subject :showModal="showAssignSubjectModal" :sellerId="seller.id" :propsSubjects="seller.subjects" @cancel="showAssignSubjectModal = false"></assign-existing-subject>-->
         <add-phone-number-modal :showModal="showAddPhoneModal" @cancel="showAddPhoneModal = false" @save="addPhone"></add-phone-number-modal>
         <add-email-modal :showModal="showAddEmailModal" @cancel="showAddEmailModal = false" @save="addEmail"></add-email-modal>
         <add-golden-address-modal :showModal="showAddAddressModal" @cancel="showAddAddressModal = false" @save="addAddress"></add-golden-address-modal>
@@ -295,7 +370,7 @@
 import EditPhoneNumberModal from "../phoneNumber/EditPhoneNumberModal";
 import EditEmailModal from "../email/EditEmailModal";
 import EditGoldenAddressModal from "../goldenAddress/EditGoldenAddressModal";
-import AssignExistingSubject from "./AssignExistingSubject";
+// import AssignExistingSubject from "./AssignExistingSubject";
 import AddPhoneNumberModal from "../phoneNumber/AddPhoneNumberModal";
 import AddEmailModal from "../email/AddEmailModal";
 import AddGoldenAddressModal from "../goldenAddress/AddGoldenAddressModal";
@@ -306,7 +381,7 @@ export default {
         EditPhoneNumberModal,
         EditEmailModal,
         EditGoldenAddressModal,
-        AssignExistingSubject,
+        // AssignExistingSubject,
         AddPhoneNumberModal,
         AddEmailModal,
         AddGoldenAddressModal
@@ -438,6 +513,23 @@ export default {
                 {key: "subject_type", label: "Subject Type", sortable: true},
                 {key: "actions", stickyColumn: true, label: "Actions"},
             ],
+            listFields: [
+                {key:"id", label: "ID", sortable: true},
+                //{key:"actions", stickyColumn: true, label: "Actions"},
+
+                // {key:"list_total_subject", label: "Total Subjects", sortable: true},
+                // {key:"list_total_individual_list", label: "Total Individual Lists", sortable: true},
+                {key:"list_market", label: "Markets", sortable: true},
+
+                {key:"list_group", label: "Group", sortable: true},
+                {key:"list_type", label: "Type", sortable: true},
+                {key:"list_source", label: "Source", sortable: true},
+
+                // Custom fields
+                {key:"list_pull_date", label: "Last Pull Date", sortable: true},
+                {key:"created_at", label: "Upload Date", sortable: true},
+                {key:"updated_at", label: "Last Edit Date", sortable: true},
+            ],
             showEditPhoneModal: false,
             showEditEmailModal: false,
             showGoldenAddressModal: false,
@@ -451,9 +543,11 @@ export default {
     computed: {
     },
     mounted () {
+
     },
     watch: {
         showModal() {
+          console.log(this.seller)
             this.seller = {...this.propsSeller}
         }
     }
