@@ -3,7 +3,7 @@
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
       <b-row class="mt-5">
         <b-tabs class="w-100" content-class="mt-3" fill>
-          <b-tab title="Subject Errors" active>
+          <b-tab title="Subject Errors" @click="currentPage = 1; perPage = 20" active>
             <b-table
                 id="subject-table"
                 small
@@ -82,11 +82,11 @@
                 <p class="mb-0">Showing 1 to {{perPage}} of {{subjectTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="subjectRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="subjectRows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
               </b-col>
             </b-row>
           </b-tab>
-          <b-tab title="Phone Errors">
+          <b-tab title="Phone Errors" @click="currentPage = 1; perPage = 20">
             <b-table
                 id="phone-table"
                 small
@@ -153,11 +153,11 @@
                 <p class="mb-0">Showing 1 to {{perPage}} of {{phoneTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="phoneRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="phoneRows" :per-page="perPage" aria-controls="phone-table"></b-pagination>
               </b-col>
             </b-row>
           </b-tab>
-          <b-tab title="Email Errors">
+          <b-tab title="Email Errors" @click="currentPage = 1; perPage = 20">
             <b-table
                 id="email-table"
                 small
@@ -224,11 +224,11 @@
                 <p class="mb-0">Showing 1 to {{perPage}} of {{emailTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="emailRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="emailRows" :per-page="perPage" aria-controls="email-table"></b-pagination>
               </b-col>
             </b-row>
           </b-tab>
-          <b-tab title="Seller Errors">
+          <b-tab title="Seller Errors" @click="currentPage = 1; perPage = 20">
             <b-table
                 id="seller-table"
                 small
@@ -299,7 +299,7 @@
               </b-col>
             </b-row>
           </b-tab>
-          <b-tab title="Golden Addresses Errors">
+          <b-tab title="Golden Addresses Errors" @click="currentPage = 1; perPage = 20">
             <b-table
                 id="golden-table"
                 small
@@ -366,7 +366,7 @@
                 <p class="mb-0">Showing 1 to {{perPage}} of {{goldenTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="goldenRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="goldenRows" :per-page="perPage" aria-controls="golden-table"></b-pagination>
               </b-col>
             </b-row>
           </b-tab>
