@@ -1,7 +1,6 @@
 <template>
   <div class="error-sections">
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-
       <b-row class="mt-5">
         <b-tabs class="w-100" content-class="mt-3" fill>
           <b-tab title="Subject Errors" active>
@@ -59,6 +58,33 @@
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
               </template>
             </b-table>
+            <b-row>
+              <b-col class="d-flex align-items-center">
+                <b-form-group
+                    label="Show"
+                    label-for="show-select"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-size="xs"
+                    class="mb-0"
+                >
+                  <b-form-select
+                      id="show-select"
+                      v-model="perPage"
+                      :options="pageOptions"
+                      size="xs"
+                      class="ml-3"
+                  ></b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col class="d-flex align-items-center justify-content-center">
+                <p class="mb-0">Showing 1 to {{perPage}} of {{subjectTotal}} entries</p>
+              </b-col>
+              <b-col class="d-flex justify-content-end">
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="subjectRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+              </b-col>
+            </b-row>
           </b-tab>
           <b-tab title="Phone Errors">
             <b-table
@@ -103,6 +129,33 @@
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
               </template>
             </b-table>
+            <b-row>
+              <b-col class="d-flex align-items-center">
+                <b-form-group
+                    label="Show"
+                    label-for="show-select"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-size="xs"
+                    class="mb-0"
+                >
+                  <b-form-select
+                      id="show-select"
+                      v-model="perPage"
+                      :options="pageOptions"
+                      size="xs"
+                      class="ml-3"
+                  ></b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col class="d-flex align-items-center justify-content-center">
+                <p class="mb-0">Showing 1 to {{perPage}} of {{phoneTotal}} entries</p>
+              </b-col>
+              <b-col class="d-flex justify-content-end">
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="phoneRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+              </b-col>
+            </b-row>
           </b-tab>
           <b-tab title="Email Errors">
             <b-table
@@ -147,6 +200,33 @@
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
               </template>
             </b-table>
+            <b-row>
+              <b-col class="d-flex align-items-center">
+                <b-form-group
+                    label="Show"
+                    label-for="show-select"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-size="xs"
+                    class="mb-0"
+                >
+                  <b-form-select
+                      id="show-select"
+                      v-model="perPage"
+                      :options="pageOptions"
+                      size="xs"
+                      class="ml-3"
+                  ></b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col class="d-flex align-items-center justify-content-center">
+                <p class="mb-0">Showing 1 to {{perPage}} of {{emailTotal}} entries</p>
+              </b-col>
+              <b-col class="d-flex justify-content-end">
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="emailRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+              </b-col>
+            </b-row>
           </b-tab>
           <b-tab title="Seller Errors">
             <b-table
@@ -191,6 +271,33 @@
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
               </template>
             </b-table>
+            <b-row>
+              <b-col class="d-flex align-items-center">
+                <b-form-group
+                    label="Show"
+                    label-for="show-select"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-size="xs"
+                    class="mb-0"
+                >
+                  <b-form-select
+                      id="show-select"
+                      v-model="perPage"
+                      :options="pageOptions"
+                      size="xs"
+                      class="ml-3"
+                  ></b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col class="d-flex align-items-center justify-content-center">
+                <p class="mb-0">Showing 1 to {{perPage}} of {{sellerTotal}} entries</p>
+              </b-col>
+              <b-col class="d-flex justify-content-end">
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="sellerRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+              </b-col>
+            </b-row>
           </b-tab>
           <b-tab title="Golden Addresses Errors">
             <b-table
@@ -235,6 +342,33 @@
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
               </template>
             </b-table>
+            <b-row>
+              <b-col class="d-flex align-items-center">
+                <b-form-group
+                    label="Show"
+                    label-for="show-select"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-size="xs"
+                    class="mb-0"
+                >
+                  <b-form-select
+                      id="show-select"
+                      v-model="perPage"
+                      :options="pageOptions"
+                      size="xs"
+                      class="ml-3"
+                  ></b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col class="d-flex align-items-center justify-content-center">
+                <p class="mb-0">Showing 1 to {{perPage}} of {{goldenTotal}} entries</p>
+              </b-col>
+              <b-col class="d-flex justify-content-end">
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="goldenRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+              </b-col>
+            </b-row>
           </b-tab>
         </b-tabs>
       </b-row>
@@ -260,7 +394,7 @@ export default {
       showDeleteModal: false,
       itemToDelete: {},
       pageOptions: [10, 20, 50],
-      searchSubject: '',
+      searchSeller: '',
       showAddModal: false
     }
   },
@@ -277,9 +411,17 @@ export default {
       phones: 'errorModule/phones',
       sellers: 'errorModule/sellers',
       goldens: 'errorModule/goldens',
-      total: 'errorModule/total'
+      subjectTotal: 'errorModule/subjectTotal',
+      emailTotal: 'errorModule/emailTotal',
+      phoneTotal: 'errorModule/phoneTotal',
+      sellerTotal: 'errorModule/sellerTotal',
+      goldenTotal: 'errorModule/goldenTotal',
     }),
-    rows() { return this.total ? this.total : 1}
+    subjectRows() { return this.subjectTotal ? this.subjectTotal : 1},
+    phoneRows() { return this.phoneTotal ? this.phoneTotal : 1},
+    emailRows() { return this.emailTotal ? this.emailTotal : 1},
+    sellerRows() { return this.sellerTotal ? this.sellerTotal : 1},
+    goldenRows() { return this.goldenTotal ? this.goldenTotal : 1}
   },
   async created () {
     try {
@@ -291,7 +433,18 @@ export default {
     }
   },
   methods: { },
-  watch: { }
+  watch: {
+    currentPage: {
+      handler: function() {
+        this.$store.dispatch('errorModule/getAllErrors', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+      }
+    },
+    perPage: {
+      handler: function () {
+        this.$store.dispatch('errorModule/getAllErrors', {page: 1, perPage: this.perPage, search: this.searchSeller})
+      }
+    },
+  }
 }
 </script>
 

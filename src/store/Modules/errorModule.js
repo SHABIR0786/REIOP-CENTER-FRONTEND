@@ -98,51 +98,62 @@ const state = {
     emails: [],
     phones: [],
     sellers: [],
-    goldens:[]
+    goldens:[],
+    subjectTotal:0,
+    emailTotal:0,
+    phoneTotal:0,
+    sellerTotal:0,
+    goldenTotal:0,
 }
 
 const mutations = {
     SET_ALL_SUBJECTS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.subjects = [...data]
+        state.subjectTotal = payload.total
     },
     SET_ALL_EMAILS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.emails = [...data]
+        state.emailTotal = payload.total
     },
     SET_ALL_PHONES(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.phones = [...data]
+        state.phoneTotal = payload.total
     },
 
     SET_ALL_SELLERS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.sellers = [...data]
+        state.sellerTotal = payload.total
     },
     SET_ALL_GOLDENS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.goldens = [...data]
-    }
+        state.goldenTotal = payload.total
+    },
+
 }
 
 const actions = {
@@ -170,10 +181,9 @@ const actions = {
             if(response && response.goldens) {
                 commit('SET_ALL_GOLDENS', response.goldens)
             }
-
             return response
         })
-    }
+    },
 }
 
 const getters = {
@@ -187,7 +197,11 @@ const getters = {
     phones: ({ phones }) => phones,
     sellers: ({ sellers }) => sellers,
     goldens:({ goldens }) => goldens,
-
+    subjectTotal: ({subjectTotal}) => subjectTotal,
+    emailTotal: ({emailTotal}) => emailTotal,
+    phoneTotal: ({phoneTotal}) => phoneTotal,
+    sellerTotal: ({sellerTotal}) => sellerTotal,
+    goldenTotal: ({goldenTotal}) => goldenTotal,
 }
 
 export default {
