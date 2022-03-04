@@ -129,7 +129,7 @@
                 <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
             </b-col>
         </b-row>
         <edit-seller-modal :showModal="showModal" :propsSeller="editedItem" @cancel="showModal=false" @save="save"></edit-seller-modal>
@@ -197,8 +197,13 @@ export default {
     },
     methods: {
         editItem(item) {
-            this.showModal = true
-            this.editedItem = { ...item }
+          this.showModal = true
+          const data = { ...item }
+          data.lists.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+          })
+          this.editedItem = { ...data }
         },
         save(item) {
             // this.showModal = false
