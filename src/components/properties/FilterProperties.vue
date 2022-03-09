@@ -186,7 +186,7 @@
               list_type_option: [{ value: null, text: 'N/A' }],
               list_market_option: [{ value: null, text: 'N/A' }],
               submarket_options: [],
-              perPage: 9999,
+              perPage: 20,
               condition: '',
               conditionalFilter: [
                   {index: 1}
