@@ -148,7 +148,7 @@
         },
         data() {
             return {
-                perPage: 9999,
+                perPage: 20,
                 isBusy: false,
                 currentPage: 1,
                 pageOptions: [10, 20, 50],
