@@ -58,7 +58,11 @@ const mutations = {
         const ADDRESS = JSON.parse(state.goldenAddresses)
         const findIndex = ADDRESS.findIndex(({ id }) => id === payload)
         findIndex !== -1 && ADDRESS.splice(findIndex, 1)
-    }
+    },
+    VUEX_STORE(state) {
+        state.goldenAddresses = [];
+        state.total = 0;
+    },
 }
 
 const actions = {
@@ -120,7 +124,10 @@ const actions = {
             }
             return response
         })
-    }
+    },
+    async deleteVuexStore({ commit }) {
+        commit ('VUEX_STORE');
+    },
 }
 
 const getters = {

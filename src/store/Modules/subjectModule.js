@@ -75,7 +75,12 @@ const mutations = {
         const SUBJECTS = JSON.parse(state.subjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1)
-    }
+    },
+    VUEX_STORE(state) {
+        state.subjects = [];
+        state.total = 0;
+        state.subject = {};
+    },
 }
 
 const actions = {
@@ -149,7 +154,10 @@ const actions = {
             }
             return response
         })
-    }
+    },
+    async deleteVuexStore({ commit }) {
+        commit ('VUEX_STORE');
+    },
 }
 
 const getters = {

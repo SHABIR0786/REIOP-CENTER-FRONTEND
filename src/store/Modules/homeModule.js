@@ -22,7 +22,9 @@ export const mutations = {
             state.cards[CARDS_ENUM.GOLDEN_ADDRESS].counter = payload.golden_addresses || 0
             state.cards[CARDS_ENUM.LISTS].counter = payload.lists || 0
         }
-    }
+    },
+    VUEX_STORE() {
+    },
 }
 
 export const actions = {
@@ -35,6 +37,9 @@ export const actions = {
             commit('SET_TOTAL_ROWS', response)
             return response
         })
+    },
+    async deleteVuexStore({ commit }) {
+        commit ('VUEX_STORE');
     },
 }
 

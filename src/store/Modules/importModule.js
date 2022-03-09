@@ -58,7 +58,17 @@ export const mutations = {
                    break;
            }
         });
-    }
+    },
+    VUEX_STORE(state) {
+        state.emailFields = [];
+        state.goldenAddressFields = 0;
+        state.listFields = {};
+        state.phoneNumberFields = {};
+        state.sellerFields = {};
+        state.subjectFields = {};
+        state.uploadedFields = {};
+        state.importVisibleFields = {};
+    },
 }
 
 export const actions = {
@@ -100,7 +110,10 @@ export const actions = {
                 commit('SET_IMPORT_FIELDS', response.labels);
             }
         });
-    }
+    },
+    async deleteVuexStore({ commit }) {
+        commit ('VUEX_STORE');
+    },
 }
 
 export const getters = {

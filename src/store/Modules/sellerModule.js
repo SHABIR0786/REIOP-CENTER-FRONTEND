@@ -74,7 +74,12 @@ const mutations = {
         const SELLER = JSON.parse(state.sellers)
         const findIndex = SELLER.findIndex(({ id }) => id === payload)
         findIndex !== -1 && SELLER.splice(findIndex, 1)
-    }
+    },
+    VUEX_STORE(state) {
+        state.sellers = [];
+        state.total = 0;
+        state.seller = {};
+    },
 }
 
 const actions = {
@@ -153,7 +158,10 @@ const actions = {
         return await api.post(`/attach`, {subject_id, seller_id}).then((response) => {
            console.log('attached', response);
         })
-    }
+    },
+    async deleteVuexStore({ commit }) {
+        commit ('VUEX_STORE');
+    },
 }
 
 const getters = {
