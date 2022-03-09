@@ -33,6 +33,11 @@ export default {
       isLogged: 'loginModule/isLogged'
     })
   },
+  data (){
+    return {
+      moduleName : '',
+    }
+  },
   created () {
     if(localStorage.getItem('accessToken') && localStorage.getItem('authUser')){
       this.$store.commit('loginModule/SIGN_IN', {
@@ -40,6 +45,39 @@ export default {
         user: JSON.parse(localStorage.getItem('authUser')),
         token: localStorage.getItem('accessToken')
       })
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      switch (from.name) {
+        case  "Home":
+          break;
+        case  "Import":
+          this.moduleName ='importModule'
+          break;
+        case  "Subject":
+            this.moduleName ='subjectModule'
+            break;
+        case  "Seller":
+          this.moduleName ='sellerModule'
+          break;
+        case  "PhoneNumber":
+          this.moduleName ='phoneNumberModule'
+          break;
+        case  "Properties":
+          this.moduleName ='propertyModule'
+          break;
+        case  "List":
+          this.moduleName ='listModule'
+          break;
+        case  "Email":
+          this.moduleName ='emailModule'
+          break;
+          case  "GoldenAddress":
+          this.moduleName ='goldenAddressModule'
+          break;
+      }
+      this.$store.dispatch(`${this.moduleName}/deleteVuexStore`)
     }
   }
 }

@@ -56,7 +56,11 @@ const mutations = {
         const PHONE = JSON.parse(state.phoneNumbers)
         const findIndex =PHONE.findIndex(({ id }) => id === payload)
         findIndex !== -1 && PHONE.splice(findIndex, 1)
-    }
+    },
+    VUEX_STORE(state) {
+        state.phoneNumbers = [];
+        state.total = 0;
+    },
 }
 
 const actions = {
@@ -118,6 +122,9 @@ const actions = {
             commit('DELETE_MULTIPLE_ITEMS', data)
             return response
         })
+    },
+    async deleteVuexStore({ commit }) {
+        commit ('VUEX_STORE');
     },
 }
 

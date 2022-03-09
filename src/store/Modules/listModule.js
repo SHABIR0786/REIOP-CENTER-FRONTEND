@@ -80,6 +80,16 @@ const mutations = {
     SET_SOYRCE_LIST(state, payload) {
         state.sourceList = payload
     },
+    VUEX_STORE(state) {
+        state.lists = [];
+        state.sellers = [];
+        state.tabData = [];
+        state.marketList = [];
+        state.groupList = [];
+        state.typeList = [];
+        state.sourceList = [];
+        state.total = 0;
+    },
 }
 
 const actions = {
@@ -172,6 +182,9 @@ const actions = {
             commit('DELETE_MULTIPLE_LISTS', data)
             return response
         })
+    },
+    async deleteVuexStore({ commit }) {
+        commit ('VUEX_STORE');
     },
 }
 
