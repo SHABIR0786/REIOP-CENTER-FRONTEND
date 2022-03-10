@@ -167,7 +167,9 @@
                 </b-row>
               <b-row >
                 <b-col cols="12">
-                  <router-link class="link-label" to="/errors"><b-icon icon="exclamation-circle-fill" variant="warning"></b-icon> Click here to see Errors </router-link>
+
+                  <div class="mr-2 cursor-pointer" @click="showErrors(editData)">
+                    <b-icon icon="exclamation-circle-fill" variant="warning"></b-icon> Click here to see Errors </div>
                 </b-col>
               </b-row>
             </b-row>
@@ -222,7 +224,13 @@ export default {
             this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
             this.$emit('cancel');
           }
-        }
+        },
+      showErrors(item) {
+        const route = '/errors?id=' + item.id;
+        this.editedItem = { ...item }
+        let routeData = this.$router.resolve({path: route});
+        window.open(routeData.href, '_blank');
+      },
     },
     data() {
         return {
