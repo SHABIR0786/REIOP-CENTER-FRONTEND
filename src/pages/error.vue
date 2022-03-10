@@ -426,7 +426,7 @@ export default {
   async created () {
     try {
       await this.$store.dispatch('uxModule/setLoading')
-      await this.$store.dispatch("errorModule/getAllErrors", {page: 1, perPage: this.perPage})
+      await this.$store.dispatch("errorModule/getAllErrors", {page: 1, perPage: this.perPage, search: this.$route.query.id})
       await this.$store.dispatch('uxModule/hideLoader')
     } catch (error) {
       await this.$store.dispatch('uxModule/hideLoader')
