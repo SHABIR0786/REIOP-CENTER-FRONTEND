@@ -38,11 +38,13 @@ const mutations = {
         const PHONE = JSON.parse(state.phoneNumbers)
         const findIndex = PHONE.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && PHONE.splice(findIndex, 1, { ...payload })
+        state.phoneNumbers = JSON.stringify(PHONE);
     },
     DELETE_ITEM(state, payload) {
         const PHONE = JSON.parse(state.phoneNumbers)
         const findIndex = PHONE.findIndex(({ id }) => id === payload)
         findIndex !== -1 && PHONE.splice(findIndex, 1)
+        state.phoneNumbers = JSON.stringify(PHONE);
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -51,11 +53,13 @@ const mutations = {
         const PHONE = JSON.parse(state.phoneNumbers)
         const findIndex = PHONE.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && PHONE.splice(findIndex, 1, { ...payload })
+        state.phoneNumbers = JSON.stringify(PHONE);
     },
     DELETE_MULTIPLE_ITEMS(state, payload) {
         const PHONE = JSON.parse(state.phoneNumbers)
         const findIndex =PHONE.findIndex(({ id }) => id === payload)
         findIndex !== -1 && PHONE.splice(findIndex, 1)
+        state.phoneNumbers = JSON.stringify(PHONE);
     },
     VUEX_STORE(state) {
         state.phoneNumbers = [];

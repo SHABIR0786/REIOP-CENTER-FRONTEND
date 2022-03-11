@@ -53,11 +53,13 @@ const mutations = {
         const SELLER = JSON.parse(state.sellers)
         const findIndex = SELLER.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && SELLER.splice(findIndex, 1, { ...payload })
+        state.sellers = JSON.stringify(SELLER)
     },
     DELETE_SELLER(state, payload) {
         const SELLER = JSON.parse(state.sellers)
         const findIndex = SELLER.findIndex(({ id }) => id === payload)
         findIndex !== -1 && SELLER.splice(findIndex, 1)
+        state.sellers = JSON.stringify(SELLER)
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -66,6 +68,7 @@ const mutations = {
         const SELLER = JSON.parse(state.sellers)
         const findIndex = SELLER.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && SELLER.splice(findIndex, 1, { ...payload })
+        state.sellers = JSON.stringify(SELLER)
     },
     SET_SELLER(state, payload) {
         state.seller = JSON.stringify(payload);
@@ -74,6 +77,7 @@ const mutations = {
         const SELLER = JSON.parse(state.sellers)
         const findIndex = SELLER.findIndex(({ id }) => id === payload)
         findIndex !== -1 && SELLER.splice(findIndex, 1)
+        state.sellers = JSON.stringify(SELLER)
     },
     VUEX_STORE(state) {
         state.sellers = [];
@@ -115,6 +119,7 @@ const actions = {
         delete updatedData.subjects;
         delete updatedData.emails;
         delete updatedData.phones;
+        delete updatedData.lists;
         delete updatedData.golden_addresses;
         delete updatedData.subject_id;
         delete updatedData.seller_total_emails;

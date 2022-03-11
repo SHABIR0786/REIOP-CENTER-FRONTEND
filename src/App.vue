@@ -50,8 +50,6 @@ export default {
   watch: {
     '$route' (to, from) {
       switch (from.name) {
-        case  "Home":
-          break;
         case  "Import":
           this.moduleName ='importModule'
           break;
@@ -77,7 +75,9 @@ export default {
           this.moduleName ='goldenAddressModule'
           break;
       }
-      this.$store.dispatch(`${this.moduleName}/deleteVuexStore`)
+      if(this.moduleName) {
+        this.$store.dispatch(`${this.moduleName}/deleteVuexStore`)
+      }
     }
   }
 }
