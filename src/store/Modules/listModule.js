@@ -46,11 +46,13 @@ const mutations = {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && LIST.splice(findIndex, 1, { ...payload })
+        state.lists = JSON.stringify(LIST);
     },
     DELETE_LIST(state, payload) {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload)
         findIndex !== -1 && LIST.splice(findIndex, 1)
+        state.lists = JSON.stringify(LIST);
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -59,6 +61,7 @@ const mutations = {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && LIST.splice(findIndex, 1, { ...payload })
+        state.lists = JSON.stringify(LIST);
     },
     SHOW_TABS(state, payload) {
         state.tabData = payload
@@ -67,6 +70,7 @@ const mutations = {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload)
         findIndex !== -1 && LIST.splice(findIndex, 1)
+        state.lists = JSON.stringify(LIST);
     },
     SET_MARKET_LIST(state, payload) {
         state.marketList = payload

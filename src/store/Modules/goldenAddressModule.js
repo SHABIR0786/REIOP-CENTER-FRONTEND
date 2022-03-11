@@ -40,11 +40,13 @@ const mutations = {
         const ADDRESS = JSON.parse(state.goldenAddresses)
         const findIndex = ADDRESS.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && ADDRESS.splice(findIndex, 1, { ...payload })
+        state.goldenAddresses = JSON.stringify(ADDRESS);
     },
     DELETE_GOLDEN_ADDRESS(state, payload) {
         const ADDRESS = JSON.parse(state.goldenAddresses)
         const findIndex = ADDRESS.findIndex(({ id }) => id === payload)
         findIndex !== -1 && ADDRESS.splice(findIndex, 1)
+        state.goldenAddresses = JSON.stringify(ADDRESS);
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -53,11 +55,13 @@ const mutations = {
         const ADDRESS = JSON.parse(state.goldenAddresses)
         const findIndex = ADDRESS.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && ADDRESS.splice(findIndex, 1, { ...payload })
+        state.goldenAddresses = JSON.stringify(ADDRESS);
     },
     DELETE_MULTIPLE_GOLDEN_ADDRESS(state, payload) {
         const ADDRESS = JSON.parse(state.goldenAddresses)
         const findIndex = ADDRESS.findIndex(({ id }) => id === payload)
         findIndex !== -1 && ADDRESS.splice(findIndex, 1)
+        state.goldenAddresses = JSON.stringify(ADDRESS);
     },
     VUEX_STORE(state) {
         state.goldenAddresses = [];

@@ -547,7 +547,6 @@ export default {
     },
     watch: {
         showModal() {
-          console.log(this.seller)
             this.seller = {...this.propsSeller}
         }
     }

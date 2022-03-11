@@ -54,11 +54,13 @@ const mutations = {
         const SUBJECTS = JSON.parse(state.subjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1, { ...payload })
+        state.subjects = JSON.stringify(SUBJECTS);
     },
     DELETE_SUBJECT(state, payload) {
         const SUBJECTS = JSON.parse(state.subjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1)
+        state.subjects = JSON.stringify(SUBJECTS);
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -67,6 +69,7 @@ const mutations = {
         const SUBJECTS = JSON.parse(state.subjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1, { ...payload })
+        state.subjects = JSON.stringify(SUBJECTS);
     },
     SET_SUBJECT(state, payload) {
         state.subject = {...payload};
@@ -75,6 +78,7 @@ const mutations = {
         const SUBJECTS = JSON.parse(state.subjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1)
+        state.subjects = JSON.stringify(SUBJECTS);
     },
     VUEX_STORE(state) {
         state.subjects = [];

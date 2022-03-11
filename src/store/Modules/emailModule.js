@@ -37,11 +37,13 @@ const mutations = {
         const EMAIL = JSON.parse(state.emails)
         const findIndex = EMAIL.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && EMAIL.splice(findIndex, 1, { ...payload })
+        state.emails = JSON.stringify(EMAIL);
     },
     DELETE_EMAIL(state, payload) {
         const EMAIL = JSON.parse(state.emails)
         const findIndex = EMAIL.findIndex(({ id }) => id === payload)
         findIndex !== -1 && EMAIL.splice(findIndex, 1)
+        state.emails = JSON.stringify(EMAIL);
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -50,11 +52,13 @@ const mutations = {
         const EMAIL = JSON.parse(state.emails)
         const findIndex = EMAIL.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && EMAIL.splice(findIndex, 1, { ...payload })
+        state.emails = JSON.stringify(EMAIL);
     },
     DELETE_MULTIPLE_EMAILS(state, payload) {
         const EMAIL = JSON.parse(state.emails)
         const findIndex = EMAIL.findIndex(({ id }) => id === payload)
         findIndex !== -1 && EMAIL.splice(findIndex, 1)
+        state.emails = JSON.stringify(EMAIL);
     },
     VUEX_STORE(state) {
         state.emails = [];
