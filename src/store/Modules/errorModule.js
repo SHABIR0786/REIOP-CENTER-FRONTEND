@@ -158,7 +158,11 @@ const mutations = {
 
 const actions = {
     async getAllErrors({ commit, dispatch }, {page, perPage, search}) {
-        return await api.get(`/errors?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+        let url = `/errors?page=${page}&perPage=${perPage}`
+        if(search) {
+            url+= `&search=${search}`
+        }
+        return await api.get(url).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
