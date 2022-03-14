@@ -52,6 +52,25 @@
                             </b-input-group>
                         </b-col>
                     </b-row>
+                  <b-row class="mb-2">
+                    <b-col cols="9" class="mx-auto">
+                      <div class="text-info">
+                        <p>Notes: Input any information about this upload that you want to see in the future.</p>
+                      </div>
+                      <template>
+                        <div>
+                          <b-form-textarea
+                              id="textarea"
+                              v-model="list.list_note"
+                              placeholder="Enter notes..."
+                              rows="6"
+                              no-resize
+                          ></b-form-textarea>
+                          <pre class="mt-3 mb-0"></pre>
+                        </div>
+                      </template>
+                    </b-col>
+                  </b-row>
                 </b-col>
             </b-row>
         </b-container>
@@ -99,6 +118,7 @@
                 list_type: '',
                 list_source: '',
                 list_pull_date: '',
+                list_note:'',
                 list_hash: '',
                 user_id: '',
                 team_id: '',
