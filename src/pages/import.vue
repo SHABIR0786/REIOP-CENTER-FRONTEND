@@ -13,45 +13,51 @@
                 ></b-form-file>
             </b-col>
         </b-row>
-        <b-row  class="mt-4">
+        <b-row  class="mt-4 mb-3">
             <b-col cols="12" md="3">
-                <fields-card class="field-section" :fromField="fromField" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
-            </b-col>
-            <b-col cols="12" md="1">
-                <b-row class="text-center">
-                    <b-col>
-                        <b-button variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
-                    </b-col>
-                </b-row>
+                <fields-card class="field-section h-100" :fromField="fromField" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
             </b-col>
             <b-col cols="12" md="4">
-                <fields-card class="field-section" :toField="toField" :importedFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
+                <fields-card class="field-section h-100" :toField="toField" :importedFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
             </b-col>
-            <b-col cols="12" md="4">
-                <mapped-fields class="mapped-fields" :items="mappedItems" @clearMappedItem="clearMappedItem"></mapped-fields>
-                <b-row class="text-right mt-5">
-                    <b-col>
-                        <b-btn variant="primary" @click="upload">Save</b-btn>
-                    </b-col>
-                </b-row>
-            </b-col>
+          <b-col cols="12" md="4" offset-md="1">
+            <mapped-fields class="mapped-fields h-100" :items="mappedItems" @clearMappedItem="clearMappedItem"></mapped-fields>
+            <b-row class="text-right mt-5">
+            </b-row>
+          </b-col>
         </b-row>
+      <b-row>
+        <b-col cols="12" md="8">
+          <b-row class="map-button text-right">
+            <b-col>
+              <b-button variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
+            </b-col>
+          </b-row>
+        </b-col>
+        <b-col class="text-right" cols="12" md="4">
+          <b-btn variant="primary" @click="confirm(mappedItems)" >Save</b-btn>
+        </b-col>
+      </b-row>
+      <confirm-modal :showModal="showConfirmModal" :is-have-mapped-items="isHaveMappedItems" @modalResponse="confirmImport"></confirm-modal>
     </b-container>
 </template>
 
 <script>
-
 import { mapGetters } from "vuex"
 import XLSX from "xlsx"
 import FieldsCard from "@/components/import/FieldsCard"
 import MappedFields from '../components/import/MappedFields.vue'
+import ConfirmModal from "../components/confirmModal/ConfirmModal";
+
 const utf8 = require('utf8');
+
 export default {
     name: "Import",
     props: ['upload_type', 'list_settings', 'skip_source'],
     components: {
         FieldsCard,
-        MappedFields
+        MappedFields,
+        ConfirmModal,
     },
     data () {
         return {
@@ -67,6 +73,8 @@ export default {
             url: '',
             mappedItems: [],
             importedFields: {},
+            showConfirmModal: false,
+            isHaveMappedItems: false
         }
     },
     computed: {
@@ -113,8 +121,19 @@ export default {
         }
     },
     methods: {
+        confirm(item) {
+          this.showConfirmModal  = true;
+          this.isHaveMappedItems = !!item.length;
+        },
+        confirmImport (response) {
+          this.showConfirmModal = false;
+          if(response) {
+            this.upload();
+          }
+        },
         previewFile (e) {
             let $this = this
+            this.$store.dispatch('uxModule/setLoading')
             let files = e.target.files, f = files[0]
             this.file = e.target.files[0];
 
@@ -136,6 +155,7 @@ export default {
                       $this.uploadedFields.push(sheetHeader)
                       $this.uploadedAllFields.push(sheetHeader)
                   }
+                this.$store.dispatch('uxModule/hideLoader')
                 }
             };
             reader.readAsArrayBuffer(f);
@@ -223,8 +243,11 @@ export default {
         overflow: auto;
     }
     .mapped-fields {
-        max-height: 60vh;
+        max-height: 70vh;
         overflow: auto;
+    }
+    .map-button{
+      margin-right: 0!important;
     }
     .import-container {
         height: calc(100vh - 56px) !important;
