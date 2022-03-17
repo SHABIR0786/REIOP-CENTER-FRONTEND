@@ -84,7 +84,7 @@ export const actions = {
     },
 
     async uploadExcelDataV2({ commit }, {file, mappedItems, url, list, skipSource}) {
-        const config = {headers: {'content-type': 'multipart/form-data'}}
+        const config = {headers: {'content-type': 'multipart/form-data; charset=UTF-8'}}
 
         let data = new FormData();
         data.append('file', file);

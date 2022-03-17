@@ -49,6 +49,7 @@ import FieldsCard from "@/components/import/FieldsCard"
 import MappedFields from '../components/import/MappedFields.vue'
 import ConfirmModal from "../components/confirmModal/ConfirmModal";
 
+const utf8 = require('utf8');
 
 export default {
     name: "Import",
@@ -141,7 +142,6 @@ export default {
               var data = new Uint8Array(e.target.result);
               var workbook = XLSX.read(data, {type: 'array'});
               let sheetName = workbook.SheetNames[0]
-
               let sheetsList = workbook.SheetNames
               let sheetDataV2 = XLSX.utils.sheet_to_json(workbook.Sheets[sheetsList[0]], {header: 1, defval: '', blankrows: true});
 
@@ -151,8 +151,9 @@ export default {
               this.uploadedAllFields = []
               if (sheetDataV2 && sheetDataV2[0] && sheetDataV2[0].length > 0) {
                    for(let i = 0; i < sheetDataV2[0].length; i++) {
-                      $this.uploadedFields.push(sheetDataV2[0][i])
-                      $this.uploadedAllFields.push(sheetDataV2[0][i])
+                     var sheetHeader = utf8.decode(sheetDataV2[0][i]);
+                      $this.uploadedFields.push(sheetHeader)
+                      $this.uploadedAllFields.push(sheetHeader)
                   }
                 this.$store.dispatch('uxModule/hideLoader')
                 }
@@ -186,8 +187,6 @@ export default {
 
             this.mappedItems.push({fromField: this.fromField, toField: this.toField, action: ""})
 
-            // const fromIndex = this.uploadedFields.findIndex(item => item === this.fromField)
-            // this.uploadedFields.splice(fromIndex, 1)
             let table = this.toField.split('_')[0];
             if (table === 'golden') { table = 'golden_address' }
 
