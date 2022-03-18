@@ -18,7 +18,7 @@
                 <fields-card class="field-section h-100" :fromField="fromField" :tableFields="uploadedFields" :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
             </b-col>
             <b-col cols="12" md="4">
-                <fields-card class="field-section h-100" :toField="toField" :importedFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
+                <fields-card class="target-section h-100" :toField="toField"  :importedFields="importedFields" :title="`Target Fields`" @selectItem="selectTargetField"/>
             </b-col>
           <b-col cols="12" md="4" offset-md="1">
             <mapped-fields class="mapped-fields h-100" :items="mappedItems" @clearMappedItem="clearMappedItem"></mapped-fields>
@@ -122,8 +122,14 @@ export default {
     },
     methods: {
         confirm(item) {
+          let requiredFields = ['subject_address', 'subject_city', 'subject_state', 'subject_zip'];
+          let mappedFields = []
+          item.forEach(item => {
+            mappedFields.push(item['toField'])
+          })
+          let requiredExist = requiredFields.every( ai => mappedFields.includes(ai) );
           this.showConfirmModal  = true;
-          this.isHaveMappedItems = !!item.length;
+          this.isHaveMappedItems = !!requiredExist;
         },
         confirmImport (response) {
           this.showConfirmModal = false;
@@ -200,15 +206,13 @@ export default {
             this.toField = null
         },
         clearMappedItem(index) {
-            let table = this.mappedItems[index].toField.split('_')[0];
-            if (table === 'golden') { table = 'golden_address' }
-
-            this.uploadedFields.push(this.mappedItems[index].fromField)
-
-            if (table !== 'seller' && table !== 'email' && table !== 'phone') {
-                this.importedFields[table].push(this.mappedItems[index].toField)
-            }
-            this.mappedItems.splice(index, 1)
+          let table = this.mappedItems[index].toField.split('_')[0];
+          if (table === 'golden') { table = 'golden_address' }
+          this.uploadedFields.push(this.mappedItems[index].fromField)
+          if (table !== 'seller' && table !== 'email' && table !== 'phone') {
+              this.importedFields[table].push({'label': this.mappedItems[index].toField,'field': this.mappedItems[index].toField})
+          }
+          this.mappedItems.splice(index, 1)
         },
         async upload() {
           await this.$store.dispatch('uxModule/setLoading')
@@ -238,7 +242,11 @@ export default {
 }
 </script>
 <style>
-    .field-section {
+.target-section .required label>span:after {
+  content: " *"!important;
+  color: red!important;
+}
+    .field-section,.target-section {
         max-height: 70vh;
         overflow: auto;
     }
