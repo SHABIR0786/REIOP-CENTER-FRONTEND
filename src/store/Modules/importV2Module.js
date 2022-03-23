@@ -59,8 +59,8 @@ const mutations = {
     },
 
 
-    EXPORTED(state, payload) {
-        console.log('payload',  payload);
+    EXPORTED() {
+        // console.log('payload',  payload);
     },
     DELETE_PROCESS(state, payload) {
         const findIndex = state.imports.findIndex(({ id }) => id === payload)
@@ -74,11 +74,9 @@ const actions = {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
-
             if (response && response.batch) {
                 commit('SET_ALL_PROCESSES', response.batch)
             }
-
             return response
         })
     },
@@ -117,18 +115,22 @@ const actions = {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
-
             if (response && response.batch) {
                 commit('SET_ALL_PROCESSES', response.batch)
             }
-
             return response
         })
     },
 
     async exportFile({ commit }, data) {
         return await api.post(`/export`, {...data}).then((response) => {
-            commit('EXPORTED', response)
+            var fileURL = window.URL.createObjectURL(new Blob([response]));
+            var fileLink = document.createElement('a');
+            fileLink.href = fileURL;
+            fileLink.setAttribute('download', data['file']['file_name']);
+            document.body.appendChild(fileLink);
+            fileLink.click();
+            commit('EXPORTED', response);
         })
     },
     async deleteProcess({ commit }, data) {
