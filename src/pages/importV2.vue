@@ -166,7 +166,7 @@ export default {
           items: 'importV2Module/imports',
           lists: 'listModule/lists',
           total: 'listModule/total',
-          editData: 'importV2Module/editData'
+          editData: 'importV2Module/editData',
       }),
       rows() { return this.total ? this.total : 1 },
     },
@@ -183,11 +183,18 @@ export default {
       save(item) {
         this.$store.dispatch('importV2Module/editImport', {...item})
       },
-      modalResponse(response) {
+     async modalResponse(response) {
         this.showImportModal = false;
         if (response) {
+          this.$store.dispatch('uxModule/setLoading')
           this.download_type = response;
-          this.$store.dispatch("importV2Module/exportFile", {type: response, file: this.download_data})
+          try {
+            await this.$store.dispatch("importV2Module/exportFile", {type: response, file: this.download_data})
+            this.$store.dispatch('uxModule/hideLoader');
+          }catch (error){
+            this.$store.dispatch('uxModule/hideLoader');
+          }
+
         }
       },
       importTypeResponse(response) {
