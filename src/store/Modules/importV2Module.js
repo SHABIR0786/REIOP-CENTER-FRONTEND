@@ -59,8 +59,8 @@ const mutations = {
     },
 
 
-    EXPORTED() {
-        // console.log('payload',  payload);
+    EXPORTED(state, payload) {
+        console.log('payload',  payload);
     },
     DELETE_PROCESS(state, payload) {
         const findIndex = state.imports.findIndex(({ id }) => id === payload)

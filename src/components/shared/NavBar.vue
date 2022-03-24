@@ -11,16 +11,16 @@
                 <b-dropdown-item>
                     <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Labels</router-link>
                 </b-dropdown-item>
-              <b-dropdown-item v-if="user && user.role === 'admin'">
+              <b-dropdown-item > <!--v-if="user && user.role === 'admin'"-->
                 <router-link class="link-label" to="/teams"><b-icon icon="card-list"></b-icon> Teams</router-link>
               </b-dropdown-item>
-              <b-dropdown-item v-if="user && user.role === 'admin'">
+              <b-dropdown-item >
                 <router-link class="link-label" to="/phoneTypes"><b-icon icon="phone"></b-icon> Phone Types</router-link>
               </b-dropdown-item>
-              <b-dropdown-item v-if="user && user.role === 'admin'">
+              <b-dropdown-item >
                 <router-link class="link-label" to="/subjectTypes"><b-icon icon="house"></b-icon> Subject Types</router-link>
               </b-dropdown-item>
-              <b-dropdown-item v-if="user && user.role === 'admin'">
+              <b-dropdown-item>
                 <router-link class="link-label" to="/companyTypes"><b-icon icon="building"></b-icon> Company Types</router-link>
               </b-dropdown-item>
               <b-dropdown-item>
