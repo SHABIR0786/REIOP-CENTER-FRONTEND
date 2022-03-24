@@ -74,6 +74,17 @@
                 },
             }
         },
+        watch: {
+          showModal() {
+            if (!this.showModal) {
+              this.team = {
+                name: '',
+                owner: '',
+                owner_password: '',
+              }
+            }
+          }
+        }
     }
 </script>
 
