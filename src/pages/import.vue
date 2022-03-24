@@ -139,11 +139,11 @@ export default {
         },
         previewFile (e) {
             let $this = this
-            this.$store.dispatch('uxModule/setLoading')
             let files = e.target.files, f = files[0]
             this.file = e.target.files[0];
 
             let reader = new FileReader()
+            this.$store.dispatch('uxModule/setLoading')
             reader.onload = (e) => {
               var data = new Uint8Array(e.target.result);
               var workbook = XLSX.read(data, {type: 'array'});

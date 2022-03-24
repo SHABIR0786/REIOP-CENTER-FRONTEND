@@ -151,9 +151,10 @@ export default {
       // this.showModal = false
       this.$store.dispatch('teamModule/editTeam', {...item})
     },
-    add(item) {
+    async add(item) {
       this.showAddModal = false
-      this.$store.dispatch('teamModule/addTeam', {...item})
+          await this.$store.dispatch('teamModule/addTeam', {...item})
+          this.$store.dispatch("teamModule/getAllTeams", {page: 1, perPage: this.perPage})
     },
     deleteItem(item){
       this.showDeleteModal = true;
