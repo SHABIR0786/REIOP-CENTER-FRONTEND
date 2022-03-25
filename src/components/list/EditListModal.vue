@@ -34,6 +34,13 @@
                 <b-row>
                     <b-col>
                         <b-row>
+                        <b-col cols="12">
+                          <b-input-group prepend="User Name" class="mb-2">
+                            <b-form-input readonly v-model="list.user_name"></b-form-input>
+                          </b-input-group>
+                        </b-col>
+                      </b-row>
+                        <b-row>
                             <b-col cols="12">
                                 <b-input-group prepend="List Type" class="mb-2">
                                     <b-form-input :readonly="isReadOnly" v-model="list.list_type"></b-form-input>
@@ -61,29 +68,23 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="Run Month" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="list.list_run_month"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
-                      <b-row>
-                        <b-col cols="12">
-                          <b-input-group prepend="Run Year" class="mb-2">
-                            <b-form-input :readonly="isReadOnly" v-model="list.list_run_year"></b-form-input>
-                          </b-input-group>
-                        </b-col>
-                      </b-row>
+<!--                        <b-row>-->
+<!--                            <b-col cols="12">-->
+<!--                                <b-input-group prepend="Run Month" class="mb-2">-->
+<!--                                    <b-form-input :readonly="isReadOnly" v-model="list.list_run_month"></b-form-input>-->
+<!--                                </b-input-group>-->
+<!--                            </b-col>-->
+<!--                        </b-row>-->
+<!--                        <b-row>-->
+<!--                        <b-col cols="12">-->
+<!--                          <b-input-group prepend="Run Year" class="mb-2">-->
+<!--                            <b-form-input :readonly="isReadOnly" v-model="list.list_run_year"></b-form-input>-->
+<!--                          </b-input-group>-->
+<!--                        </b-col>-->
+<!--                      </b-row>-->
                     </b-col>
                     <b-col>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="User Name" class="mb-2">
-                                    <b-form-input readonly v-model="list.user_name"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
+
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Subjects Count" class="mb-2">
@@ -124,7 +125,7 @@
             </b-row>
           <b-row class="mt-5">
             <b-tabs class="w-100" content-class="mt-3" fill>
-              <b-tab title="Related Sellers" active @click="currentModal('sellers','Seller')">
+              <b-tab title="Related Running Lists" active @click="currentModal()">
                 <!--                <b-row>-->
                 <!--                  <b-col class="assign-btn">-->
                 <!--                    <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>-->
@@ -136,7 +137,7 @@
                     striped
                     hover
                     :busy="isBusy"
-                    :fields="sellerTableFields"
+                    :fields="relatedTableFields"
                     :items="tabData.data"
                     responsive
                     :per-page="0"
@@ -157,273 +158,333 @@
                   <template #head()="scope">
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                   </template>
+                  <!--                  <template v-slot:cell(actions)="data">-->
+                  <!--                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editPhone(data.item)"></b-icon>-->
+                  <!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon>-->
+                  <!--                  </template>-->
+                </b-table>
+                <b-row>
+                  <b-col class="d-flex align-items-center">
+                    <b-form-group
+                        label="Show"
+                        label-for="show-select"
+                        label-cols-sm="6"
+                        label-cols-md="4"
+                        label-cols-lg="3"
+                        label-size="xs"
+                        class="mb-0"
+                    >
+                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
+                    </b-form-group>
+                  </b-col>
+                  <b-col class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
+                  </b-col>
+                  <b-col class="d-flex justify-content-end">
+                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                  </b-col>
+                </b-row>
+              </b-tab>
+<!--              <b-tab title="Related Sellers" active @click="currentModal('sellers','Seller')">-->
+<!--                &lt;!&ndash;                <b-row>&ndash;&gt;-->
+<!--                &lt;!&ndash;                  <b-col class="assign-btn">&ndash;&gt;-->
+<!--                &lt;!&ndash;                    <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>&ndash;&gt;-->
+<!--                &lt;!&ndash;                  </b-col>&ndash;&gt;-->
+<!--                &lt;!&ndash;                </b-row>&ndash;&gt;-->
+<!--                <b-table-->
+<!--                    id="sellers-table"-->
+<!--                    small-->
+<!--                    striped-->
+<!--                    hover-->
+<!--                    :busy="isBusy"-->
+<!--                    :fields="sellerTableFields"-->
+<!--                    :items="tabData.data"-->
+<!--                    responsive-->
+<!--                    :per-page="0"-->
+<!--                    :sticky-header="true"-->
+<!--                >-->
+<!--                  <template #table-busy>-->
+<!--                    <div class="text-center" my-2>-->
+<!--                      <b-spinner class="align-middle"></b-spinner>-->
+<!--                      <strong>Loading...</strong>-->
+<!--                    </div>-->
+<!--                  </template>-->
+<!--                  <template #head(id)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head(actions)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head()="scope">-->
+<!--                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>-->
+<!--                  </template>-->
+<!--&lt;!&ndash;                  <template v-slot:cell(actions)="data">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editPhone(data.item)"></b-icon>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </template>&ndash;&gt;-->
+<!--                </b-table>-->
+<!--                <b-row>-->
+<!--                  <b-col class="d-flex align-items-center">-->
+<!--                    <b-form-group-->
+<!--                        label="Show"-->
+<!--                        label-for="show-select"-->
+<!--                        label-cols-sm="6"-->
+<!--                        label-cols-md="4"-->
+<!--                        label-cols-lg="3"-->
+<!--                        label-size="xs"-->
+<!--                        class="mb-0"-->
+<!--                    >-->
+<!--                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
+<!--                    </b-form-group>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex align-items-center justify-content-center">-->
+<!--                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex justify-content-end">-->
+<!--                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
+<!--                  </b-col>-->
+<!--                </b-row>-->
+<!--              </b-tab>-->
+<!--              <b-tab title="Related Phones" @click="currentModal('phones','Phone')">-->
+<!--&lt;!&ndash;                <b-row>&ndash;&gt;-->
+<!--&lt;!&ndash;                  <b-col class="assign-btn">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </b-col>&ndash;&gt;-->
+<!--&lt;!&ndash;                </b-row>&ndash;&gt;-->
+<!--                <b-table-->
+<!--                    id="phone-number-table"-->
+<!--                    small-->
+<!--                    striped-->
+<!--                    hover-->
+<!--                    :busy="isBusy"-->
+<!--                    :fields="phoneFields"-->
+<!--                    :items="tabData.data"-->
+<!--                    responsive-->
+<!--                    :per-page="0"-->
+<!--                    :sticky-header="true"-->
+<!--                >-->
+<!--                  <template #table-busy>-->
+<!--                    <div class="text-center" my-2>-->
+<!--                      <b-spinner class="align-middle"></b-spinner>-->
+<!--                      <strong>Loading...</strong>-->
+<!--                    </div>-->
+<!--                  </template>-->
+<!--                  <template #head(id)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head(actions)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head()="scope">-->
+<!--                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>-->
+<!--                  </template>-->
 <!--                  <template v-slot:cell(actions)="data">-->
 <!--                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editPhone(data.item)"></b-icon>-->
 <!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon>-->
 <!--                  </template>-->
-                </b-table>
-                <b-row>
-                  <b-col class="d-flex align-items-center">
-                    <b-form-group
-                        label="Show"
-                        label-for="show-select"
-                        label-cols-sm="6"
-                        label-cols-md="4"
-                        label-cols-lg="3"
-                        label-size="xs"
-                        class="mb-0"
-                    >
-                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                  <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
-                  </b-col>
-                  <b-col class="d-flex justify-content-end">
-                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
-                  </b-col>
-                </b-row>
-              </b-tab>
-              <b-tab title="Related Phones" @click="currentModal('phones','Phone')">
+<!--                </b-table>-->
 <!--                <b-row>-->
-<!--                  <b-col class="assign-btn">-->
-<!--                    <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>-->
+<!--                  <b-col class="d-flex align-items-center">-->
+<!--                    <b-form-group-->
+<!--                        label="Show"-->
+<!--                        label-for="show-select"-->
+<!--                        label-cols-sm="6"-->
+<!--                        label-cols-md="4"-->
+<!--                        label-cols-lg="3"-->
+<!--                        label-size="xs"-->
+<!--                        class="mb-0"-->
+<!--                    >-->
+<!--                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
+<!--                    </b-form-group>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex align-items-center justify-content-center">-->
+<!--                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex justify-content-end">-->
+<!--                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
 <!--                  </b-col>-->
 <!--                </b-row>-->
-                <b-table
-                    id="phone-number-table"
-                    small
-                    striped
-                    hover
-                    :busy="isBusy"
-                    :fields="phoneFields"
-                    :items="tabData.data"
-                    responsive
-                    :per-page="0"
-                    :sticky-header="true"
-                >
-                  <template #table-busy>
-                    <div class="text-center" my-2>
-                      <b-spinner class="align-middle"></b-spinner>
-                      <strong>Loading...</strong>
-                    </div>
-                  </template>
-                  <template #head(id)="scope">
-                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
-                  </template>
-                  <template #head(actions)="scope">
-                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-                  </template>
-                  <template #head()="scope">
-                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-                  </template>
-                  <template v-slot:cell(actions)="data">
-                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editPhone(data.item)"></b-icon>
-                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon>
-                  </template>
-                </b-table>
-                <b-row>
-                  <b-col class="d-flex align-items-center">
-                    <b-form-group
-                        label="Show"
-                        label-for="show-select"
-                        label-cols-sm="6"
-                        label-cols-md="4"
-                        label-cols-lg="3"
-                        label-size="xs"
-                        class="mb-0"
-                    >
-                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                  <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
-                  </b-col>
-                  <b-col class="d-flex justify-content-end">
-                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
-                  </b-col>
-                </b-row>
-              </b-tab>
-              <b-tab title="Related Emails" @click="currentModal('emails','Email')">
-<!--                <b-row>-->
-<!--                  <b-col class="assign-btn">-->
-<!--                    <b-button class="mb-2" variant="primary" @click="showAddEmailModal = true">Add New Email Address</b-button>-->
-<!--                  </b-col>-->
-<!--                </b-row>-->
-                <b-table
-                    id="email-table"
-                    small
-                    striped
-                    hover
-                    :busy="isBusy"
-                    :fields="emailFields"
-                    :items="tabData.data"
-                    responsive
-                    :per-page="0"
-                    :sticky-header="true"
-                >
-                  <template #table-busy>
-                    <div class="text-center" my-2>
-                      <b-spinner class="align-middle"></b-spinner>
-                      <strong>Loading...</strong>
-                    </div>
-                  </template>
-                  <template #head(id)="scope">
-                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
-                  </template>
-                  <template #head(actions)="scope">
-                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-                  </template>
-                  <template #head()="scope">
-                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-                  </template>
-                  <template v-slot:cell(actions)="data">
-                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editEmail(data.item)"></b-icon>
-                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteEmail(data.item)"></b-icon>
-                  </template>
-                </b-table>
-                <b-row>
-                  <b-col class="d-flex align-items-center">
-                    <b-form-group
-                        label="Show"
-                        label-for="show-select"
-                        label-cols-sm="6"
-                        label-cols-md="4"
-                        label-cols-lg="3"
-                        label-size="xs"
-                        class="mb-0"
-                    >
-                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                  <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
-                  </b-col>
-                  <b-col class="d-flex justify-content-end">
-                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
-                  </b-col>
-                </b-row>
-              </b-tab>
-              <b-tab title="Related Golden Addresses" @click="currentModal('golden_addresses','GoldenAddress')">
-<!--                <b-row>-->
-<!--                  <b-col class="assign-btn">-->
-<!--                    <b-button class="mb-2" variant="primary" @click="showAddAddressModal = true">Add New Golden Address</b-button>-->
-<!--                  </b-col>-->
-<!--                </b-row>-->
-                <b-table
-                    id="phone-number-table"
-                    small
-                    striped
-                    hover
-                    :busy="isBusy"
-                    :fields="goldenFields"
-                    :items="tabData.data"
-                    responsive
-                    :per-page="0"
-                    :sticky-header="true"
-                >
-                  <template #table-busy>
-                    <div class="text-center" my-2>
-                      <b-spinner class="align-middle"></b-spinner>
-                      <strong>Loading...</strong>
-                    </div>
-                  </template>
-                  <template #head(id)="scope">
-                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
-                  </template>
-                  <template #head(actions)="scope">
-                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-                  </template>
-                  <template #head()="scope">
-                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-                  </template>
-                  <template v-slot:cell(actions)="data">
-                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editGoldenAddress(data.item)"></b-icon>
-                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteGoldenAddress(data.item)"></b-icon>
-                  </template>
-                </b-table>
-                <b-row>
-                  <b-col class="d-flex align-items-center">
-                    <b-form-group
-                        label="Show"
-                        label-for="show-select"
-                        label-cols-sm="6"
-                        label-cols-md="4"
-                        label-cols-lg="3"
-                        label-size="xs"
-                        class="mb-0"
-                    >
-                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                  <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
-                  </b-col>
-                  <b-col class="d-flex justify-content-end">
-                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
-                  </b-col>
-                </b-row>
-              </b-tab>
-              <b-tab title="Related Subjects"  @click="currentModal('subjects', 'Subject')">
-<!--                <b-row>-->
-<!--                  <b-col class="assign-btn">-->
-<!--                    <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>-->
-<!--                  </b-col>-->
-<!--                </b-row>-->
-                <b-table
-                    id="subject-table"
-                    small
-                    striped
-                    hover
-                    :busy="isBusy"
-                    :fields="subjectFields"
-                    :items="tabData.data"
-                    responsive
-                    :per-page="0"
-                    :sticky-header="true"
-                >
-                  <template #table-busy>
-                    <div class="text-center" my-2>
-                      <b-spinner class="align-middle"></b-spinner>
-                      <strong>Loading...</strong>
-                    </div>
-                  </template>
-                  <template #head(id)="scope">
-                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
-                  </template>
-                  <template #head(actions)="scope">
-                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-                  </template>
-                  <template #head()="scope">
-                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-                  </template>
-<!--                  <template v-slot:cell(actions)="data">-->
-<!--                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>-->
-<!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>-->
+<!--              </b-tab>-->
+<!--              <b-tab title="Related Emails" @click="currentModal('emails','Email')">-->
+<!--&lt;!&ndash;                <b-row>&ndash;&gt;-->
+<!--&lt;!&ndash;                  <b-col class="assign-btn">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-button class="mb-2" variant="primary" @click="showAddEmailModal = true">Add New Email Address</b-button>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </b-col>&ndash;&gt;-->
+<!--&lt;!&ndash;                </b-row>&ndash;&gt;-->
+<!--                <b-table-->
+<!--                    id="email-table"-->
+<!--                    small-->
+<!--                    striped-->
+<!--                    hover-->
+<!--                    :busy="isBusy"-->
+<!--                    :fields="emailFields"-->
+<!--                    :items="tabData.data"-->
+<!--                    responsive-->
+<!--                    :per-page="0"-->
+<!--                    :sticky-header="true"-->
+<!--                >-->
+<!--                  <template #table-busy>-->
+<!--                    <div class="text-center" my-2>-->
+<!--                      <b-spinner class="align-middle"></b-spinner>-->
+<!--                      <strong>Loading...</strong>-->
+<!--                    </div>-->
 <!--                  </template>-->
-                </b-table>
-                <b-row>
-                  <b-col class="d-flex align-items-center">
-                    <b-form-group
-                        label="Show"
-                        label-for="show-select"
-                        label-cols-sm="6"
-                        label-cols-md="4"
-                        label-cols-lg="3"
-                        label-size="xs"
-                        class="mb-0"
-                    >
-                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                  <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>
-                  </b-col>
-                  <b-col class="d-flex justify-content-end">
-                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
-                  </b-col>
-                </b-row>
-              </b-tab>
+<!--                  <template #head(id)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head(actions)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head()="scope">-->
+<!--                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>-->
+<!--                  </template>-->
+<!--                  <template v-slot:cell(actions)="data">-->
+<!--                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editEmail(data.item)"></b-icon>-->
+<!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteEmail(data.item)"></b-icon>-->
+<!--                  </template>-->
+<!--                </b-table>-->
+<!--                <b-row>-->
+<!--                  <b-col class="d-flex align-items-center">-->
+<!--                    <b-form-group-->
+<!--                        label="Show"-->
+<!--                        label-for="show-select"-->
+<!--                        label-cols-sm="6"-->
+<!--                        label-cols-md="4"-->
+<!--                        label-cols-lg="3"-->
+<!--                        label-size="xs"-->
+<!--                        class="mb-0"-->
+<!--                    >-->
+<!--                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
+<!--                    </b-form-group>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex align-items-center justify-content-center">-->
+<!--                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex justify-content-end">-->
+<!--                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
+<!--                  </b-col>-->
+<!--                </b-row>-->
+<!--              </b-tab>-->
+<!--              <b-tab title="Related Golden Addresses" @click="currentModal('golden_addresses','GoldenAddress')">-->
+<!--&lt;!&ndash;                <b-row>&ndash;&gt;-->
+<!--&lt;!&ndash;                  <b-col class="assign-btn">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-button class="mb-2" variant="primary" @click="showAddAddressModal = true">Add New Golden Address</b-button>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </b-col>&ndash;&gt;-->
+<!--&lt;!&ndash;                </b-row>&ndash;&gt;-->
+<!--                <b-table-->
+<!--                    id="phone-number-table"-->
+<!--                    small-->
+<!--                    striped-->
+<!--                    hover-->
+<!--                    :busy="isBusy"-->
+<!--                    :fields="goldenFields"-->
+<!--                    :items="tabData.data"-->
+<!--                    responsive-->
+<!--                    :per-page="0"-->
+<!--                    :sticky-header="true"-->
+<!--                >-->
+<!--                  <template #table-busy>-->
+<!--                    <div class="text-center" my-2>-->
+<!--                      <b-spinner class="align-middle"></b-spinner>-->
+<!--                      <strong>Loading...</strong>-->
+<!--                    </div>-->
+<!--                  </template>-->
+<!--                  <template #head(id)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head(actions)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head()="scope">-->
+<!--                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>-->
+<!--                  </template>-->
+<!--                  <template v-slot:cell(actions)="data">-->
+<!--                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editGoldenAddress(data.item)"></b-icon>-->
+<!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteGoldenAddress(data.item)"></b-icon>-->
+<!--                  </template>-->
+<!--                </b-table>-->
+<!--                <b-row>-->
+<!--                  <b-col class="d-flex align-items-center">-->
+<!--                    <b-form-group-->
+<!--                        label="Show"-->
+<!--                        label-for="show-select"-->
+<!--                        label-cols-sm="6"-->
+<!--                        label-cols-md="4"-->
+<!--                        label-cols-lg="3"-->
+<!--                        label-size="xs"-->
+<!--                        class="mb-0"-->
+<!--                    >-->
+<!--                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
+<!--                    </b-form-group>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex align-items-center justify-content-center">-->
+<!--                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex justify-content-end">-->
+<!--                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
+<!--                  </b-col>-->
+<!--                </b-row>-->
+<!--              </b-tab>-->
+<!--              <b-tab title="Related Subjects"  @click="currentModal('subjects', 'Subject')">-->
+<!--&lt;!&ndash;                <b-row>&ndash;&gt;-->
+<!--&lt;!&ndash;                  <b-col class="assign-btn">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </b-col>&ndash;&gt;-->
+<!--&lt;!&ndash;                </b-row>&ndash;&gt;-->
+<!--                <b-table-->
+<!--                    id="subject-table"-->
+<!--                    small-->
+<!--                    striped-->
+<!--                    hover-->
+<!--                    :busy="isBusy"-->
+<!--                    :fields="subjectFields"-->
+<!--                    :items="tabData.data"-->
+<!--                    responsive-->
+<!--                    :per-page="0"-->
+<!--                    :sticky-header="true"-->
+<!--                >-->
+<!--                  <template #table-busy>-->
+<!--                    <div class="text-center" my-2>-->
+<!--                      <b-spinner class="align-middle"></b-spinner>-->
+<!--                      <strong>Loading...</strong>-->
+<!--                    </div>-->
+<!--                  </template>-->
+<!--                  <template #head(id)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head(actions)="scope">-->
+<!--                    <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>-->
+<!--                  </template>-->
+<!--                  <template #head()="scope">-->
+<!--                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>-->
+<!--                  </template>-->
+<!--&lt;!&ndash;                  <template v-slot:cell(actions)="data">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </template>&ndash;&gt;-->
+<!--                </b-table>-->
+<!--                <b-row>-->
+<!--                  <b-col class="d-flex align-items-center">-->
+<!--                    <b-form-group-->
+<!--                        label="Show"-->
+<!--                        label-for="show-select"-->
+<!--                        label-cols-sm="6"-->
+<!--                        label-cols-md="4"-->
+<!--                        label-cols-lg="3"-->
+<!--                        label-size="xs"-->
+<!--                        class="mb-0"-->
+<!--                    >-->
+<!--                      <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
+<!--                    </b-form-group>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex align-items-center justify-content-center">-->
+<!--                    <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
+<!--                  </b-col>-->
+<!--                  <b-col class="d-flex justify-content-end">-->
+<!--                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
+<!--                  </b-col>-->
+<!--                </b-row>-->
+<!--              </b-tab>-->
             </b-tabs>
           </b-row>
         </b-container>
@@ -454,11 +515,11 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.list);
         },
-      currentModal(modalName,tableName){
-        this.modalName  = modalName;
-        this.tableName  = tableName;
+      currentModal(){
+        // this.modalName  = modalName;
+        // this.tableName  = tableName;
         this.currentPage = 1;
-        this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.id, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
+        this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.list_hash, page: 1, perPage:this.perPage})
       },
       editSubject (item) {
         const route = '/subjects?subject_id=' + item.id;
@@ -482,6 +543,7 @@ export default {
                 list_run_month: '',
                 list_run_year: '',
                 list_stack: '',
+                list_hash: '',
                 user_id: '',
                 subject_id: '',
                 subjects_count:'',
@@ -496,49 +558,53 @@ export default {
           emailTableFields: null,
           goldenTableFields: null,
           subjectTableFields: null,
-          sellerTableFields: null,
+          // sellerTableFields: null,
           modalName:'sellers',
           tableName:'Seller',
-          phoneFields: [
+          relatedTableFields: [
             {key:"id", label: "ID", sortable: true},
-            {key: "phone_number", label: "Phone Number", sortable: true},
-            {key: "phone_type", label: "Phone Type", sortable: true},
-            {key: "phone_validity", label: "Phone Validity", sortable: true},
-            {key: "phone_skip_source", label: "Phone Skip Source"},
-            {key:"created_at", label: "Created Date", sortable: true},
-           // {key: "actions", stickyColumn: true, label: "Actions"},
-
-          ],
-          emailFields: [
-            {key:"id", label: "ID", sortable: true},
-            {key: "email_address", label: "Email Address", sortable: true},
-            {key: "email_validity", label: "Email Validity", sortable: true},
-            {key: "email_skip_source", label: "Skip Source", sortable: true},
-            {key:"created_at", label: "Created Date", sortable: true},
-            // {key: "actions", stickyColumn: true, label: "Actions"},
-          ],
-          goldenFields: [
-            {key:"id", label: "ID", sortable: true},
-            {key: "golden_address_address", label: "Golden Address", sortable: true},
-            {key: "golden_address_city", label: "Golden City", sortable: true},
-            {key: "golden_address_state", label: "Golden State", sortable: true},
-            {key: "golden_address_zip", label: "Golden Zip", sortable: true},
-            {key:"created_at", label: "Created Date", sortable: true},
+            {key:"list_market", label: "Markets", sortable: true},
+            {key:"list_group", label: "Group", sortable: true},
+            {key:"list_type", label: "Type", sortable: true},
+            {key:"list_source", label: "Source", sortable: true},
+            {key:"created_at", label: "Upload Date", sortable: true},
+            {key:"updated_at", label: "Last Edit Date", sortable: true},
             {key:"user_name", label: "Uploaded By", sortable: true},
-            // {key: "actions", stickyColumn: true, label: "Actions"},
+            // {key:"delete", label: ""},
+            // {key:"actions", stickyColumn: true, label: "Actions"},
+           // {key:"list_total_subject", label: "Total Subjects", sortable: true},
+           //  {key:"list_total_individual_list", label: "Total Individual Lists", sortable: true},
           ],
-          subjectFields: [
-            {key:"id", label: "Id", sortable: true},
-            {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
-            {key: "subject_city", label: "Subject City", sortable: true},
-            {key: "subject_state", label: "Subject State", sortable: true},
-            {key: "subject_zip", label: "Subject Zip", sortable: true},
-            {key: "subject_country", label: "Subject County", sortable: true},
-            {key: "subject_market", label: "Market", sortable: true},
-            {key: "subject_age", label: "Subject Age", sortable: true},
-            {key: "subject_type", label: "Subject Type", sortable: true},
-            // {key: "actions", stickyColumn: true, label: "Actions"},
-          ],
+          // emailFields: [
+          //   {key:"id", label: "ID", sortable: true},
+          //   {key: "email_address", label: "Email Address", sortable: true},
+          //   {key: "email_validity", label: "Email Validity", sortable: true},
+          //   {key: "email_skip_source", label: "Skip Source", sortable: true},
+          //   {key:"created_at", label: "Created Date", sortable: true},
+          //   // {key: "actions", stickyColumn: true, label: "Actions"},
+          // ],
+          // goldenFields: [
+          //   {key:"id", label: "ID", sortable: true},
+          //   {key: "golden_address_address", label: "Golden Address", sortable: true},
+          //   {key: "golden_address_city", label: "Golden City", sortable: true},
+          //   {key: "golden_address_state", label: "Golden State", sortable: true},
+          //   {key: "golden_address_zip", label: "Golden Zip", sortable: true},
+          //   {key:"created_at", label: "Created Date", sortable: true},
+          //   {key:"user_name", label: "Uploaded By", sortable: true},
+          //   // {key: "actions", stickyColumn: true, label: "Actions"},
+          // ],
+          // subjectFields: [
+          //   {key:"id", label: "Id", sortable: true},
+          //   {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
+          //   {key: "subject_city", label: "Subject City", sortable: true},
+          //   {key: "subject_state", label: "Subject State", sortable: true},
+          //   {key: "subject_zip", label: "Subject Zip", sortable: true},
+          //   {key: "subject_country", label: "Subject County", sortable: true},
+          //   {key: "subject_market", label: "Market", sortable: true},
+          //   {key: "subject_age", label: "Subject Age", sortable: true},
+          //   {key: "subject_type", label: "Subject Type", sortable: true},
+          //   // {key: "actions", stickyColumn: true, label: "Actions"},
+          // ],
         }
     },
     computed: {
@@ -557,7 +623,7 @@ export default {
     },
     watch: {
         showModal() {
-          this.$store.dispatch('listModule/currentModal',{data:this.propsData.id, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
+          this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
           this.list= {...this.propsData}
         },
       currentPage: {

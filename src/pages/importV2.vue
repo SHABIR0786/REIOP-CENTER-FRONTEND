@@ -97,6 +97,7 @@
           <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails" @goBack="goBack"></map-fields>
           <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
           <select-skip-data-source v-if="step_2_skip" @skipResponse="setSkipSource" @goBack="goBack"></select-skip-data-source>
+          <confirm-modal :showModal="showNoErrorsModal"  @modalResponse="confirmImport"></confirm-modal>
     </div>
 </template>
 
@@ -110,6 +111,7 @@ import MapFields from "../components/import/MapFields";
 import DeleteModal from "../components/deleteModal/DeleteModal";
 import SelectSkipDataSource from "../components/import/SelectSkipDataSource";
 import EditImportModal from "@/components/import/EditImportModal";
+import ConfirmModal from "@/components/noErrorsModal/NoErrorsModal";
 
 export default {
     name: "importV2",
@@ -121,7 +123,8 @@ export default {
       PullSettings,
       MapFields,
       DeleteModal,
-      EditImportModal
+      EditImportModal,
+      ConfirmModal,
     },
     data () {
       return {
@@ -146,6 +149,8 @@ export default {
         showModal: false,
         editedItem:{},
         isReload: false,
+        showNoErrorsModal: false,
+        currentItemErrorLines: null,
 
       }
     },
@@ -178,23 +183,26 @@ export default {
         this.$nextTick(() => {
           this.isReload = false
         })
-
       },
       save(item) {
         this.$store.dispatch('importV2Module/editImport', {...item})
       },
+      confirmImport () {
+        this.showNoErrorsModal = false;
+      },
      async modalResponse(response) {
         this.showImportModal = false;
-        if (response) {
-          this.$store.dispatch('uxModule/setLoading')
-          this.download_type = response;
-          try {
-            await this.$store.dispatch("importV2Module/exportFile", {type: response, file: this.download_data})
-            this.$store.dispatch('uxModule/hideLoader');
-          }catch (error){
-            this.$store.dispatch('uxModule/hideLoader');
-          }
-
+       if(response === 'error' && this.currentItemErrorLines === 0) {
+         this.showNoErrorsModal = true;
+         return;
+       }
+       this.$store.dispatch('uxModule/setLoading')
+       this.download_type = response;
+        try {
+          await this.$store.dispatch("importV2Module/exportFile", {type: response, file: this.download_data})
+          this.$store.dispatch('uxModule/hideLoader');
+        }catch (error){
+          this.$store.dispatch('uxModule/hideLoader');
         }
       },
       importTypeResponse(response) {
@@ -273,6 +281,7 @@ export default {
           }
       },
       importModal(item) {
+        this.currentItemErrorLines = +item.error_number
         this.showImportModal = true;
         this.download_data = {...item}
       },

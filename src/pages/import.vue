@@ -35,7 +35,7 @@
           </b-row>
         </b-col>
         <b-col class="text-right" cols="12" md="4">
-          <b-btn variant="primary" @click="confirm(mappedItems)" >Save</b-btn>
+          <b-btn variant="primary" @click="confirm(mappedItems)" >Import</b-btn>
         </b-col>
       </b-row>
       <confirm-modal :showModal="showConfirmModal" :is-have-mapped-items="isHaveMappedItems" @modalResponse="confirmImport"></confirm-modal>
