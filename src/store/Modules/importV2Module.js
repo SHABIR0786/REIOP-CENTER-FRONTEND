@@ -59,8 +59,8 @@ const mutations = {
     },
 
 
-    EXPORTED(state, payload) {
-        console.log('payload',  payload);
+    EXPORTED() {
+        // console.log('payload',  payload);
     },
     DELETE_PROCESS(state, payload) {
         const findIndex = state.imports.findIndex(({ id }) => id === payload)
@@ -124,10 +124,14 @@ const actions = {
 
     async exportFile({ commit }, data) {
         return await api.post(`/export`, {...data}).then((response) => {
+            var fileName = data['file']['file_name'];
+            if(data.type === 'error'){
+                fileName = 'Errors-'+data['file']['file_name'];
+            }
             var fileURL = window.URL.createObjectURL(new Blob([response]));
             var fileLink = document.createElement('a');
             fileLink.href = fileURL;
-            fileLink.setAttribute('download', data['file']['file_name']);
+            fileLink.setAttribute('download', fileName);
             document.body.appendChild(fileLink);
             fileLink.click();
             commit('EXPORTED', response);

@@ -5,22 +5,20 @@ const state = {
         {key:"delete", label: ""},
         {key:"id", label: "ID", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
-
         {key:"list_total_subject", label: "Total Subjects", sortable: true},
         {key:"list_total_individual_list", label: "Total Individual Lists", sortable: true},
         {key:"list_market", label: "Markets", sortable: true},
-
         {key:"list_group", label: "Group", sortable: true},
         {key:"list_type", label: "Type", sortable: true},
         {key:"list_source", label: "Source", sortable: true},
 
         // Custom fields
         {key:"list_pull_date", label: "Last Pull Date", sortable: true},
-        // {key:"list_upload_date", label: "Upload Date", sortable: true},
-        // {key:"list_last_edit_date", label: "Last Edit Date", sortable: true},
         {key:"created_at", label: "Upload Date", sortable: true},
         {key:"updated_at", label: "Last Edit Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},
+        // {key:"list_upload_date", label: "Upload Date", sortable: true},
+        // {key:"list_last_edit_date", label: "Last Edit Date", sortable: true},
     ],
     lists: [],
     total: 0,
@@ -64,7 +62,13 @@ const mutations = {
         state.lists = JSON.stringify(LIST);
     },
     SHOW_TABS(state, payload) {
-        state.tabData = payload
+        const relatedData = [...payload.data]
+        relatedData.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.tabData = payload;
+        state.tabData.data = relatedData;
     },
     DELETE_MULTIPLE_LISTS(state, payload) {
         const LIST = JSON.parse(state.lists)
@@ -138,15 +142,17 @@ const actions = {
     async editList({ commit }, data) {
         delete data.user_name;
         delete data.list_total_subject;
+        delete data.list_total_individual_list;
         delete data.subjects_count;
         delete data.sellers_count;
         delete data.phones_count;
         delete data.golden_addresses_count;
         delete data.emails_count;
-        delete data.phones;
-        delete data.golden_addresses;
-        delete data.emails;
-        delete data.sellers;
+        data.list_hash = data.list_market + '_' + data.list_type + '_' +  data.list_group + '_' + data.list_source
+        // delete data.phones;
+        // delete data.golden_addresses;
+        // delete data.emails;
+        // delete data.sellers;
         return await api.put(`/lists/${data.id}`, {...data}).then((response) => {
             commit('EDIT_LIST', data)
             return response
@@ -159,8 +165,8 @@ const actions = {
         })
     },
 
-    async currentModal({ commit }, {data, page, perPage, modalName, tableName}) {
-        return await api.get(`/lists/modal/${modalName}/${tableName}?listId=${data}&page=${page}&perPage=${perPage}`, {...data}).then((response) => {
+    async currentModal({ commit }, {data, page, perPage}) {
+        return await api.get(`/lists/modal?listHash=${data}&page=${page}&perPage=${perPage}`, {...data}).then((response) => {
             commit('SHOW_TABS', response.tabData)
             return response
         })
