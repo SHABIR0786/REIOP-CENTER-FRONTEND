@@ -24,7 +24,9 @@ export default {
         })
     },
     async created () {
-        await this.$store.dispatch('homeModule/getTotalRows')
+        await this.$store.dispatch('homeModule/getTotalRows').then(() => {
+          this.$store.dispatch('uxModule/hideLoader')
+        })
     }
 }
 </script>
