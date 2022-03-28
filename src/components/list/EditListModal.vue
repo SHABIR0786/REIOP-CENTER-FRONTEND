@@ -126,13 +126,8 @@
           <b-row class="mt-5">
             <b-tabs class="w-100" content-class="mt-3" fill>
               <b-tab title="Related Running Lists" active @click="currentModal()">
-                <!--                <b-row>-->
-                <!--                  <b-col class="assign-btn">-->
-                <!--                    <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>-->
-                <!--                  </b-col>-->
-                <!--                </b-row>-->
                 <b-table
-                    id="sellers-table"
+                    id="related-table"
                     small
                     striped
                     hover
@@ -158,10 +153,6 @@
                   <template #head()="scope">
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                   </template>
-                  <!--                  <template v-slot:cell(actions)="data">-->
-                  <!--                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editPhone(data.item)"></b-icon>-->
-                  <!--                    <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon>-->
-                  <!--                  </template>-->
                 </b-table>
                 <b-row>
                   <b-col class="d-flex align-items-center">
@@ -562,14 +553,17 @@ export default {
           modalName:'sellers',
           tableName:'Seller',
           relatedTableFields: [
-            {key:"id", label: "ID", sortable: true},
-            {key:"list_market", label: "Markets", sortable: true},
-            {key:"list_group", label: "Group", sortable: true},
-            {key:"list_type", label: "Type", sortable: true},
-            {key:"list_source", label: "Source", sortable: true},
-            {key:"created_at", label: "Upload Date", sortable: true},
-            {key:"updated_at", label: "Last Edit Date", sortable: true},
-            {key:"user_name", label: "Uploaded By", sortable: true},
+            {key:"run_year",  label: "Run Year", sortable: true},
+            {key:"run_month",   label: "Run Month", sortable: true},
+            {key:"subjects_count",  label: "Subjects Count", sortable: true},
+            {key:"sellers_count",   label: "Sellers Count", sortable: true},
+            {key:"phones_count",    label: "Phones Count", sortable: true},
+            {key:"emails_count",    label: "Emails Count", sortable: true},
+            {key:"golden_addresses_count", label: "Golden Address Count", sortable: true},
+            {key:"error_number",    label: "Total rrors Count", sortable: true},
+            // {key:"created_at", label: "Upload Date", sortable: true},
+            // {key:"updated_at", label: "Last Edit Date", sortable: true},
+            // {key:"user_name", label: "Uploaded By", sortable: true},
             // {key:"delete", label: ""},
             // {key:"actions", stickyColumn: true, label: "Actions"},
            // {key:"list_total_subject", label: "Total Subjects", sortable: true},
