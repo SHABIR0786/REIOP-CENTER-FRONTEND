@@ -64,8 +64,9 @@ const mutations = {
     SHOW_TABS(state, payload) {
         const relatedData = [...payload.data]
         relatedData.forEach(e => {
-            e.created_at = e.created_at.split('T')[0];
-            e.updated_at = e.updated_at.split('T')[0];
+            var date = new Date(e.updated_at);
+            e.run_month = date.getUTCMonth() + 1;
+            e.run_year = date.getUTCFullYear();
         })
         state.tabData = payload;
         state.tabData.data = relatedData;
