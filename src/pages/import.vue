@@ -161,8 +161,8 @@ export default {
                       $this.uploadedFields.push(sheetHeader)
                       $this.uploadedAllFields.push(sheetHeader)
                   }
-                this.$store.dispatch('uxModule/hideLoader')
                 }
+              this.$store.dispatch('uxModule/hideLoader')
             };
             reader.readAsArrayBuffer(f);
         },
