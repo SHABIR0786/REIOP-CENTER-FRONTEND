@@ -87,35 +87,35 @@
 
                       <b-row>
                         <b-col cols="12">
-                          <b-input-group prepend="Subjects Count" class="mb-2">
+                          <b-input-group prepend="Unique Subjects " class="mb-2">
                             <b-form-input readonly v-model="list.subjects_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
-                          <b-input-group prepend="Sellers Count" class="mb-2">
+                          <b-input-group prepend="Unique Sellers" class="mb-2">
                             <b-form-input readonly v-model="list.sellers_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
-                          <b-input-group prepend="Phones Count" class="mb-2">
+                          <b-input-group prepend="Unique Phones" class="mb-2">
                             <b-form-input readonly v-model="list.phones_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
-                          <b-input-group prepend="Emails Count" class="mb-2">
+                          <b-input-group prepend="Unique Emails" class="mb-2">
                             <b-form-input readonly v-model="list.emails_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
-                          <b-input-group prepend="Golden Address Count" class="mb-2">
+                          <b-input-group prepend="Unique Golden Address" class="mb-2">
                             <b-form-input readonly v-model="list.golden_addresses_count"></b-form-input>
                           </b-input-group>
                         </b-col>
@@ -555,12 +555,12 @@ export default {
           relatedTableFields: [
             {key:"run_year",  label: "Run Year", sortable: true},
             {key:"run_month",   label: "Run Month", sortable: true},
-            {key:"subjects_count",  label: "Subjects Count", sortable: true},
-            {key:"sellers_count",   label: "Sellers Count", sortable: true},
-            {key:"phones_count",    label: "Phones Count", sortable: true},
-            {key:"emails_count",    label: "Emails Count", sortable: true},
-            {key:"golden_addresses_count", label: "Golden Address Count", sortable: true},
-            {key:"error_number",    label: "Total rrors Count", sortable: true},
+            {key:"subjects_count",  label: "Total Subjects", sortable: true},
+            {key:"sellers_count",   label: "Total Sellers", sortable: true},
+            {key:"phones_count",    label: "Total Phones", sortable: true},
+            {key:"emails_count",    label: "Total Emails", sortable: true},
+            {key:"golden_addresses_count", label: "Total Golden Address", sortable: true},
+            {key:"error_number",    label: "Total Errors", sortable: true},
             // {key:"created_at", label: "Upload Date", sortable: true},
             // {key:"updated_at", label: "Last Edit Date", sortable: true},
             // {key:"user_name", label: "Uploaded By", sortable: true},
