@@ -90,6 +90,9 @@
     <add-team-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-team-modal>
     <edit-team-modal :showModal="showEditModal" :propsData="editedItem" @cancel="showEditModal=false" @save="save"></edit-team-modal>
     <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+    <confirm-modal :showModal="showUserExistModal"   @modalResponse="userExist">
+      <template v-slot:userExist>A team already exists with this owner email. Please use a different owner email</template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -99,6 +102,7 @@ import {mapGetters} from "vuex";
 import AddTeamModal from "../components/teams/AddTeamModal";
 import EditTeamModal from "../components/teams/EditTeamModal";
 import DeleteModal from "../components/deleteModal/DeleteModal";
+import ConfirmModal from "@/components/slotModal/SlotModal";
 
 export default {
   name: "Teams",
@@ -106,7 +110,8 @@ export default {
     BIcon,
     AddTeamModal,
     EditTeamModal,
-    DeleteModal
+    DeleteModal,
+    ConfirmModal,
   },
   data () {
     return {
@@ -121,6 +126,7 @@ export default {
       search: '',
       showAddModal: false,
       showEditModal: false,
+      showUserExistModal: false,
     }
   },
   computed: {
@@ -143,6 +149,11 @@ export default {
     }
   },
   methods: {
+    userExist () {
+      this.showUserExistModal = false;
+      this.showAddModal = true;
+    },
+
     editItem(item) {
       this.showEditModal = true
       this.editedItem = { ...item }
@@ -153,7 +164,12 @@ export default {
     },
     async add(item) {
       this.showAddModal = false
-          await this.$store.dispatch('teamModule/addTeam', {...item})
+          await this.$store.dispatch('teamModule/addTeam', {...item}).then((response) => {
+            if (response.team === 'user_exist'){
+              this.$store.dispatch('teamModule/filledData', {...response.teamData})
+              this.showUserExistModal = true;
+            }
+          })
           this.$store.dispatch("teamModule/getAllTeams", {page: 1, perPage: this.perPage})
     },
     deleteItem(item){

@@ -13,6 +13,7 @@ const state = {
     ],
     teams: [],
     total: 0,
+    existTeam: [],
 }
 
 const mutations = {
@@ -47,6 +48,9 @@ const mutations = {
     DELETE_TEAM_MEMBER(state, payload) {
         const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+    },
+    FILLED_DATA(state, data){
+        state.existTeam = data;
     }
 }
 
@@ -73,11 +77,12 @@ const actions = {
             if(response && response.teams && response.teams.data) {
                 commit('SET_ALL_TEAMS', response.teams.data)
             }
-
             return response
         })
     },
     async editTeam({ commit }, data) {
+        delete data.users;
+        delete data.total_users;
         return await api.put(`/teams/${data.id}`, {...data}).then((response) => {
             commit('EDIT_TEAM', data)
             return response
@@ -114,13 +119,17 @@ const actions = {
             }
             return response
         })
+    },
+    async filledData({commit} , data){
+        commit ('FILLED_DATA', data);
     }
 }
 
 const getters = {
     fields: ({ fields }) => fields,
     teams: ({ teams }) => teams,
-    total: ({total}) => total
+    total: ({total}) => total,
+    existTeam: ({existTeam}) => existTeam
 }
 
 export default {

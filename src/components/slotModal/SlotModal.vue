@@ -7,7 +7,8 @@
 
         </template>
         <b-container fluid >
-            <h4>No errors in this file</h4>
+          <slot name="userExist"></slot>
+          <slot name="noError"></slot>
         </b-container>
 
         <template #modal-footer>
@@ -19,7 +20,7 @@
 </template>
 <script>
     export default {
-        name: 'NoErrorsModal',
+        name: 'SlotModal',
         props: {
             showModal: {
                 type: Boolean
