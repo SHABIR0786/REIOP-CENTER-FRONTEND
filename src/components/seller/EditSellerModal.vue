@@ -151,7 +151,7 @@
                         <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
                       </template>
 
-                      <template #head(list_marjet)="scope">
+                      <template #head(list_market)="scope">
                         <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
                       </template>
 
