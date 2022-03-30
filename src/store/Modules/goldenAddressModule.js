@@ -14,8 +14,8 @@ const state = {
         {key: "golden_address_zip", label: "Golden Zip", sortable: true},
 
         // Errors
-        {key: "error", label: "Error", sortable: true},
-        {key: "error_type", label: "Error Type", sortable: true},
+        {key: "golden_error", label: "Error", sortable: true},
+        {key: "golden_error_type", label: "Error Type", sortable: true},
 
         // Custom Fields
 
