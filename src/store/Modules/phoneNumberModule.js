@@ -13,8 +13,8 @@ const state = {
         {key: "phone_skip_source", label: "Phone Skip Source"},
 
         // Errors
-        {key: "error", label: "Error", sortable: true},
-        {key: "error_type", label: "Error Type", sortable: true},
+        {key: "phone_error", label: "Error", sortable: true},
+        {key: "phone_error_type", label: "Error Type", sortable: true},
 
         // Custom Fields
         {key:"created_at", label: "Created Date", sortable: true},

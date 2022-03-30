@@ -3,7 +3,7 @@ import * as api from "../Services/api"
 const state = {
     subject_fields: [
         {key:"id", label: "Id", sortable: true},
-        {key: "error_type", label: "Error"},
+        {key: "subject_error_type", label: "Error"},
         {key: "file_name", label: "File Name"},
         {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
         {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
@@ -28,7 +28,7 @@ const state = {
     ],
     phone_fields: [
         {key:"id", label: "ID", sortable: true},
-        {key: "error_type", label: "Error"},
+        {key: "phone_error_type", label: "Error"},
         {key: "file_name", label: "File Name"},
         {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "phone_number", label: "Phone Number", sortable: true},
@@ -43,7 +43,7 @@ const state = {
     ],
     email_fields: [
         {key:"id", label: "ID", sortable: true},
-        {key: "error_type", label: "Error"},
+        {key: "email_error_type", label: "Error"},
         {key: "file_name", label: "File Name"},
         {key: "seller_id",label: "Seller ID", sortable: true},
         {key: "email_address", label: "Email Address", sortable: true},
@@ -57,7 +57,7 @@ const state = {
     ],
     seller_fields: [
         {key: "id", label: "ID", sortable: true},
-        {key: "error_type", label: "Error Type", sortable: true},
+        {key: "seller_error_type", label: "Error Type", sortable: true},
         {key: "file_name", label: "File Name"},
         // {key: "seller_total_subjects", label: "Total Subjects", sortable: true},
         // {key: "seller_total_phones", label: "Total Phones", sortable: true},
@@ -80,7 +80,7 @@ const state = {
     ],
     golden_fields: [
         {key: "id", label: "ID", sortable: true},
-        {key: "error_type", label: "Error Type", sortable: true},
+        {key: "golden_error_type", label: "Error Type", sortable: true},
         {key: "file_name", label: "File Name"},
         {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "golden_address_address", label: "Golden Address", sortable: true},

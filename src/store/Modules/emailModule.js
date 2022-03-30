@@ -12,8 +12,8 @@ const state = {
         {key: "email_skip_source", label: "Skip Source", sortable: true},
 
         // Errors
-        {key: "error", label: "Error", sortable: true},
-        {key: "error_type", label: "Error Type", sortable: true},
+        {key: "email_error", label: "Error", sortable: true},
+        {key: "email_error_type", label: "Error Type", sortable: true},
 
         // Custom Fields
         {key:"created_at", label: "Created Date", sortable: true},
