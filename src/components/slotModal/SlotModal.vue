@@ -9,6 +9,7 @@
         <b-container fluid >
           <slot name="userExist"></slot>
           <slot name="noError"></slot>
+          <slot name="sellerFill"></slot>
         </b-container>
 
         <template #modal-footer>
