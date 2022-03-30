@@ -23,8 +23,8 @@ const state = {
         {key: "seller_company_owned", label: "Company Owned"},
 
         // Errors
-        {key: "error", label: "Error", sortable: true},
-        {key: "error_type", label: "Error Type", sortable: true},
+        {key: "seller_error", label: "Error", sortable: true},
+        {key: "seller_error_type", label: "Error Type", sortable: true},
 
         // Custom Fields
         {key:"created_at", label: "Created Date", sortable: true},
