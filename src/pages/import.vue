@@ -181,9 +181,6 @@ export default {
 
 
         const sellersNamesAdrCountEqual = addressCount.filter(element => element !== sellersCount)
-        console.log('sellersNamesAdrCountEqual',sellersNamesAdrCountEqual);
-
-
         if (requiredSellersExist && !sellersNamesAdrCountEqual.length) {
           this.showConfirmModal = true;
         } else {
@@ -260,7 +257,6 @@ export default {
       }
 
       this.mappedItems.push({fromField: this.fromField, toField: this.toField, action: ""})
-
       let table = this.toField.split('_')[0];
       if (table === 'golden') {
         table = 'golden_address'
@@ -303,7 +299,6 @@ export default {
 
         mapping.push({fromField: fromF, toField: toItem, action: ""});
       })
-
       await this.$store.dispatch('importModule/uploadExcelDataV2', {
         file: this.file,
         mappedItems: mapping,
