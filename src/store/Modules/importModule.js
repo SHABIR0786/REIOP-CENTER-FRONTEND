@@ -98,7 +98,6 @@ export const actions = {
         })
 
         data.append('map', JSON.stringify(mapObject));
-
         return await api.post('/upload', data, config).then((response) => {
             commit('SET_UPLOADED', true)
             return response
