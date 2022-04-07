@@ -23,7 +23,9 @@
             <hr>
             <b-row class="mb-3">
                 <b-col cols="8" class="d-flex align-items-center">
-                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                  <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon></b-button>
+                  <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
                     <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
@@ -42,7 +44,7 @@
             hover
             :busy="isBusy"
             :fields="fields"
-            :items="items"
+            :items="filteredOrAllData"
             responsive
             :per-page="0"
             :current-page="currentPage"
@@ -116,7 +118,7 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+                <p class="mb-0">Showing 1 to {{perPage}} of {{itemsCount}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
@@ -125,6 +127,7 @@
         <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
+        <filter-subjects @filter="filter" @filtersCount="filtersCount" :propsData="items" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
     </div>
 </template>
 <script>
@@ -133,6 +136,7 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 import AddSubjectModal from "../components/subject/AddSubjectModal";
+import FilterSubjects from "@/components/subject/FilterSubjects";
 
 export default {
     name: "Subject",
@@ -140,7 +144,8 @@ export default {
         BIcon,
         EditSubjectModal,
         DeleteModal,
-        AddSubjectModal
+        AddSubjectModal,
+        FilterSubjects
     },
     data () {
         return {
@@ -156,6 +161,12 @@ export default {
             showAddModal: false,
             bulkDeleteItems: [],
             allSelected: false,
+            showFilterPropertiesModal: false,
+            filteredOrAllData:[],
+            itemsCount:0,
+            totalFilters:0,
+            filtersName:{},
+            searchInFiltered: {}
         }
     },
     computed: {
@@ -163,17 +174,29 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'subjectModule/fields',
             items: 'subjectModule/subjects',
+            filteredItems: 'subjectModule/filteredSubject',
+            filteredSubjectsCount:'subjectModule/filteredSubjectsCount',
             total: 'subjectModule/total',
             selectedSubject: 'subjectModule/subject'
         }),
-        rows() { return this.total ? this.total : 1}
+        rows() { return this.itemsCount ? this.itemsCount : 1},
+
     },
     async created () {
         this.$store.dispatch('subjectModule/getTotal')
         try {
             this.$store.dispatch('uxModule/setLoading')
+          if(localStorage.getItem('last-applied-filters')) {
+            const filters = JSON.parse(localStorage.getItem('last-applied-filters'))
+            let filterValue = 0;
+            for (let i in filters){
+              filterValue += filters[i].length
+            }
+            this.filter(filters, filterValue)
+          } else {
             await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
-            this.$store.dispatch('uxModule/hideLoader')
+          }
+          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
@@ -183,8 +206,28 @@ export default {
                 this.showModal = true
             });
         }
+      this.filteredOrAllData = this.items;
+      this.itemsCount = this.total;
     },
     methods: {
+
+     async filter(data,filterValue, allData){
+       this.filtersName = data
+        await this.$store.dispatch("subjectModule/filterSubject", {page: 1, perPage: this.perPage, filter: data})
+       localStorage.setItem('last-applied-filters', JSON.stringify(data))
+       if(allData) {
+         localStorage.setItem('all-filter-data', JSON.stringify(allData))
+         localStorage.setItem('filters-count', filterValue)
+       }
+        if (!filterValue){
+          this.filteredOrAllData = this.items
+          this.itemsCount = this.total
+        }else{
+          this.filteredOrAllData = this.filteredItems
+          this.itemsCount = this.filteredSubjectsCount
+        }
+        this.showFilterPropertiesModal =false
+      },
         editSubject(item) {
             this.showModal = true
             this.editedItem = { ...item }
@@ -195,6 +238,7 @@ export default {
             delete item.list_stack
             this.$store.dispatch('subjectModule/editSubject', {...item})
         },
+
         add(item) {
             this.showAddModal = false
             this.$store.dispatch('subjectModule/addSubject', {...item})
@@ -225,29 +269,74 @@ export default {
                     this.bulkDeleteItems.push(e.id);
                 });
             }
-        }
+        },
+      filtersCount(total){
+        this.totalFilters = total
+        return  total
+      }
     },
     watch: {
         currentPage: {
-            handler: function() {
-                this.$store.dispatch('subjectModule/getAllSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchSubject})
+            handler: async function() {
+              if (!this.total){
+                await this.$store.dispatch('subjectModule/getAllSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+                this.filteredOrAllData = this.items
+              }else{
+                await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
         },
         perPage: {
-            handler: function () {
-                this.$store.dispatch('subjectModule/getAllSubjects', {page: 1, perPage: this.perPage, search: this.searchSubject})
+            handler: async function () {
+              if (!this.total){
+                await this.$store.dispatch('subjectModule/getAllSubjects', { page: 1, perPage: this.perPage, search: this.searchSubject })
+                this.filteredOrAllData = this.items
+              }else{
+                await this.$store.dispatch("subjectModule/filterSubject", { page: 1, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
         },
         searchSubject: {
-            handler: function () {
-                this.$store.dispatch('subjectModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchSubject})
+            handler: async function () {
+              if (!this.total) {
+                await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+                this.itemsCount = this.items.length
+              }else{
+                this.currentPage = 1;
+                let searchInFiltered = [...this.filteredItems]
+                 searchInFiltered = searchInFiltered.filter(el => {
+                 return  el.subject_address.includes(this.searchSubject)||
+                   el.subject_city.includes(this.searchSubject)  ||
+                   el.subject_state.includes(this.searchSubject) ||
+                   el.subject_zip.includes(this.searchSubject)   ||
+                   el.id.toString().includes(this.searchSubject)
+                 });
+                if(this.searchSubject) {
+                  this.itemsCount = searchInFiltered.length
+                } else {
+                  this.itemsCount = this.total;
+                }
+                this.filteredOrAllData =  searchInFiltered
+                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+              }
             }
-        }
+        },
     }
 }
 </script>
 
 <style>
+    .filter-count{
+      border-radius: 50%;
+      background-color: #808080a6;
+      color: #ffffff;
+      font-size: 13px;
+      text-align: center;
+      width: 20px;
+      height: 20px;
+    }
     .info {
         border: 1px solid black;
         border-radius: 5px;

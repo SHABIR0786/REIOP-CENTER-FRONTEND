@@ -37,6 +37,8 @@ const state = {
     subjects: [],
     total: 0,
     subject: {},
+    filteredSubject: {},
+    filteredSubjectsCount: 0,
 }
 
 const mutations = {
@@ -65,11 +67,16 @@ const mutations = {
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
-    ADD_SUBJECT(state, payload) {
-        const SUBJECTS = JSON.parse(state.subjects)
-        const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && SUBJECTS.splice(findIndex, 1, { ...payload })
-        state.subjects = JSON.stringify(SUBJECTS);
+
+    FILTER_SUBJECT(state, payload) {
+        const filteredData = [...payload.data]
+        filteredData.forEach(e => {
+            e.list_stack = e.lists.length;
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.filteredSubject =JSON.stringify(filteredData);
+        state.filteredSubjectsCount =payload.total;
     },
     SET_SUBJECT(state, payload) {
         state.subject = {...payload};
@@ -139,6 +146,17 @@ const actions = {
             return response
         })
     },
+
+
+    async filterSubject({ commit }, data) {
+        return await api.post(`/subjects/filter`, {...data}).then((response) => {
+            commit('FILTER_SUBJECT', response.subjects)
+            return response
+        })
+    },
+
+
+
     async deleteSubject({ commit }, data) {
         return await api.deleteAPI(`/subjects/${data}`).then((response) => {
             commit('DELETE_SUBJECT', data)
@@ -174,7 +192,14 @@ const getters = {
         return [];
     },
     total: ({total}) => total,
-    subject: ({subject}) => subject
+    filteredSubjectsCount: ({filteredSubjectsCount}) => filteredSubjectsCount,
+    subject: ({subject}) => subject,
+    filteredSubject: ({ filteredSubject }) => {
+        if (typeof filteredSubject === 'string') {
+            return JSON.parse(filteredSubject);
+        }
+        return [];
+    },
 }
 
 export default {
