@@ -293,25 +293,27 @@ export default {
             this.allData.Errors.push(el.subject_error_type)
           }
         })
-        this.lists.forEach(el =>{
-          var date = new Date(el.updated_at);
-          el.runDate = date.getUTCMonth() + 1+'/'+date.getUTCFullYear();
-          if (el.list_market && !this.allData.Market.includes(el.list_market)){
-            this.allData.Market.push(el.list_market)
-          }
-          if (el.list_group && !this.allData.Group.includes(el.list_group)){
-            this.allData.Group.push(el.list_group)
-          }
-          if (el.list_type && !this.allData.Type.includes(el.list_type)){
-            this.allData.Type.push(el.list_type)
-          }
-          if (el.list_source && !this.allData.Source.includes(el.list_source)){
-            this.allData.Source.push(el.list_source)
-          }
-          if (el.runDate && !this.allData.RunDate.includes(el.runDate)){
-            this.allData.RunDate.push(el.runDate)
-          }
-        })
+        if(+localStorage.getItem('filters-count') === 0) {
+          this.lists.forEach(el =>{
+            var date = new Date(el.updated_at);
+            el.runDate = date.getUTCMonth() + 1+'/'+date.getUTCFullYear();
+            if (el.list_market && !this.allData.Market.includes(el.list_market)){
+              this.allData.Market.push(el.list_market)
+            }
+            if (el.list_group && !this.allData.Group.includes(el.list_group)){
+              this.allData.Group.push(el.list_group)
+            }
+            if (el.list_type && !this.allData.Type.includes(el.list_type)){
+              this.allData.Type.push(el.list_type)
+            }
+            if (el.list_source && !this.allData.Source.includes(el.list_source)){
+              this.allData.Source.push(el.list_source)
+            }
+            if (el.runDate && !this.allData.RunDate.includes(el.runDate)){
+              this.allData.RunDate.push(el.runDate)
+            }
+          })
+        }
       }
     },
     searchSubject: {
@@ -377,7 +379,7 @@ export default {
         this.appliedFilters = true;
         this.activeTab = 'allFilters';
       }
-      this.$emit('filter', filters, filterValue)
+      this.$emit('filter', filters, filterValue, this.allData)
     },
     closeFilterModal(){
       if(!this.appliedFilters){
@@ -399,7 +401,16 @@ export default {
         }
       }
       this.$emit('cancel')
+    },
+  },
+  created() {
+    if(localStorage.getItem('last-applied-filters')) {
+      this.allFilters = JSON.parse(localStorage.getItem('last-applied-filters'))
     }
+    if(localStorage.getItem('all-filter-data')) {
+      this.allData = JSON.parse(localStorage.getItem('all-filter-data'))
+    }
+
   }
 }
 </script>

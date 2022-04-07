@@ -166,6 +166,7 @@ export default {
             itemsCount:0,
             totalFilters:0,
             filtersName:{},
+            searchInFiltered: {}
         }
     },
     computed: {
@@ -185,8 +186,17 @@ export default {
         this.$store.dispatch('subjectModule/getTotal')
         try {
             this.$store.dispatch('uxModule/setLoading')
+          if(localStorage.getItem('last-applied-filters')) {
+            const filters = JSON.parse(localStorage.getItem('last-applied-filters'))
+            let filterValue = 0;
+            for (let i in filters){
+              filterValue += filters[i].length
+            }
+            this.filter(filters, filterValue)
+          } else {
             await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
-            this.$store.dispatch('uxModule/hideLoader')
+          }
+          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
@@ -201,9 +211,14 @@ export default {
     },
     methods: {
 
-     async filter(data,filterValue){
+     async filter(data,filterValue, allData){
        this.filtersName = data
         await this.$store.dispatch("subjectModule/filterSubject", {page: 1, perPage: this.perPage, filter: data})
+       localStorage.setItem('last-applied-filters', JSON.stringify(data))
+       if(allData) {
+         localStorage.setItem('all-filter-data', JSON.stringify(allData))
+         localStorage.setItem('filters-count', filterValue)
+       }
         if (!filterValue){
           this.filteredOrAllData = this.items
           this.itemsCount = this.total
@@ -287,8 +302,24 @@ export default {
             handler: async function () {
               if (!this.total) {
                 await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+                this.itemsCount = this.items.length
               }else{
-                await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+                this.currentPage = 1;
+                let searchInFiltered = [...this.filteredItems]
+                 searchInFiltered = searchInFiltered.filter(el => {
+                 return  el.subject_address.includes(this.searchSubject)||
+                   el.subject_city.includes(this.searchSubject)  ||
+                   el.subject_state.includes(this.searchSubject) ||
+                   el.subject_zip.includes(this.searchSubject)   ||
+                   el.id.toString().includes(this.searchSubject)
+                 });
+                if(this.searchSubject) {
+                  this.itemsCount = searchInFiltered.length
+                } else {
+                  this.itemsCount = this.total;
+                }
+                this.filteredOrAllData =  searchInFiltered
+                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
               }
             }
         },
