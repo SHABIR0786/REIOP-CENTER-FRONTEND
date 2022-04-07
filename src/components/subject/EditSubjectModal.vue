@@ -119,11 +119,11 @@
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
                     <b-tab title="Assigned Sellers" active>
-                        <b-row>
+                        <b-col>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
                             </b-col>
-                        </b-row>
+                        </b-col>
                         <b-table
                                 id="seller-table"
                                 small
