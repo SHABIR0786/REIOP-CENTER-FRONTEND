@@ -150,6 +150,7 @@ export default {
       let requiredSubjectsFields = ['subject_address', 'subject_city', 'subject_state', 'subject_zip'];
       let mappedFields           = []
       item.forEach(item => {
+        if (!(item['toField'].includes('subject_address_line2')) && !(item['toField'].includes('seller_mailing_address_line2')))
         mappedFields.push(item['toField'])
       })
 
@@ -169,13 +170,11 @@ export default {
       namesCounts.push(mappedFields.filter(x => x.includes('seller_middle_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_full_name')).length);
       var sellersCount = Math.max.apply(null, namesCounts);
-
       var addressCount  = [];
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_address')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_city')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_state')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_zip')).length);
-
       if (sellerMapped) {
         let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
 
