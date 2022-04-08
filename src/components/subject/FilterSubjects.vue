@@ -358,6 +358,8 @@ export default {
         allFilters.Group.forEach(e => {this.allData.Group.push(e)});
         allFilters.Type.forEach(e => {this.allData.Type.push(e)});
         allFilters.Source.forEach(e => {this.allData.Source.push(e)});
+        allFilters.Errors.forEach(e => {this.allData.Errors.push(e)});
+        allFilters.RunDate.forEach(e => {this.allData.RunDate.push(e)});
         this.allFilters= {
           Market:[],
           Group:[],
