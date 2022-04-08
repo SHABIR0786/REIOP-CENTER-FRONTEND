@@ -286,14 +286,13 @@ export default {
   },
   watch: {
     showModal() {
-      if (this.showModal && !this.appliedFilters){
-        this.subject = this.propsData
-        this.subject.forEach(el => {
-          if (el.subject_error_type && !this.allData.Errors.includes(el.subject_error_type)){
-            this.allData.Errors.push(el.subject_error_type)
-          }
-        })
-        if(+localStorage.getItem('filters-count') === 0) {
+      if (this.showModal && !this.appliedFilters && +localStorage.getItem('filters-count') === 0){
+          this.subject = this.propsData
+          this.subject.forEach(el => {
+            if (el.subject_error_type && !this.allData.Errors.includes(el.subject_error_type)){
+              this.allData.Errors.push(el.subject_error_type)
+            }
+          })
           this.lists.forEach(el =>{
             var date = new Date(el.updated_at);
             el.runDate = date.getUTCMonth() + 1+'/'+date.getUTCFullYear();
@@ -313,7 +312,6 @@ export default {
               this.allData.RunDate.push(el.runDate)
             }
           })
-        }
       }
     },
     searchSubject: {
