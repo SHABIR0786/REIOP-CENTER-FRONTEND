@@ -310,12 +310,9 @@ export default {
               this.allData.RunDate.push(el.run_date)
             }
           });
-        this.allData.Market.sort((a, b) => (a > b ? 1 : -1));
-        this.allData.Group.sort((a, b) => (a > b ? 1 : -1));
-        this.allData.Type.sort((a, b) => (a > b ? 1 : -1));
-        this.allData.Source.sort((a, b) => (a > b ? 1 : -1));
-        this.allData.Errors.sort((a, b) => (a > b ? 1 : -1));
-        this.allData.RunDate.sort((a, b) => (a > b ? 1 : -1));
+        for(let category in this.allData){
+          this.allData[category].sort((a, b) => (a > b ? 1 : -1));
+        }
       }
     },
     searchSubject: {
@@ -355,6 +352,9 @@ export default {
           this.allFilters[this.activeTab].splice(index, 1);
         }
       }
+      for(let category in this.allData){
+        this.allData[category].sort((a, b) => (a > b ? 1 : -1));
+      }
     },
     clearAllFilters(allFilters){
       if (typeof allFilters === 'object'){
@@ -372,6 +372,9 @@ export default {
           Errors:[],
           RunDate:[],
         }
+      }
+      for(let category in this.allData){
+        this.allData[category].sort((a, b) => (a > b ? 1 : -1));
       }
     },
     applyFilters(filters){
