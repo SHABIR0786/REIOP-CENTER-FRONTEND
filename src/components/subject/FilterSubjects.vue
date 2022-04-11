@@ -309,7 +309,10 @@ export default {
             if (el.run_date && !this.allData.RunDate.includes(el.run_date)){
               this.allData.RunDate.push(el.run_date)
             }
-          })
+          });
+        for(let category in this.allData){
+          this.allData[category].sort((a, b) => (a > b ? 1 : -1));
+        }
       }
     },
     searchSubject: {
@@ -349,6 +352,9 @@ export default {
           this.allFilters[this.activeTab].splice(index, 1);
         }
       }
+      for(let category in this.allData){
+        this.allData[category].sort((a, b) => (a > b ? 1 : -1));
+      }
     },
     clearAllFilters(allFilters){
       if (typeof allFilters === 'object'){
@@ -366,6 +372,9 @@ export default {
           Errors:[],
           RunDate:[],
         }
+      }
+      for(let category in this.allData){
+        this.allData[category].sort((a, b) => (a > b ? 1 : -1));
       }
     },
     applyFilters(filters){
