@@ -43,18 +43,20 @@
     </b-row>
     <confirm-modal :showModal="showConfirmModal" :is-have-mapped-items="isHaveMappedItems"
                    @modalResponse="confirmImport"></confirm-modal>
-    <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
-      <template v-slot:sellerFill>
-        <b-row>With two sellers mapped you must map two mailing addresses. You can use the same mailing address fields
-          if your import has one address for both sellers.
-        </b-row>
-        <b-row>The target fields that would be required to map are:</b-row>
-        <b-row>. seller_mailing_address,</b-row>
-        <b-row>. seller_mailing_city,</b-row>
-        <b-row>. seller_mailing_state,</b-row>
-        <b-row> . seller_mailing_zip.</b-row>
-      </template>
-    </seller-modal>
+    <div v-if="!isSkippedValidation">
+      <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
+        <template v-slot:sellerFill>
+          <b-row>With two sellers mapped you must map two mailing addresses. You can use the same mailing address fields
+            if your import has one address for both sellers.
+          </b-row>
+          <b-row>The target fields that would be required to map are:</b-row>
+          <b-row>. seller_mailing_address,</b-row>
+          <b-row>. seller_mailing_city,</b-row>
+          <b-row>. seller_mailing_state,</b-row>
+          <b-row> . seller_mailing_zip.</b-row>
+        </template>
+      </seller-modal>
+    </div>
   </b-container>
 </template>
 
@@ -105,7 +107,8 @@ export default {
       sellerFields: 'importModule/sellerFields',
       subjectFields: 'importModule/subjectFields',
       schemas: 'importModule/schemas',
-      importFields: 'importModule/importFields'
+      importFields: 'importModule/importFields',
+      isSkippedValidation: 'importV2Module/isSkipValidation'
     })
   },
   async created() {
@@ -145,7 +148,6 @@ export default {
       this.showSellerFillModal = false
     },
     confirm(item) {
-
       // Check if all required Subjects field are mapped
       let requiredSubjectsFields = ['subject_address', 'subject_city', 'subject_state', 'subject_zip'];
       let mappedFields           = []

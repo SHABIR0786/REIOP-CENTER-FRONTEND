@@ -3,7 +3,8 @@
       <h3>New Import</h3>
       <hr>
       <div class="type-container">
-          <h3>Step {{importDetails.import_type === 'existing' ? 3 : 4}}: Map Fields</h3>
+<!--          <h3>Step {{importDetails.import_type === 'existing' ? 3 : 4}}: Map Fields</h3>-->
+          <h3>Step 4: Map Fields</h3>
       </div>
       <div class="info-text">
           <p>Description of step for user: To be filled out later.</p>
@@ -51,7 +52,7 @@
 
               if(this.importDetails.skip_source) {
                   this.skip_source = this.importDetails.skip_source;
-                  this.list_settings = 'update_existing';
+                  //this.list_settings = 'update_existing';
               }
           }
       },

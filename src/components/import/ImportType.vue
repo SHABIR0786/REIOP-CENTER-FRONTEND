@@ -61,6 +61,11 @@
       },
       methods: {
         setImportType() {
+          if (this.import_type === 'existing'){
+            this.$store.dispatch('importV2Module/setSkipValidation', true)
+          } else {
+            this.$store.dispatch('importV2Module/setSkipValidation', false)
+          }
             this.$emit('importResponse', this.import_type);
         },
       }

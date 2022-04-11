@@ -18,6 +18,7 @@ const state = {
     imports: [],
     total: 0,
     editData: {},
+    isSkipValidation: false,
 }
 
 const mutations = {
@@ -65,6 +66,9 @@ const mutations = {
     DELETE_PROCESS(state, payload) {
         const findIndex = state.imports.findIndex(({ id }) => id === payload)
         findIndex !== -1 && state.imports.splice(findIndex, 1)
+    },
+    SET_SKIP_VALIDATION(state, bool) {
+        state.isSkipValidation = bool;
     }
 }
 
@@ -143,12 +147,16 @@ const actions = {
             return response
         })
     },
+    setSkipValidation({ commit }, bool) {
+        commit('SET_SKIP_VALIDATION', bool)
+    }
 }
 
 const getters = {
     fields: ({ fields }) => fields,
     imports: ({ imports }) => imports,
     editData: ({ editData }) => editData,
+    isSkipValidation: (state) => state.isSkipValidation
 }
 
 export default {
