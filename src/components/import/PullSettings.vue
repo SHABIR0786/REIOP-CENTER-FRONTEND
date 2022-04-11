@@ -71,7 +71,7 @@
                 <b-button
                         variant="primary"
                         class="data-type"
-                        :disabled='list.list_market.length === 0 || list.list_group.length === 0 || list.list_type.length === 0 || list.list_source.length === 0'
+
                         @click="checkUpdateList()"
                 >
                     Next
@@ -79,6 +79,9 @@
             </b-col>
         </b-row>
         <AddListSettingsModal :showModal="showSettingsModal" :propsData="settingSection" @cancel="showSettingsModal=false" @save="add"></AddListSettingsModal>
+        <confirm-modal :showModal="allFieldsMapped" @modalResponse="allFieldsMapped=false">
+          <template v-slot:requiredMappingFields> <h4>All these fields are required</h4></template>
+        </confirm-modal>
     </div>
 </template>
 
@@ -86,10 +89,13 @@
 <script>
     import {mapGetters} from "vuex";
     import AddListSettingsModal from "../list/AddListSettingsModal";
-
+    import ConfirmModal from "@/components/slotModal/SlotModal";
     export default {
       name: "PullSettings",
-      components: {AddListSettingsModal},
+      components: {
+        AddListSettingsModal,
+        ConfirmModal,
+      },
       props: ['lists', 'importDetails'],
       data () {
         return {
@@ -110,6 +116,7 @@
             pull_date: [],
             showSettingsModal: false,
             settingSection: '',
+            allFieldsMapped: false,
         }
       },
       mounted() {
@@ -170,6 +177,15 @@
       },
       methods: {
         checkUpdateList() {
+          if (this.list.list_market.length === 0 ||
+              this.list.list_group.length === 0 ||
+              this.list.list_type.length === 0 ||
+              this.list.list_source.length === 0 ||
+              this.list.list_pull_date.length === 0){
+           this.allFieldsMapped = true;
+           return
+          }
+
           this.list.user_id = this.user.id;
           this.list.team_id = this.user.team_id;
           this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source

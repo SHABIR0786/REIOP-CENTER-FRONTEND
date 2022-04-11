@@ -294,8 +294,6 @@ export default {
             }
           })
           this.lists.forEach(el =>{
-            var date = new Date(el.updated_at);
-            el.runDate = date.getUTCMonth() + 1+'/'+date.getUTCFullYear();
             if (el.list_market && !this.allData.Market.includes(el.list_market)){
               this.allData.Market.push(el.list_market)
             }
@@ -308,8 +306,8 @@ export default {
             if (el.list_source && !this.allData.Source.includes(el.list_source)){
               this.allData.Source.push(el.list_source)
             }
-            if (el.runDate && !this.allData.RunDate.includes(el.runDate)){
-              this.allData.RunDate.push(el.runDate)
+            if (el.run_date && !this.allData.RunDate.includes(el.run_date)){
+              this.allData.RunDate.push(el.run_date)
             }
           })
       }

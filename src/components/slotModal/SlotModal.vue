@@ -8,8 +8,9 @@
         </template>
         <b-container fluid >
           <slot name="userExist"></slot>
-          <slot name="noError"></slot>
+          <slot class="text-center" name="noError"></slot>
           <slot name="sellerFill"></slot>
+          <slot class="text-center" name="requiredMappingFields"></slot>
         </b-container>
 
         <template #modal-footer>

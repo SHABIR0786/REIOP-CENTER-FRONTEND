@@ -185,13 +185,13 @@ export default {
     async created () {
         this.$store.dispatch('subjectModule/getTotal')
         try {
-            this.$store.dispatch('uxModule/setLoading')
-          if(localStorage.getItem('last-applied-filters')) {
-            const filters = JSON.parse(localStorage.getItem('last-applied-filters'))
-            let filterValue = 0;
-            for (let i in filters){
-              filterValue += filters[i].length
-            }
+          this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('last-applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
             this.filter(filters, filterValue)
           } else {
             await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})

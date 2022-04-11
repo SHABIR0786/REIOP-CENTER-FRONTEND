@@ -9,7 +9,7 @@
             </div>
         </template>
         <b-container fluid v-if="isHaveMappedItems">
-            <h4>Are you ready to upload this spreadsheet?</h4>
+            <h4 class="text-center">Are you ready to upload this spreadsheet?</h4>
         </b-container>
         <b-container fluid v-else>
           <h5 class="text-sm-center"> There are required fields you must map:<br>
