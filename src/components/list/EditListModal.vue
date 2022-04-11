@@ -553,8 +553,8 @@ export default {
           modalName:'sellers',
           tableName:'Seller',
           relatedTableFields: [
-            {key:"run_year",  label: "Run Year", sortable: true},
-            {key:"run_month",   label: "Run Month", sortable: true},
+            {key:"list_run_year",  label: "Run Year", sortable: true},
+            {key:"list_run_month",   label: "Run Month", sortable: true},
             {key:"subjects_count",  label: "Total Subjects", sortable: true},
             {key:"sellers_count",   label: "Total Sellers", sortable: true},
             {key:"phones_count",    label: "Total Phones", sortable: true},

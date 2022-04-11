@@ -37,6 +37,7 @@ const mutations = {
             e.list_total_subject = e.subjects_count;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
+            e.run_date   = e.list_run_month + '/' + e.list_run_year;
         })
         state.lists = JSON.stringify(data);
     },
@@ -62,14 +63,14 @@ const mutations = {
         state.lists = JSON.stringify(LIST);
     },
     SHOW_TABS(state, payload) {
-        const relatedData = [...payload.data]
-        relatedData.forEach(e => {
-            var date = new Date(e.updated_at);
-            e.run_month = date.getUTCMonth() + 1;
-            e.run_year = date.getUTCFullYear();
-        })
+        // const relatedData = [...payload.data]
+        // relatedData.forEach(e => {
+        //     var date = new Date(e.updated_at);
+        //     e.run_month = date.getUTCMonth() + 1;
+        //     e.run_year = date.getUTCFullYear();
+        // })
         state.tabData = payload;
-        state.tabData.data = relatedData;
+        //state.tabData.data = relatedData;
     },
     DELETE_MULTIPLE_LISTS(state, payload) {
         const LIST = JSON.parse(state.lists)

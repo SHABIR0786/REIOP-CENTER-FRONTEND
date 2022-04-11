@@ -97,7 +97,7 @@
           <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails" @goBack="goBack"></map-fields>
           <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
           <select-skip-data-source v-if="step_2_skip" @skipResponse="setSkipSource" @goBack="goBack"></select-skip-data-source>
-          <confirm-modal :showModal="showNoErrorsModal"  @modalResponse="confirmImport">
+          <confirm-modal :showModal="showNoErrorsModal"  @modalResponse="showNoErrorsModal=false">
             <template v-slot:noError> <h4>No errors in this file</h4></template>
           </confirm-modal>
     </div>
@@ -188,9 +188,6 @@ export default {
       },
       save(item) {
         this.$store.dispatch('importV2Module/editImport', {...item})
-      },
-      confirmImport () {
-        this.showNoErrorsModal = false;
       },
      async modalResponse(response) {
         this.showImportModal = false;
