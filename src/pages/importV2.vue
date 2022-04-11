@@ -96,7 +96,7 @@
           <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
           <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails" @goBack="goBack"></map-fields>
           <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
-          <select-skip-data-source v-if="step_2_skip" @skipResponse="setSkipSource" @goBack="goBack"></select-skip-data-source>
+          <select-skip-data-source v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipSource" @goBack="goBack"></select-skip-data-source>
           <confirm-modal :showModal="showNoErrorsModal"  @modalResponse="showNoErrorsModal=false">
             <template v-slot:noError> <h4>No errors in this file</h4></template>
           </confirm-modal>
@@ -153,6 +153,7 @@ export default {
         isReload: false,
         showNoErrorsModal: false,
         currentItemErrorLines: null,
+        statusBackSkip:false,
 
       }
     },
@@ -238,13 +239,21 @@ export default {
           this.step_2_skip = false
           this.step_3 = false;
           this.step_4 = false;
-        } else if (response === 'PullSettings') {
+        } else if (response === 'PullSettings' && !this.statusBackSkip) {
           this.step_1 = false;
           this.step_2 = true;
           this.step_2_skip = false
           this.step_3 = false;
           this.step_4 = false;
-        } else if (response === 'MapFields') {
+        }else if(response === 'PullSettings' && this.statusBackSkip){
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = true
+          this.step_3 = false;
+          this.step_4 = false;
+          this.statusBackSkip =false
+        }
+        else if (response === 'MapFields') {
           this.step_1 = false;
           this.step_2 = false;
           this.step_2_skip = false
@@ -271,12 +280,12 @@ export default {
       setSkipSource (response) {
           if(response) {
               this.importDetails.skip_source = response;
-
+              this.statusBackSkip = true;
               this.step_1 = false;
               this.step_2 = false;
               this.step_2_skip = false
-              this.step_3 = false;
-              this.step_4 = true;
+              this.step_3 = true;
+              this.step_4 = false;
           }
       },
       importModal(item) {

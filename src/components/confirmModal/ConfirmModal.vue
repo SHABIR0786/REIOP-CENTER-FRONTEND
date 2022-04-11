@@ -1,14 +1,14 @@
 <template>
     <b-modal v-model="showModal" @close="$emit('modalResponse', false)">
         <template #modal-header>
-            <div class="w-100" style="font-size: 20px;color:white " v-if="isHaveMappedItems">
+            <div class="w-100" style="font-size: 20px;color:white " v-if="isHaveMappedItems || isSkippedValidation">
               Confirm
             </div>
             <div class="w-100"  style="font-size: 20px;color:white " v-else>
               Error!
             </div>
         </template>
-        <b-container fluid v-if="isHaveMappedItems">
+        <b-container fluid v-if="isHaveMappedItems || isSkippedValidation">
             <h4 class="text-center">Are you ready to upload this spreadsheet?</h4>
         </b-container>
         <b-container fluid v-else>
@@ -17,7 +17,7 @@
             subject_state, subject_zip </h5>
         </b-container>
         <template #modal-footer>
-            <div class="w-100" v-if="isHaveMappedItems">
+            <div class="w-100" v-if="isHaveMappedItems || isSkippedValidation">
                 <b-button
                         variant="primary"
                         size="sm"
@@ -42,6 +42,7 @@
     </b-modal>
 </template>
 <script>
+  import { mapGetters } from 'vuex';
     export default {
         name: 'ConfirmModal',
         props: {
@@ -52,7 +53,12 @@
               type: Boolean,
             default: false,
           }
-        }
+        },
+      computed: {
+          ...mapGetters({
+            isSkippedValidation: 'importV2Module/isSkipValidation'
+          })
+      }
     }
 </script>
 <style scoped>
