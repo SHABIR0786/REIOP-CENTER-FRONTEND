@@ -178,7 +178,12 @@ const getters = {
         return [];
     },
     total: ({total}) => total,
-    seller: ({seller}) => seller
+    seller: ({ seller }) => {
+        if (typeof seller === 'string') {
+            return JSON.parse(seller);
+        }
+        return [];
+    },
 }
 
 export default {

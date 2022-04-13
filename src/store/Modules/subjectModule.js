@@ -49,6 +49,14 @@ const mutations = {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
             e.total_sellers = e.sellers.length;
+            e.lists.forEach(el =>{
+                el.created_at = el.created_at.split('T')[0];
+                el.updated_at = el.updated_at.split('T')[0];
+                el.user_name  = e.user_name
+            })
+            e.sellers.forEach(sl =>{
+                sl.user_name  = e.user_name
+            })
         })
         state.subjects = JSON.stringify(data);
     },
