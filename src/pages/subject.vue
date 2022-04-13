@@ -202,8 +202,8 @@ export default {
         }
         if (this.$route.query.subject_id) {
             this.$store.dispatch('subjectModule/getSubject', this.$route.query.subject_id).then(() => {
-                this.editedItem = this.selectedSubject
-                this.showModal = true
+              this.editedItem = this.selectedSubject
+              this.showModal = true
             });
         }
       this.filteredOrAllData = this.items;

@@ -2,7 +2,6 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"delete", label: ""},
         {key:"id", label: "ID", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
         {key:"list_total_subject", label: "Unique Subjects", sortable: true},
@@ -11,6 +10,7 @@ const state = {
         {key:"list_group", label: "Group", sortable: true},
         {key:"list_type", label: "Type", sortable: true},
         {key:"list_source", label: "Source", sortable: true},
+        // {key:"delete", label: ""},
 
         // Custom fields
         {key:"list_pull_date", label: "Last Pull Date", sortable: true},
@@ -28,6 +28,7 @@ const state = {
     groupList: [],
     typeList: [],
     sourceList: [],
+    list: [],
 }
 
 const mutations = {
@@ -63,20 +64,16 @@ const mutations = {
         state.lists = JSON.stringify(LIST);
     },
     SHOW_TABS(state, payload) {
-        // const relatedData = [...payload.data]
-        // relatedData.forEach(e => {
-        //     var date = new Date(e.updated_at);
-        //     e.run_month = date.getUTCMonth() + 1;
-        //     e.run_year = date.getUTCFullYear();
-        // })
         state.tabData = payload;
-        //state.tabData.data = relatedData;
     },
     DELETE_MULTIPLE_LISTS(state, payload) {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload)
         findIndex !== -1 && LIST.splice(findIndex, 1)
         state.lists = JSON.stringify(LIST);
+    },
+    SET_LIST(state, payload) {
+        state.list =JSON.stringify(payload.list);
     },
     SET_MARKET_LIST(state, payload) {
         state.marketList = payload
@@ -151,10 +148,6 @@ const actions = {
         delete data.golden_addresses_count;
         delete data.emails_count;
         data.list_hash = data.list_market + '_' + data.list_type + '_' +  data.list_group + '_' + data.list_source
-        // delete data.phones;
-        // delete data.golden_addresses;
-        // delete data.emails;
-        // delete data.sellers;
         return await api.put(`/lists/${data.id}`, {...data}).then((response) => {
             commit('EDIT_LIST', data)
             return response
@@ -173,7 +166,14 @@ const actions = {
             return response
         })
     },
-
+    async getSelectedList({commit}, data) {
+        return await api.get(`/lists/selected/${data}`).then((response) => {
+            if (response ) {
+                commit('SET_LIST', response)
+            }
+            return response
+        })
+    },
 
     async deleteList({ commit }, data) {
         return await api.deleteAPI(`/lists/${data}`).then((response) => {
@@ -206,7 +206,6 @@ const getters = {
         if (typeof lists === 'string') {
             return JSON.parse(lists);
         }
-
         return [];
     },
     total: ({total}) => total,
@@ -215,6 +214,12 @@ const getters = {
     groupList: state => state.groupList,
     typeList: state => state.typeList,
     sourceList: state => state.sourceList,
+    list: ({ list }) => {
+        if (typeof list === 'string') {
+            return JSON.parse(list);
+        }
+        return [];
+    },
 }
 
 export default {

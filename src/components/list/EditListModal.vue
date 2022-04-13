@@ -68,20 +68,6 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
-<!--                        <b-row>-->
-<!--                            <b-col cols="12">-->
-<!--                                <b-input-group prepend="Run Month" class="mb-2">-->
-<!--                                    <b-form-input :readonly="isReadOnly" v-model="list.list_run_month"></b-form-input>-->
-<!--                                </b-input-group>-->
-<!--                            </b-col>-->
-<!--                        </b-row>-->
-<!--                        <b-row>-->
-<!--                        <b-col cols="12">-->
-<!--                          <b-input-group prepend="Run Year" class="mb-2">-->
-<!--                            <b-form-input :readonly="isReadOnly" v-model="list.list_run_year"></b-form-input>-->
-<!--                          </b-input-group>-->
-<!--                        </b-col>-->
-<!--                      </b-row>-->
                     </b-col>
                     <b-col>
 
@@ -553,6 +539,7 @@ export default {
           modalName:'sellers',
           tableName:'Seller',
           relatedTableFields: [
+            {key:"id",  label: "Id", sortable: true},
             {key:"list_run_year",  label: "Run Year", sortable: true},
             {key:"list_run_month",   label: "Run Month", sortable: true},
             {key:"subjects_count",  label: "Total Subjects", sortable: true},

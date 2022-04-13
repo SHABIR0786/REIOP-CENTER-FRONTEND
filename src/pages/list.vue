@@ -176,7 +176,8 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'listModule/fields',
             items: 'listModule/lists',
-            total: 'listModule/total'
+            total: 'listModule/total',
+            tabData: 'listModule/list'
         }),
         rows() { return this.total ? this.total : 1 }
     },
@@ -189,6 +190,12 @@ export default {
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
+        if (this.$route.query.id) {
+          this.$store.dispatch('listModule/getSelectedList', this.$route.query.id).then(() => {
+            this.editedItem = this.tabData
+            this.showModal = true
+          })
+        }
     },
     methods: {
         editItem(item) {
@@ -196,7 +203,6 @@ export default {
             this.editedItem = { ...item }
         },
         save(item) {
-            // this.showModal = false
             if (item.subjects) {
                 delete item.subjects
             }

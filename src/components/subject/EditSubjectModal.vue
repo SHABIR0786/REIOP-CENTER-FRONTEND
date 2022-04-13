@@ -118,7 +118,7 @@
 
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab title="Assigned Sellers" active>
+                    <b-tab title="Related Sellers" active>
                         <b-col>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
@@ -152,7 +152,7 @@
                                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSellerItem(data.item)"></b-icon>
                                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
                             </template>
                         </b-table>
@@ -170,7 +170,7 @@
                                 hover
                                 responsive
                                 :busy="isBusy"
-                                :fields="listFields"
+                                :fields="listFieldsFiltered"
                                 :items="subject.lists"
                                 :per-page="0"
                                 :sticky-header="true"
@@ -202,11 +202,11 @@
                             </template>
 
                             <template #head(list_total_subject)="scope">
-                                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                                <div class="text-nowrap" style="width: 130px;">{{scope.label}}</div>
                             </template>
 
                             <template #head()="scope">
-                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                                <div class="text-nowrap" style="width: 160px;">{{ scope.label }}</div>
                             </template>
 
                             <template v-slot:cell(id)="data">
@@ -230,10 +230,68 @@
                                     <p class="user-email">{{data.item.list_group}}</p>
                                 </div>
                             </template>
+                          <template v-slot:cell(actions)="data">
+                            <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editListItem(data.item)"></b-icon>
+                            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                          </template>
                         </b-table>
                     </b-tab>
-                    <b-tab title="Related Running Lists">
-                    </b-tab>
+                    <b-tab title="Related Running Lists"  @click="currentModal()">
+                    <b-table
+                        id="related-table"
+                        small
+                        striped
+                        hover
+                        :busy="isBusy"
+                        :fields="relatedTableFields"
+                        :items="tabData.data"
+                        responsive
+                        :per-page="0"
+                        :sticky-header="true"
+                    >
+                      <template #table-busy>
+                        <div class="text-center" my-2>
+                          <b-spinner class="align-middle"></b-spinner>
+                          <strong>Loading...</strong>
+                        </div>
+                      </template>
+                      <template #head(id)="scope">
+                        <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                      </template>
+                      <template #head(actions)="scope">
+                        <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                      </template>
+                      <template #head()="scope">
+                        <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                      </template>
+                      <template v-slot:cell(id)="data">
+                        <div :title="data.item.id">
+                          <p class="related-list-id" @click="editListItem(data.item)">{{data.item.id}}</p>
+                        </div>
+                      </template>
+                    </b-table>
+<!--                    <b-row>-->
+<!--                      <b-col class="d-flex align-items-center">-->
+<!--                        <b-form-group-->
+<!--                            label="Show"-->
+<!--                            label-for="show-select"-->
+<!--                            label-cols-sm="6"-->
+<!--                            label-cols-md="4"-->
+<!--                            label-cols-lg="3"-->
+<!--                            label-size="xs"-->
+<!--                            class="mb-0"-->
+<!--                        >-->
+<!--                          <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
+<!--                        </b-form-group>-->
+<!--                      </b-col>-->
+<!--                      <b-col class="d-flex align-items-center justify-content-center">-->
+<!--                        <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
+<!--                      </b-col>-->
+<!--                      <b-col class="d-flex justify-content-end">-->
+<!--                        <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
+<!--                      </b-col>-->
+<!--                    </b-row>-->
+                  </b-tab>
                 </b-tabs>
             </b-row>
         </b-container>
@@ -263,6 +321,43 @@ export default {
             type: Object
         }
     },
+    data() {
+    return {
+      subject: {
+        subject_address: '',
+        subject_city: '',
+        subject_state: '',
+        subject_zip: '',
+        subject_full_address: '',
+        subject_county: '',
+        subject_market: '',
+        subject_age: '',
+        subject_type: '',
+        subject_address_line2: '',
+        user_id: '',
+      },
+      isReadOnly: true,
+      buttonState: 'Edit',
+      isBusy: false,
+      sellerTableFields: null,
+      listFieldsFiltered: null,
+      editedItem: {},
+      showDetailsModal: false,
+      showAssignSellerModal: false,
+      relatedTableFields: [
+        {key:"id",  label: "Id", sortable: true},
+        {key:"list_run_year",  label: "Run Year", sortable: true},
+        {key:"list_run_month",   label: "Run Month", sortable: true},
+        {key:"subjects_count",  label: "Total Subjects", sortable: true},
+        {key:"sellers_count",   label: "Total Sellers", sortable: true},
+        {key:"phones_count",    label: "Total Phones", sortable: true},
+        {key:"emails_count",    label: "Total Emails", sortable: true},
+        {key:"golden_addresses_count", label: "Total Golden Address", sortable: true},
+        {key:"error_number",    label: "Total Errors", sortable: true},
+      ],
+    }
+  },
+
     components: {
         EditSellerDetails,
         AssignExistingSeller
@@ -273,45 +368,32 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.subject);
         },
-        editItem(item) {
+      currentModal(){
+        this.currentPage = 1;
+        this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.lists[0].list_hash, page: 1, perPage:20})
+      },
+        editSellerItem(item) {
             const route = '/sellers?seller_id=' + item.id;
             this.editedItem = { ...item }
             let routeData = this.$router.resolve({path: route});
             window.open(routeData.href, '_blank');
         },
+        editListItem(item) {
+          const route = '/list?id=' + item.id;
+          this.editedItem = { ...item }
+          let routeData = this.$router.resolve({path: route});
+          window.open(routeData.href, '_blank');
+        },
         save(item) {
             this.$store.dispatch('sellerModule/editSeller', {...item})
-        }
+        },
     },
 
-  data() {
-        return {
-            subject: {
-                subject_address: '',
-                subject_city: '',
-                subject_state: '',
-                subject_zip: '',
-                subject_full_address: '',
-                subject_county: '',
-                subject_market: '',
-                subject_age: '',
-                subject_type: '',
-                subject_address_line2: '',
-                user_id: '',
-            },
-            isReadOnly: true,
-            buttonState: 'Edit',
-            isBusy: false,
-            sellerTableFields: null,
-            editedItem: {},
-            showDetailsModal: false,
-            showAssignSellerModal: false,
-        }
-    },
     computed: {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
             listFields: 'listModule/fields',
+            tabData: 'listModule/tabData',
         }),
         rows() { return this.total ? this.total : 1 }
     },
@@ -319,7 +401,8 @@ export default {
         this.sellerTableFields = this.sellerFields.filter(s => s.key !== 'seller_total_subjects' &&
             s.key !== 'seller_total_subjects' && s.key !== 'seller_total_phones' && s.key !== 'seller_total_emails' &&
             s.key !== 'seller_mailing_address_line2' && s.key !== 'seller_company_owned' && s.key !== 'created_at' &&
-            s.key !== 'updated_at' && s.key !== 'user_id')
+            s.key !== 'updated_at' && s.key !== 'user_id' && s.key !== 'delete')
+      this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'list_total_individual_list' )
     },
     watch: {
         showModal() {
@@ -329,12 +412,17 @@ export default {
 
 }
 </script>
-<style>
+<style scoped>
     .close-icon {
         font-size: 30px;
         cursor: pointer;
     }
     .assign-btn {
         text-align: end;
+    }
+    >>>.related-list-id{
+      color: #024847;
+      cursor: pointer;
+      font-weight: bold;
     }
 </style>
