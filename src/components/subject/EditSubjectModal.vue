@@ -345,7 +345,7 @@ export default {
       showDetailsModal: false,
       showAssignSellerModal: false,
       relatedTableFields: [
-        {key:"id",  label: "Id", sortable: true},
+        {key:"id",  label: "ID", sortable: true},
         {key:"list_run_year",  label: "Run Year", sortable: true},
         {key:"list_run_month",   label: "Run Month", sortable: true},
         {key:"subjects_count",  label: "Total Subjects", sortable: true},
