@@ -155,6 +155,9 @@
                                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSellerItem(data.item)"></b-icon>
                                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
                             </template>
+                            <template v-slot:cell(user_name)="">
+                                <p class="" >{{subject.user_name}}</p>
+                            </template>
                         </b-table>
                     </b-tab>
                     <b-tab title="Related Lists">
@@ -368,10 +371,10 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.subject);
         },
-      currentModal(){
-        this.currentPage = 1;
-        this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.lists[0].list_hash, page: 1, perPage:20})
-      },
+        currentModal(){
+          this.currentPage = 1;
+          this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.lists[0].list_hash, page: 1, perPage:20})
+        },
         editSellerItem(item) {
             const route = '/sellers?seller_id=' + item.id;
             this.editedItem = { ...item }
@@ -402,7 +405,7 @@ export default {
             s.key !== 'seller_total_subjects' && s.key !== 'seller_total_phones' && s.key !== 'seller_total_emails' &&
             s.key !== 'seller_mailing_address_line2' && s.key !== 'seller_company_owned' && s.key !== 'created_at' &&
             s.key !== 'updated_at' && s.key !== 'user_id' && s.key !== 'delete')
-      this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'list_total_individual_list' )
+        this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'list_total_individual_list' )
     },
     watch: {
         showModal() {

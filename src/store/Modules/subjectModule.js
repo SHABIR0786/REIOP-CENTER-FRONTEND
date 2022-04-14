@@ -13,7 +13,7 @@ const state = {
         {key: "subject_city", label: "Subject City", sortable: true},
         {key: "subject_state", label: "Subject State", sortable: true},
         {key: "subject_zip", label: "Subject Zip", sortable: true},
-        {key: "subject_country", label: "Subject County", sortable: true},
+        {key: "subject_county", label: "Subject County", sortable: true},
         {key: "subject_market", label: "Market", sortable: true},
         {key: "subject_type", label: "Subject Type", sortable: true},
         {key: "subject_age", label: "Subject Age", sortable: true},
@@ -54,9 +54,6 @@ const mutations = {
                 el.updated_at = el.updated_at.split('T')[0];
                 el.user_name  = e.user_name
             })
-            e.sellers.forEach(sl =>{
-                sl.user_name  = e.user_name
-            })
         })
         state.subjects = JSON.stringify(data);
     },
@@ -80,6 +77,7 @@ const mutations = {
         const filteredData = [...payload.data]
         filteredData.forEach(e => {
             e.list_stack = e.lists.length;
+            e.total_sellers = e.sellers.length;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
@@ -162,7 +160,6 @@ const actions = {
             return response
         })
     },
-
 
 
     async deleteSubject({ commit }, data) {

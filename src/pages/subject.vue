@@ -127,7 +127,7 @@
         <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-        <filter-subjects @filter="filter" @filtersCount="filtersCount" :propsData="items" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
+        <filter-subjects @filter="filter" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
     </div>
 </template>
 <script>
@@ -186,7 +186,7 @@ export default {
         this.$store.dispatch('subjectModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('last-applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -211,23 +211,26 @@ export default {
     },
     methods: {
 
-     async filter(data,filterValue, allData){
-       this.filtersName = data
-        await this.$store.dispatch("subjectModule/filterSubject", {page: 1, perPage: this.perPage, filter: data})
-       localStorage.setItem('last-applied-filters', JSON.stringify(data))
-       if(allData) {
-         localStorage.setItem('all-filter-data', JSON.stringify(allData))
-         localStorage.setItem('filters-count', filterValue)
-       }
-        if (!filterValue){
-          this.filteredOrAllData = this.items
-          this.itemsCount = this.total
-        }else{
-          this.filteredOrAllData = this.filteredItems
-          this.itemsCount = this.filteredSubjectsCount
-        }
-        this.showFilterPropertiesModal =false
-      },
+     async filter(data,filterValue, dataAfterFiltering){
+         this.filtersName = data
+         await this.$store.dispatch("subjectModule/filterSubject", {page: 1, perPage: this.perPage, filter: data})
+         localStorage.setItem('applied-filters', JSON.stringify(data))
+         if(dataAfterFiltering) {
+           localStorage.setItem('data-after-filtering', JSON.stringify(dataAfterFiltering))
+           localStorage.setItem('filters-count', filterValue)
+         }
+         if (!filterValue){
+            if(!this.items.length){
+              await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
+           }
+            this.filteredOrAllData = this.items
+            this.itemsCount = this.total
+          }else{
+            this.filteredOrAllData = this.filteredItems
+            this.itemsCount = this.filteredSubjectsCount
+          }
+            this.showFilterPropertiesModal =false
+        },
         editSubject(item) {
             this.showModal = true
             this.editedItem = { ...item }

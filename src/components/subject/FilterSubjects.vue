@@ -233,8 +233,13 @@ export default {
       type: Boolean
     },
     propsData: {
-      type: Array
-    }
+      type: Array,
+      default: null,
+    },
+    currentPage: {
+      type: Number,
+      default: 1,
+    },
   },
   mounted() {
     this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
@@ -250,6 +255,14 @@ export default {
         RunDate:[],
       },
       allFilters: {
+        Market:[],
+        Group:[],
+        Type:[],
+        Source:[],
+        Errors:[],
+        RunDate:[],
+      },
+      incomingList: {
         Market:[],
         Group:[],
         Type:[],
@@ -286,27 +299,27 @@ export default {
   },
   watch: {
     showModal() {
-      if (this.showModal && !this.appliedFilters && +localStorage.getItem('filters-count') === 0){
+      if (this.showModal /* && !this.appliedFilters && +localStorage.getItem('filters-count') === 0*/){
           this.subject = this.propsData
           this.subject.forEach(el => {
-            if (el.subject_error_type && !this.allData.Errors.includes(el.subject_error_type)){
+            if (el.subject_error_type && !this.allData.Errors.includes(el.subject_error_type)  && !this.allFilters.Errors.includes(el.subject_error_type)){
               this.allData.Errors.push(el.subject_error_type)
             }
           })
           this.lists.forEach(el =>{
-            if (el.list_market && !this.allData.Market.includes(el.list_market)){
+            if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
               this.allData.Market.push(el.list_market)
             }
-            if (el.list_group && !this.allData.Group.includes(el.list_group)){
+            if (el.list_group && !this.allData.Group.includes(el.list_group) && !this.allFilters.Group.includes(el.list_group)){
               this.allData.Group.push(el.list_group)
             }
-            if (el.list_type && !this.allData.Type.includes(el.list_type)){
+            if (el.list_type && !this.allData.Type.includes(el.list_type) && !this.allFilters.Type.includes(el.list_type)){
               this.allData.Type.push(el.list_type)
             }
-            if (el.list_source && !this.allData.Source.includes(el.list_source)){
+            if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
               this.allData.Source.push(el.list_source)
             }
-            if (el.run_date && !this.allData.RunDate.includes(el.run_date)){
+            if (el.run_date && !this.allData.RunDate.includes(el.run_date) && !this.allFilters.RunDate.includes(el.run_date)){
               this.allData.RunDate.push(el.run_date)
             }
           });
@@ -320,7 +333,12 @@ export default {
         var categoryTab = this.activeTab
         this.filtered = this.allData[categoryTab].filter(name => name.toLowerCase().includes(this.searchSubject.toLowerCase()));
       }
-    }
+    },
+    propsData: {
+      handler: function() {
+          this.updateDataChanges()
+      }
+    },
   },
   methods: {
     tab(currentTub){
@@ -389,7 +407,7 @@ export default {
       this.$emit('filter', filters, filterValue, this.allData)
     },
     closeFilterModal(){
-      if(!this.appliedFilters){
+      if(!this.appliedFilters && +localStorage.getItem('filters-count') === 0){
         this.allData = {
           Market:[],
           Group:[],
@@ -409,16 +427,36 @@ export default {
       }
       this.$emit('cancel')
     },
-  },
-  created() {
-    if(localStorage.getItem('last-applied-filters')) {
-      this.allFilters = JSON.parse(localStorage.getItem('last-applied-filters'))
-    }
-    if(localStorage.getItem('all-filter-data')) {
-      this.allData = JSON.parse(localStorage.getItem('all-filter-data'))
-    }
+    async updateDataChanges() {
+      await this.$store.dispatch("listModule/getAllLists", {page: this.currentPage, perPage: this.perPage});
+      this.lists.forEach(e => {
+        this.incomingList.Market.push(e.list_market)
+        this.incomingList.Group.push(e.list_group)
+        this.incomingList.Type.push(e.list_type)
+        this.incomingList.Source.push(e.list_source)
+        this.incomingList.RunDate.push(e.run_date)
+      });
+      this.subject = this.propsData
+      this.subject.forEach(el => {
+          this.incomingList.Errors.push(el.subject_error_type)
+      })
 
-  }
+      if(localStorage.getItem('applied-filters')) {
+        let lastFilters = JSON.parse(localStorage.getItem('applied-filters'))
+        for(let category in lastFilters){
+          this.allFilters[category] = lastFilters[category].filter(value => this.incomingList[category].includes(value));
+        }
+      }
+
+      if(localStorage.getItem('data-after-filtering')) {
+        let lastAllData = JSON.parse(localStorage.getItem('data-after-filtering'))
+        for(let category in lastAllData){
+          this.allData[category] = lastAllData[category].filter(value => this.incomingList[category].includes(value));
+        }
+      }
+      // this.applyFilters(this.allFilters)
+    },
+  },
 }
 </script>
 
