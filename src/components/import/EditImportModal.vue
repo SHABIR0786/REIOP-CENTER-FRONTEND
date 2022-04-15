@@ -1,5 +1,5 @@
 <template>
-    <b-modal @close="$emit('cancel')" v-model="showModalCopy" size="xl" centered no-close-on-backdrop>
+    <b-modal content-class="edit-modal" @close="$emit('cancel')" v-model="showModalCopy" size="xl" centered no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
                 Edit Import
@@ -173,8 +173,27 @@
                 </b-col>
               </b-row>
             </b-row>
-
         </b-container>
+        <div id="mapped-fields" class="w-100 mb-3 p-3 mt-3">
+          Mapped Fields
+        </div>
+        <b-table
+            id="list-table"
+            small
+            striped
+            hover
+            :fields="fields"
+            :items="mappedFields"
+            responsive
+            :sticky-header="true"
+        >
+          <template #table-busy>
+            <div class="text-center" my-2>
+              <b-spinner class="align-middle"></b-spinner>
+              <strong>Loading...</strong>
+            </div>
+          </template>
+        </b-table>
         <template #modal-footer>
             <div class="w-100">
                 <b-button variant="primary" size="sm" class="float-right" @click="$emit('cancel')">
@@ -187,14 +206,14 @@
 
 </template>
 <script>
-// import {mapGetters} from "vuex";
 import DeleteModal from "@/components/deleteModal/DeleteModal";
+
 
 export default {
     name: 'EditImportModal',
     props: {
         showModal: {
-            type: Boolean,
+          type: Boolean,
           default: false,
         },
       data: {
@@ -208,6 +227,7 @@ export default {
 
     DeleteModal,
   },
+
 
     methods: {
         edit() {
@@ -246,9 +266,14 @@ export default {
                 error_emails: '',
                 error_phones: '',
             },
+          fields: [
+            {key:"mapped_from",  label: "From", sortable: true},
+            {key:"mapped_to",   label: "To", sortable: true},
+          ],
           isReadOnly: true,
           showDeleteModal: false,
           showModalCopy: false,
+          mappedFields: [],
         }
     },
 
@@ -256,6 +281,19 @@ export default {
         showModal() {
             this.showModalCopy = this.showModal
         },
+      showModalCopy() {
+
+        let obj = JSON.parse(this.data.mapped_fields);
+        Object.keys(obj).forEach((key) => {
+          if (obj[key] === '') {
+            delete obj[key];
+          }
+          else{
+            this.mappedFields.push({ mapped_from: key, mapped_to: obj[key] })
+          }
+        });
+
+      },
         data: {
           deep: true,
           handler() {
@@ -263,15 +301,21 @@ export default {
           }
         }
     },
-  created() {
-      //this.editData = {...this.data}
-      this.showModalCopy = this.showModal
-  }
+    created() {
+        //this.editData = {...this.data}
+        this.showModalCopy = this.showModal
+    }
 }
 </script>
-<style>
-    .close-icon {
+<style scoped>
+    >>>.close-icon {
         font-size: 30px;
         cursor: pointer;
+    }
+    >>> #mapped-fields{
+      background-color: #e4f2f2e0!important;
+    }
+    >>> .edit-modal {
+      max-height: 70vh !important;
     }
 </style>
