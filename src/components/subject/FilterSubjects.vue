@@ -324,7 +324,7 @@ export default {
             }
           });
         for(let category in this.allData){
-          this.allData[category].sort((a, b) => (a > b ? 1 : -1));
+          this.allData[category].sort((a, b) => a.localeCompare(b))
         }
       }
     },
@@ -371,7 +371,7 @@ export default {
         }
       }
       for(let category in this.allData){
-        this.allData[category].sort((a, b) => (a > b ? 1 : -1));
+        this.allData[category].sort((a, b) => a.localeCompare(b))
       }
     },
     clearAllFilters(allFilters){
@@ -392,7 +392,7 @@ export default {
         }
       }
       for(let category in this.allData){
-        this.allData[category].sort((a, b) => (a > b ? 1 : -1));
+        this.allData[category].sort((a, b) => a.localeCompare(b))
       }
     },
     applyFilters(filters){
@@ -436,8 +436,8 @@ export default {
         this.incomingList.Source.push(e.list_source)
         this.incomingList.RunDate.push(e.run_date)
       });
-      this.subject = this.propsData
-      this.subject.forEach(el => {
+      this.subjectData = this.propsData
+      this.subjectData.forEach(el => {
           this.incomingList.Errors.push(el.subject_error_type)
       })
 
@@ -446,6 +446,13 @@ export default {
         for(let category in lastFilters){
           this.allFilters[category] = lastFilters[category].filter(value => this.incomingList[category].includes(value));
         }
+        let filterValue = 0;
+        for (let i in this.allFilters){
+          filterValue += this.allFilters[i].length
+        }
+        localStorage.removeItem('applied-filters')
+        localStorage.setItem('applied-filters', JSON.stringify(this.allFilters))
+        localStorage.setItem('filters-count', filterValue)
       }
 
       if(localStorage.getItem('data-after-filtering')) {
@@ -453,7 +460,15 @@ export default {
         for(let category in lastAllData){
           this.allData[category] = lastAllData[category].filter(value => this.incomingList[category].includes(value));
         }
+        let filterValue = 0;
+        for (let i in this.allFilters){
+          filterValue += this.allFilters[i].length
+        }
+        localStorage.removeItem('data-after-filtering')
+        localStorage.setItem('data-after-filtering',JSON.stringify(this.allData))
+        localStorage.setItem('filters-count', filterValue)
       }
+      this.$emit('finish-process')
       // this.applyFilters(this.allFilters)
     },
   },
