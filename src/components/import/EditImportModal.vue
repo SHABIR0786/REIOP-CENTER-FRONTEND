@@ -1,5 +1,5 @@
 <template>
-    <b-modal content-class="edit-modal" @close="$emit('cancel')" v-model="showModalCopy" size="xl" centered no-close-on-backdrop>
+    <b-modal body-class="edit-modal" @close="$emit('cancel')" v-model="showModalCopy" size="xl" centered no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
                 Edit Import
@@ -316,6 +316,7 @@ export default {
       background-color: #e4f2f2e0!important;
     }
     >>> .edit-modal {
-      max-height: 70vh !important;
+      max-height: 62vh;
+      overflow-y: auto;
     }
 </style>
