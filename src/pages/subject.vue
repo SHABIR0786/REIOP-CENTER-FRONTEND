@@ -127,7 +127,7 @@
         <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-        <filter-subjects @filter="filter" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
+        <filter-subjects @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
     </div>
 </template>
 <script>
@@ -152,6 +152,7 @@ export default {
             isBusy: false,
             showModal: false,
             perPage: 20,
+            isFinishedFilterSubjects: false,
             currentPage: 1,
             editedItem: {},
             showDeleteModal: false,
@@ -165,7 +166,14 @@ export default {
             filteredOrAllData:[],
             itemsCount:0,
             totalFilters:0,
-            filtersName:{},
+            filtersName:{
+              Market:[],
+              Group:[],
+              Type:[],
+              Source:[],
+              Errors:[],
+              RunDate:[],
+            },
             searchInFiltered: {}
         }
     },
@@ -276,6 +284,33 @@ export default {
       filtersCount(total){
         this.totalFilters = total
         return  total
+      },
+      async doCreatedOperation() {
+        this.$store.dispatch('subjectModule/getTotal')
+        try {
+         // this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
+            this.filter(filters, filterValue)
+          } else {
+            await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
+          }
+         this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          this.$store.dispatch('uxModule/hideLoader')
+        }
+        if (this.$route.query.subject_id) {
+          this.$store.dispatch('subjectModule/getSubject', this.$route.query.subject_id).then(() => {
+            this.editedItem = this.selectedSubject
+            this.showModal = true
+          });
+        }
+        this.filteredOrAllData = this.items;
+        this.itemsCount = this.total;
       }
     },
     watch: {
@@ -326,6 +361,11 @@ export default {
               }
             }
         },
+      isFinishedFilterSubjects() {
+        if(this.isFinishedFilterSubjects) {
+          this.doCreatedOperation()
+        }
+      },
     }
 }
 </script>
