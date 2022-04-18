@@ -288,18 +288,14 @@ export default {
     },
     async upload() {
       await this.$store.dispatch('uxModule/setLoading')
-
-      const mapping = [];
+      let mapping = [];
       this.uploadedAllFields.forEach(fromF => {
-        let toItem = '';
-        this.mappedItems.forEach(mappedI => {
-          if (mappedI.fromField === fromF) {
-            toItem = mappedI.toField;
-          }
-        })
-
-        mapping.push({fromField: fromF, toField: toItem, action: ""});
+        mapping.push({fromField: fromF, toField: "", action: ""});
       })
+      this.mappedItems.forEach(item => {
+        mapping = mapping.filter(el => el.fromField !== item.fromField)
+      })
+      mapping = [...this.mappedItems, ...mapping ]
       await this.$store.dispatch('importModule/uploadExcelDataV2', {
         file: this.file,
         mappedItems: mapping,
