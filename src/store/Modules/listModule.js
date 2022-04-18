@@ -10,15 +10,13 @@ const state = {
         {key:"list_group", label: "Group", sortable: true},
         {key:"list_type", label: "Type", sortable: true},
         {key:"list_source", label: "Source", sortable: true},
-        // {key:"delete", label: ""},
 
         // Custom fields
         {key:"list_pull_date", label: "Last Pull Date", sortable: true},
         {key:"created_at", label: "Upload Date", sortable: true},
         {key:"updated_at", label: "Last Edit Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},
-        // {key:"list_upload_date", label: "Upload Date", sortable: true},
-        // {key:"list_last_edit_date", label: "Last Edit Date", sortable: true},
+
     ],
     lists: [],
     total: 0,
@@ -38,7 +36,6 @@ const mutations = {
             e.list_total_subject = e.subjects_count;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
-            e.run_date   = e.list_run_month + '/' + e.list_run_year;
         })
         state.lists = JSON.stringify(data);
     },
