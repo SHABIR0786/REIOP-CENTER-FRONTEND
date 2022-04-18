@@ -306,6 +306,7 @@ export default {
               this.allData.Errors.push(el.subject_error_type)
             }
           })
+
           this.lists.forEach(el =>{
             if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
               this.allData.Market.push(el.list_market)
@@ -319,8 +320,15 @@ export default {
             if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
               this.allData.Source.push(el.list_source)
             }
-            if (el.run_date && !this.allData.RunDate.includes(el.run_date) && !this.allFilters.RunDate.includes(el.run_date)){
-              this.allData.RunDate.push(el.run_date)
+            if (el.run_year &&  el.run_month){
+              let runYear = el.run_year.split(",")
+              let runMonth = el.run_month.split(",")
+              for(let i = 0; i < runYear.length; i++){
+               let  run_date = runMonth[i]+'/'+runYear[i];
+                if (!this.allData.RunDate.includes(run_date) && !this.allFilters.RunDate.includes(run_date)){
+                  this.allData.RunDate.push(run_date)
+                }
+              }
             }
           });
         for(let category in this.allData){
@@ -353,7 +361,6 @@ export default {
         this.allFilters[this.activeTab].push(item);
         this.allData[this.activeTab].splice(index, 1)
       }
-
     },
     resetFilter (item,index) {
       if (this.activeTab === 'allFilters'){
@@ -434,7 +441,11 @@ export default {
         this.incomingList.Group.push(e.list_group)
         this.incomingList.Type.push(e.list_type)
         this.incomingList.Source.push(e.list_source)
-        this.incomingList.RunDate.push(e.run_date)
+        let runYear = e.run_year.split(",")
+        let runMonth = e.run_month.split(",")
+        for(let i = 0; i < runYear.length; i++){
+          this.incomingList.RunDate.push(runMonth[i]+'/'+runYear[i])
+        }
       });
       this.subjectData = this.propsData
       this.subjectData.forEach(el => {
@@ -469,7 +480,6 @@ export default {
         localStorage.setItem('filters-count', filterValue)
       }
       this.$emit('finish-process')
-      // this.applyFilters(this.allFilters)
     },
   },
 }
