@@ -281,8 +281,11 @@ export default {
         showModal() {
             this.showModalCopy = this.showModal
         },
-      showModalCopy() {
 
+      showModalCopy() {
+       if (!this.data.mapped_fields){
+         return
+       }
         let obj = JSON.parse(this.data.mapped_fields);
         Object.keys(obj).forEach((key) => {
           if (obj[key] === '') {
@@ -292,14 +295,14 @@ export default {
             this.mappedFields.push({ mapped_from: key, mapped_to: obj[key] })
           }
         });
-
       },
-        data: {
-          deep: true,
-          handler() {
-            this.editData = {...this.data}
-          }
+
+      data: {
+        deep: true,
+        handler() {
+          this.editData = {...this.data}
         }
+      }
     },
     created() {
         //this.editData = {...this.data}
