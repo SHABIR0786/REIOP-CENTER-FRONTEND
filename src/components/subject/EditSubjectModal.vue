@@ -247,7 +247,7 @@
                         hover
                         :busy="isBusy"
                         :fields="relatedTableFields"
-                        :items="tabData.data"
+                        :items="tabData"
                         responsive
                         :per-page="0"
                         :sticky-header="true"
@@ -372,8 +372,7 @@ export default {
             this.$emit('save', this.subject);
         },
         currentModal(){
-          this.currentPage = 1;
-          this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.lists[0].list_hash, page: 1, perPage:20})
+          this.$store.dispatch(`listModule/getSubjectRelatedList`, {...this.propsData})
         },
         editSellerItem(item) {
             const route = '/sellers?seller_id=' + item.id;
@@ -396,7 +395,7 @@ export default {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
             listFields: 'listModule/fields',
-            tabData: 'listModule/tabData',
+            tabData: 'listModule/subjectRelatedList',
         }),
         rows() { return this.total ? this.total : 1 }
     },
@@ -409,7 +408,7 @@ export default {
     },
     watch: {
         showModal() {
-            this.subject = {...this.propsData}
+          this.subject = {...this.propsData}
         }
     }
 
