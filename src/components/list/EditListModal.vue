@@ -74,35 +74,35 @@
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Subjects " class="mb-2">
-                            <b-form-input readonly v-model="list.subjects_count"></b-form-input>
+                            <b-form-input readonly v-model="uniqueSubjects"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Sellers" class="mb-2">
-                            <b-form-input readonly v-model="list.sellers_count"></b-form-input>
+                            <b-form-input readonly v-model="uniqueSellers"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Phones" class="mb-2">
-                            <b-form-input readonly v-model="list.phones_count"></b-form-input>
+                            <b-form-input readonly v-model="uniquePhones"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Emails" class="mb-2">
-                            <b-form-input readonly v-model="list.emails_count"></b-form-input>
+                            <b-form-input readonly v-model="uniqueEmails"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Golden Address" class="mb-2">
-                            <b-form-input readonly v-model="list.golden_addresses_count"></b-form-input>
+                            <b-form-input readonly v-model="uniqueGoldens"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
@@ -493,8 +493,6 @@ export default {
             this.$emit('save', this.list);
         },
       currentModal(){
-        // this.modalName  = modalName;
-        // this.tableName  = tableName;
         this.currentPage = 1;
         this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.list_hash, page: 1, perPage:this.perPage})
       },
@@ -512,23 +510,6 @@ export default {
           perPage: 20,
           currentPage: 1,
           pageOptions: [10, 20, 50],
-            list: {
-                list_type: '',
-                list_group: '',
-                list_market: '',
-                list_source: '',
-                list_run_month: '',
-                list_run_year: '',
-                list_stack: '',
-                list_hash: '',
-                user_id: '',
-                subject_id: '',
-                subjects_count:'',
-                sellers_count:'',
-                phones_count:'',
-                emails_count:'',
-                golden_addresses_count:'',
-            },
           isReadOnly: true,
           isBusy: false,
           phoneTableFields: null,
@@ -537,6 +518,29 @@ export default {
           subjectTableFields: null,
           modalName:'sellers',
           tableName:'Seller',
+          uniqueSubjects: 0,
+          uniqueSellers: 0,
+          uniquePhones: 0,
+          uniqueEmails: 0,
+          uniqueGoldens: 0,
+
+          list: {
+            list_type: '',
+            list_group: '',
+            list_market: '',
+            list_source: '',
+            list_run_month: '',
+            list_run_year: '',
+            list_stack: '',
+            list_hash: '',
+            user_id: '',
+            subject_id: '',
+            subjects_count:'',
+            sellers_count:'',
+            phones_count:'',
+            emails_count:'',
+            golden_addresses_count:'',
+          },
           relatedTableFields: [
             {key:"id",  label: "Id", sortable: true},
             {key:"list_run_year",  label: "Run Year", sortable: true},
@@ -559,15 +563,30 @@ export default {
       rows() { return this.tabData.total ? this.tabData.total : 1 }
     },
     mounted () {
+
       this.sellerTableFields = this.sellerFields.filter(s => s.key !== 'seller_total_subjects' &&
           s.key !== 'seller_total_subjects' && s.key !== 'seller_total_phones' && s.key !== 'seller_total_emails' &&
           s.key !== 'seller_mailing_address_line2' && s.key !== 'seller_company_owned' && s.key !== 'created_at' &&
           s.key !== 'updated_at' && s.key !== 'user_id' && s.key !== 'actions' && s.key !== 'delete')
     },
     watch: {
-        showModal() {
-          this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
+        async showModal() {
+         await this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
           this.list= {...this.propsData}
+          if (this.tabData.data){
+            this.uniqueSubjects = 0
+            this.uniqueSellers = 0
+            this.uniquePhones = 0
+            this.uniqueEmails = 0
+            this.uniqueGoldens = 0
+            this.tabData.data.forEach(e => {
+              this.uniqueSubjects += e.subjects_count
+              this.uniqueSellers += e.sellers_count
+              this.uniquePhones += e.phones_count
+              this.uniqueEmails += e.emails_count
+              this.uniqueGoldens += e.golden_addresses_count
+            })
+          }
         },
       currentPage: {
         handler: function() {
@@ -576,7 +595,7 @@ export default {
       },
       perPage: {
         handler: function () {
-          this.$store.dispatch('listModule/currentModal', {data:this.propsData.id, page:this.currentPage, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
+          this.$store.dispatch('listModule/currentModal', {data:this.propsData.id, page:1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
         }
       },
     }
