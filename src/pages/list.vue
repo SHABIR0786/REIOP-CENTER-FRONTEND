@@ -6,12 +6,12 @@
                 <b-col cols="8" class="d-flex">
                     <div class="info total">
                         <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
-                        <div>{{total}}</div>
+                        <div>{{totalAllTime}}</div>
                         <div>Total</div>
                     </div>
                     <div class="info latest">
                         <b-icon class="mr-2 cursor-pointer" icon="arrow-up" variant="primary" @click="editItem(data.item)"></b-icon>
-                        <div>{{total}}</div>
+                        <div>{{totalCurrentMonth}}</div>
                         <div>Added This Month</div>
                     </div>
                 </b-col>
@@ -169,6 +169,7 @@ export default {
             showAddModal: false,
             bulkDeleteItems: [],
             allSelected: false,
+            totalAllTime: 0,
         }
     },
     computed: {
@@ -177,11 +178,17 @@ export default {
             fields: 'listModule/fields',
             items: 'listModule/lists',
             total: 'listModule/total',
-            tabData: 'listModule/list'
+            tabData: 'listModule/list',
+            totalCurrentMonth: 'listModule/totalCurrentMonth'
         }),
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
+        this.$store.dispatch("listModule/getTotalCurrentMonth")
+         this.items.forEach(e => {
+           this.totalAllTime +=e.list_total_individual_list
+        })
+
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('listModule/getTotal')
         try {
