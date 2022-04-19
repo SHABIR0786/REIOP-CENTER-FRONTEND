@@ -27,6 +27,7 @@ const state = {
     typeList: [],
     sourceList: [],
     list: [],
+    subjectRelatedList: [],
 }
 
 const mutations = {
@@ -83,6 +84,12 @@ const mutations = {
     },
     SET_SOYRCE_LIST(state, payload) {
         state.sourceList = payload
+    },
+    SUBJECT_RELATED_LIST(state, payload) {
+        payload.data.forEach(e =>{
+            delete e.subjects;
+        })
+        state.subjectRelatedList = JSON.stringify(payload.data);
     },
     VUEX_STORE(state) {
         state.lists = [];
@@ -157,6 +164,13 @@ const actions = {
         })
     },
 
+    async getSubjectRelatedList({ commit }, data) {
+        return await api.post(`/lists/subjectRelatedLists`, {...data}).then((response) => {
+            commit('SUBJECT_RELATED_LIST', response.subjectRelatedList)
+            return response
+        })
+    },
+
     async currentModal({ commit }, {data, page, perPage}) {
         return await api.get(`/lists/modal?listHash=${data}&page=${page}&perPage=${perPage}`, {...data}).then((response) => {
             commit('SHOW_TABS', response.tabData)
@@ -214,6 +228,12 @@ const getters = {
     list: ({ list }) => {
         if (typeof list === 'string') {
             return JSON.parse(list);
+        }
+        return [];
+    },
+    subjectRelatedList: ({ subjectRelatedList }) => {
+        if (typeof subjectRelatedList === 'string') {
+            return JSON.parse(subjectRelatedList);
         }
         return [];
     },
