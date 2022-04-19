@@ -155,6 +155,8 @@ const actions = {
         delete data.phones_count;
         delete data.golden_addresses_count;
         delete data.emails_count;
+        delete data.run_month;
+        delete data.run_year;
         data.list_hash = data.list_market + '_' + data.list_type + '_' +  data.list_group + '_' + data.list_source
         return await api.put(`/lists/${data.id}`, {...data}).then((response) => {
             commit('EDIT_LIST', data)
