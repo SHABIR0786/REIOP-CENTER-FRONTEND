@@ -55,6 +55,10 @@ const mutations = {
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
+    GET_TOTAL_CURRENT_MONTH(state, payload) {
+        state.totalCurrentMonth = payload;
+    },
+
     ADD_LIST(state, payload) {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload.id)
@@ -200,6 +204,14 @@ const actions = {
             return response
         })
     },
+    async getTotalCurrentMonth({ commit }) {
+        return await api.get(`/totals/listsCurrentMonth`).then((response) => {
+            if (response && response.count > -1) {
+                commit ('GET_TOTAL_CURRENT_MONTH', response.count);
+            }
+            return response
+        })
+    },
     async deleteMultipleLists({ commit }, data) {
         return await api.deleteAPI(`/lists/deleteAll/${data}`).then((response) => {
             commit('DELETE_MULTIPLE_LISTS', data)
@@ -220,6 +232,7 @@ const getters = {
         return [];
     },
     total: ({total}) => total,
+    totalCurrentMonth: ({totalCurrentMonth}) => totalCurrentMonth,
     tabData: state => state.tabData,
     marketList: state => state.marketList,
     groupList: state => state.groupList,
