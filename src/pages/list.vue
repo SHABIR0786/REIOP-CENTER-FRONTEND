@@ -184,10 +184,6 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        this.$store.dispatch("listModule/getTotalCurrentMonth")
-         this.items.forEach(e => {
-           this.totalAllTime +=e.list_total_individual_list
-        })
 
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('listModule/getTotal')
@@ -203,6 +199,10 @@ export default {
             this.showModal = true
           })
         }
+      this.$store.dispatch("listModule/getTotalCurrentMonth")
+      this.items.forEach(e => {
+        this.totalAllTime +=e.list_total_individual_list
+      })
     },
     methods: {
         editItem(item) {
