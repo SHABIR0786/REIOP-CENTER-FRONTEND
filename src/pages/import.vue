@@ -14,15 +14,32 @@
       </b-col>
     </b-row>
     <b-row class="mt-4 mb-3">
-      <b-col cols="12" md="3">
-        <fields-card class="field-section h-100" :fromField="fromField" :tableFields="uploadedFields"
-                     :title="`Uploaded Fields`" @selectItem="selectUploadedField"/>
-      </b-col>
       <b-col cols="12" md="4">
-        <fields-card class="target-section h-100" :toField="toField" :importedFields="importedFields"
-                     :title="`Target Fields`" @selectItem="selectTargetField"/>
+        <fields-card class="field-section h-100"
+                     :fromField="fromField"
+                     :tableFields="uploadedFields"
+                     :title="`Uploaded Fields`"
+                     @selectItem="selectUploadedField"
+
+        />
       </b-col>
-      <b-col cols="12" md="4" offset-md="1">
+      <b-col cols="12" md="3">
+        <fields-card class="target-section h-100"
+                     :toField="toField"
+                     :importedFields="importedFields"
+                     :title="`Target Fields`"
+                     @selectItem="selectTargetField"
+                     @dblclick="mapFields"
+                     />
+      </b-col>
+      <b-col cols="12" md="1">
+        <b-row class="map-button text-right">
+          <b-col>
+            <b-button variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
+          </b-col>
+        </b-row>
+      </b-col>
+      <b-col cols="12" md="4" >
         <mapped-fields class="mapped-fields h-100" :items="mappedItems"
                        @clearMappedItem="clearMappedItem"></mapped-fields>
         <b-row class="text-right mt-5">
@@ -30,14 +47,7 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col cols="12" md="8">
-        <b-row class="map-button text-right">
-          <b-col>
-            <b-button variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
-          </b-col>
-        </b-row>
-      </b-col>
-      <b-col class="text-right" cols="12" md="4">
+      <b-col class="text-right" cols="12" md="12">
         <b-btn variant="primary" @click="confirm(mappedItems)">Import</b-btn>
       </b-col>
     </b-row>
@@ -237,6 +247,9 @@ export default {
       this.toField = field
     },
     mapFields() {
+      if (!this.fromField || !this.toField){
+        return
+      }
       let lastElementId = 0;
       let status        = false;
       this.mappedItems.forEach(item => {
@@ -267,6 +280,8 @@ export default {
       if (table !== 'seller' && table !== 'email' && table !== 'phone') {
         const toIndex = this.importedFields[table].findIndex(item => item.field === this.toField)
         this.importedFields[table].splice(toIndex, 1)
+        const fromIndex = this.uploadedFields.indexOf(this.fromField)
+        this.uploadedFields.splice(fromIndex, 1)
       }
 
       this.fromField = null
@@ -282,7 +297,10 @@ export default {
         this.importedFields[table].push({
           'label': this.mappedItems[index].toField,
           'field': this.mappedItems[index].toField
-        })
+        });
+        this.uploadedFields.unshift(
+          this.mappedItems[index].fromField
+       )
       }
       this.mappedItems.splice(index, 1)
     },
