@@ -93,10 +93,11 @@
           <edit-import-modal v-if="!isReload" :data="editData" :showModal="showModal"  @cancel="showModal=false" @save="save"></edit-import-modal>
           <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
           <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
+          <skip-variant v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipOption" @goBack="goBack"></skip-variant>
           <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
-          <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails" @goBack="goBack"></map-fields>
+          <select-skip-data-source v-if="step_3_skip" :importDetails="importDetails" @skipTraceData="setSkipSource" @goBack="goBack"></select-skip-data-source>
+          <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails"  @goBack="goBack"></map-fields>
           <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
-          <select-skip-data-source v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipSource" @goBack="goBack"></select-skip-data-source>
           <confirm-modal :showModal="showNoErrorsModal"  @modalResponse="showNoErrorsModal=false">
             <template v-slot:noError> <h4>No errors in this file</h4></template>
           </confirm-modal>
@@ -111,6 +112,7 @@ import UploadType from "../components/import/UploadType";
 import PullSettings from "../components/import/PullSettings";
 import MapFields from "../components/import/MapFields";
 import DeleteModal from "../components/deleteModal/DeleteModal";
+import SkipVariant from "@/components/import/SkipVariant";
 import SelectSkipDataSource from "../components/import/SelectSkipDataSource";
 import EditImportModal from "@/components/import/EditImportModal";
 import ConfirmModal from "@/components/slotModal/SlotModal";
@@ -127,6 +129,7 @@ export default {
       DeleteModal,
       EditImportModal,
       ConfirmModal,
+      SkipVariant
     },
     data () {
       return {
@@ -140,6 +143,7 @@ export default {
         step_2: false,
         step_2_skip: false,
         step_3: false,
+        step_3_skip:false,
         step_4: false,
         currentPage: 2,
         download_type: '',
@@ -154,6 +158,7 @@ export default {
         showNoErrorsModal: false,
         currentItemErrorLines: null,
         statusBackSkip:false,
+        statusBackValidity:false
 
       }
     },
@@ -205,24 +210,29 @@ export default {
           this.$store.dispatch('uxModule/hideLoader');
         }
       },
+
       importTypeResponse(response) {
        if(response) {
          this.importDetails.import_type = response;
+          this.importDetails.skip_variant = ''
          if (response === 'existing') {
              this.step_1 = false;
              this.step_2 = false;
              this.step_2_skip = true;
              this.step_3 = false;
+             this.step_3_skip = false;
              this.step_4 = false;
          } else {
              this.step_1 = false;
              this.step_2 = true;
              this.step_2_skip = false;
              this.step_3 = false;
+             this.step_3_skip = false;
              this.step_4 = false;
          }
        }
       },
+
       uploadTypeResponse (response) {
         if(response) {
           this.importDetails.upload_type = response;
@@ -232,6 +242,54 @@ export default {
           this.step_4 = false;
         }
       },
+
+      pullSettingsResponse (response) {
+        if(response) {
+          this.importDetails.pull_settings = response;
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false
+          this.step_3_skip = false;
+          this.step_3 = false;
+          this.step_4 = true;
+          this.statusBackSkip = false;
+          this.statusBackValidity = false;
+        }
+      },
+
+      setSkipOption (response) {
+        this.importDetails.skip_variant = response;
+        if (response === 'skip_trace') {
+          this.statusBackSkip =true;
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false;
+          this.step_3_skip = true;
+          this.step_3 = false;
+          this.step_4 = false;
+        } else {
+          this.statusBackValidity =true;
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false;
+          this.step_3_skip = false;
+          this.step_3 = false;
+          this.step_4 = true;
+        }
+      },
+
+      setSkipSource (response) {
+          if(response) {
+              this.importDetails.skip_options = response;
+              this.statusBackSkip = true;
+              this.step_1 = false;
+              this.step_2 = false;
+              this.step_2_skip = false
+              this.step_3 = false;
+              this.step_3_skip = false;
+              this.step_4 = true;
+          }
+      },
       goBack(response) {
         if (response === 'UploadType') {
           this.step_1 = true;
@@ -239,55 +297,58 @@ export default {
           this.step_2_skip = false
           this.step_3 = false;
           this.step_4 = false;
-        } else if (response === 'PullSettings' && !this.statusBackSkip) {
+        } else if (response === 'PullSettings') {
           this.step_1 = false;
           this.step_2 = true;
           this.step_2_skip = false
           this.step_3 = false;
           this.step_4 = false;
-        }else if(response === 'PullSettings' && this.statusBackSkip){
+        }
+        else if (response === 'MapFields' &&
+            !this.statusBackSkip &&
+            !this.statusBackValidity) {
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false
+          this.step_3_skip = false;
+          this.step_3 = true;
+          this.step_4 = false;
+        } else if(response === 'MapFields' &&
+            this.statusBackSkip){
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false
+          this.step_3_skip = true;
+          this.step_3 = false;
+          this.step_4 = false;
+          this.statusBackSkip =false
+        }else if(response === 'MapFields' &&
+            this.statusBackValidity){
           this.step_1 = false;
           this.step_2 = false;
           this.step_2_skip = true
+          this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = false;
           this.statusBackSkip =false
         }
-        else if (response === 'MapFields') {
+        else if (response === 'SkipSource') {
           this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = true
+          this.step_3_skip = false;
+          this.step_3 = false;
+          this.step_4 = false;
+        }else if (response === 'SkipOption') {
+          this.step_1 = true;
           this.step_2 = false;
           this.step_2_skip = false
-          this.step_3 = true;
-          this.step_4 = false;
-        } else if (response === 'SkipSource') {
-            this.step_1 = true;
-            this.step_2 = false;
-            this.step_2_skip = false
-            this.step_3 = false;
-            this.step_4 = false;
-        }
-      },
-      pullSettingsResponse (response) {
-        if(response) {
-          this.importDetails.pull_settings = response;
-
-          this.step_1 = false;
-          this.step_2 = false;
+          this.step_3_skip = false;
           this.step_3 = false;
-          this.step_4 = true;
+          this.step_4 = false;
         }
       },
-      setSkipSource (response) {
-          if(response) {
-              this.importDetails.skip_source = response;
-              this.statusBackSkip = true;
-              this.step_1 = false;
-              this.step_2 = false;
-              this.step_2_skip = false
-              this.step_3 = true;
-              this.step_4 = false;
-          }
-      },
+
       importModal(item) {
         this.currentItemErrorLines = +item.error_number
         this.showImportModal = true;

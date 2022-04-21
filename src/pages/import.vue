@@ -82,7 +82,7 @@ const utf8 = require('utf8');
 
 export default {
   name: "Import",
-  props: ['upload_type', 'list_settings', 'skip_source'],
+  props: ['upload_type', 'list_settings', 'skip_variant'],
   components: {
     FieldsCard,
     MappedFields,
@@ -123,7 +123,7 @@ export default {
   },
   async created() {
     await this.$store.dispatch('importModule/loadVisibleFields')
-    if (this.upload_type) {
+    if (this.upload_type && !this.skip_variant) {
       if (this.upload_type === 'single') {
         this.importedFields = {
           seller: this.sellerFields,
@@ -144,12 +144,22 @@ export default {
           subject: this.subjectFields,
         }
       }
-    } else if (this.skip_source) {
-      this.importedFields = {
-        email: this.emailFields,
-        golden_address: this.goldenAddressFields,
-        phone: this.phoneNumberFields,
+    } else if (this.skip_variant) {
+      if (this.skip_variant === 'skip_trace'){
+        this.importedFields = {
+          email: this.emailFields.filter(function(el) { return el.field === "email_address" }),
+          golden_address: this.goldenAddressFields,
+          phone: this.phoneNumberFields.filter(function(el) { return el.field === "phone_number" }),
+          seller: this.sellerFields.filter(function(el) { return el.field !== "seller_company_owned" }),
+          subject: this.subjectFields.filter(function(el) { return el.field !== "subject_type" &&  el.field !== "subject_age" && el.field !== "subject_county"}),
+        }
+      }else if(this.skip_variant === 'validate'){
+        this.importedFields = {
+          email: this.emailFields,
+          phone: this.phoneNumberFields,
+        }
       }
+
     }
   },
   methods: {
@@ -318,7 +328,7 @@ export default {
         mappedItems: mapping,
         url: this.url,
         list: this.list_settings,
-        skipSource: this.skip_source,
+        skipSource: this.skip_variant,
       })
       location.reload()
     }
