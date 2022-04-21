@@ -74,35 +74,35 @@
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Subjects " class="mb-2">
-                            <b-form-input readonly v-model="uniqueSubjects"></b-form-input>
+                            <b-form-input readonly v-model="list.subjects_unique_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Sellers" class="mb-2">
-                            <b-form-input readonly v-model="uniqueSellers"></b-form-input>
+                            <b-form-input readonly v-model="list.sellers_unique_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Phones" class="mb-2">
-                            <b-form-input readonly v-model="uniquePhones"></b-form-input>
+                            <b-form-input readonly v-model="list.phones_unique_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Emails" class="mb-2">
-                            <b-form-input readonly v-model="uniqueEmails"></b-form-input>
+                            <b-form-input readonly v-model="list.emails_unique_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
                       <b-row>
                         <b-col cols="12">
                           <b-input-group prepend="Unique Golden Address" class="mb-2">
-                            <b-form-input readonly v-model="uniqueGoldens"></b-form-input>
+                            <b-form-input readonly v-model="list.golden_unique_count"></b-form-input>
                           </b-input-group>
                         </b-col>
                       </b-row>
@@ -518,11 +518,6 @@ export default {
           subjectTableFields: null,
           modalName:'sellers',
           tableName:'Seller',
-          uniqueSubjects: 0,
-          uniqueSellers: 0,
-          uniquePhones: 0,
-          uniqueEmails: 0,
-          uniqueGoldens: 0,
 
           list: {
             list_type: '',
@@ -573,20 +568,6 @@ export default {
         async showModal() {
          await this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName})
           this.list= {...this.propsData}
-          if (this.tabData.data){
-            this.uniqueSubjects = 0
-            this.uniqueSellers = 0
-            this.uniquePhones = 0
-            this.uniqueEmails = 0
-            this.uniqueGoldens = 0
-            this.tabData.data.forEach(e => {
-              this.uniqueSubjects += e.subjects_count
-              this.uniqueSellers += e.sellers_count
-              this.uniquePhones += e.phones_count
-              this.uniqueEmails += e.emails_count
-              this.uniqueGoldens += e.golden_addresses_count
-            })
-          }
         },
       currentPage: {
         handler: function() {
