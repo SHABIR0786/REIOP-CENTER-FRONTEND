@@ -3,7 +3,7 @@
         <h3>New Import</h3>
         <hr>
         <div class="type-container">
-            <h3>Step 2: Select Skip Data Source</h3>
+            <h3>Step 3: Skip Trace Data</h3>
         </div>
         <div class="info-text">
             <p>Description of step for user: To be filled out later.</p>
@@ -14,11 +14,18 @@
                 <b-col class="d-flex justify-content-end flex-column">
                     <b-row class="mb-2">
                         <b-col cols="9" class="mx-auto">
-                            <b-input-group prepend="Skip Source">
-                                <b-input v-model="skip_source"></b-input>
+                            <b-input-group  prepend="Skip Source">
+                                <b-input  v-model="skipOptions.skip_source"></b-input>
                             </b-input-group>
                         </b-col>
                     </b-row>
+                  <b-row class="mb-2">
+                    <b-col cols="9" class="mx-auto">
+                      <b-input-group prepend="Skip Date">
+                        <b-input  v-model="skipOptions.skip_date"></b-input>
+                      </b-input-group>
+                    </b-col>
+                  </b-row>
                 </b-col>
             </b-row>
         </b-container>
@@ -38,7 +45,7 @@
                 <b-button
                         variant="primary"
                         @click="setSkipSource()"
-                        :disabled="!skip_source.length"
+                        :disabled="!skipOptions.skip_source.length || !skipOptions.skip_date.length"
                 >
                     Next
                 </b-button>
@@ -51,14 +58,24 @@
 <script>
     export default {
         name: "SelectSkipDataSource",
+        props: ['importDetails'],
         data () {
             return {
+              skipOptions: {
                 skip_source: '',
+                skip_date: '',
+              },
+
             }
         },
+      mounted() {
+        if (this.importDetails && this.importDetails.skip_options) {
+          this.skipOptions = this.importDetails.skip_options;
+        }
+      },
         methods: {
             setSkipSource() {
-                this.$emit('skipResponse', this.skip_source);
+                this.$emit('skipTraceData', this.skipOptions);
             },
             goBack() {
                 this.$emit('goBack', 'SkipSource');

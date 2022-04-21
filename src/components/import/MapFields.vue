@@ -3,14 +3,13 @@
       <h3>New Import</h3>
       <hr>
       <div class="type-container">
-<!--          <h3>Step {{importDetails.import_type === 'existing' ? 3 : 4}}: Map Fields</h3>-->
-          <h3>Step 4: Map Fields</h3>
+          <h3>Step {{importDetails.skip_variant === 'validate' ? 3 : 4}}: Map Fields</h3>
       </div>
       <div class="info-text">
           <p>Description of step for user: To be filled out later.</p>
       </div>
       <hr>
-      <import :upload_type="upload_type" :list_settings="list_settings" :skip_source="this.skip_source" class="w-100 import-map"></import>
+      <import :upload_type="upload_type" :list_settings="list_settings" :skip_variant="this.skip_variant" class="w-100 import-map"></import>
 
       <b-row>
         <b-col cols="12" class="prev-btn">
@@ -37,7 +36,7 @@
       },
       data () {
           return {
-              skip_source: '',
+            skip_variant: '',
           }
       },
       mounted() {
@@ -50,9 +49,9 @@
                   this.upload_type = this.importDetails.upload_type;
               }
 
-              if(this.importDetails.skip_source) {
-                  this.skip_source = this.importDetails.skip_source;
-                  //this.list_settings = 'update_existing';
+              if(this.importDetails.skip_variant) {
+                  this.skip_variant = this.importDetails.skip_variant;
+                //this.list_settings = 'update_existing';
               }
           }
       },
