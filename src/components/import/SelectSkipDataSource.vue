@@ -22,7 +22,7 @@
                   <b-row class="mb-2">
                     <b-col cols="9" class="mx-auto">
                       <b-input-group prepend="Skip Date">
-                        <b-input  v-model="skipOptions.skip_date"></b-input>
+                        <b-input  v-model="skipOptions.skip_date" type="date"></b-input>
                       </b-input-group>
                     </b-col>
                   </b-row>
