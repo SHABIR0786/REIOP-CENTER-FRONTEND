@@ -83,7 +83,7 @@ export const actions = {
         })
     },
 
-    async uploadExcelDataV2({ commit }, {file, mappedItems, url, list, skipSource}) {
+    async uploadExcelDataV2({ commit }, {file, mappedItems, url, list, skipSource, mapOrder}) {
         const config = {headers: {'content-type': 'multipart/form-data; charset=UTF-8'}}
 
         let data = new FormData();
@@ -96,7 +96,11 @@ export const actions = {
         mappedItems.forEach(map => {
             mapObject[map.fromField] = map.toField;
         })
-
+        const mapSequence  = {};
+        mapOrder.forEach(map => {
+            mapSequence[map.fromField] = map.toField;
+        })
+        data.append('mapOrder', JSON.stringify(mapSequence));
         data.append('map', JSON.stringify(mapObject));
         return await api.post('/upload', data, config).then((response) => {
             commit('SET_UPLOADED', true)
