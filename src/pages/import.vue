@@ -149,7 +149,7 @@ export default {
         this.importedFields = {
           email: this.emailFields.filter(function(el) { return el.field === "email_address" }),
           golden_address: this.goldenAddressFields,
-          phone: this.phoneNumberFields.filter(function(el) { return el.field === "phone_number" }),
+          phone: this.phoneNumberFields.filter(function(el) { return el.field === "phone_number" || el.field === "phone_type"}),
           seller: this.sellerFields.filter(function(el) { return el.field !== "seller_company_owned" }),
           subject: this.subjectFields.filter(function(el) { return el.field !== "subject_type" &&  el.field !== "subject_age" && el.field !== "subject_county"}),
         }
