@@ -26,6 +26,7 @@ const state = {
     groupList: [],
     typeList: [],
     sourceList: [],
+    skipSourceList: [],
     list: [],
     subjectRelatedList: [],
 }
@@ -89,6 +90,9 @@ const mutations = {
     SET_SOYRCE_LIST(state, payload) {
         state.sourceList = payload
     },
+    SET_SKIP_SOURCE_LIST(state, payload) {
+        state.skipSourceList = payload
+    },
     SUBJECT_RELATED_LIST(state, payload) {
         payload.data.forEach(e =>{
             delete e.subjects;
@@ -119,6 +123,9 @@ const actions = {
     },
     saveSourceList({ commit }, payload) {
         commit('SET_SOYRCE_LIST', payload)
+    },
+    saveSkipSourceList({ commit }, payload) {
+        commit('SET_SKIP_SOURCE_LIST', payload)
     },
     async getAllLists({ commit, dispatch }, {page, perPage}) {
         return await api.get(`/lists?page=${page}&perPage=${perPage}`).then((response) => {
@@ -240,6 +247,7 @@ const getters = {
     groupList: state => state.groupList,
     typeList: state => state.typeList,
     sourceList: state => state.sourceList,
+    skipSourceList: state => state.skipSourceList,
     list: ({ list }) => {
         if (typeof list === 'string') {
             return JSON.parse(list);
