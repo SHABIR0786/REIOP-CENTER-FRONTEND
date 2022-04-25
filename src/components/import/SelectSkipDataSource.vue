@@ -66,7 +66,7 @@
         },
         computed: {
           ...mapGetters({
-            sourceList: 'listModule/sourceList',
+            sourceList: 'listModule/skipSourceList',
           })
         },
         props: ['importDetails','lists'],
@@ -109,7 +109,7 @@
             add (response) {
                 if(this.source.indexOf(response) === -1){
                   this.source.splice(this.source.length -1, 0, response);
-                  this.$store.dispatch('listModule/saveSourceList', this.source)
+                  this.$store.dispatch('listModule/saveSkipSourceList', this.source)
                 }
                 this.skipOptions.skip_source = response;
                 this.showSettingsModal = false;
