@@ -95,7 +95,7 @@
           <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
           <skip-variant v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipOption" @goBack="goBack"></skip-variant>
           <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
-          <select-skip-data-source v-if="step_3_skip" :importDetails="importDetails" @skipTraceData="setSkipSource" @goBack="goBack"></select-skip-data-source>
+          <select-skip-data-source v-if="step_3_skip" :importDetails="importDetails" :lists="lists" @skipTraceData="setSkipSource" @goBack="goBack"></select-skip-data-source>
           <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails"  @goBack="goBack"></map-fields>
           <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
           <confirm-modal :showModal="showNoErrorsModal"  @modalResponse="showNoErrorsModal=false">

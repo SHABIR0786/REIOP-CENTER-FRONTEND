@@ -12,13 +12,13 @@
         <b-container fluid>
             <b-row class="d-flex justify-content-center">
                 <b-col class="d-flex justify-content-end flex-column">
-                    <b-row class="mb-2">
-                        <b-col cols="9" class="mx-auto">
-                            <b-input-group  prepend="Skip Source">
-                                <b-input  v-model="skipOptions.skip_source"></b-input>
-                            </b-input-group>
-                        </b-col>
-                    </b-row>
+                  <b-row class="mb-2">
+                    <b-col cols="9" class="mx-auto">
+                      <b-input-group prepend="Skip Source">
+                        <b-form-select v-model="skipOptions.skip_source" :options="source" @change="addNewField($event)"></b-form-select>
+                      </b-input-group>
+                    </b-col>
+                  </b-row>
                   <b-row class="mb-2">
                     <b-col cols="9" class="mx-auto">
                       <b-input-group prepend="Skip Date">
@@ -51,29 +51,69 @@
                 </b-button>
             </b-col>
         </b-row>
+      <AddListSettingsModal :showModal="showSettingsModal" :propsData="settingSection" @cancel="showSettingsModal=false" @save="add"></AddListSettingsModal>
     </div>
 </template>
 
 
 <script>
+    import AddListSettingsModal from "@/components/list/AddListSettingsModal";
+    import {mapGetters} from "vuex";
     export default {
         name: "SelectSkipDataSource",
-        props: ['importDetails'],
+        components: {
+          AddListSettingsModal,
+        },
+        computed: {
+          ...mapGetters({
+            sourceList: 'listModule/sourceList',
+          })
+        },
+        props: ['importDetails','lists'],
         data () {
             return {
               skipOptions: {
                 skip_source: '',
                 skip_date: '',
               },
-
+              showSettingsModal: false,
+              source: [],
+              settingSection: '',
             }
         },
       mounted() {
         if (this.importDetails && this.importDetails.skip_options) {
           this.skipOptions = this.importDetails.skip_options;
+          //this.source = this.importDetails.skip_options
+        }
+        if (this.sourceList.length > 0) {
+          this.source = this.sourceList
+        }else {
+          this.lists.forEach(e => {
+            this.source.push(e.list_skip_source)
+          })
+        }
+
+        if (!this.source.includes('Add a new Source')){
+          this.source.push('Add a new Source')
         }
       },
         methods: {
+            addNewField(event) {
+              if (event === 'Add a new Source'){
+                this.settingSection = 'Source';
+                this.showSettingsModal = true;
+                this.skipOptions.skip_source = '';
+              }
+            },
+            add (response) {
+                if(this.source.indexOf(response) === -1){
+                  this.source.splice(this.source.length -1, 0, response);
+                  this.$store.dispatch('listModule/saveSourceList', this.source)
+                }
+                this.skipOptions.skip_source = response;
+                this.showSettingsModal = false;
+          },
             setSkipSource() {
                 this.$emit('skipTraceData', this.skipOptions);
             },
