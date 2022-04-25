@@ -90,18 +90,20 @@
           this.source = this.sourceList
         }else {
           this.lists.forEach(e => {
-            this.source.push(e.list_skip_source)
+            if (e.list_skip_source !== null){
+              this.source.push(e.list_skip_source)
+            }
           })
         }
 
-        if (!this.source.includes('Add a new Source')){
-          this.source.push('Add a new Source')
+        if (!this.source.includes('Add a new Skip Source')){
+          this.source.push('Add a new Skip Source')
         }
       },
         methods: {
             addNewField(event) {
-              if (event === 'Add a new Source'){
-                this.settingSection = 'Source';
+              if (event === 'Add a new Skip Source'){
+                this.settingSection = 'Skip Source';
                 this.showSettingsModal = true;
                 this.skipOptions.skip_source = '';
               }
