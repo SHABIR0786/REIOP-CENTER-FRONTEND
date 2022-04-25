@@ -216,20 +216,19 @@ export default {
           type: Boolean,
           default: false,
         },
-      data: {
-          type: Object,
-          default: () => {
-            return {}
-          }
-      }
+    data: {
+        type: Object,
+        default: () => {
+          return {}
+        }
+    }
     },
-  components: {
+    components: {
 
-    DeleteModal,
-  },
+      DeleteModal,
+    },
 
-
-    methods: {
+  methods: {
         edit() {
             this.isReadOnly = true;
             this.$emit('save', this.editData);
@@ -282,25 +281,19 @@ export default {
             this.showModalCopy = this.showModal
         },
 
-      showModalCopy() {
-       if (!this.data.mapped_fields){
-         return
-       }
-        let obj = JSON.parse(this.data.mapped_fields);
-        Object.keys(obj).forEach((key) => {
-          if (obj[key] === '') {
-            delete obj[key];
-          }
-          else{
-            this.mappedFields.push({ mapped_from: key, mapped_to: obj[key] })
-          }
-        });
-      },
-
       data: {
         deep: true,
         handler() {
           this.editData = {...this.data}
+          let obj = JSON.parse(this.editData.mapped_fields);
+          Object.keys(obj).forEach((key) => {
+            if (obj[key] === '') {
+              delete obj[key];
+            }
+            else{
+              this.mappedFields.push({ mapped_from: key, mapped_to: obj[key] })
+            }
+          });
         }
       }
     },
