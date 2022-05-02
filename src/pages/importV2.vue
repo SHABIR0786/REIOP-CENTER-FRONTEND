@@ -280,6 +280,7 @@ export default {
 
       setSkipSource (response) {
           if(response) {
+
               this.importDetails.skip_options = response;
               this.statusBackSkip = true;
               this.step_1 = false;

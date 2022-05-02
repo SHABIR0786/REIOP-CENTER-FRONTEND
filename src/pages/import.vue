@@ -82,7 +82,7 @@ const utf8 = require('utf8');
 
 export default {
   name: "Import",
-  props: ['upload_type', 'list_settings', 'skip_variant'],
+  props: ['upload_type', 'list_settings', 'skip_variant','skip_data'],
   components: {
     FieldsCard,
     MappedFields,
@@ -177,10 +177,16 @@ export default {
       })
 
       let requiredSubjectExist = requiredSubjectsFields.every(msub => mappedFields.includes(msub));
-      this.isHaveMappedItems   = !!requiredSubjectExist;
+      if (!this.isSkippedValidation){
+        this.isHaveMappedItems   = !!requiredSubjectExist;
+      }
 
       // If User map Sellers, then check if all required Sellers field are mapped
       let requiredSellersFields = ['seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
+      if (this.isSkippedValidation && ( !requiredSubjectExist && !requiredSellersFields)){
+
+        this.isHaveMappedItems  =false;
+      }
       const sellerMapped        = mappedFields.find(element => {
         if (element.includes('seller')) {
           return true;
@@ -200,11 +206,14 @@ export default {
       if (sellerMapped) {
         let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
 
+        if (this.isSkippedValidation && (requiredSubjectExist || requiredSellersExist)){
+          this.isHaveMappedItems  = true;
+        }
 
         const sellersNamesAdrCountEqual = addressCount.filter(element => element !== sellersCount)
         if (requiredSellersExist && !sellersNamesAdrCountEqual.length) {
           this.showConfirmModal = true;
-        } else {
+        } else if (!this.isSkippedValidation){
           this.showSellerFillModal = true;
           return;
         }
@@ -332,6 +341,7 @@ export default {
         list: this.list_settings,
         skipSource: this.skip_variant,
         mapOrder: this.mappedItems,
+        skipData: this.skip_data,
       })
       location.reload()
     }
