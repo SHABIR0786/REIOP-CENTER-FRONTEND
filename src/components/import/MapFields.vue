@@ -9,7 +9,7 @@
           <p>Description of step for user: To be filled out later.</p>
       </div>
       <hr>
-      <import :upload_type="upload_type" :list_settings="list_settings" :skip_variant="this.skip_variant" class="w-100 import-map"></import>
+      <import :upload_type="upload_type" :list_settings="list_settings" :skip_variant="this.skip_variant" :skip_data="this.skipData" class="w-100 import-map"></import>
 
       <b-row>
         <b-col cols="12" class="prev-btn">
@@ -37,6 +37,7 @@
       data () {
           return {
             skip_variant: '',
+            skipData: {},
           }
       },
       mounted() {
@@ -51,7 +52,7 @@
 
               if(this.importDetails.skip_variant) {
                   this.skip_variant = this.importDetails.skip_variant;
-                //this.list_settings = 'update_existing';
+                this.skipData = this.importDetails.skip_options;
               }
           }
       },
