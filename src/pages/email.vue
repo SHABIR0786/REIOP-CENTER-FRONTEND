@@ -69,6 +69,18 @@
             <template #head(created_at)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
+            <template #head(email_validity)="scope">
+              <div class="text-nowrap" style="width: 200px;">{{scope.label}}</div>
+            </template>
+            <template #head(email_error)="scope">
+              <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(email_address)="scope">
+              <div class="text-nowrap" style="width: 200px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_id)="scope">
+              <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
             <template #head(updated_at)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>

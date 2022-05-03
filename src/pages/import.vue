@@ -51,9 +51,12 @@
         <b-btn variant="primary" @click="confirm(mappedItems)">Import</b-btn>
       </b-col>
     </b-row>
-    <confirm-modal :showModal="showConfirmModal" :is-have-mapped-items="isHaveMappedItems"
+    <confirm-modal :showModal="showConfirmModal"
+                   :is-have-mapped-items="isHaveMappedItems"
+                   :is-skip-validate="skipValidate"
+                   :is-skip-trace="isSkippedData"
                    @modalResponse="confirmImport"></confirm-modal>
-    <div v-if="!isSkippedValidation">
+    <div v-if="!isSkippedData">
       <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
         <template v-slot:sellerFill>
           <b-row>With two sellers mapped you must map two mailing addresses. You can use the same mailing address fields
@@ -105,7 +108,8 @@ export default {
       importedFields: {},
       showConfirmModal: false,
       isHaveMappedItems: false,
-      showSellerFillModal: false
+      showSellerFillModal: false,
+      skipValidate: false,
     }
   },
   computed: {
@@ -118,12 +122,21 @@ export default {
       subjectFields: 'importModule/subjectFields',
       schemas: 'importModule/schemas',
       importFields: 'importModule/importFields',
-      isSkippedValidation: 'importV2Module/isSkipValidation'
-    })
+      skippedValidation: 'importV2Module/isSkipValidation'
+    }),
+    isSkippedData: {
+      get() {
+        return this.skippedValidation
+      },
+      set(newVal) {
+        return newVal
+      }
+    }
   },
   async created() {
     await this.$store.dispatch('importModule/loadVisibleFields')
     if (this.upload_type && !this.skip_variant) {
+      this.$store.dispatch('importV2Module/setSkipValidation',false)
       if (this.upload_type === 'single') {
         this.importedFields = {
           seller: this.sellerFields,
@@ -146,6 +159,7 @@ export default {
       }
     } else if (this.skip_variant) {
       if (this.skip_variant === 'skip_trace'){
+        this.$store.dispatch('importV2Module/setSkipValidation',true)
         this.importedFields = {
           email: this.emailFields.filter(function(el) { return el.field === "email_address" }),
           golden_address: this.goldenAddressFields,
@@ -154,9 +168,11 @@ export default {
           subject: this.subjectFields.filter(function(el) { return el.field !== "subject_type" &&  el.field !== "subject_age" && el.field !== "subject_county"}),
         }
       }else if(this.skip_variant === 'validate'){
+        this.skipValidate = true;
+        this.$store.dispatch('importV2Module/setSkipValidation',false)
         this.importedFields = {
-          email: this.emailFields,
-          phone: this.phoneNumberFields,
+          email: this.emailFields.filter(function(el) { return el.field !== "email_skip_source" }),
+          phone: this.phoneNumberFields.filter(function(el) { return el.field === "phone_number" || el.field === "phone_validity"}),
         }
       }
 
@@ -177,15 +193,15 @@ export default {
       })
 
       let requiredSubjectExist = requiredSubjectsFields.every(msub => mappedFields.includes(msub));
-      if (!this.isSkippedValidation){
+      if (!this.isSkippedData){
         this.isHaveMappedItems   = !!requiredSubjectExist;
       }
 
       // If User map Sellers, then check if all required Sellers field are mapped
       let requiredSellersFields = ['seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
-      if (this.isSkippedValidation && ( !requiredSubjectExist && !requiredSellersFields)){
 
-        this.isHaveMappedItems  =false;
+      if (this.isSkippedData && ( !requiredSubjectExist && !requiredSellersFields)){
+        this.isHaveMappedItems  = false;
       }
       const sellerMapped        = mappedFields.find(element => {
         if (element.includes('seller')) {
@@ -206,16 +222,33 @@ export default {
       if (sellerMapped) {
         let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
 
-        if (this.isSkippedValidation && (requiredSubjectExist || requiredSellersExist)){
+        if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)){
           this.isHaveMappedItems  = true;
         }
 
         const sellersNamesAdrCountEqual = addressCount.filter(element => element !== sellersCount)
         if (requiredSellersExist && !sellersNamesAdrCountEqual.length) {
           this.showConfirmModal = true;
-        } else if (!this.isSkippedValidation){
+        } else if (!this.isSkippedData){
           this.showSellerFillModal = true;
           return;
+        }
+      }
+      if (this.skipValidate && item.length){
+
+        let mappedValidateFields = [];
+        item.forEach(item => {
+            mappedValidateFields.push(item['toField'])
+        })
+
+        let requiredPhonesFields = ['phone_number', 'phone_validity'];
+        let requiredPhoneExist = requiredPhonesFields.every(Ph => mappedValidateFields.includes(Ph));
+
+        let requiredEmailFields = ['email_address', 'email_validity'];
+        let requiredEmailExist = requiredEmailFields.every(Em => mappedValidateFields.includes(Em));
+
+        if (requiredPhoneExist || requiredEmailExist){
+          this.isHaveMappedItems  = true;
         }
       }
       this.showConfirmModal = true;
@@ -342,6 +375,7 @@ export default {
         skipSource: this.skip_variant,
         mapOrder: this.mappedItems,
         skipData: this.skip_data,
+        skipValidate: this.skipValidate,
       })
       location.reload()
     }

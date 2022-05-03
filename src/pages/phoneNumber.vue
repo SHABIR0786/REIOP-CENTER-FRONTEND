@@ -75,6 +75,15 @@
             <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
             </template>
+            <template #head(phone_validity)="scope">
+              <div class="text-nowrap" style="width: 200px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_id)="scope">
+              <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(phone_error)="scope">
+              <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+            </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
