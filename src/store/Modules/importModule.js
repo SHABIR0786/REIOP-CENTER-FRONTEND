@@ -83,7 +83,7 @@ export const actions = {
         })
     },
 
-    async uploadExcelDataV2({ commit }, {file, mappedItems, url, list, skipSource, mapOrder,skipData}) {
+    async uploadExcelDataV2({ commit }, {file, mappedItems, url, list, skipSource, mapOrder,skipData,skipValidate}) {
         const config = {headers: {'content-type': 'multipart/form-data; charset=UTF-8'}}
 
         let data = new FormData();
@@ -92,6 +92,7 @@ export const actions = {
         data.append('list', JSON.stringify(list));
         data.append('skipData', JSON.stringify(skipData));
         data.append('skipSource', skipSource);
+        data.append('skipValidate', skipValidate);
 
         const mapObject = {};
         mappedItems.forEach(map => {

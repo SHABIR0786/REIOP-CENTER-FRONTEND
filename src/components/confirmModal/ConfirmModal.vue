@@ -1,26 +1,36 @@
 <template>
     <b-modal v-model="showModal" @close="$emit('modalResponse', false)">
         <template #modal-header>
-            <div class="w-100" style="font-size: 20px;color:white " v-if="isHaveMappedItems ">
+            <div class="w-100" style="font-size: 20px;color:white " v-if="isHaveMappedItems">
               Confirm
             </div>
             <div class="w-100"  style="font-size: 20px;color:white " v-else>
               Error!
             </div>
         </template>
-        <b-container fluid v-if="isHaveMappedItems && !isSkippedValidation">
+        <b-container fluid v-if="isHaveMappedItems && !isSkipTrace && !isSkipValidate">
             <h4 class="text-center">Are you ready to upload this spreadsheet?</h4>
         </b-container>
-        <b-container fluid v-if="!isHaveMappedItems && !isSkippedValidation">
+
+        <b-container fluid v-if="!isHaveMappedItems && !isSkipTrace && !isSkipValidate">
           <h5 class="text-sm-center"> There are required fields you must map:<br>
             subject_address, subject_city,<br>
             subject_state, subject_zip </h5>
         </b-container>
-      <b-container fluid v-if="isHaveMappedItems && isSkippedValidation">
+
+      <b-container fluid v-if="isHaveMappedItems && isSkipTrace">
         <h4 class="text-center">Are you ready skip trace data?</h4>
       </b-container>
-      <b-container fluid v-if="!isHaveMappedItems && isSkippedValidation">
+
+      <b-container fluid v-if="!isHaveMappedItems && isSkipTrace">
         <h4 class="text-center">You must map a full mailing address, subject address, or both before being able to import skip traced data.</h4>
+      </b-container>
+
+      <b-container fluid v-if="!isHaveMappedItems && isSkipValidate">
+        <h4 class="text-center">Please map either "email and email validity" pair or "phone and phone validity" pair or all options together</h4>
+      </b-container>
+      <b-container fluid v-if="isHaveMappedItems && isSkipValidate">
+        <h4 class="text-center">Are you ready to validate data?</h4>
       </b-container>
         <template #modal-footer>
             <div class="w-100" v-if="isHaveMappedItems">
@@ -48,7 +58,7 @@
     </b-modal>
 </template>
 <script>
-  import { mapGetters } from 'vuex';
+ // import { mapGetters } from 'vuex';
     export default {
         name: 'ConfirmModal',
         props: {
@@ -58,13 +68,17 @@
           isHaveMappedItems: {
               type: Boolean,
             default: false,
-          }
+          },
+          isSkipValidate: {
+              type: Boolean,
+            default: false,
+          },
+          isSkipTrace: {
+              type: Boolean,
+            default: false,
+          },
+
         },
-      computed: {
-          ...mapGetters({
-            isSkippedValidation: 'importV2Module/isSkipValidation'
-          })
-      }
     }
 </script>
 <style scoped>
