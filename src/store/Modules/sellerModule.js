@@ -15,12 +15,12 @@ const state = {
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
         {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
 
-        {key: "seller_mailing_address", label: "Mailing Address"},
-        {key: "seller_mailing_address_line2", label: "Mailing Address Line2"},
-        {key: "seller_mailing_state", label: "Mailing State"},
-        {key: "seller_mailing_city", label: "Mailing City"},
-        {key: "seller_mailing_zip", label: "Mailing Zip"},
-        {key: "seller_company_owned", label: "Company Owned"},
+        {key: "seller_mailing_address", label: "Mailing Address", sortable: true},
+        {key: "seller_mailing_address_line2", label: "Mailing Address Line2", sortable: true},
+        {key: "seller_mailing_state", label: "Mailing State", sortable: true},
+        {key: "seller_mailing_city", label: "Mailing City", sortable: true},
+        {key: "seller_mailing_zip", label: "Mailing Zip", sortable: true},
+        {key: "seller_company_owned", label: "Company Owned", sortable: true},
 
         // Errors
         {key: "seller_error", label: "Error", sortable: true},

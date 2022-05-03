@@ -10,7 +10,7 @@ const state = {
         {key: "phone_number", label: "Phone Number", sortable: true},
         {key: "phone_type", label: "Phone Type", sortable: true},
         {key: "phone_validity", label: "Phone Validity", sortable: true},
-        {key: "phone_skip_source", label: "Phone Skip Source"},
+        {key: "phone_skip_source", label: "Phone Skip Source", sortable: true},
 
         // Errors
         {key: "phone_error", label: "Error", sortable: true},
