@@ -29,6 +29,8 @@ const state = {
     skipSourceList: [],
     list: [],
     subjectRelatedList: [],
+    sameDate:null,
+    sameSource:null,
 }
 
 const mutations = {
@@ -93,6 +95,13 @@ const mutations = {
     SET_SKIP_SOURCE_LIST(state, payload) {
         state.skipSourceList = payload
     },
+    SET_SKIP_SOURCE_CHOOSE(state, payload) {
+        state.sameSource = payload
+    },
+    SET_SKIP_DATE_CHOOSE(state, payload) {
+        state.sameDate = payload
+    },
+
     SUBJECT_RELATED_LIST(state, payload) {
         payload.data.forEach(e =>{
             delete e.subjects;
@@ -107,7 +116,10 @@ const mutations = {
         state.groupList = [];
         state.typeList = [];
         state.sourceList = [];
+        state.skipSourceList = [];
         state.total = 0;
+        state.sameDate = null;
+        state.sameSource = null;
     },
 }
 
@@ -126,6 +138,12 @@ const actions = {
     },
     saveSkipSourceList({ commit }, payload) {
         commit('SET_SKIP_SOURCE_LIST', payload)
+    },
+    saveSkipSourceChoose({ commit }, payload) {
+        commit('SET_SKIP_SOURCE_CHOOSE', payload)
+    },
+    saveSkipDateChoose({ commit }, payload) {
+        commit('SET_SKIP_DATE_CHOOSE', payload)
     },
     async getAllLists({ commit, dispatch }, {page, perPage}) {
         return await api.get(`/lists?page=${page}&perPage=${perPage}`).then((response) => {
@@ -248,6 +266,8 @@ const getters = {
     typeList: state => state.typeList,
     sourceList: state => state.sourceList,
     skipSourceList: state => state.skipSourceList,
+    sameDate: state => state.sameDate,
+    sameSource: state => state.sameSource,
     list: ({ list }) => {
         if (typeof list === 'string') {
             return JSON.parse(list);
