@@ -7,7 +7,7 @@
         </b-navbar-brand>
         <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right>
-                <template #button-content> {{ user ? user.name : "User"}}</template>
+                <template #button-content> {{ (user && user.name) ? user.name : "User"}}</template>
                 <b-dropdown-item>
                     <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Labels</router-link>
                 </b-dropdown-item>

@@ -4,14 +4,10 @@ const state = {
     fields: [
         {key:"file_name", label: "File Name", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
-
-        {key:"is_processing", label: "Is Processing"},
-        {key:"is_processed", label: "Is Processed"},
+        {key:"percentage", label: "Completion %", sortable:true},
         {key:"created_records", label: "Created Records", sortable: true},
-
         {key:"error_number", label: "Error Lines", sortable: true},
         {key:"total_row_number", label: "Total Lines", sortable: true},
-
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"id", label: "Process ID", sortable: true},
     ],

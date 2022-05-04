@@ -41,15 +41,9 @@
                 <template #head(actions)="scope">
                     <div class="text-nowrap" style="width: 70px;">{{scope.label}}</div>
                 </template>
-
-                <template #head(is_processing)="scope">
+              <template #head(percentage)="scope">
                     <div class="text-nowrap" style="width: 90px;">{{scope.label}}</div>
                 </template>
-
-                <template #head(is_processed)="scope">
-                    <div class="text-nowrap" style="width: 90px;">{{scope.label}}</div>
-                </template>
-
                 <template #head()="scope">
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                 </template>
@@ -63,6 +57,11 @@
                     <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)"></b-icon>
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                     <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
+                </template>
+                <template v-slot:cell(percentage)="data">
+                    <div :title="data.item.id">
+                        <p class="user-email">{{Math.round((data.item.is_processed / (data.item.is_processed + data.item.is_processing)) * 100)}}%</p>
+                    </div>
                 </template>
 
             </b-table>
