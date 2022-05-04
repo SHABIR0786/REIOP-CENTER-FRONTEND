@@ -40,6 +40,7 @@
         <b-table
             id="subject-table"
             small
+            sort-icon-left
             striped
             hover
             :busy="isBusy"

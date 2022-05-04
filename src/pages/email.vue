@@ -40,6 +40,7 @@
             small
             striped
             hover
+            sort-icon-left
             :busy="isBusy"
             :fields="fields"
             :items="items"
