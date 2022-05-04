@@ -186,6 +186,45 @@
                       </template>
                     </b-table>
                   </b-tab>
+                  <b-tab title="Related Subjects">
+                        <b-row>
+                            <b-col class="assign-btn">
+                                <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>
+                            </b-col>
+                        </b-row>
+                        <b-table
+                                id="subject-table"
+                                small
+                                striped
+                                hover
+                                :busy="isBusy"
+                                :fields="subjectFields"
+                                :items="seller.subjects"
+                                responsive
+                                :per-page="0"
+                                :sticky-header="true"
+                        >
+                            <template #table-busy>
+                                <div class="text-center" my-2>
+                                    <b-spinner class="align-middle"></b-spinner>
+                                    <strong>Loading...</strong>
+                                </div>
+                            </template>
+                            <template #head(id)="scope">
+                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editSubject(data.item)"></b-icon>
+                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon> -->
+                            </template>
+                            <template #head(actions)="scope">
+                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                            </template>
+                            <template #head()="scope">
+                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                            </template>
+                        </b-table>
+                    </b-tab>
                     <b-tab title="Related Phones">
                         <b-row>
                             <b-col class="assign-btn">
@@ -220,8 +259,8 @@
                                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editPhone(data.item)"></b-icon>
-                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon>
+                                <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editPhone(data.item)"></b-icon>
+                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deletePhone(data.item)"></b-icon> -->
                             </template>
                         </b-table>
                     </b-tab>
@@ -259,8 +298,8 @@
                                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editEmail(data.item)"></b-icon>
-                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteEmail(data.item)"></b-icon>
+                                <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editEmail(data.item)"></b-icon>
+                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteEmail(data.item)"></b-icon> -->
                             </template>
                         </b-table>
                     </b-tab>
@@ -298,47 +337,8 @@
                                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editGoldenAddress(data.item)"></b-icon>
-                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteGoldenAddress(data.item)"></b-icon>
-                            </template>
-                        </b-table>
-                    </b-tab>
-                    <b-tab title="Related Subjects">
-                        <b-row>
-                            <b-col class="assign-btn">
-                                <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>
-                            </b-col>
-                        </b-row>
-                        <b-table
-                                id="subject-table"
-                                small
-                                striped
-                                hover
-                                :busy="isBusy"
-                                :fields="subjectFields"
-                                :items="seller.subjects"
-                                responsive
-                                :per-page="0"
-                                :sticky-header="true"
-                        >
-                            <template #table-busy>
-                                <div class="text-center" my-2>
-                                    <b-spinner class="align-middle"></b-spinner>
-                                    <strong>Loading...</strong>
-                                </div>
-                            </template>
-                            <template #head(id)="scope">
-                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
-                            </template>
-                            <template #head(actions)="scope">
-                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-                            </template>
-                            <template #head()="scope">
-                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-                            </template>
-                            <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
-                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
+                                <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editGoldenAddress(data.item)"></b-icon>
+                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteGoldenAddress(data.item)"></b-icon> -->
                             </template>
                         </b-table>
                     </b-tab>
@@ -476,33 +476,34 @@ export default {
             subjectTableFields: null,
             phoneFields: [
                 {key:"id", label: "ID", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
                 {key: "phone_number", label: "Phone Number", sortable: true},
                 {key: "phone_type", label: "Phone Type", sortable: true},
                 {key: "phone_validity", label: "Phone Validity", sortable: true},
                 {key: "phone_skip_source", label: "Phone Skip Source"},
                 {key:"created_at", label: "Created Date", sortable: true},
-                {key: "actions", stickyColumn: true, label: "Actions"},
 
             ],
             emailFields: [
                 {key:"id", label: "ID", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
                 {key: "email_address", label: "Email Address", sortable: true},
                 {key: "email_validity", label: "Email Validity", sortable: true},
                 {key: "email_skip_source", label: "Skip Source", sortable: true},
                 {key:"created_at", label: "Created Date", sortable: true},
-                {key: "actions", stickyColumn: true, label: "Actions"},
             ],
             goldenFields: [
                 {key:"id", label: "ID", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
                 {key: "golden_address_address", label: "Golden Address", sortable: true},
                 {key: "golden_address_city", label: "Golden City", sortable: true},
                 {key: "golden_address_state", label: "Golden State", sortable: true},
                 {key: "golden_address_zip", label: "Golden Zip", sortable: true},
                 {key:"created_at", label: "Created Date", sortable: true},
-                {key: "actions", stickyColumn: true, label: "Actions"},
             ],
             subjectFields: [
                 {key:"id", label: "Id", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
                 {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
                 {key: "subject_city", label: "Subject City", sortable: true},
                 {key: "subject_state", label: "Subject State", sortable: true},
@@ -511,7 +512,6 @@ export default {
                 {key: "subject_market", label: "Market", sortable: true},
                 {key: "subject_age", label: "Subject Age", sortable: true},
                 {key: "subject_type", label: "Subject Type", sortable: true},
-                {key: "actions", stickyColumn: true, label: "Actions"},
             ],
             listFields: [
                 {key:"id", label: "ID", sortable: true},

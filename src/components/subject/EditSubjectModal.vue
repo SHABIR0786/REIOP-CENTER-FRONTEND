@@ -118,49 +118,7 @@
 
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab title="Related Sellers" active>
-                        <b-col>
-                            <b-col class="assign-btn">
-                                <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
-                            </b-col>
-                        </b-col>
-                        <b-table
-                                id="seller-table"
-                                small
-                                striped
-                                hover
-                                :busy="isBusy"
-                                :fields="sellerTableFields"
-                                :items="subject.sellers"
-                                responsive
-                                :per-page="0"
-                                :sticky-header="true"
-                        >
-                            <template #table-busy>
-                                <div class="text-center" my-2>
-                                    <b-spinner class="align-middle"></b-spinner>
-                                    <strong>Loading...</strong>
-                                </div>
-                            </template>
-                            <template #head(id)="scope">
-                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
-                            </template>
-                            <template #head(actions)="scope">
-                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-                            </template>
-                            <template #head()="scope">
-                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-                            </template>
-                            <template v-slot:cell(actions)="data">
-                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSellerItem(data.item)"></b-icon>
-                                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
-                            </template>
-                            <template v-slot:cell(user_name)="">
-                                <p class="" >{{subject.user_name}}</p>
-                            </template>
-                        </b-table>
-                    </b-tab>
-                    <b-tab title="Related Lists">
+                    <b-tab title="Related Lists" active>
                         <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing List</b-button>
@@ -234,8 +192,8 @@
                                 </div>
                             </template>
                           <template v-slot:cell(actions)="data">
-                            <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editListItem(data.item)"></b-icon>
-                            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                            <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editListItem(data.item)"></b-icon>
+                            <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
                           </template>
                         </b-table>
                     </b-tab>
@@ -295,6 +253,48 @@
 <!--                      </b-col>-->
 <!--                    </b-row>-->
                   </b-tab>
+                  <b-tab title="Related Sellers">
+                        <b-col>
+                            <b-col class="assign-btn">
+                                <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
+                            </b-col>
+                        </b-col>
+                        <b-table
+                                id="seller-table"
+                                small
+                                striped
+                                hover
+                                :busy="isBusy"
+                                :fields="sellerTableFields"
+                                :items="subject.sellers"
+                                responsive
+                                :per-page="0"
+                                :sticky-header="true"
+                        >
+                            <template #table-busy>
+                                <div class="text-center" my-2>
+                                    <b-spinner class="align-middle"></b-spinner>
+                                    <strong>Loading...</strong>
+                                </div>
+                            </template>
+                            <template #head(id)="scope">
+                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                            </template>
+                            <template #head(actions)="scope">
+                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                            </template>
+                            <template #head()="scope">
+                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editSellerItem(data.item)"></b-icon>
+                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
+                            </template>
+                            <template v-slot:cell(user_name)="">
+                                <p class="" >{{subject.user_name}}</p>
+                            </template>
+                        </b-table>
+                    </b-tab>
                 </b-tabs>
             </b-row>
         </b-container>
@@ -422,7 +422,7 @@ export default {
     .assign-btn {
         text-align: end;
     }
-    >>>.related-list-id{
+    .related-list-id{
       color: #024847;
       cursor: pointer;
       font-weight: bold;

@@ -174,8 +174,12 @@ export default {
     },
     methods: {
         editItem(item) {
-            this.showModal = true
+            this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
+            item.sellers = [response.seller];
+            item.subjects = response.seller.subjects;
             this.editedItem = { ...item }
+            this.showModal = true
+            });
         },
         save(item) {
             // this.showModal = false
