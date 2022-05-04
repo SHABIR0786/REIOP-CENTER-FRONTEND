@@ -347,6 +347,7 @@ export default {
       editedItem: {},
       showDetailsModal: false,
       showAssignSellerModal: false,
+      sellerTableSkipFields:["seller_total_subjects","seller_total_phones","seller_total_emails","seller_mailing_address_line2","seller_company_owned","created_at","updated_at","user_id","delete"],
       relatedTableFields: [
         {key:"id",  label: "ID", sortable: true},
         {key:"list_run_year",  label: "Run Year", sortable: true},
@@ -400,10 +401,7 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     mounted () {
-        this.sellerTableFields = this.sellerFields.filter(s => s.key !== 'seller_total_subjects' &&
-            s.key !== 'seller_total_subjects' && s.key !== 'seller_total_phones' && s.key !== 'seller_total_emails' &&
-            s.key !== 'seller_mailing_address_line2' && s.key !== 'seller_company_owned' && s.key !== 'created_at' &&
-            s.key !== 'updated_at' && s.key !== 'user_id' && s.key !== 'delete')
+        this.sellerTableFields = this.sellerFields.filter(s=>this.sellerTableSkipFields.indexOf(s.key) == -1);
         this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'list_total_individual_list' )
     },
     watch: {

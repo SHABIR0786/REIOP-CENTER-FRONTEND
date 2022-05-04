@@ -536,6 +536,7 @@ export default {
             emails_count:'',
             golden_addresses_count:'',
           },
+          sellerTableSkipFields:["seller_total_subjects","seller_total_phones","seller_total_emails","seller_mailing_address_line2","seller_company_owned","created_at","updated_at","user_id","delete"],
           relatedTableFields: [
             {key:"id",  label: "Id", sortable: true},
             {key:"list_run_year",  label: "Run Year", sortable: true},
@@ -558,11 +559,7 @@ export default {
       rows() { return this.tabData.total ? this.tabData.total : 1 }
     },
     mounted () {
-
-      this.sellerTableFields = this.sellerFields.filter(s => s.key !== 'seller_total_subjects' &&
-          s.key !== 'seller_total_subjects' && s.key !== 'seller_total_phones' && s.key !== 'seller_total_emails' &&
-          s.key !== 'seller_mailing_address_line2' && s.key !== 'seller_company_owned' && s.key !== 'created_at' &&
-          s.key !== 'updated_at' && s.key !== 'user_id' && s.key !== 'actions' && s.key !== 'delete')
+        this.sellerTableFields = this.sellerFields.filter(s=>this.sellerTableSkipFields.indexOf(s.key) == -1);
     },
     watch: {
         async showModal() {
