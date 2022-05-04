@@ -95,6 +95,91 @@
                     </b-col>
                 </b-row>
             </b-row>
+            <b-row class="mt-5">
+                <b-tabs class="w-100" content-class="mt-3" fill>
+                    <b-tab title="Related Sellers" active>
+                        <b-col>
+                            <b-col class="assign-btn">
+                                <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
+                            </b-col>
+                        </b-col>
+                        <b-table
+                                id="seller-table"
+                                small
+                                striped
+                                hover
+                                :busy="isBusy"
+                                :fields="sellerTableFields"
+                                :items="goldenAddress.sellers"
+                                responsive
+                                :per-page="10"
+                                :sticky-header="true"
+                        >
+                            <template #table-busy>
+                                <div class="text-center" my-2>
+                                    <b-spinner class="align-middle"></b-spinner>
+                                    <strong>Loading...</strong>
+                                </div>
+                            </template>
+                            <template #head(id)="scope">
+                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                            </template>
+                            <template #head(actions)="scope">
+                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                            </template>
+                            <template #head()="scope">
+                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editSellerItem(data.item)"></b-icon>
+                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
+                            </template>
+                            <template v-slot:cell(user_name)="">
+                                <p class="" >{{goldenAddress.user_name}}</p>
+                            </template>
+                        </b-table>
+                    </b-tab>
+                    <b-tab title="Related Subjects">
+                        <b-row>
+                            <b-col class="assign-btn">
+                                <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>
+                            </b-col>
+                        </b-row>
+                        <b-table
+                                id="subject-table"
+                                small
+                                striped
+                                hover
+                                :busy="isBusy"
+                                :fields="subjectFields"
+                                :items="goldenAddress.subjects"
+                                responsive
+                                :per-page="10"
+                                :sticky-header="true"
+                        >
+                            <template #table-busy>
+                                <div class="text-center" my-2>
+                                    <b-spinner class="align-middle"></b-spinner>
+                                    <strong>Loading...</strong>
+                                </div>
+                            </template>
+                            <template #head(id)="scope">
+                                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                            </template>
+                            <template #head(actions)="scope">
+                                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                            </template>
+                            <template #head()="scope">
+                                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editSubject(data.item)"></b-icon>
+                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon> -->
+                            </template>
+                        </b-table>
+                    </b-tab>
+                </b-tabs>
+            </b-row>
         </b-container>
         <template #modal-footer>
             <div class="w-100">
@@ -111,6 +196,7 @@
     </b-modal>
 </template>
 <script>
+import {mapGetters} from "vuex";
 export default {
     name: 'EditGoldenAddressModal',
     props: {
@@ -121,10 +207,25 @@ export default {
             type: Object
         }
     },
+    computed: {
+        ...mapGetters({
+            sellerFields: 'sellerModule/fields',
+        }),
+    },
     methods: {
         edit() {
             this.isReadOnly = true;
             this.$emit('save', this.goldenAddress);
+        },
+        editSellerItem(item) {
+            const route = '/sellers?seller_id=' + item.id;
+            let routeData = this.$router.resolve({path: route});
+            window.open(routeData.href, '_blank');
+        },
+        editSubject (item) {
+            const route = '/subjects?subject_id=' + item.id;
+            let routeData = this.$router.resolve({path: route});
+            window.open(routeData.href, '_blank');
         }
     },
     data() {
@@ -138,9 +239,30 @@ export default {
                 golden_address_address_line2: '',
                 user_id: '',
                 seller_id: '',
+                sellers: [],
+                subjects: [],
             },
-            isReadOnly: true
+            isBusy: false,
+            isReadOnly: true,
+            showAssignSellerModal: false,
+            sellerTableFields: null,
+            sellerTableSkipFields:["seller_total_subjects","seller_total_phones","seller_total_emails","seller_mailing_address_line2","seller_company_owned","created_at","updated_at","user_id","delete"],
+            subjectFields: [
+                {key:"id", label: "Id", sortable: true},
+                {key: "actions", stickyColumn: true, label: "Actions"},
+                {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
+                {key: "subject_city", label: "Subject City", sortable: true},
+                {key: "subject_state", label: "Subject State", sortable: true},
+                {key: "subject_zip", label: "Subject Zip", sortable: true},
+                {key: "subject_country", label: "Subject County", sortable: true},
+                {key: "subject_market", label: "Market", sortable: true},
+                {key: "subject_age", label: "Subject Age", sortable: true},
+                {key: "subject_type", label: "Subject Type", sortable: true},
+            ],
         }
+    },
+    mounted() {
+        this.sellerTableFields = this.sellerFields.filter(s=>this.sellerTableSkipFields.indexOf(s.key) == -1);
     },
     watch: {
         showModal() {
