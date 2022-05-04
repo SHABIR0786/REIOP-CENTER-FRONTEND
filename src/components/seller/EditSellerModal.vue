@@ -86,14 +86,7 @@
                         </b-row>
                         <b-row>
                             <b-col cols="12">
-                                <b-input-group prepend="Seller Full Mailing Address" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="seller.seller_full_mailing_address"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="Seller Mailing Address 2" class="mb-2">
+                                <b-input-group prepend="Mailing Address Line 2" class="mb-2">
                                     <b-form-input :readonly="isReadOnly" v-model="seller.seller_mailing_address_line2"></b-form-input>
                                 </b-input-group>
                             </b-col>
@@ -396,6 +389,7 @@ export default {
     },
     methods: {
         edit() {
+            this.seller.seller_full_mailing_address = ((this.seller.seller_mailing_address??"") +" "+ (this.seller.seller_mailing_address_line2?this.seller.seller_mailing_address_line2+", ":" ") + (this.seller.seller_mailing_city ? this.seller.seller_mailing_city+", ":" ") + (this.seller.seller_mailing_state??"") +" "+ (this.seller.seller_mailing_zip??"")).trim();
             this.isReadOnly = true;
             this.$emit('save', this.seller);
         },
