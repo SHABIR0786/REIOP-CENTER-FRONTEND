@@ -146,7 +146,8 @@ export default {
         this.importedFields = {
           seller: this.sellerFields,
           subject: this.subjectFields,
-          phone: this.phoneNumberFields,
+          phone: this.phoneNumberFields.filter(function(el) { return el.field === "phone_number" || el.field === "phone_type"}),
+          email: this.emailFields.filter(function(el) { return el.field === "email_address" }),
         }
       } else {
         this.importedFields = {
@@ -377,7 +378,7 @@ export default {
         skipData: this.skip_data,
         skipValidate: this.skipValidate,
       })
-      location.reload()
+       location.reload()
     }
   }
 }
