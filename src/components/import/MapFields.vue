@@ -52,13 +52,17 @@
 
               if(this.importDetails.skip_variant) {
                   this.skip_variant = this.importDetails.skip_variant;
-                this.skipData = this.importDetails.skip_options;
+                  this.skipData = this.importDetails.skip_options;
               }
           }
       },
       methods: {
         goBack() {
-          this.$emit('goBack', 'MapFields');
+          if (this.upload_type === 'combined'){
+            this.$emit('goBack', 'Combined');
+          }else {
+            this.$emit('goBack', 'MapFields');
+          }
         }
       }
     }
