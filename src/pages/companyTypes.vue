@@ -23,6 +23,7 @@
           id="list-table"
           small
           striped
+          sort-icon-left
           hover
           responsive
           :busy="isBusy"

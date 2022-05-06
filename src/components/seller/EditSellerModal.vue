@@ -104,7 +104,7 @@
 
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab title="Related Lists" active>
+                    <b-tab :title="(seller.lists?seller.lists.length:'')+' Related Lists'" active>
 <!--                    <b-row>-->
 <!--                      <b-col class="assign-btn">-->
 <!--                        <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing List</b-button>-->
@@ -114,10 +114,11 @@
                         id="list-table"
                         small
                         striped
+                        sort-icon-left
                         hover
                         responsive
                         :busy="isBusy"
-                        :fields="listFields"
+                        :fields="listFieldsFiltered"
                         :items="seller.lists"
                         :per-page="0"
                         :sticky-header="true"
@@ -161,6 +162,10 @@
                           <p class="user-email">{{data.item.id}}</p>
                         </div>
                       </template>
+                        <template v-slot:cell(actions)="data">
+                            <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editListItem(data.item)"></b-icon>
+                            <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
+                          </template>
                       <template #head(created_at)="scope">
                         <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
                       </template>
@@ -179,7 +184,64 @@
                       </template>
                     </b-table>
                   </b-tab>
-                  <b-tab title="Related Subjects">
+                <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'"  @click="currentModal()">
+                    <b-table
+                        id="related-table"
+                        small
+                        sort-icon-left
+                        striped
+                        hover
+                        :busy="isBusy"
+                        :fields="relatedTableFields"
+                        :items="tabData"
+                        responsive
+                        :per-page="0"
+                        :sticky-header="true"
+                    >
+                      <template #table-busy>
+                        <div class="text-center" my-2>
+                          <b-spinner class="align-middle"></b-spinner>
+                          <strong>Loading...</strong>
+                        </div>
+                      </template>
+                      <template #head(id)="scope">
+                        <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
+                      </template>
+                      <template #head(actions)="scope">
+                        <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                      </template>
+                      <template #head()="scope">
+                        <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                      </template>
+                      <template v-slot:cell(id)="data">
+                        <div :title="data.item.id">
+                          <p class="related-list-id" @click="editListItem(data.item)">{{data.item.id}}</p>
+                        </div>
+                      </template>
+                    </b-table>
+<!--                    <b-row>-->
+<!--                      <b-col class="d-flex align-items-center">-->
+<!--                        <b-form-group-->
+<!--                            label="Show"-->
+<!--                            label-for="show-select"-->
+<!--                            label-cols-sm="6"-->
+<!--                            label-cols-md="4"-->
+<!--                            label-cols-lg="3"-->
+<!--                            label-size="xs"-->
+<!--                            class="mb-0"-->
+<!--                        >-->
+<!--                          <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
+<!--                        </b-form-group>-->
+<!--                      </b-col>-->
+<!--                      <b-col class="d-flex align-items-center justify-content-center">-->
+<!--                        <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
+<!--                      </b-col>-->
+<!--                      <b-col class="d-flex justify-content-end">-->
+<!--                        <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
+<!--                      </b-col>-->
+<!--                    </b-row>-->
+                  </b-tab>
+                  <b-tab :title="(seller.subjects?seller.subjects.length:'') + ' Related Subjects'">
                         <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>
@@ -188,6 +250,7 @@
                         <b-table
                                 id="subject-table"
                                 small
+                                sort-icon-left
                                 striped
                                 hover
                                 :busy="isBusy"
@@ -218,7 +281,7 @@
                             </template>
                         </b-table>
                     </b-tab>
-                    <b-tab title="Related Phones">
+                    <b-tab :title="(seller.phones?seller.phones.length:'') + ' Related Phones'">
                         <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>
@@ -228,6 +291,7 @@
                                 id="phone-number-table"
                                 small
                                 striped
+                                sort-icon-left
                                 hover
                                 :busy="isBusy"
                                 :fields="phoneFields"
@@ -257,7 +321,7 @@
                             </template>
                         </b-table>
                     </b-tab>
-                    <b-tab title="Related Emails">
+                    <b-tab :title="(seller.emails?seller.emails.length:'') + ' Related Emails'">
                         <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAddEmailModal = true">Add New Email Address</b-button>
@@ -267,6 +331,7 @@
                                 id="email-table"
                                 small
                                 striped
+                                sort-icon-left
                                 hover
                                 :busy="isBusy"
                                 :fields="emailFields"
@@ -296,7 +361,7 @@
                             </template>
                         </b-table>
                     </b-tab>
-                    <b-tab title="Related Golden Addresses">
+                    <b-tab :title="(seller.golden_addresses?seller.golden_addresses.length:'') + ' Related Golden Addresses'">
                         <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAddAddressModal = true">Add New Golden Address</b-button>
@@ -307,6 +372,7 @@
                                 small
                                 striped
                                 hover
+                                sort-icon-left
                                 :busy="isBusy"
                                 :fields="goldenFields"
                                 :items="seller.golden_addresses"
@@ -360,6 +426,7 @@
     </b-modal>
 </template>
 <script>
+import {mapGetters} from "vuex";
 import EditPhoneNumberModal from "../phoneNumber/EditPhoneNumberModal";
 import EditEmailModal from "../email/EditEmailModal";
 import EditGoldenAddressModal from "../goldenAddress/EditGoldenAddressModal";
@@ -396,6 +463,10 @@ export default {
         editPhone(item) {
             this.editedItem = { ...item }
             this.showEditPhoneModal = true;
+        },
+        currentModal(){
+          let subject = this.propsSeller.subjects?.[0];
+           this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
         },
         editPhoneSave (item) {
             this.$store.dispatch('phoneNumberModule/editPhoneNumber', {...item})
@@ -463,6 +534,7 @@ export default {
                 subject_id: '',
             },
             isReadOnly: true,
+            listFieldsFiltered: null,
             isBusy: false,
             phoneTableFields: null,
             emailTableFields: null,
@@ -507,22 +579,16 @@ export default {
                 {key: "subject_age", label: "Subject Age", sortable: true},
                 {key: "subject_type", label: "Subject Type", sortable: true},
             ],
-            listFields: [
-                {key:"id", label: "ID", sortable: true},
-                //{key:"actions", stickyColumn: true, label: "Actions"},
-
-                // {key:"list_total_subject", label: "Total Subjects", sortable: true},
-                // {key:"list_total_individual_list", label: "Total Individual Lists", sortable: true},
-                {key:"list_market", label: "Markets", sortable: true},
-
-                {key:"list_group", label: "Group", sortable: true},
-                {key:"list_type", label: "Type", sortable: true},
-                {key:"list_source", label: "Source", sortable: true},
-
-                // Custom fields
-                {key:"list_pull_date", label: "Last Pull Date", sortable: true},
-                {key:"created_at", label: "Upload Date", sortable: true},
-                {key:"updated_at", label: "Last Edit Date", sortable: true},
+            relatedTableFields: [
+                {key:"id",  label: "ID", sortable: true},
+                {key:"list_run_year",  label: "Run Year", sortable: true},
+                {key:"list_run_month",   label: "Run Month", sortable: true},
+                {key:"subjects_count",  label: "Total Subjects", sortable: true},
+                {key:"sellers_count",   label: "Total Sellers", sortable: true},
+                {key:"phones_count",    label: "Total Phones", sortable: true},
+                {key:"emails_count",    label: "Total Emails", sortable: true},
+                {key:"golden_addresses_count", label: "Total Golden Address", sortable: true},
+                {key:"error_number",    label: "Total Errors", sortable: true},
             ],
             showEditPhoneModal: false,
             showEditEmailModal: false,
@@ -535,9 +601,13 @@ export default {
         }
     },
     computed: {
+            ...mapGetters({
+            tabData: 'listModule/subjectRelatedList',
+            listFields: 'listModule/fields',
+        }),
     },
     mounted () {
-
+        this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'list_total_individual_list' )
     },
     watch: {
         showModal() {

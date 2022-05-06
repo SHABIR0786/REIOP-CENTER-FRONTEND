@@ -47,6 +47,7 @@
             id="subject-table"
             small
             striped
+            sort-icon-left
             hover
             :busy="isBusy"
             :fields="fields"
@@ -103,6 +104,24 @@
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+            </template>
+            <template v-slot:cell(subject_address)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_address">{{ data.item.subject_address }}</div>
+            </template>
+            <template v-slot:cell(subject_city)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_city">{{ data.item.subject_city }}</div>
+            </template>
+            <template v-slot:cell(subject_state)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_state">{{ data.item.subject_state }}</div>
+            </template>
+            <template v-slot:cell(subject_zip)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_zip">{{ data.item.subject_zip }}</div>
+            </template>
+            <template v-slot:cell(subject_county)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_county">{{ data.item.subject_county }}</div>
+            </template>
+            <template v-slot:cell(subject_type)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_type">{{ data.item.subject_type }}</div>
             </template>
         </b-table>
         <b-row>
@@ -265,7 +284,6 @@ export default {
           this.$store.dispatch("propertyModule/getTemplate", {id: event})
         },
         bulkDelete () {
-            console.log(this.bulkDeleteItems);
             this.$store.dispatch('propertyModule/deleteMultipleSubjects', this.bulkDeleteItems).then(
                 this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty})
             )
@@ -278,7 +296,6 @@ export default {
                 });
             }
 
-            console.log(this.bulkDeleteItems);
         }
     },
     mounted() {

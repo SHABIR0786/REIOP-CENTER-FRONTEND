@@ -13,17 +13,16 @@
         ></b-form-file>
       </b-col>
     </b-row>
-    <b-row class="mt-4 mb-3">
-      <b-col cols="12" md="4">
-        <fields-card class="field-section h-100"
+    <div class="mt-4 parent">
+      <div class="child">
+        <fields-card
                      :fromField="fromField"
                      :tableFields="uploadedFields"
                      :title="`Uploaded Fields`"
                      @selectItem="selectUploadedField"
-
         />
-      </b-col>
-      <b-col cols="12" md="3">
+      </div>
+      <div class="child">
         <fields-card class="target-section h-100"
                      :toField="toField"
                      :importedFields="importedFields"
@@ -31,21 +30,17 @@
                      @selectItem="selectTargetField"
                      @dblclick="mapFields"
                      />
-      </b-col>
-      <b-col cols="12" md="1">
-        <b-row class="map-button text-right">
-          <b-col>
-            <b-button variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
-          </b-col>
-        </b-row>
-      </b-col>
-      <b-col cols="12" md="4" >
+      </div>
+      <div class="map-button child">
+            <b-button class="w-100" variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
+      </div>
+      <div class="child">
         <mapped-fields class="mapped-fields h-100" :items="mappedItems"
                        @clearMappedItem="clearMappedItem"></mapped-fields>
         <b-row class="text-right mt-5">
         </b-row>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
     <b-row>
       <b-col class="text-right" cols="12" md="12">
         <b-btn variant="primary" @click="confirm(mappedItems)">Import</b-btn>
@@ -180,7 +175,6 @@ export default {
     }
   },
   methods: {
-
     sellerFill() {
       this.showSellerFillModal = false
     },
@@ -400,10 +394,28 @@ export default {
 }
 
 .map-button {
-  margin-right: 0 !important;
+  /* margin-right: 0 !important; */
+  height: 50px;
 }
 
 .import-container {
   height: calc(100vh - 56px) !important;
+}
+.parent {
+    display: grid;
+    grid-template-columns: 31% 30% 9% 30%;
+}
+.parent div:first-child {
+  margin-left:0px !important;
+  /* margin-right:15px !important; */
+} 
+.parent div:nth-child(4) {
+  /* margin-left:20px !important; */
+  margin-right:0px !important;
+} 
+.child {
+    flex-grow: 1;
+    margin-left: 1rem;
+    margin-right:1rem !important;
 }
 </style>

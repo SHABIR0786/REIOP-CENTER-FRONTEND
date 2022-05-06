@@ -10,6 +10,7 @@
                 small
                 striped
                 hover
+                sort-icon-left
                 responsive
                 :busy="isBusy"
                 :fields="fields"

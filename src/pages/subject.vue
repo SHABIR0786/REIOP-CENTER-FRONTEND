@@ -97,6 +97,36 @@
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
             </template>
+            <template v-slot:cell(subject_address)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_address">{{ data.item.subject_address }}</div>
+            </template>
+            <template v-slot:cell(subject_city)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_city">{{ data.item.subject_city }}</div>
+            </template>
+            <template v-slot:cell(subject_zip)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_zip">{{ data.item.subject_zip }}</div>
+            </template>
+            <template v-slot:cell(subject_county)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_county">{{ data.item.subject_county }}</div>
+            </template>
+            <template v-slot:cell(subject_state)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_state">{{ data.item.subject_state }}</div>
+            </template>
+              <template v-slot:cell(subject_market)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_market">{{ data.item.subject_market }}</div>
+            </template>
+            <template v-slot:cell(subject_address_line2)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_address_line2">{{ data.item.subject_address_line2 }}</div>
+            </template>
+            <template v-slot:cell(subject_type)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_type">{{ data.item.subject_type }}</div>
+            </template>
+                        <template v-slot:cell(subject_error_type)="data">
+                <div v-b-tooltip.hover :title="data.item.subject_error_type">{{ data.item.subject_error_type }}</div>
+            </template>
+                                    <template v-slot:cell(user_name)="data">
+                <div v-b-tooltip.hover :title="data.item.user_name">{{ data.item.user_name }}</div>
+            </template>
         </b-table>
         <b-row>
             <b-col class="d-flex align-items-center">

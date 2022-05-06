@@ -89,6 +89,21 @@
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
             </template>
+            <template v-slot:cell(phone_number)="data">
+                <div v-b-tooltip.hover :title="data.item.phone_number">{{ data.item.phone_number }}</div>
+            </template>
+            <template v-slot:cell(phone_skip_source)="data">
+                <div v-b-tooltip.hover :title="data.item.phone_skip_source">{{ data.item.phone_skip_source }}</div>
+            </template>
+            <template v-slot:cell(phone_error_type)="data">
+                <div v-b-tooltip.hover :title="data.item.phone_error_type">{{ data.item.phone_error_type }}</div>
+            </template>
+            <template v-slot:cell(user_name)="data">
+                <div v-b-tooltip.hover :title="data.item.user_name">{{ data.item.user_name }}</div>
+            </template>
+                        <template v-slot:cell(phone_type)="data">
+                <div v-b-tooltip.hover :title="data.item.phone_type">{{ data.item.phone_type }}</div>
+            </template>
         </b-table>
         <b-row>
             <b-col class="d-flex align-items-center">

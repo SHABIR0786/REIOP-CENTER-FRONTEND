@@ -105,6 +105,37 @@
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
             </template>
+            <template v-slot:cell(seller_first_name)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_first_name">{{ data.item.seller_first_name }}</div>
+            </template>
+                        <template v-slot:cell(seller_last_name)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_last_name">{{ data.item.seller_last_name }}</div>
+            </template>
+                        <template v-slot:cell(seller_middle_name)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_middle_name">{{ data.item.seller_middle_name }}</div>
+            </template>
+            <template v-slot:cell(seller_mailing_address)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_mailing_address">{{ data.item.seller_mailing_address }}</div>
+            </template>
+            <template v-slot:cell(seller_mailing_address_line2)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_mailing_address_line2">{{ data.item.seller_mailing_address_line2 }}</div>
+            </template>
+            <template v-slot:cell(seller_error_type)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_error_type">{{ data.item.seller_error_type }}</div>
+            </template>
+            <template v-slot:cell(user_name)="data">
+                <div v-b-tooltip.hover :title="data.item.user_name">{{ data.item.user_name }}</div>
+            </template>
+            <template v-slot:cell(seller_mailing_zip)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_mailing_zip">{{ data.item.seller_mailing_zip }}</div>
+            </template>
+            <template v-slot:cell(seller_mailing_city)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_mailing_city">{{ data.item.seller_mailing_city }}</div>
+            </template>
+                       <template v-slot:cell(seller_mailing_state)="data">
+                <div v-b-tooltip.hover :title="data.item.seller_mailing_state">{{ data.item.seller_mailing_state }}</div>
+            </template>
+            
         </b-table>
         <b-row>
             <b-col class="d-flex align-items-center">

@@ -180,6 +180,7 @@
         <b-table
             id="list-table"
             small
+            sort-icon-left
             striped
             hover
             :fields="fields"

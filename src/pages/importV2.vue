@@ -23,6 +23,7 @@
                     id="list-table"
                     small
                     striped
+                    sort-icon-left
                     hover
                     responsive
                     :busy="isBusy"
@@ -47,12 +48,6 @@
                 <template #head()="scope">
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                 </template>
-
-                <template v-slot:cell(id)="data">
-                    <div :title="data.item.id">
-                        <p class="user-email">{{data.item.id}}</p>
-                    </div>
-                </template>
                 <template v-slot:cell(actions)="data">
                     <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)"></b-icon>
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -63,6 +58,15 @@
                         <p class="user-email">{{Math.round((data.item.is_processed / (data.item.is_processed + data.item.is_processing)) * 100)}}%</p>
                     </div>
                 </template>
+                <template v-slot:cell(file_name)="data">
+                <div v-b-tooltip.hover :title="data.item.file_name">{{ data.item.file_name }}</div>
+              </template>
+              <template v-slot:cell(created_records)="data">
+                <div v-b-tooltip.hover :title="data.item.created_records">{{ data.item.created_records }}</div>
+              </template>
+              <template v-slot:cell(id)="data">
+                <div v-b-tooltip.hover :title="data.item.id">{{ data.item.id }}</div>
+              </template>
 
             </b-table>
             <b-row>

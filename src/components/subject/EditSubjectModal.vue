@@ -104,7 +104,7 @@
 
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab title="Related Lists" active>
+                    <b-tab :title="(subject.lists?subject.lists.length:'')+' Related Lists'" active>
                         <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing List</b-button>
@@ -114,6 +114,7 @@
                                 id="list-table"
                                 small
                                 striped
+                                sort-icon-left
                                 hover
                                 responsive
                                 :busy="isBusy"
@@ -128,7 +129,6 @@
                                     <strong>Loading...</strong>
                                 </div>
                             </template>
-
                             <template #head(id)="scope">
                                 <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
                             </template>
@@ -183,11 +183,12 @@
                           </template>
                         </b-table>
                     </b-tab>
-                    <b-tab title="Related Running Lists"  @click="currentModal()">
+                    <b-tab :title="(tabData ? tabData.length : '') + ' Related Running Lists'"  @click="currentModal()">
                     <b-table
                         id="related-table"
                         small
                         striped
+                        sort-icon-left
                         hover
                         :busy="isBusy"
                         :fields="relatedTableFields"
@@ -239,7 +240,7 @@
 <!--                      </b-col>-->
 <!--                    </b-row>-->
                   </b-tab>
-                  <b-tab title="Related Sellers">
+                  <b-tab :title="(subject.sellers?subject.sellers.length:'') +' Related Sellers'">
                         <b-col>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
@@ -250,6 +251,7 @@
                                 small
                                 striped
                                 hover
+                                sort-icon-left
                                 :busy="isBusy"
                                 :fields="sellerTableFields"
                                 :items="subject.sellers"

@@ -4,7 +4,7 @@ const state = {
     fields: [
         {key:"id", label: "ID", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
-        {key:"list_total_subject", label: "Unique Subjects", sortable: true},
+        {key:"subjects_unique_count", label: "Unique Subjects", sortable: true},
         {key:"list_total_individual_list", label: "Total Individual Lists", sortable: true},
         {key:"list_market", label: "Markets", sortable: true},
         {key:"list_group", label: "Group", sortable: true},

@@ -22,6 +22,7 @@
                     small
                     striped
                     hover
+                    sort-icon-left
                     :busy="isBusy"
                     :fields="sellerFields"
                     :items="items"

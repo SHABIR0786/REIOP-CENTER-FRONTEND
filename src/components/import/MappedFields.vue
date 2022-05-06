@@ -1,6 +1,6 @@
 <template>
-    <b-card header-tag="header" header-bg-variant="light" header="Mapped Fields">
-        <b-table small striped hover :busy="isBusy" :fields="headers" :items="items" responsive="md">
+    <b-card header-tag="header" header-bg-variant="light"  header="Mapped Fields">
+        <b-table sort-icon-left small striped hover :busy="isBusy" :fields="headers" :items="items" responsive="md">
             <template #table-busy>
                 <div class="text-center" my-2>
                     <b-spinner

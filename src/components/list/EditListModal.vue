@@ -111,11 +111,12 @@
             </b-row>
           <b-row class="mt-5">
             <b-tabs class="w-100" content-class="mt-3" fill>
-              <b-tab title="Related Running Lists" active @click="currentModal()">
+              <b-tab :title="(tabData.data?tabData.data.length:'') + ' Related Running Lists'" active @click="currentModal()">
                 <b-table
                     id="related-table"
                     small
                     striped
+                    sort-icon-left
                     hover
                     :busy="isBusy"
                     :fields="relatedTableFields"

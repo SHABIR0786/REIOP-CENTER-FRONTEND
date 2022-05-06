@@ -39,6 +39,7 @@
             id="list-table"
             small
             striped
+            sort-icon-left
             hover
             responsive
             :busy="isBusy"
@@ -92,6 +93,9 @@
                     <p class="user-email">{{data.item.id}}</p>
                 </div>
             </template>
+            <template v-slot:cell(list_total_subject)="data">
+                <div class="text-nowrap" style="width: 100px;">{{data.item.subjects_unique_count}}</div>
+            </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item) "></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
@@ -102,15 +106,20 @@
             <template #head(updated_at)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
-            <template v-slot:cell(list_type)="data">
-                <div :title="data.item.list_type">
-                    <p class="user-email">{{data.item.list_type}}</p>
-                </div>
+            <template v-slot:cell(list_source)="data">
+                <div v-b-tooltip.hover :title="data.item.list_source">{{ data.item.list_source }}</div>
+            </template>
+            <template v-slot:cell(list_market)="data">
+                <div v-b-tooltip.hover :title="data.item.list_market">{{ data.item.list_market }}</div>
             </template>
             <template v-slot:cell(list_group)="data">
-                <div :title="data.item.list_group">
-                    <p class="user-email">{{data.item.list_group}}</p>
-                </div>
+                <div v-b-tooltip.hover :title="data.item.list_group">{{ data.item.list_group }}</div>
+            </template>
+            <template v-slot:cell(list_type)="data">
+                <div v-b-tooltip.hover :title="data.item.list_type">{{ data.item.list_type }}</div>
+            </template>
+            <template v-slot:cell(user_name)="data">
+                <div v-b-tooltip.hover :title="data.item.user_name">{{ data.item.user_name }}</div>
             </template>
         </b-table>
         <b-row>

@@ -4,6 +4,7 @@
                 id="email-table"
                 small
                 striped
+                sort-icon-left
                 hover
                 :busy="isBusy"
                 :fields="fields"

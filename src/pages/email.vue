@@ -92,6 +92,18 @@
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
             </template>
+            <template v-slot:cell(email_address)="data">
+                <div v-b-tooltip.hover :title="data.item.email_address">{{ data.item.email_address }}</div>
+            </template>
+            <template v-slot:cell(email_skip_source)="data">
+                <div v-b-tooltip.hover :title="data.item.email_skip_source">{{ data.item.email_skip_source }}</div>
+            </template>
+            <template v-slot:cell(email_error_type)="data">
+                <div v-b-tooltip.hover :title="data.item.email_error_type">{{ data.item.email_error_type }}</div>
+            </template>
+            <template v-slot:cell(user_name)="data">
+                <div v-b-tooltip.hover :title="data.item.user_name">{{ data.item.user_name }}</div>
+            </template>
         </b-table>
         <b-row>
             <b-col class="d-flex align-items-center">

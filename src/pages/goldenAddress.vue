@@ -89,6 +89,27 @@
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
             </template>
+            <template v-slot:cell(golden_address_address)="data">
+                <div v-b-tooltip.hover :title="data.item.golden_address_address">{{ data.item.golden_address_address }}</div>
+            </template>
+            <template v-slot:cell(golden_address_address_line2)="data">
+                <div v-b-tooltip.hover :title="data.item.golden_address_address_line2">{{ data.item.golden_address_address_line2 }}</div>
+            </template>
+            <template v-slot:cell(golden_address_city)="data">
+                <div v-b-tooltip.hover :title="data.item.golden_address_city">{{ data.item.golden_address_city }}</div>
+            </template>
+            <template v-slot:cell(golden_error_type)="data">
+                <div v-b-tooltip.hover :title="data.item.golden_error_type">{{ data.item.golden_error_type }}</div>
+            </template>
+            <template v-slot:cell(user_name)="data">
+                <div v-b-tooltip.hover :title="data.item.user_name">{{ data.item.user_name }}</div>
+            </template>
+            <template v-slot:cell(golden_address_state)="data">
+                <div v-b-tooltip.hover :title="data.item.golden_address_state">{{ data.item.golden_address_state }}</div>
+            </template>
+            <template v-slot:cell(golden_address_zip)="data">
+                <div v-b-tooltip.hover :title="data.item.golden_address_zip">{{ data.item.golden_address_zip }}</div>
+            </template>
         </b-table>
         <b-row>
             <b-col class="d-flex align-items-center">
