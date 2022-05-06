@@ -237,7 +237,14 @@ export default {
       },
 
       uploadTypeResponse (response) {
-        if(response) {
+        this.statusBackSkip = false
+        if(response === 'combined') {
+          this.importDetails.upload_type = response;
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_3 = false;
+          this.step_4 = true;
+        }else {
           this.importDetails.upload_type = response;
           this.step_1 = false;
           this.step_2 = false;
@@ -305,6 +312,14 @@ export default {
           this.step_1 = false;
           this.step_2 = true;
           this.step_2_skip = false
+          this.step_3 = false;
+          this.step_4 = false;
+        }
+        else if(response === 'Combined'){
+          this.step_1 = false;
+          this.step_2 = true;
+          this.step_2_skip = false
+          this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = false;
         }

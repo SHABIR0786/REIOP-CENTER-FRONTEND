@@ -105,6 +105,18 @@ export default {
       isHaveMappedItems: false,
       showSellerFillModal: false,
       skipValidate: false,
+      list: {
+        list_market: '',
+        list_group: '',
+        list_type: '',
+        list_source: '',
+        list_skip_source: '',
+        list_skip_date: '',
+        list_pull_date: '',
+        list_hash: '',
+        user_id: '',
+        team_id: '',
+      },
     }
   },
   computed: {
@@ -115,6 +127,7 @@ export default {
       phoneNumberFields: 'importModule/phoneNumberFields',
       sellerFields: 'importModule/sellerFields',
       subjectFields: 'importModule/subjectFields',
+      listFields: 'importModule/listFields',
       schemas: 'importModule/schemas',
       importFields: 'importModule/importFields',
       skippedValidation: 'importV2Module/isSkipValidation'
@@ -146,11 +159,12 @@ export default {
         }
       } else {
         this.importedFields = {
-          email: this.emailFields,
-          golden_address: this.goldenAddressFields,
-          phone: this.phoneNumberFields,
+          // email: this.emailFields,
+          // golden_address: this.goldenAddressFields,
+          // phone: this.phoneNumberFields,
           seller: this.sellerFields,
           subject: this.subjectFields,
+          list: this.listFields,
         }
       }
     } else if (this.skip_variant) {
@@ -245,6 +259,11 @@ export default {
         if (requiredPhoneExist || requiredEmailExist){
           this.isHaveMappedItems  = true;
         }
+      }
+      // Combined data
+
+      if (this.upload_type === 'combined'){
+        this.list_settings = 'Combined Data'
       }
       this.showConfirmModal = true;
     },

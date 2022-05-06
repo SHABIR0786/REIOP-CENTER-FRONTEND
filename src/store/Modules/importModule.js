@@ -104,10 +104,17 @@ export const actions = {
         })
         data.append('mapOrder', JSON.stringify(mapSequence));
         data.append('map', JSON.stringify(mapObject));
-        return await api.post('/upload', data, config).then((response) => {
-            commit('SET_UPLOADED', true)
-            return response
-        })
+        if (list === 'Combined Data'){
+            return await api.post('/combinedUpload', data, config).then((response) => {
+                commit('SET_UPLOADED', true)
+                return response
+            })
+        }else {
+            return await api.post('/upload', data, config).then((response) => {
+                commit('SET_UPLOADED', true)
+                return response
+            })
+        }
     },
     async loadVisibleFields ({ commit }) {
         return await api.get('/visible-labels').then((response) => {
@@ -127,6 +134,7 @@ export const getters = {
     phoneNumberFields: ({ phoneNumberFields }) => phoneNumberFields,
     sellerFields: ({ sellerFields }) => sellerFields,
     subjectFields: ({ subjectFields }) => subjectFields,
+    listFields: ({ listFields }) => listFields,
     uploadedFields: ({ uploadedFields }) => uploadedFields,
     mappedHeader: ({ mappedHeader }) => mappedHeader,
     schemas: ({ schemas }) => schemas,
