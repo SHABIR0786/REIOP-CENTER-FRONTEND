@@ -23,7 +23,9 @@
             <hr>
             <b-row class="mb-3">
                 <b-col cols="8" class="d-flex align-items-center">
-                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                  <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon></b-button>
+                  <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
                     <b-form-input v-model="searchGoldenAddress" placeholder="Search"></b-form-input>
@@ -141,6 +143,8 @@
         <edit-golden-address-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-golden-address-modal>
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-golden-address-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-golden-address-modal>
+        <filter-golden-addresses @filter="filter" @finish-process="isFinishedFilterGoldenAddresses = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-golden-addresses>
+
     </div>
 </template>
 <script>
@@ -149,25 +153,31 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditGoldenAddressModal from "../components/goldenAddress/EditGoldenAddressModal";
 import AddGoldenAddressModal from "../components/goldenAddress/AddGoldenAddressModal";
-
+import FilterGoldenAddresses from "../components/goldenAddress/FilterGoldenAddresses.vue"
 export default {
     name: "GoldenAddress",
     components: {
         BIcon,
         EditGoldenAddressModal,
         DeleteModal,
-        AddGoldenAddressModal
+        AddGoldenAddressModal,
+        FilterGoldenAddresses
     },
     data () {
         return {
             isBusy: false,
             showModal: false,
+            showFilterPropertiesModal: false,
+            isFinishedFilterGoldenAddresses: false,
+            filteredOrAllData:[],
             perPage: 20,
             currentPage: 1,
             editedItem: {},
+            itemsCount:0,
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
+            totalFilters:0,
             searchGoldenAddress: '',
             showAddModal: false,
             bulkDeleteItems: [],
@@ -179,22 +189,63 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'goldenAddressModule/fields',
             items: 'goldenAddressModule/goldenAddresses',
-            total: 'goldenAddressModule/total'
+            total: 'goldenAddressModule/total',
+            filteredItems: 'goldenAddressModule/filteredGoldenAddress',
+            filteredGoldenAddressesCount:'goldenAddressModule/filteredGoldenAddressesCount',
+            selectedGoldenAddress: 'goldenAddressModule/goldenAddress'
+
         }),
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('goldenAddressModule/getTotal')
-        try {
+         try {
+          this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
+            this.filter(filters, filterValue)
+          } else {
             await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
-            this.$store.dispatch('uxModule/hideLoader')
+          }
+          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
+        if (this.$route.query.goldenaddress_id) {
+            this.$store.dispatch('goldenAddressModule/getGoldenAddress', this.$route.query.goldenaddress_id).then(() => {
+              this.editedItem = this.selectedGoldenAddress
+              this.showModal = true
+            });
+        }
+      this.filteredOrAllData = this.items;
+      this.itemsCount = this.total;
         
     },
     methods: {
+        async filter(data,filterValue, dataAfterFiltering){
+            this.filtersName = data
+            await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", {page: 1, perPage: this.perPage, filter: data})
+            localStorage.setItem('applied-filters', JSON.stringify(data))
+            if(dataAfterFiltering) {
+            localStorage.setItem('data-after-filtering', JSON.stringify(dataAfterFiltering))
+            localStorage.setItem('filters-count', filterValue)
+            }
+            if (!filterValue){
+                if(!this.items.length){
+                await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
+            }
+                this.filteredOrAllData = this.items
+                this.itemsCount = this.total
+            }else{
+                this.filteredOrAllData = this.filteredItems
+                this.itemsCount = this.filteredGoldenAddressesCount
+            }
+                this.showFilterPropertiesModal =false
+        },
         editItem(item) {
             this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
             item.sellers = [response.seller];
@@ -237,24 +288,92 @@ export default {
                     this.bulkDeleteItems.push(e.id);
                 });
             }
+        },
+        filtersCount(total) {
+            this.totalFilters = total
+            return  total
+        },
+        async doCreatedOperation() {
+            this.$store.dispatch('goldenAddressModule/getTotal')
+            try {
+            // this.$store.dispatch('uxModule/setLoading')
+            const filters = JSON.parse(localStorage.getItem('applied-filters'))
+            let filterValue = 0;
+            for (let i in filters){
+                filterValue += filters[i].length
+            }
+            if(filterValue) {
+                this.filter(filters, filterValue)
+            } else {
+                await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
+            }
+            this.$store.dispatch('uxModule/hideLoader')
+            } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+            }
+            if (this.$route.query.goldenaddress_id) {
+            this.$store.dispatch('goldenAddressModule/getGoldenAddress', this.$route.query.goldenaddress_id).then(() => {
+                this.editedItem = this.selectedGoldenAddress
+                this.showModal = true
+            });
+            }
+            this.filteredOrAllData = this.items;
+            this.itemsCount = this.total;
         }
     },
     watch: {
         currentPage: {
-            handler: function() {
-                this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
+            handler: async function() {
+            if (!this.total){
+                await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
+                this.filteredOrAllData = this.items
+              }else{
+                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
         },
         perPage: {
-            handler: function () {
-                this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: 1, perPage: this.perPage, search: this.searchGoldenAddress})
+            handler: async function () {
+            if (!this.total) {
+                await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: 1, perPage: this.perPage, search: this.searchGoldenAddress})
+                this.filteredOrAllData = this.items
+              } else {
+                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: 1, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
         },
         searchGoldenAddress: {
-            handler: function () {
-                this.$store.dispatch('goldenAddressModule/searchGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
+            handler: async function () {
+              if (!this.total) {
+                await this.$store.dispatch('goldenAddressModule/searchGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
+                this.itemsCount = this.items.length
+              }else{
+                this.currentPage = 1;
+                let searchInFiltered = [...this.filteredItems]
+                 searchInFiltered = searchInFiltered.filter(el => {
+                 return  el.golden_address_address.includes(this.searchGoldenAddress)||
+                   el.golden_address_city.includes(this.searchGoldenAddress)  ||
+                   el.golden_address_state.includes(this.searchGoldenAddress) ||
+                   el.golden_address_zip.includes(this.searchGoldenAddress)   ||
+                   el.id.toString().includes(this.searchGoldenAddress)
+                 });
+                if(this.searchGoldenAddress) {
+                  this.itemsCount = searchInFiltered.length
+                } else {
+                  this.itemsCount = this.total;
+                }
+                this.filteredOrAllData =  searchInFiltered
+                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+              }
             }
+        },
+        isFinishedFilterGoldenAddresses() {
+        if(this.isFinishedFilterGoldenAddresses) {
+          this.doCreatedOperation()
         }
+      },
     }
 }
 </script>

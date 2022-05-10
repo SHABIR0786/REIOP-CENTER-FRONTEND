@@ -23,6 +23,9 @@ const state = {
     ],
     phoneNumbers: [],
     total: 0,
+    phoneNumber: {},
+    filteredPhoneNumber: {},
+    filteredPhoneNumbersCount: 0,
 }
 
 const mutations = {
@@ -55,6 +58,20 @@ const mutations = {
         findIndex !== -1 && PHONE.splice(findIndex, 1, { ...payload })
         state.phoneNumbers = JSON.stringify(PHONE);
     },
+    FILTER_PHONE_NUMBER(state, payload) {
+        const filteredData = [...payload.data]
+        filteredData.forEach(e => {
+            e.list_stack = e.lists.length;
+            e.total_sellers = e.sellers.length;
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.filteredPhoneNumber = JSON.stringify(filteredData);
+        state.filteredPhoneNumbersCount = payload.total;
+    },
+    SET_PHONE_NUMBER(state, payload) {
+        state.phoneNumber = {...payload};
+    },
     DELETE_MULTIPLE_ITEMS(state, payload) {
         const PHONE = JSON.parse(state.phoneNumbers)
         const findIndex =PHONE.findIndex(({ id }) => id === payload)
@@ -64,6 +81,7 @@ const mutations = {
     VUEX_STORE(state) {
         state.phoneNumbers = [];
         state.total = 0;
+        state.phoneNumber = {};
     },
 }
 
@@ -78,6 +96,21 @@ const actions = {
                 commit('SET_ALL_ITEMS', response.phones.data)
             }
 
+            return response
+        })
+    },
+    async getPhoneNumber({commit}, data) {
+        return await api.get(`/phones/full/${data}`).then((response) => {
+            if (response && response.phone) {
+                commit('SET_PHONE_NUMBER', response.phone)
+            }
+
+            return response
+        })
+    },
+    async filterPhoneNumber({ commit }, data) {
+        return await api.post(`/phones/filter`, {...data}).then((response) => {
+            commit('FILTER_PHONE_NUMBER', response.phones)
             return response
         })
     },
@@ -141,7 +174,16 @@ const getters = {
 
         return [];
     },
-    total: ({total}) => total
+    total: ({total}) => total,
+    filteredPhoneNumbersCount: ({filteredPhoneNumbersCount}) => filteredPhoneNumbersCount,
+    phoneNumber: ({phoneNumber}) => phoneNumber,
+    filteredPhoneNumber: ({ filteredPhoneNumber }) => {
+        if (typeof filteredPhoneNumber === 'string') {
+            return JSON.parse(filteredPhoneNumber);
+        }
+        return [];
+    },
+
 }
 
 export default {

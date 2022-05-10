@@ -10,7 +10,6 @@ const state = {
         {key: "seller_total_phones", label: "Total Phones", sortable: true},
         {key: "seller_total_emails", label: "Total Emails", sortable: true},
 
-
         {key: "seller_first_name", label: "First Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
         {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
@@ -34,7 +33,9 @@ const state = {
     ],
     sellers: [],
     total: 0,
-    seller: {}
+    seller: {},
+    filteredSeller: {},
+    filteredSellersCount: 0,
 }
 
 const mutations = {
@@ -69,6 +70,17 @@ const mutations = {
         const findIndex = SELLER.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && SELLER.splice(findIndex, 1, { ...payload })
         state.sellers = JSON.stringify(SELLER)
+    },
+    FILTER_SELLER(state, payload) {
+        const filteredData = [...payload.data]
+        filteredData.forEach(e => {
+            e.list_stack = e.lists.length;
+            e.total_subjects = e.subjects.length;
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.filteredSeller =JSON.stringify(filteredData);
+        state.filteredSellersCount =payload.total;
     },
     SET_SELLER(state, payload) {
         state.seller = JSON.stringify(payload);
@@ -111,6 +123,12 @@ const actions = {
                 commit('SET_ALL_SELLERS', response.sellers.data)
             }
 
+            return response
+        })
+    },
+    async filterSeller({ commit }, data) {
+        return await api.post(`/sellers/filter`, {...data}).then((response) => {
+            commit('FILTER_SELLER', response.sellers)
             return response
         })
     },
@@ -184,6 +202,15 @@ const getters = {
         }
         return [];
     },
+
+    filteredSellersCount: ({filteredSellersCount}) => filteredSellersCount,
+    filteredSeller: ({ filteredSeller }) => {
+        if (typeof filteredSeller === 'string') {
+            return JSON.parse(filteredSeller);
+        }
+        return [];
+    },
+
 }
 
 export default {

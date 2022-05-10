@@ -23,7 +23,9 @@
             <hr>
             <b-row class="mb-3">
                 <b-col cols="8" class="d-flex align-items-center">
-                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                  <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon></b-button>
+                  <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
                     <b-form-input v-model="searchEmail" placeholder="Search"></b-form-input>
@@ -135,6 +137,9 @@
         <edit-email-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-email-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-email-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-email-modal>
+        <filter-emails @filter="filter" @finish-process="isFinishedFilterEmails = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-emails>
+
+
     </div>
 </template>
 <script>
@@ -143,6 +148,7 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditEmailModal from "../components/email/EditEmailModal"
 import AddEmailModal from "../components/email/AddEmailModal";
+import FilterEmails from "../components/email/FilterEmails";
 
 export default {
     name: "Email",
@@ -150,18 +156,23 @@ export default {
         BIcon,
         EditEmailModal,
         DeleteModal,
-        AddEmailModal
+        AddEmailModal,
+        FilterEmails
     },
     data () {
         return {
             isBusy: false,
             showModal: false,
+            isFinishedFilterEmails: false,
+            totalFilters:0,
             perPage: 20,
             currentPage: 1,
+            filteredOrAllData:[],
             editedItem: {},
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
+            showFilterPropertiesModal: false,
             searchEmail: '',
             showAddModal: false,
             bulkDeleteItems: [],
@@ -173,22 +184,66 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'emailModule/fields',
             items: 'emailModule/emails',
-            total: 'emailModule/total'
+            total: 'emailModule/total',
+            selectedEmail: 'emailModule/email',
+            filteredItems: 'emailModule/filteredEmail',
+            filteredEmailsCount:'emailModule/filteredEmailsCount',
         }),
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('emailModule/getTotal')
         try {
+          this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
+            this.filter(filters, filterValue)
+          } else {
             await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage})
-            this.$store.dispatch('uxModule/hideLoader')
+          }
+          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
-        
+        if (this.$route.query.email_id) {
+            this.$store.dispatch('emailModule/getEmail', this.$route.query.email_id).then(() => {
+              this.editedItem = this.selectedEmail
+              this.showModal = true
+            });
+        }
+      this.filteredOrAllData = this.items;
+      this.itemsCount = this.total;
+
     },
     methods: {
+        async filter(data,filterValue, dataAfterFiltering){
+         this.filtersName = data
+         await this.$store.dispatch("emailModule/filterEmail", {page: 1, perPage: this.perPage, filter: data})
+         localStorage.setItem('applied-filters', JSON.stringify(data))
+         if(dataAfterFiltering) {
+           localStorage.setItem('data-after-filtering', JSON.stringify(dataAfterFiltering))
+           localStorage.setItem('filters-count', filterValue)
+         }
+         if (!filterValue){
+            if(!this.items.length){
+              await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage})
+           }
+            this.filteredOrAllData = this.items
+            this.itemsCount = this.total
+          }else{
+            this.filteredOrAllData = this.filteredItems
+            this.itemsCount = this.filteredEmailsCount
+          }
+            this.showFilterPropertiesModal =false
+        },
+        filtersCount(total){
+        this.totalFilters = total
+        return  total
+        },
         editItem(item) {
              this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
             item.sellers = [response.seller];
@@ -231,24 +286,88 @@ export default {
                     this.bulkDeleteItems.push(e.id);
                 });
             }
+        },
+        async doCreatedOperation() {
+        this.$store.dispatch('emailModule/getTotal')
+        try {
+         // this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
+            this.filter(filters, filterValue)
+          } else {
+            await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage})
+          }
+         this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          this.$store.dispatch('uxModule/hideLoader')
         }
+        if (this.$route.query.email_id) {
+          this.$store.dispatch('emailModule/getEmail', this.$route.query.email_id).then(() => {
+            this.editedItem = this.selectedEmail
+            this.showModal = true
+          });
+        }
+        this.filteredOrAllData = this.items;
+        this.itemsCount = this.total;
+      }
     },
     watch: {
         currentPage: {
-            handler: function() {
-                this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
+            handler: async function() {
+              if (!this.total){
+                await this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
+                this.filteredOrAllData = this.items
+              }else{
+                await this.$store.dispatch("emailModule/filterEmail", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
         },
         perPage: {
-            handler: function () {
-                this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage, search: this.searchEmail})
+            handler: async function () {
+                if (!this.total){
+                await this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage, search: this.searchEmail})
+                this.filteredOrAllData = this.items
+              }else{
+                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
         },
         searchEmail: {
-            handler:function () {
-                this.$store.dispatch('emailModule/searchEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
+            handler: async function () {
+              if (!this.total) {
+                await this.$store.dispatch('emailModule/searchEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
+                this.itemsCount = this.items.length
+              }else{
+                this.currentPage = 1;
+                let searchInFiltered = [...this.filteredItems]
+                 searchInFiltered = searchInFiltered.filter(el => {
+                 return  el.email_address.includes(this.searchEmail)||
+                   el.email_city.includes(this.searchEmail)  ||
+                   el.email_state.includes(this.searchEmail) ||
+                   el.email_zip.includes(this.searchEmail)   ||
+                   el.id.toString().includes(this.searchEmail)
+                 });
+                if(this.searchEmail) {
+                  this.itemsCount = searchInFiltered.length
+                } else {
+                  this.itemsCount = this.total;
+                }
+                this.filteredOrAllData =  searchInFiltered
+                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+              }
             }
+        },
+        isFinishedFilterEmails() {
+        if(this.isFinishedFilterEmails) {
+          this.doCreatedOperation()
         }
+      },
     }
 }
 </script>

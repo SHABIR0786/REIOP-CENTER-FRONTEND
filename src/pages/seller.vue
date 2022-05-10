@@ -24,7 +24,9 @@
             <hr>
             <b-row class="mb-3">
                 <b-col cols="8" class="d-flex align-items-center">
-                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                    <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon></b-button>
+                  <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
                     <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
@@ -167,6 +169,7 @@
         <edit-seller-modal :showModal="showModal" :propsSeller="editedItem" @cancel="showModal=false" @save="save"></edit-seller-modal>
         <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-seller-modal :showModal="showAddModal" @cancel="showAddModal=false" @save="add"></add-seller-modal>
+        <filter-sellers @filter="filter" @finish-process="isFinishedFilterSellers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-sellers>
     </div>
 </template>
 <script>
@@ -176,6 +179,7 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditSellerModal from "../components/seller/EditSellerModal"
 import AddSellerModal from "../components/seller/AddSellerModal";
+import FilterSellers from "../components/seller/FilterSellers";
 
 export default {
     name: "Seller",
@@ -183,15 +187,20 @@ export default {
         BIcon,
         EditSellerModal,
         DeleteModal,
-        AddSellerModal
+        AddSellerModal,
+        FilterSellers
     },
     data () {
         return {
             isBusy: false,
+            totalFilters:0,
+            isFinishedFilterSellers: false,
+            showFilterPropertiesModal: false,
             showModal: false,
             perPage: 20, // server-side connection!
             currentPage: 1,
             editedItem: {},
+            filteredOrAllData:[],
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
@@ -207,27 +216,92 @@ export default {
             fields: 'sellerModule/fields',
             items: 'sellerModule/sellers',
             total: 'sellerModule/total',
-            selectedSeller: 'sellerModule/seller'
+            selectedSeller: 'sellerModule/seller',
+            filteredItems: 'sellerModule/filteredSeller',
+            filteredSellersCount:'sellerModule/filteredSellersCount',
         }),
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('sellerModule/getTotal')
         try {
+          this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
+            this.filter(filters, filterValue)
+          } else {
             await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
-            this.$store.dispatch('uxModule/hideLoader')
+          }
+          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
         if (this.$route.query.seller_id) {
             this.$store.dispatch('sellerModule/getSeller', this.$route.query.seller_id).then(() => {
-                this.editedItem = this.selectedSeller
-                this.showModal = true
-            })
+              this.editedItem = this.selectedSeller
+              this.showModal = true
+            });
         }
+      this.filteredOrAllData = this.items;
+      this.itemsCount = this.total;
+
     },
     methods: {
+    filtersCount(total){
+        this.totalFilters = total
+        return  total
+      },
+    async doCreatedOperation() {
+        this.$store.dispatch('sellerModule/getTotal')
+        try {
+         // this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
+            this.filter(filters, filterValue)
+          } else {
+            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
+          }
+         this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          this.$store.dispatch('uxModule/hideLoader')
+        }
+        if (this.$route.query.seller_id) {
+          this.$store.dispatch('sellerModule/getSeller', this.$route.query.seller_id).then(() => {
+            this.editedItem = this.selectedSeller
+            this.showModal = true
+          });
+        }
+        this.filteredOrAllData = this.items;
+        this.itemsCount = this.total;
+      },
+    async filter(data,filterValue, dataAfterFiltering){
+         this.filtersName = data
+         await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: data})
+         localStorage.setItem('applied-filters', JSON.stringify(data))
+         if(dataAfterFiltering) {
+           localStorage.setItem('data-after-filtering', JSON.stringify(dataAfterFiltering))
+           localStorage.setItem('filters-count', filterValue)
+         }
+         if (!filterValue){
+            if(!this.items.length){
+              await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
+           }
+            this.filteredOrAllData = this.items
+            this.itemsCount = this.total
+          }else{
+            this.filteredOrAllData = this.filteredItems
+            this.itemsCount = this.filteredSellersCount
+          }
+            this.showFilterPropertiesModal =false
+        },
         editItem(item) {
           this.showModal = true
           const data = { ...item }
@@ -275,20 +349,59 @@ export default {
     },
     watch: {
         currentPage: {
-            handler: function() {
-                this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+            handler: async function() {
+                if (!this.total){
+                await  this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+                this.filteredOrAllData = this.items
+              } else {
+                await this.$store.dispatch("sellerModule/filterSeller", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
         },
         perPage: {
-            handler: function () {
+            handler: async function () {
+            if (!this.total){
                 this.$store.dispatch('sellerModule/getAllSellers', {page: 1, perPage: this.perPage, search: this.searchSeller})
+                this.filteredOrAllData = this.items
+              }else{
+                await this.$store.dispatch("sellerModule/filterSeller", { page: 1, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
         },
         searchSeller: {
-            handler: function () {
-                this.$store.dispatch('sellerModule/searchSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+            handler: async function () {
+                if (!this.total) {
+                await this.$store.dispatch('sellerModule/searchSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+                this.itemsCount = this.items.length
+              }else{
+                this.currentPage = 1;
+                let searchInFiltered = [...this.filteredItems]
+                 searchInFiltered = searchInFiltered.filter(el => {
+                 return  el.seller_address.includes(this.searchSeller)||
+                   el.seller_city.includes(this.searchSeller)  ||
+                   el.seller_state.includes(this.searchSeller) ||
+                   el.seller_zip.includes(this.searchSeller)   ||
+                   el.id.toString().includes(this.searchSeller)
+                 });
+                if(this.searchSeller) {
+                  this.itemsCount = searchInFiltered.length
+                } else {
+                  this.itemsCount = this.total;
+                }
+                this.filteredOrAllData =  searchInFiltered
+                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+              }
+
+
             }
+        },
+        isFinishedFilterSellers() {
+        if(this.isFinishedFilterSellers) {
+          this.doCreatedOperation()
         }
+      },
     }
 }
 </script>

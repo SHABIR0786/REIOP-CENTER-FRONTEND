@@ -54,7 +54,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchEmail" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -82,7 +82,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchEmail" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -110,7 +110,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchEmail" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -138,7 +138,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchEmail" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -166,7 +166,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchEmail" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -194,7 +194,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchEmail" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body header="Run Month / Year">
                     <b-list-group flush>
@@ -227,7 +227,7 @@
 import {mapGetters} from "vuex";
 
 export default {
-  name: 'FilterSellerModal',
+  name: 'FilterEmails',
   props: {
     showModal: {
       type: Boolean
@@ -270,7 +270,7 @@ export default {
         Errors:[],
         RunDate:[],
       },
-      searchSeller: '',
+      searchEmail: '',
       activeTab: 'allFilters',
       filtered:[],
       perPage: 20,
@@ -290,7 +290,7 @@ export default {
       return total;
     },
     filteredOrAllData(){
-      if (this.searchSeller){
+      if (this.searchEmail){
         return this.filtered
       }else{
         return  this.allData[this.activeTab]
@@ -300,10 +300,10 @@ export default {
   watch: {
     showModal() {
       if (this.showModal /* && !this.appliedFilters && +localStorage.getItem('filters-count') === 0*/){
-          this.seller = this.propsData
-          this.seller.forEach(el => {
-            if (el.seller_error_type && !this.allData.Errors.includes(el.seller_error_type)  && !this.allFilters.Errors.includes(el.seller_error_type)){
-              this.allData.Errors.push(el.seller_error_type)
+          this.email = this.propsData
+          this.email.forEach(el => {
+            if (el.email_error_type && !this.allData.Errors.includes(el.email_error_type)  && !this.allFilters.Errors.includes(el.email_error_type)){
+              this.allData.Errors.push(el.email_error_type)
             }
           })
 
@@ -336,10 +336,10 @@ export default {
         }
       }
     },
-    searchSeller: {
+    searchEmail: {
       handler: function () {
         var categoryTab = this.activeTab
-        this.filtered = this.allData[categoryTab].filter(name => name.toLowerCase().includes(this.searchSeller.toLowerCase()));
+        this.filtered = this.allData[categoryTab].filter(name => name.toLowerCase().includes(this.searchEmail.toLowerCase()));
       }
     },
     propsData: {
@@ -353,7 +353,7 @@ export default {
       this.activeTab = currentTub;
     },
     addFilter (item, index) {
-      if (this.searchSeller){
+      if (this.searchEmail){
         this.allFilters[this.activeTab].push(item);
         this.filtered = this.filtered.filter(e => e !== item);
         this.allData[this.activeTab] = this.allData[this.activeTab].filter(e => e !== item)
@@ -367,10 +367,10 @@ export default {
         this.allData[index].push(item);
         this.allFilters[index] = this.allFilters[index].filter(e => e !== item);
       }else{
-        if (this.searchSeller){
+        if (this.searchEmail){
           this.allData[this.activeTab].push(item);
           this.filtered.push(item);
-          this.filtered = this.filtered.filter(name => name.toLowerCase().includes(this.searchSeller.toLowerCase()));
+          this.filtered = this.filtered.filter(name => name.toLowerCase().includes(this.searchEmail.toLowerCase()));
           this.allFilters[this.activeTab].splice(index, 1);
         }else{
           this.allData[this.activeTab].push(item);
@@ -447,9 +447,9 @@ export default {
           this.incomingList.RunDate.push(runMonth[i]+'/'+runYear[i])
         }
       });
-      this.sellerData = this.propsData
-      this.sellerData.forEach(el => {
-          this.incomingList.Errors.push(el.seller_error_type)
+      this.emailData = this.propsData
+      this.emailData.forEach(el => {
+          this.incomingList.Errors.push(el.email_error_type)
       })
 
       if(localStorage.getItem('applied-filters')) {
