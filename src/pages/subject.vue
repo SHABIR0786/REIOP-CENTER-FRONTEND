@@ -405,7 +405,6 @@ export default {
         },
         searchSubject: {
             handler: async function () {
-              console.log(this.filteredItems);
               if (!this.total || (this.filteredItems.length == 0)) {
                 await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
                 if(this.searchSubject == '') {
