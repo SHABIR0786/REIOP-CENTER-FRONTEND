@@ -5,9 +5,8 @@ const state = {
         {key:"id", label: "Id", sortable: true},
         {key: "actions", label: "Actions"},
         {key: "name", label: "Name", sortable: true},
-        {key: "owner", label: "Owner"},
-        {key: "total_users", label: "Members Number"},
-
+        {key: "owner", label: "Owner", sortable: true},
+        {key: "total_users", label: "Members Number", sortable: true},
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],

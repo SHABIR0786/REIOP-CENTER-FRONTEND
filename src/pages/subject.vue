@@ -67,19 +67,55 @@
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(actions)="scope">
-                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
             </template>
             <template #head(total_sellers)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                <div style="width: 45px;">{{scope.label}}</div>
             </template>
-            <template #head(subject_state)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
-            </template>
-            <template #head(subject_zip)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+            <template #head(list_stack)="scope">
+                <div style="width: 45px;">{{scope.label}}</div>
             </template>
             <template #head(subject_address)="scope">
-                <div class="text-nowrap" style="width: 250px;">{{scope.label}}</div>
+                <div  style="width: 150px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_address_line2)="scope">
+                <div  style="width: 150px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_city)="scope">
+                <div  style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_state)="scope">
+                <div  style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_zip)="scope">
+                <div style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_county)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_market)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_type)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_age)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_last_marked_date)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_last_exported_date)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_skip_trace_date)="scope">
+                <div style="width: 80px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_pull_date)="scope">
+                <div style="width: 80px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_error)="scope">
+                <div style="width: 40px;">{{scope.label}}</div>
             </template>
             <template #head(user_id)="scope">
                 <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
@@ -121,10 +157,10 @@
             <template v-slot:cell(subject_type)="data">
                 <div v-b-tooltip.hover :title="data.item.subject_type">{{ data.item.subject_type }}</div>
             </template>
-                        <template v-slot:cell(subject_error_type)="data">
+            <template v-slot:cell(subject_error_type)="data">
                 <div v-b-tooltip.hover :title="data.item.subject_error_type">{{ data.item.subject_error_type }}</div>
             </template>
-                                    <template v-slot:cell(user_name)="data">
+            <template v-slot:cell(user_name)="data">
                 <div v-b-tooltip.hover :title="data.item.user_name">{{ data.item.user_name }}</div>
             </template>
         </b-table>
@@ -225,7 +261,7 @@ export default {
         this.$store.dispatch('subjectModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('subject-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -253,10 +289,10 @@ export default {
      async filter(data,filterValue, dataAfterFiltering){
          this.filtersName = data
          await this.$store.dispatch("subjectModule/filterSubject", {page: 1, perPage: this.perPage, filter: data})
-         localStorage.setItem('applied-filters', JSON.stringify(data))
+         localStorage.setItem('subject-applied-filters', JSON.stringify(data))
          if(dataAfterFiltering) {
-           localStorage.setItem('data-after-filtering', JSON.stringify(dataAfterFiltering))
-           localStorage.setItem('filters-count', filterValue)
+           localStorage.setItem('subject-data-after-filtering', JSON.stringify(dataAfterFiltering))
+           localStorage.setItem('subject-filters-count', filterValue)
          }
          if (!filterValue){
             if(!this.items.length){
@@ -320,7 +356,7 @@ export default {
         this.$store.dispatch('subjectModule/getTotal')
         try {
          // this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('subject-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -348,7 +384,7 @@ export default {
         currentPage: {
             handler: async function() {
               if (!this.total){
-                await this.$store.dispatch('subjectModule/getAllSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+                await this.$store.dispatch('subjectModule/getAllSubjects', { page: this.currentPage, perPage: this.perPage })
                 this.filteredOrAllData = this.items
               }else{
                 await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
@@ -369,17 +405,23 @@ export default {
         },
         searchSubject: {
             handler: async function () {
-              if (!this.total) {
+              console.log(this.filteredItems);
+              if (!this.total || (this.filteredItems.length == 0)) {
                 await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+                if(this.searchSubject == '') {
+                  this.itemsCount = this.total;
+                } else { 
                 this.itemsCount = this.items.length
-              }else{
+                }
+                this.filteredOrAllData = this.items;
+              } else {
                 this.currentPage = 1;
                 let searchInFiltered = [...this.filteredItems]
                  searchInFiltered = searchInFiltered.filter(el => {
-                 return  el.subject_address.includes(this.searchSubject)||
-                   el.subject_city.includes(this.searchSubject)  ||
-                   el.subject_state.includes(this.searchSubject) ||
-                   el.subject_zip.includes(this.searchSubject)   ||
+                 return  el.subject_address.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())||
+                   el.subject_city.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())  ||
+                   el.subject_state.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase()) ||
+                   el.subject_zip.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())   ||
                    el.id.toString().includes(this.searchSubject)
                  });
                 if(this.searchSubject) {
@@ -439,5 +481,9 @@ export default {
     }
     .b-table-sticky-header {
         max-height: calc(100vh - 372px) !important;
+    }
+    table th {
+      vertical-align: inherit !important;
+      height: 64px;
     }
 </style>

@@ -29,27 +29,57 @@
               </template>
               <template #head(actions)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              </template>          
+              <template #head(subject_error_type)="scope">
+                <div  style="width: 150px;">{{scope.label}}</div>
               </template>
-              <template #head(total_sellers)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              <template #head(file_name)="scope">
+                <div  style="width: 150px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_address)="scope">
+                <div  style="width: 150px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_address_line2)="scope">
+                <div  style="width: 150px;">{{scope.label}}</div>
+              </template>
+                <template #head(subject_city)="scope">
+                <div  style="width: 80px;">{{scope.label}}</div>
               </template>
               <template #head(subject_state)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                <div style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_county)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_market)="scope">
+                <div style="width: 50px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_type)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_age)="scope">
+                <div style="width: 80px;">{{scope.label}}</div>
               </template>
               <template #head(subject_zip)="scope">
                 <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
               </template>
-              <template #head(subject_address)="scope">
-                <div class="text-nowrap" style="width: 250px;">{{scope.label}}</div>
+              <template #head(subject_last_marked_date)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
-              <template #head(user_id)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+              <template #head(subject_last_exported_date)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_pull_date)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(subject_skip_trace_date)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
               <template #head(created_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
-              <template #head(updated_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              <template #head(user_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
               <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
@@ -144,17 +174,33 @@
               <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
               </template>
-              <template #head(actions)="scope">
-                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+
+              <template #head(phone_error_type)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
-              <template #head(user_id)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                  <template #head(file_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+                  <template #head(seller_id)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+                <template #head(phone_number)="scope">
+                <div  style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(phone_type)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(phone_validity)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(phone_skip_source)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
               <template #head(created_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
-              <template #head(updated_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              <template #head(user_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
               <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
@@ -234,24 +280,32 @@
               <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
               </template>
-              <template #head(actions)="scope">
-                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+             <template #head(email_error_type)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
-              <template #head(user_id)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                  <template #head(file_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+                  <template #head(seller_id)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+                <template #head(email_address)="scope">
+                <div  style="width: 150px;">{{scope.label}}</div>
+              </template>
+              <template #head(email_validity)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
+              </template>
+              <template #head(email_skip_source)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
               <template #head(created_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
-              <template #head(updated_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              <template #head(user_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
               <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
-              </template>
-              <template v-slot:cell(actions)="data">
-                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
-                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
               </template>
             <template v-slot:cell(email_address)="data">
                 <div v-b-tooltip.hover :title="data.item.email_address">{{ data.item.email_address }}</div>
@@ -321,17 +375,42 @@
               <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
               </template>
-              <template #head(actions)="scope">
-                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+     
+              <template #head(seller_error_type)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
-              <template #head(user_id)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                  <template #head(file_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+                  <template #head(seller_first_name)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+                <template #head(seller_middle_name)="scope">
+                <div  style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(seller_last_name)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(seller_mailing_address)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+              <template #head(seller_mailing_address_line2)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+              <template #head(seller_mailing_state)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(seller_mailing_city)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(seller_mailing_zip)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
               <template #head(created_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
-              <template #head(updated_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              <template #head(user_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
               <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
@@ -427,17 +506,35 @@
               <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
               </template>
-              <template #head(actions)="scope">
-                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+              <template #head(golden_error_type)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
-              <template #head(user_id)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                  <template #head(file_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+                  <template #head(seller_id)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(golden_address_address)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+              <template #head(golden_address_address_line2)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+              </template>
+              <template #head(golden_address_state)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(golden_address_city)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+              </template>
+              <template #head(golden_address_zip)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
               <template #head(created_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 100px;">{{scope.label}}</div>
               </template>
-              <template #head(updated_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+              <template #head(user_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
               </template>
               <template #head()="scope">
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>

@@ -78,16 +78,31 @@
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(total_sellers)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                <div style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(list_stack)="scope">
+                <div style="width: 50px;">{{scope.label}}</div>
             </template>
             <template #head(subject_state)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                <div style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(subject_zip)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+            <div style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(subject_address)="scope">
-                <div class="text-nowrap" style="width: 250px;">{{scope.label}}</div>
+                <div style="width: 150px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_county)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_city)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_type)="scope">
+                <div style="width: 90px;">{{scope.label}}</div>
+            </template>
+            <template #head(subject_age)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(user_id)="scope">
                 <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
@@ -364,6 +379,10 @@ export default {
 
     .select-template {
         width: 80% !important;
+    }
+    table th {
+      vertical-align: inherit !important;
+      height: 64px;
     }
 </style>
 

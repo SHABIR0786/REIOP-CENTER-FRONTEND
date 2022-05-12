@@ -70,11 +70,26 @@
             <template #head(seller_id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
+            <template #head(golden_address_address)="scope">
+                <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+            </template>
+            <template #head(golden_address_address_line2)="scope">
+                <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+            </template>
+            <template #head(golden_address_city)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
             <template #head(golden_address_zip)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(golden_address_state)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div  style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(golden_error)="scope">
+                <div  style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(golden_error_type)="scope">
+                <div  style="width: 150px;">{{scope.label}}</div>
             </template>
             <template #head(created_at)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
@@ -288,6 +303,10 @@ export default {
     }
     .b-table-sticky-header {
         max-height: calc(100vh - 372px) !important;
+    }
+    table th {
+      vertical-align: inherit !important;
+      height: 64px;
     }
 </style>
 

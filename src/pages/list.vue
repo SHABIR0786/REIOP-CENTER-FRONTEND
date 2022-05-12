@@ -67,17 +67,35 @@
             <template #head(actions)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
-
+            <template #head(subjects_unique_count)="scope">
+                <div style="width: 70px;">{{scope.label}}</div>
+            </template>
+            <template #head(list_total_individual_list)="scope">
+                <div style="width: 70px;">{{scope.label}}</div>
+            </template>
+            <template #head(list_market)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(list_group)="scope">
+                <div style="width: 120px;">{{scope.label}}</div>
+            </template>
             <template #head(list_type)="scope">
                 <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
             </template>
-
-            <template #head(list_group)="scope">
-                <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+            <template #head(list_source)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
             </template>
-
-            <template #head(list_market)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            <template #head(list_pull_date)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(created_at)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(updated_at)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(user_name)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
             </template>
 
             <template #head(list_total_subject)="scope">
@@ -99,12 +117,6 @@
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item) "></b-icon>
                 <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
-            </template>
-            <template #head(created_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-            </template>
-            <template #head(updated_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
             <template v-slot:cell(list_source)="data">
                 <div v-b-tooltip.hover :title="data.item.list_source">{{ data.item.list_source }}</div>
@@ -307,5 +319,9 @@ export default {
     }
     .b-table-sticky-header {
         max-height: calc(100vh - 372px) !important;
+    }
+        table th {
+      vertical-align: inherit !important;
+      height: 64px;
     }
 </style>
