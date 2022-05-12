@@ -160,10 +160,10 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+                <p class="mb-0">Showing 1 to {{perPage}} of {{itemsCount}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="itemsCount" :per-page="perPage" aria-controls="seller-table"></b-pagination>
             </b-col>
         </b-row>
         <edit-seller-modal :showModal="showModal" :propsSeller="editedItem" @cancel="showModal=false" @save="save"></edit-seller-modal>
@@ -199,6 +199,7 @@ export default {
             showModal: false,
             perPage: 20, // server-side connection!
             currentPage: 1,
+            itemsCount:0,
             editedItem: {},
             filteredOrAllData:[],
             showDeleteModal: false,
@@ -226,7 +227,7 @@ export default {
         this.$store.dispatch('sellerModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('seller-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -259,7 +260,7 @@ export default {
         this.$store.dispatch('sellerModule/getTotal')
         try {
          // this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('seller-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -285,10 +286,10 @@ export default {
     async filter(data,filterValue, dataAfterFiltering){
          this.filtersName = data
          await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: data})
-         localStorage.setItem('applied-filters', JSON.stringify(data))
+         localStorage.setItem('seller-applied-filters', JSON.stringify(data))
          if(dataAfterFiltering) {
-           localStorage.setItem('data-after-filtering', JSON.stringify(dataAfterFiltering))
-           localStorage.setItem('filters-count', filterValue)
+           localStorage.setItem('seller-data-after-filtering', JSON.stringify(dataAfterFiltering))
+           localStorage.setItem('seller-filters-count', filterValue)
          }
          if (!filterValue){
             if(!this.items.length){
@@ -372,17 +373,22 @@ export default {
         },
         searchSeller: {
             handler: async function () {
-                if (!this.total) {
-                await this.$store.dispatch('sellerModule/searchSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+                if (!this.total || (this.filteredItems.length == 0)) {
+                await this.$store.dispatch('sellerModule/searchSellers', { page: this.currentPage, perPage: this.perPage, search: this.searchSeller })
+                if(this.searchSeller == '') {
+                  this.itemsCount = this.total;
+                } else { 
                 this.itemsCount = this.items.length
-              }else{
+                }
+                this.filteredOrAllData = this.items;
+              } else {
                 this.currentPage = 1;
                 let searchInFiltered = [...this.filteredItems]
                  searchInFiltered = searchInFiltered.filter(el => {
-                 return  el.seller_address.includes(this.searchSeller)||
-                   el.seller_city.includes(this.searchSeller)  ||
-                   el.seller_state.includes(this.searchSeller) ||
-                   el.seller_zip.includes(this.searchSeller)   ||
+                 return  el.seller_address.toLocaleLowerCase().includes(this.searchSeller.toLocaleLowerCase())||
+                   el.seller_city.toLocaleLowerCase().includes(this.searchSeller.toLocaleLowerCase())  ||
+                   el.seller_state.toLocaleLowerCase().includes(this.searchSeller.toLocaleLowerCase()) ||
+                   el.seller_zip.toLocaleLowerCase().includes(this.searchSeller.toLocaleLowerCase())   ||
                    el.id.toString().includes(this.searchSeller)
                  });
                 if(this.searchSeller) {

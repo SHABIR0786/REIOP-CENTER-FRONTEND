@@ -299,7 +299,7 @@ export default {
   },
   watch: {
     showModal() {
-      if (this.showModal /* && !this.appliedFilters && +localStorage.getItem('filters-count') === 0*/){
+      if (this.showModal /* && !this.appliedFilters && +localStorage.getItem('golden-filters-count') === 0*/){
           this.goldenAddress = this.propsData
           this.goldenAddress.forEach(el => {
             if (el.golden_error_type && !this.allData.Errors.includes(el.golden_error_type)  && !this.allFilters.Errors.includes(el.golden_error_type)){
@@ -414,7 +414,7 @@ export default {
       this.$emit('filter', filters, filterValue, this.allData)
     },
     closeFilterModal(){
-      if(!this.appliedFilters && +localStorage.getItem('filters-count') === 0){
+      if(!this.appliedFilters && +localStorage.getItem('golden-filters-count') === 0){
         this.allData = {
           Market:[],
           Group:[],
@@ -452,8 +452,8 @@ export default {
           this.incomingList.Errors.push(el.golden_error_type)
       })
 
-      if(localStorage.getItem('applied-filters')) {
-        let lastFilters = JSON.parse(localStorage.getItem('applied-filters'))
+      if(localStorage.getItem('golden-applied-filters')) {
+        let lastFilters = JSON.parse(localStorage.getItem('golden-applied-filters'))
         for(let category in lastFilters){
           this.allFilters[category] = lastFilters[category].filter(value => this.incomingList[category].includes(value));
         }
@@ -461,13 +461,13 @@ export default {
         for (let i in this.allFilters){
           filterValue += this.allFilters[i].length
         }
-        localStorage.removeItem('applied-filters')
-        localStorage.setItem('applied-filters', JSON.stringify(this.allFilters))
-        localStorage.setItem('filters-count', filterValue)
+        localStorage.removeItem('golden-applied-filters')
+        localStorage.setItem('golden-applied-filters', JSON.stringify(this.allFilters))
+        localStorage.setItem('golden-filters-count', filterValue)
       }
 
-      if(localStorage.getItem('data-after-filtering')) {
-        let lastAllData = JSON.parse(localStorage.getItem('data-after-filtering'))
+      if(localStorage.getItem('golden-data-after-filtering')) {
+        let lastAllData = JSON.parse(localStorage.getItem('golden-data-after-filtering'))
         for(let category in lastAllData){
           this.allData[category] = lastAllData[category].filter(value => this.incomingList[category].includes(value));
         }
@@ -475,9 +475,9 @@ export default {
         for (let i in this.allFilters){
           filterValue += this.allFilters[i].length
         }
-        localStorage.removeItem('data-after-filtering')
-        localStorage.setItem('data-after-filtering',JSON.stringify(this.allData))
-        localStorage.setItem('filters-count', filterValue)
+        localStorage.removeItem('golden-data-after-filtering')
+        localStorage.setItem('golden-data-after-filtering',JSON.stringify(this.allData))
+        localStorage.setItem('golden-filters-count', filterValue)
       }
       this.$emit('finish-process')
     },

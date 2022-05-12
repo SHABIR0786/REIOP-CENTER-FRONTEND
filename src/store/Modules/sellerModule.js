@@ -113,7 +113,6 @@ const actions = {
             if (response && response.seller) {
                 commit('SET_SELLER', response.seller)
             }
-
             return response
         })
     },

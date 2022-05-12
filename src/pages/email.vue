@@ -166,6 +166,7 @@ export default {
             isFinishedFilterEmails: false,
             totalFilters:0,
             perPage: 20,
+            itemsCount:0,
             currentPage: 1,
             filteredOrAllData:[],
             editedItem: {},
@@ -195,7 +196,7 @@ export default {
         this.$store.dispatch('emailModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('email-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -223,10 +224,10 @@ export default {
         async filter(data,filterValue, dataAfterFiltering){
          this.filtersName = data
          await this.$store.dispatch("emailModule/filterEmail", {page: 1, perPage: this.perPage, filter: data})
-         localStorage.setItem('applied-filters', JSON.stringify(data))
+         localStorage.setItem('email-applied-filters', JSON.stringify(data))
          if(dataAfterFiltering) {
-           localStorage.setItem('data-after-filtering', JSON.stringify(dataAfterFiltering))
-           localStorage.setItem('filters-count', filterValue)
+           localStorage.setItem('email-data-after-filtering', JSON.stringify(dataAfterFiltering))
+           localStorage.setItem('email-filters-count', filterValue)
          }
          if (!filterValue){
             if(!this.items.length){
@@ -291,7 +292,7 @@ export default {
         this.$store.dispatch('emailModule/getTotal')
         try {
          // this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('email-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -340,17 +341,22 @@ export default {
         },
         searchEmail: {
             handler: async function () {
-              if (!this.total) {
-                await this.$store.dispatch('emailModule/searchEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
+            if (!this.total || (this.filteredItems.length == 0)) {
+                await this.$store.dispatch('emailModule/searchEmails', { page: this.currentPage, perPage: this.perPage, search: this.searchEmail })
+                if(this.searchEmail == '') {
+                  this.itemsCount = this.total;
+                } else { 
                 this.itemsCount = this.items.length
-              }else{
+                }
+                this.filteredOrAllData = this.items;
+              } else {
                 this.currentPage = 1;
                 let searchInFiltered = [...this.filteredItems]
                  searchInFiltered = searchInFiltered.filter(el => {
-                 return  el.email_address.includes(this.searchEmail)||
-                   el.email_city.includes(this.searchEmail)  ||
-                   el.email_state.includes(this.searchEmail) ||
-                   el.email_zip.includes(this.searchEmail)   ||
+                 return  el.email_address.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())||
+                   el.email_city.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())  ||
+                   el.email_state.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase()) ||
+                   el.email_zip.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())   ||
                    el.id.toString().includes(this.searchEmail)
                  });
                 if(this.searchEmail) {

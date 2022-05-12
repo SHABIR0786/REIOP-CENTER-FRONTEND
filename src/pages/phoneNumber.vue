@@ -128,10 +128,10 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+                <p class="mb-0">Showing 1 to {{perPage}} of {{itemsCount}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="itemsCount" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
         </b-row>
         <edit-phone-number-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-phone-number-modal>
@@ -165,6 +165,7 @@ export default {
             perPage: 20,
             currentPage: 1,
             editedItem: {},
+            itemsCount:0,
             showDeleteModal: false,
             showFilterPropertiesModal: false,
             filteredOrAllData:[],
@@ -193,7 +194,7 @@ export default {
         this.$store.dispatch('phoneNumberModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('phone-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -220,10 +221,10 @@ export default {
         async filter(data,filterValue, dataAfterFiltering){
          this.filtersName = data
          await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {page: 1, perPage: this.perPage, filter: data})
-         localStorage.setItem('applied-filters', JSON.stringify(data))
+         localStorage.setItem('phone-applied-filters', JSON.stringify(data))
          if(dataAfterFiltering) {
-           localStorage.setItem('data-after-filtering', JSON.stringify(dataAfterFiltering))
-           localStorage.setItem('filters-count', filterValue)
+           localStorage.setItem('phone-data-after-filtering', JSON.stringify(dataAfterFiltering))
+           localStorage.setItem('phone-filters-count', filterValue)
          }
          if (!filterValue){
             if(!this.items.length){
@@ -288,7 +289,7 @@ export default {
         this.$store.dispatch('phoneNumberModule/getTotal')
         try {
          // this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('applied-filters'))
+          const filters = JSON.parse(localStorage.getItem('phone-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
             filterValue += filters[i].length
@@ -337,10 +338,15 @@ export default {
             },
             searchPhone: {
                 handler: async function () {
-                if (!this.total) {
-                    await this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone })
-                    this.itemsCount = this.items.length
-                } else {
+            if (!this.total || (this.filteredItems.length == 0)) {
+                await this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone })
+                if(this.searchPhone == '') {
+                  this.itemsCount = this.total;
+                } else { 
+                this.itemsCount = this.items.length
+                }
+                this.filteredOrAllData = this.items;
+              } else {
                 this.currentPage = 1;
                 let searchInFiltered = [...this.filteredItems]
                  searchInFiltered = searchInFiltered.filter(el => {
