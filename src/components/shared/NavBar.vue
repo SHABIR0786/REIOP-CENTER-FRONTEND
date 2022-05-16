@@ -24,6 +24,9 @@
                 <router-link class="link-label" to="/companyTypes"><b-icon icon="building"></b-icon> Company Types</router-link>
               </b-dropdown-item>
               <b-dropdown-item>
+                <router-link class="link-label" to="/marketingChannels"><b-icon icon="building"></b-icon> Marketing Channels</router-link>
+              </b-dropdown-item>
+              <b-dropdown-item>
                 <router-link class="link-label" to="/errors"><b-icon icon="exclamation-circle-fill" variant="warning"></b-icon> Errors</router-link>
               </b-dropdown-item>
                 <b-dropdown-item @click="logout"><b-icon icon="power"></b-icon> Logout</b-dropdown-item>
