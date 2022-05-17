@@ -149,7 +149,7 @@ export default {
       this.editedItem = { ...item }
     },
     save(item) {
-      // this.showModal = false
+      this.showModal = false
       delete item.user_name;
       this.$store.dispatch('marketingChannelModule/editMarketChannel', {...item})
     },

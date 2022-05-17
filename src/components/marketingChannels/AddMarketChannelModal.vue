@@ -9,7 +9,7 @@
             <b-row  class="text-center">
                 <b-row class="mb-1 text-center col-12">
                     <b-col cols="12">
-                        <b-input-group prepend="New Type" class="mb-2">
+                        <b-input-group prepend="New Channel Name" class="mb-2">
                             <b-form-input v-model="marketingChannels.marketing_channel_name"></b-form-input>
                         </b-input-group>
                     </b-col>
@@ -30,8 +30,7 @@
                         variant="primary"
                         size="sm"
                         class="float-right mr-2"
-                        @click="$emit('add', marketingChannels)"
-                >
+                        @click="$emit('add', marketingChannels)">
                     Add
                 </b-button>
             </div>
@@ -40,7 +39,7 @@
 </template>
 <script>
     export default {
-        name: 'AddTypeModal',
+        name: 'AddChannelModal',
         props: {
             showModal: {
                 type: Boolean

@@ -2,7 +2,7 @@
     <b-modal v-model="showModal" size="md" centered no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
-                Edit Type
+                Edit Channel
             </div>
             <div>
                 <b-icon @click="$emit('cancel')" class="close-icon" icon="x"></b-icon>
@@ -11,7 +11,7 @@
         <b-container fluid>
             <b-row class="d-flex flex-column">
                 <b-row class="mb-1 text-center d-flex align-items-center p-3">
-                    <div>Type</div>
+                    <div>Channel Name</div>
                     <b-button
                             v-if="isReadOnly"
                             variant="primary"
@@ -35,7 +35,7 @@
                     <b-col>
                         <b-row>
                           <b-col cols="12">
-                            <b-input-group prepend="Edit Type" class="mb-2">
+                            <b-input-group prepend="Edit Channel Name" class="mb-2">
                               <b-form-input :readonly="isReadOnly" v-model="marketingChannels.marketing_channel_name"></b-form-input>
                             </b-input-group>
                           </b-col>
@@ -84,7 +84,7 @@
         },
         watch: {
             showModal() {
-                this.companyTypes= {...this.propsData}
+                this.marketingChannels= {...this.propsData}
             }
         }
 

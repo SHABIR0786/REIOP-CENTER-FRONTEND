@@ -3,7 +3,6 @@
         <div v-if="!importedFields">
             <b-form-radio-group  value-field="field" :options="tableFields" v-model="selected"  stacked @change="$emit('selectItem', selected)"></b-form-radio-group>
         </div>
-
         <div v-if="importedFields" id="target-fields">
             <b-form-radio-group  value-field="field" v-model="selected" stacked @dblclick.native="$emit('dblclick',selected)" @change="$emit('selectItem', selected)">
               <template v-for="option in importedFields.subject">
