@@ -16,10 +16,10 @@
     <div class="mt-4 parent">
       <div class="child">
         <fields-card
-                     :fromField="fromField"
-                     :tableFields="uploadedFields"
-                     :title="`Uploaded Fields`"
-                     @selectItem="selectUploadedField"
+            :fromField="fromField"
+            :tableFields="uploadedFields"
+            :title="`Uploaded Fields`"
+            @selectItem="selectUploadedField"
         />
       </div>
       <div class="child">
@@ -29,10 +29,10 @@
                      :title="`Target Fields`"
                      @selectItem="selectTargetField"
                      @dblclick="mapFields"
-                     />
+        />
       </div>
       <div class="map-button child">
-            <b-button class="w-100" variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
+        <b-button class="w-100" variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
       </div>
       <div class="child">
         <mapped-fields class="mapped-fields h-100" :items="mappedItems"
@@ -80,7 +80,7 @@ const utf8 = require('utf8');
 
 export default {
   name: "Import",
-  props: ['upload_type', 'list_settings', 'skip_variant','skip_data'],
+  props: ['upload_type', 'list_settings', 'skip_variant', 'skip_data'],
   components: {
     FieldsCard,
     MappedFields,
@@ -117,6 +117,13 @@ export default {
         user_id: '',
         team_id: '',
       },
+      importTypes: {
+        single: 'New Records From Single Pull Raw Data',
+        appended: 'New Records From Single Pull Appended Data',
+        combined: 'New Records From Combined Raw Data',
+        skip_trace: 'Updating Records With Skip Trace Data',
+        skip_validity: 'Updating Records With Phone and/or Email Validity',
+      },
     }
   },
   computed: {
@@ -144,7 +151,7 @@ export default {
   async created() {
     await this.$store.dispatch('importModule/loadVisibleFields')
     if (this.upload_type && !this.skip_variant) {
-      this.$store.dispatch('importV2Module/setSkipValidation',false)
+      this.$store.dispatch('importV2Module/setSkipValidation', false)
       if (this.upload_type === 'single') {
         this.importedFields = {
           seller: this.sellerFields,
@@ -154,38 +161,50 @@ export default {
         this.importedFields = {
           seller: this.sellerFields,
           subject: this.subjectFields,
-          phone: this.phoneNumberFields.filter(function(el) { return el.field === "phone_number" || el.field === "phone_type"}),
-          email: this.emailFields.filter(function(el) { return el.field === "email_address" }),
+          phone: this.phoneNumberFields.filter(function (el) {
+            return el.field === "phone_number" || el.field === "phone_type"
+          }),
+          email: this.emailFields.filter(function (el) {
+            return el.field === "email_address"
+          }),
         }
       } else {
         this.importedFields = {
-          // email: this.emailFields,
-          // golden_address: this.goldenAddressFields,
-          // phone: this.phoneNumberFields,
           seller: this.sellerFields,
           subject: this.subjectFields,
           list: this.listFields,
         }
       }
     } else if (this.skip_variant) {
-      if (this.skip_variant === 'skip_trace'){
-        this.$store.dispatch('importV2Module/setSkipValidation',true)
+      if (this.skip_variant === 'skip_trace') {
+        this.$store.dispatch('importV2Module/setSkipValidation', true)
         this.importedFields = {
-          email: this.emailFields.filter(function(el) { return el.field === "email_address" }),
+          email: this.emailFields.filter(function (el) {
+            return el.field === "email_address"
+          }),
           golden_address: this.goldenAddressFields,
-          phone: this.phoneNumberFields.filter(function(el) { return el.field === "phone_number" || el.field === "phone_type"}),
-          seller: this.sellerFields.filter(function(el) { return el.field !== "seller_company_owned" }),
-          subject: this.subjectFields.filter(function(el) { return el.field !== "subject_type" &&  el.field !== "subject_age" && el.field !== "subject_county"}),
+          phone: this.phoneNumberFields.filter(function (el) {
+            return el.field === "phone_number" || el.field === "phone_type"
+          }),
+          seller: this.sellerFields.filter(function (el) {
+            return el.field !== "seller_company_owned"
+          }),
+          subject: this.subjectFields.filter(function (el) {
+            return el.field !== "subject_type" && el.field !== "subject_age" && el.field !== "subject_county"
+          }),
         }
-      }else if(this.skip_variant === 'validate'){
+      } else if (this.skip_variant === 'validate') {
         this.skipValidate = true;
-        this.$store.dispatch('importV2Module/setSkipValidation',false)
+        this.$store.dispatch('importV2Module/setSkipValidation', false)
         this.importedFields = {
-          email: this.emailFields.filter(function(el) { return el.field !== "email_skip_source" }),
-          phone: this.phoneNumberFields.filter(function(el) { return el.field === "phone_number" || el.field === "phone_validity"}),
+          email: this.emailFields.filter(function (el) {
+            return el.field !== "email_skip_source"
+          }),
+          phone: this.phoneNumberFields.filter(function (el) {
+            return el.field === "phone_number" || el.field === "phone_validity"
+          }),
         }
       }
-
     }
   },
   methods: {
@@ -198,32 +217,32 @@ export default {
       let mappedFields           = []
       item.forEach(item => {
         if (!(item['toField'].includes('subject_address_line2')) && !(item['toField'].includes('seller_mailing_address_line2')))
-        mappedFields.push(item['toField'])
+          mappedFields.push(item['toField'])
       })
 
       let requiredSubjectExist = requiredSubjectsFields.every(msub => mappedFields.includes(msub));
-      if (!this.isSkippedData){
-        this.isHaveMappedItems   = !!requiredSubjectExist;
+      if (!this.isSkippedData) {
+        this.isHaveMappedItems = !!requiredSubjectExist;
       }
 
       // If User map Sellers, then check if all required Sellers field are mapped
       let requiredSellersFields = ['seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
 
-      if (this.isSkippedData && ( !requiredSubjectExist && !requiredSellersFields)){
-        this.isHaveMappedItems  = false;
+      if (this.isSkippedData && (!requiredSubjectExist && !requiredSellersFields)) {
+        this.isHaveMappedItems = false;
       }
-      const sellerMapped        = mappedFields.find(element => {
+      const sellerMapped = mappedFields.find(element => {
         if (element.includes('seller')) {
           return true;
         }
       });
-      var namesCounts   = [];
+      var namesCounts    = [];
       namesCounts.push(mappedFields.filter(x => x.includes('seller_first_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_last_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_middle_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_full_name')).length);
       var sellersCount = Math.max.apply(null, namesCounts);
-      var addressCount  = [];
+      var addressCount = [];
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_address')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_city')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_state')).length);
@@ -231,38 +250,38 @@ export default {
       if (sellerMapped) {
         let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
 
-        if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)){
-          this.isHaveMappedItems  = true;
+        if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
+          this.isHaveMappedItems = true;
         }
 
         const sellersNamesAdrCountEqual = addressCount.filter(element => element !== sellersCount)
         if (requiredSellersExist && !sellersNamesAdrCountEqual.length) {
           this.showConfirmModal = true;
-        } else if (!this.isSkippedData){
+        } else if (!this.isSkippedData) {
           this.showSellerFillModal = true;
           return;
         }
       }
-      if (this.skipValidate && item.length){
+      if (this.skipValidate && item.length) {
 
         let mappedValidateFields = [];
         item.forEach(item => {
-            mappedValidateFields.push(item['toField'])
+          mappedValidateFields.push(item['toField'])
         })
 
         let requiredPhonesFields = ['phone_number', 'phone_validity'];
-        let requiredPhoneExist = requiredPhonesFields.every(Ph => mappedValidateFields.includes(Ph));
+        let requiredPhoneExist   = requiredPhonesFields.every(Ph => mappedValidateFields.includes(Ph));
 
         let requiredEmailFields = ['email_address', 'email_validity'];
-        let requiredEmailExist = requiredEmailFields.every(Em => mappedValidateFields.includes(Em));
+        let requiredEmailExist  = requiredEmailFields.every(Em => mappedValidateFields.includes(Em));
 
-        if (requiredPhoneExist || requiredEmailExist){
-          this.isHaveMappedItems  = true;
+        if (requiredPhoneExist || requiredEmailExist) {
+          this.isHaveMappedItems = true;
         }
       }
       // Combined data
 
-      if (this.upload_type === 'combined'){
+      if (this.upload_type === 'combined') {
         this.list_settings = 'Combined Data'
       }
       this.showConfirmModal = true;
@@ -275,10 +294,10 @@ export default {
     },
     previewFile(e) {
       this.$store.dispatch('uxModule/setLoading')
-      let $this = this
-      let files = e.target.files, f = files[0]
-      this.file = e.target.files[0];
-      let reader = new FileReader()
+      let $this     = this
+      let files     = e.target.files, f = files[0]
+      this.file     = e.target.files[0];
+      let reader    = new FileReader()
       reader.onload = (e) => {
         var data        = new Uint8Array(e.target.result);
         var workbook    = XLSX.read(data, {type: 'array'});
@@ -312,7 +331,7 @@ export default {
       this.toField = field
     },
     mapFields() {
-      if (!this.fromField || !this.toField){
+      if (!this.fromField || !this.toField) {
         return
       }
       let lastElementId = 0;
@@ -364,8 +383,8 @@ export default {
           'field': this.mappedItems[index].toField
         });
         this.uploadedFields.unshift(
-          this.mappedItems[index].fromField
-       )
+            this.mappedItems[index].fromField
+        )
       }
       this.mappedItems.splice(index, 1)
     },
@@ -386,6 +405,7 @@ export default {
         mappedItems: mapping,
         url: this.url,
         list: this.list_settings,
+        uploadType: this.importTypes[this.upload_type],
         skipSource: this.skip_variant,
         mapOrder: this.mappedItems,
         skipData: this.skip_data,
@@ -420,21 +440,25 @@ export default {
 .import-container {
   height: calc(100vh - 56px) !important;
 }
+
 .parent {
-    display: grid;
-    grid-template-columns: 31% 30% 9% 30%;
+  display: grid;
+  grid-template-columns: 31% 30% 9% 30%;
 }
+
 .parent div:first-child {
-  margin-left:0px !important;
+  margin-left: 0px !important;
   /* margin-right:15px !important; */
-} 
+}
+
 .parent div:nth-child(4) {
   /* margin-left:20px !important; */
-  margin-right:0px !important;
-} 
+  margin-right: 0px !important;
+}
+
 .child {
-    flex-grow: 1;
-    margin-left: 1rem;
-    margin-right:1rem !important;
+  flex-grow: 1;
+  margin-left: 1rem;
+  margin-right: 1rem !important;
 }
 </style>
