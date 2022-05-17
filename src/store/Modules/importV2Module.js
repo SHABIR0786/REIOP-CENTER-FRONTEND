@@ -3,6 +3,7 @@ import * as api from "../Services/api";
 const state = {
     fields: [
         {key:"file_name", label: "File Name", sortable: true},
+        {key:"import_type", label: "Import Type", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
         {key:"percentage", label: "Completion %", sortable:true},
         {key:"created_records", label: "Created Records", sortable: true},
@@ -32,6 +33,7 @@ const mutations = {
             process.is_processed = e.total_jobs - e.pending_jobs;
             process.file_name = e.file_name;
             process.user_id = e.user_id;
+            process.import_type = e.import_type;
             process.extension = e.extension;
             process.created_at = new Date(date * 1000).toLocaleString();
             readyData.push(process);

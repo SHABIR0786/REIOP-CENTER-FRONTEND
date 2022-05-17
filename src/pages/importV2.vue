@@ -66,15 +66,18 @@
                         <p class="user-email">{{Math.round((data.item.is_processed / (data.item.is_processed + data.item.is_processing)) * 100)}}%</p>
                     </div>
                 </template>
+                <template v-slot:cell(import_type)="data">
+                  <div v-b-tooltip.hover :title="data.item.import_type">{{ data.item.import_type }}</div>
+                </template>
                 <template v-slot:cell(file_name)="data">
                 <div v-b-tooltip.hover :title="data.item.file_name">{{ data.item.file_name }}</div>
-              </template>
-              <template v-slot:cell(created_records)="data">
-                <div v-b-tooltip.hover :title="data.item.created_records">{{ data.item.created_records }}</div>
-              </template>
-              <template v-slot:cell(id)="data">
-                <div v-b-tooltip.hover :title="data.item.id">{{ data.item.id }}</div>
-              </template>
+                </template>
+                <template v-slot:cell(created_records)="data">
+                  <div v-b-tooltip.hover :title="data.item.created_records">{{ data.item.created_records }}</div>
+                </template>
+                <template v-slot:cell(id)="data">
+                  <div v-b-tooltip.hover :title="data.item.id">{{ data.item.id }}</div>
+                </template>
 
             </b-table>
             <b-row>
@@ -278,6 +281,7 @@ export default {
       setSkipOption (response) {
         this.importDetails.skip_variant = response;
         if (response === 'skip_trace') {
+          this.importDetails.upload_type = 'skip_trace'
           this.statusBackSkip =true;
           this.step_1 = false;
           this.step_2 = false;
@@ -287,6 +291,7 @@ export default {
           this.step_4 = false;
         } else {
           this.statusBackValidity =true;
+          this.importDetails.upload_type = 'skip_validity'
           this.step_1 = false;
           this.step_2 = false;
           this.step_2_skip = false;
