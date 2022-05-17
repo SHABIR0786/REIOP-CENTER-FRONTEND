@@ -54,7 +54,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchGoldenAddress" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -82,7 +82,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchGoldenAddress" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -110,7 +110,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchGoldenAddress" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -138,7 +138,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchGoldenAddress" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -166,7 +166,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchGoldenAddress" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
                     <b-list-group flush>
@@ -194,7 +194,7 @@
                       :key="result.userId"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchGoldenAddress" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body header="Run Month / Year">
                     <b-list-group flush>
@@ -227,7 +227,7 @@
 import {mapGetters} from "vuex";
 
 export default {
-  name: 'FilterSellerModal',
+  name: 'FilterGoldenAddresses',
   props: {
     showModal: {
       type: Boolean
@@ -270,7 +270,7 @@ export default {
         Errors:[],
         RunDate:[],
       },
-      searchSeller: '',
+      searchGoldenAddress: '',
       activeTab: 'allFilters',
       filtered:[],
       perPage: 20,
@@ -290,7 +290,7 @@ export default {
       return total;
     },
     filteredOrAllData(){
-      if (this.searchSeller){
+      if (this.searchGoldenAddress){
         return this.filtered
       }else{
         return  this.allData[this.activeTab]
@@ -299,11 +299,11 @@ export default {
   },
   watch: {
     showModal() {
-      if (this.showModal /* && !this.appliedFilters && +localStorage.getItem('seller-filters-count') === 0*/){
-          this.seller = this.propsData
-          this.seller.forEach(el => {
-            if (el.seller_error_type && !this.allData.Errors.includes(el.seller_error_type)  && !this.allFilters.Errors.includes(el.seller_error_type)){
-              this.allData.Errors.push(el.seller_error_type)
+      if (this.showModal /* && !this.appliedFilters && +localStorage.getItem('golden-filters-count') === 0*/){
+          this.goldenAddress = this.propsData
+          this.goldenAddress.forEach(el => {
+            if (el.golden_error_type && !this.allData.Errors.includes(el.golden_error_type)  && !this.allFilters.Errors.includes(el.golden_error_type)){
+              this.allData.Errors.push(el.golden_error_type)
             }
           })
 
@@ -336,10 +336,10 @@ export default {
         }
       }
     },
-    searchSeller: {
+    searchGoldenAddress: {
       handler: function () {
         var categoryTab = this.activeTab
-        this.filtered = this.allData[categoryTab].filter(name => name.toLowerCase().includes(this.searchSeller.toLowerCase()));
+        this.filtered = this.allData[categoryTab].filter(name => name.toLowerCase().includes(this.searchGoldenAddress.toLowerCase()));
       }
     },
     propsData: {
@@ -353,7 +353,7 @@ export default {
       this.activeTab = currentTub;
     },
     addFilter (item, index) {
-      if (this.searchSeller){
+      if (this.searchGoldenAddress){
         this.allFilters[this.activeTab].push(item);
         this.filtered = this.filtered.filter(e => e !== item);
         this.allData[this.activeTab] = this.allData[this.activeTab].filter(e => e !== item)
@@ -367,10 +367,10 @@ export default {
         this.allData[index].push(item);
         this.allFilters[index] = this.allFilters[index].filter(e => e !== item);
       }else{
-        if (this.searchSeller){
+        if (this.searchGoldenAddress){
           this.allData[this.activeTab].push(item);
           this.filtered.push(item);
-          this.filtered = this.filtered.filter(name => name.toLowerCase().includes(this.searchSeller.toLowerCase()));
+          this.filtered = this.filtered.filter(name => name.toLowerCase().includes(this.searchGoldenAddress.toLowerCase()));
           this.allFilters[this.activeTab].splice(index, 1);
         }else{
           this.allData[this.activeTab].push(item);
@@ -414,7 +414,7 @@ export default {
       this.$emit('filter', filters, filterValue, this.allData)
     },
     closeFilterModal(){
-      if(!this.appliedFilters && +localStorage.getItem('seller-filters-count') === 0){
+      if(!this.appliedFilters && +localStorage.getItem('golden-filters-count') === 0){
         this.allData = {
           Market:[],
           Group:[],
@@ -447,13 +447,13 @@ export default {
           this.incomingList.RunDate.push(runMonth[i]+'/'+runYear[i])
         }
       });
-      this.sellerData = this.propsData
-      this.sellerData.forEach(el => {
-          this.incomingList.Errors.push(el.seller_error_type)
+      this.goldenData = this.propsData
+      this.goldenData.forEach(el => {
+          this.incomingList.Errors.push(el.golden_error_type)
       })
 
-      if(localStorage.getItem('seller-applied-filters')) {
-        let lastFilters = JSON.parse(localStorage.getItem('seller-applied-filters'))
+      if(localStorage.getItem('golden-applied-filters')) {
+        let lastFilters = JSON.parse(localStorage.getItem('golden-applied-filters'))
         for(let category in lastFilters){
           this.allFilters[category] = lastFilters[category].filter(value => this.incomingList[category].includes(value));
         }
@@ -461,13 +461,13 @@ export default {
         for (let i in this.allFilters){
           filterValue += this.allFilters[i].length
         }
-        localStorage.removeItem('seller-applied-filters')
-        localStorage.setItem('seller-applied-filters', JSON.stringify(this.allFilters))
-        localStorage.setItem('seller-filters-count', filterValue)
+        localStorage.removeItem('golden-applied-filters')
+        localStorage.setItem('golden-applied-filters', JSON.stringify(this.allFilters))
+        localStorage.setItem('golden-filters-count', filterValue)
       }
 
-      if(localStorage.getItem('seller-data-after-filtering')) {
-        let lastAllData = JSON.parse(localStorage.getItem('seller-data-after-filtering'))
+      if(localStorage.getItem('golden-data-after-filtering')) {
+        let lastAllData = JSON.parse(localStorage.getItem('golden-data-after-filtering'))
         for(let category in lastAllData){
           this.allData[category] = lastAllData[category].filter(value => this.incomingList[category].includes(value));
         }
@@ -475,9 +475,9 @@ export default {
         for (let i in this.allFilters){
           filterValue += this.allFilters[i].length
         }
-        localStorage.removeItem('seller-data-after-filtering')
-        localStorage.setItem('seller-data-after-filtering',JSON.stringify(this.allData))
-        localStorage.setItem('seller-filters-count', filterValue)
+        localStorage.removeItem('golden-data-after-filtering')
+        localStorage.setItem('golden-data-after-filtering',JSON.stringify(this.allData))
+        localStorage.setItem('golden-filters-count', filterValue)
       }
       this.$emit('finish-process')
     },

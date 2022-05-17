@@ -23,7 +23,9 @@
             <hr>
             <b-row class="mb-3">
                 <b-col cols="8" class="d-flex align-items-center">
-                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                    <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon></b-button>
+                    <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
                     <b-form-input v-model="searchPhone" placeholder="Search"></b-form-input>
@@ -138,15 +140,16 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+                <p class="mb-0">Showing 1 to {{perPage}} of {{itemsCount}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                <b-pagination class="mb-0" v-model="currentPage" :total-rows="itemsCount" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
         </b-row>
         <edit-phone-number-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-phone-number-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-phone-number-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-phone-number-modal>
+        <filter-phone-numbers @filter="filter" @finish-process="isFinishedFilterPhoneNumbers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-phone-numbers>
     </div>
 </template>
 <script>
@@ -155,6 +158,7 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditPhoneNumberModal from "../components/phoneNumber/EditPhoneNumberModal"
 import AddPhoneNumberModal from "../components/phoneNumber/AddPhoneNumberModal";
+import FilterPhoneNumbers from "../components/phoneNumber/FilterPhoneNumbers";
 
 export default {
     name: "PhoneNumber",
@@ -162,16 +166,22 @@ export default {
         BIcon,
         EditPhoneNumberModal,
         DeleteModal,
-        AddPhoneNumberModal
+        AddPhoneNumberModal,
+        FilterPhoneNumbers
     },
     data () {
         return {
             isBusy: false,
             showModal: false,
+            isFinishedFilterPhoneNumbers: false,
             perPage: 20,
             currentPage: 1,
             editedItem: {},
+            itemsCount:0,
             showDeleteModal: false,
+            showFilterPropertiesModal: false,
+            filteredOrAllData:[],
+            totalFilters:0,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
             searchPhone: '',
@@ -185,22 +195,61 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'phoneNumberModule/fields',
             items: 'phoneNumberModule/phoneNumbers',
-            total: 'phoneNumberModule/total'
+            total: 'phoneNumberModule/total',
+            filteredItems: 'phoneNumberModule/filterPhoneNumber',
+            filteredPhoneNumbersCount:'phoneNumberModule/filteredPhoneNumbersCount',
+            selectedPhoneNumber: 'phoneNumberModule/phoneNumber'
         }),
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('phoneNumberModule/getTotal')
         try {
+          this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('phone-applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
+            this.filter(filters, filterValue)
+          } else {
             await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage})
-            this.$store.dispatch('uxModule/hideLoader')
+          }
+          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
-        
+        if (this.$route.query.phone_id) {
+            this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then(() => {
+              this.editedItem = this.selectedPhoneNumber
+              this.showModal = true
+            });
+        }
+      this.filteredOrAllData = this.items;
+      this.itemsCount = this.total;
     },
     methods: {
+        async filter(data,filterValue, dataAfterFiltering){
+         this.filtersName = data
+         await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {page: 1, perPage: this.perPage, filter: data})
+         localStorage.setItem('phone-applied-filters', JSON.stringify(data))
+         if(dataAfterFiltering) {
+           localStorage.setItem('phone-data-after-filtering', JSON.stringify(dataAfterFiltering))
+           localStorage.setItem('phone-filters-count', filterValue)
+         }
+         if (!filterValue){
+            if(!this.items.length){
+              await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage})
+           }
+            this.filteredOrAllData = this.items
+            this.itemsCount = this.total
+          }else{
+            this.filteredOrAllData = this.filteredItems
+            this.itemsCount = this.filteredPhoneNumbersCount
+          }
+            this.showFilterPropertiesModal =false
+        },
         editItem(item) {
             this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
             item.sellers = [response.seller];
@@ -243,28 +292,93 @@ export default {
                     this.bulkDeleteItems.push(e.id);
                 });
             }
+        },
+        filtersCount(total){
+            this.totalFilters = total
+            return  total
+        },
+        async doCreatedOperation() {
+        this.$store.dispatch('phoneNumberModule/getTotal')
+        try {
+         // this.$store.dispatch('uxModule/setLoading')
+          const filters = JSON.parse(localStorage.getItem('phone-applied-filters'))
+          let filterValue = 0;
+          for (let i in filters){
+            filterValue += filters[i].length
+          }
+          if(filterValue) {
+            this.filter(filters, filterValue)
+          } else {
+            await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage})
+          }
+         this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          this.$store.dispatch('uxModule/hideLoader')
         }
+        if (this.$route.query.phone_id) {
+          this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then(() => {
+            this.editedItem = this.selectedPhoneNumber
+            this.showModal = true
+          });
+        }
+        this.filteredOrAllData = this.items;
+        this.itemsCount = this.total;
+      }
     },
     watch: {
         currentPage: {
-            handler: function() {
-                this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {
-                    page: this.currentPage,
-                    perPage: this.perPage,
-                    search: this.searchPhone
-                })
+            handler:async function() {
+                if (!this.total){
+                await this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone })
+                this.filteredOrAllData = this.items
+              }else{
+                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
             }
             },
             perPage: {
-                handler: function () {
-                    this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {page: 1, perPage: this.perPage, search: this.searchPhone})
+                handler: async function () {
+                if (!this.total){
+                await this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', { page: 1, perPage: this.perPage, search: this.searchPhone })
+                this.filteredOrAllData = this.items
+              }else{
+                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: 1, perPage: this.perPage, filter: this.filtersName })
+                this.filteredOrAllData = this.filteredItems
+              }
                 }
             },
             searchPhone: {
-                handler: function () {
-                    this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', {page: this.currentPage, perPage: this.perPage, search: this.searchPhone})
+                handler: async function () {
+            if (!this.total || (this.filteredItems.length == 0)) {
+                await this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone })
+                if(this.searchPhone == '') {
+                  this.itemsCount = this.total;
+                } else { 
+                this.itemsCount = this.items.length
                 }
+                this.filteredOrAllData = this.items;
+              } else {
+                this.currentPage = 1;
+                let searchInFiltered = [...this.filteredItems]
+                 searchInFiltered = searchInFiltered.filter(el => {
+                 return el.id.toString().includes(this.searchPhone)
+                 });
+                if(this.searchPhone) {
+                  this.itemsCount = searchInFiltered.length
+                } else {
+                  this.itemsCount = this.total;
+                }
+                this.filteredOrAllData =  searchInFiltered
+                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+              }
+                }
+            },
+        isFinishedFilterPhoneNumbers() {
+            if(this.isFinishedFilterPhoneNumbers) {
+                this.doCreatedOperation()
             }
+      },
     }
 }
 </script>

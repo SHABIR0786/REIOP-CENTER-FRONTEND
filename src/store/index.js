@@ -25,6 +25,7 @@ import teamModule from "./Modules/teamModule";
 import phoneTypesModule from "./Modules/phoneTypesModule";
 import subjectTypesModule from "./Modules/subjectTypesModule";
 import companyTypesModule from "./Modules/companyTypesModule";
+import marketingChannelModule from "./Modules/marketingChannelModule"
 
 
 const state = {}
@@ -55,6 +56,7 @@ export default new Vuex.Store({
         phoneTypesModule: phoneTypesModule,
         subjectTypesModule: subjectTypesModule,
         companyTypesModule: companyTypesModule,
+        marketingChannelModule: marketingChannelModule
 
     },
     state,

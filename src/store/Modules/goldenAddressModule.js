@@ -6,7 +6,6 @@ const state = {
         {key:"id", label: "ID", sortable: true},
         {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
-
         {key: "golden_address_address", label: "Golden Address", sortable: true},
         {key: "golden_address_address_line2", label: "Golden Address Line 2", sortable: true},
         {key: "golden_address_city", label: "Golden City", sortable: true},
@@ -25,6 +24,9 @@ const state = {
     ],
     goldenAddresses: [],
     total: 0,
+    goldenAddress: {},
+    filteredGoldenAddress: {},
+    filteredGoldenAddressesCount: 0,
 }
 
 const mutations = {
@@ -50,6 +52,19 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
+    },
+    FILTER_GOLDEN_ADDRESS(state, payload) {
+        const filteredData = [...payload.data]
+        filteredData.forEach(e => {
+            e.list_stack = e.lists.length;
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.filteredGoldenAddress =JSON.stringify(filteredData);
+        state.filteredGoldenAddressesCount =payload.total;
+    },
+    SET_GOLDEN_ADDRESS(state, payload) {
+        state.goldenAddress = {...payload};
     },
     ADD_GOLDEN_ADDRESS(state, payload) {
         const ADDRESS = JSON.parse(state.goldenAddresses)
@@ -92,7 +107,20 @@ const actions = {
             if (response && response.goldenAddresses && response.goldenAddresses.data) {
                 commit('SET_ALL_GOLDEN_ADDRESSES', response.goldenAddresses.data)
             }
-
+            return response
+        })
+    },
+    async getGoldenAddress({commit}, data) {
+        return await api.get(`/golden-addresses/full/${data}`).then((response) => {
+            if (response && response.goldenAddress) {
+                commit('SET_GOLDEN_ADDRESS', response.goldenAddress)
+            }
+            return response
+        })
+    },
+    async filterGoldenAddress({ commit }, data) {
+        return await api.post(`/golden-addresses/filter`, {...data}).then((response) => {
+            commit('FILTER_GOLDEN_ADDRESS', response.goldenAddresses)
             return response
         })
     },

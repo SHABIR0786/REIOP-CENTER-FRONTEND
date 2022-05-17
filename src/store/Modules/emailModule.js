@@ -22,6 +22,9 @@ const state = {
     ],
     emails: [],
     total: 0,
+    email: {},
+    filteredEmail: {},
+    filteredEmailsCount: 0,
 }
 
 const mutations = {
@@ -48,6 +51,20 @@ const mutations = {
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
+    FILTER_EMAIL(state, payload) {
+        const filteredData = [...payload.data]
+        filteredData.forEach(e => {
+            e.list_stack = e.lists.length;
+            e.total_sellers = e.sellers.length;
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        })
+        state.filteredEmail =JSON.stringify(filteredData);
+        state.filteredEmailsCount =payload.total;
+    },
+    SET_EMAIL(state, payload) {
+        state.email = {...payload};
+    },
     ADD_EMAIL(state, payload) {
         const EMAIL = JSON.parse(state.emails)
         const findIndex = EMAIL.findIndex(({ id }) => id === payload.id)
@@ -63,6 +80,7 @@ const mutations = {
     VUEX_STORE(state) {
         state.emails = [];
         state.total = 0;
+        state.email = {};
     },
 }
 
@@ -90,6 +108,20 @@ const actions = {
                 commit('SET_ALL_EMAILS', response.emails.data)
             }
 
+            return response
+        })
+    },
+    async getEmail({commit}, data) {
+        return await api.get(`/emails/full/${data}`).then((response) => {
+            if (response && response.email) {
+                commit('SET_EMAIL', response.email)
+            }
+            return response
+        })
+    },
+    async filterEmail({ commit }, data) {
+        return await api.post(`/emails/filter`, {...data}).then((response) => {
+            commit('FILTER_EMAIL', response.emails)
             return response
         })
     },
@@ -140,7 +172,15 @@ const getters = {
 
         return [];
     },
-    total: ({total}) => total
+    total: ({total}) => total,
+    filteredEmailsCount: ({filteredEmailsCount}) => filteredEmailsCount,
+    email: ({email}) => email,
+    filteredEmail: ({ filteredEmail }) => {
+        if (typeof filteredEmail === 'string') {
+            return JSON.parse(filteredEmail);
+        }
+        return [];
+    },
 }
 
 export default {
