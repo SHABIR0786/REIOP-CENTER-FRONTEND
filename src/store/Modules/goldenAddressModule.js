@@ -55,11 +55,13 @@ const mutations = {
     },
     FILTER_GOLDEN_ADDRESS(state, payload) {
         const filteredData = [...payload.data]
+        if(filteredData?.length > 0) {
         filteredData.forEach(e => {
             e.list_stack = e.lists.length;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
+        }
         state.filteredGoldenAddress =JSON.stringify(filteredData);
         state.filteredGoldenAddressesCount =payload.total;
     },
@@ -120,7 +122,7 @@ const actions = {
     },
     async filterGoldenAddress({ commit }, data) {
         return await api.post(`/golden-addresses/filter`, {...data}).then((response) => {
-            commit('FILTER_GOLDEN_ADDRESS', response.goldenAddresses)
+            commit('FILTER_GOLDEN_ADDRESS', response.golden_addresses)
             return response
         })
     },
@@ -168,10 +170,16 @@ const getters = {
         if (typeof goldenAddresses === 'string') {
             return JSON.parse(goldenAddresses);
         }
-
         return [];
     },
-    total: ({total}) => total
+    total: ({total}) => total,
+    filteredGoldenAddressesCount: ({filteredGoldenAddressesCount}) => filteredGoldenAddressesCount,
+    filteredGoldenAddress: ({ filteredGoldenAddress }) => {
+        if (typeof filteredGoldenAddress === 'string') {
+            return JSON.parse(filteredGoldenAddress);
+        }
+        return [];
+    },
 }
 
 export default {

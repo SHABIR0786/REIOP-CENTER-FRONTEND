@@ -196,7 +196,7 @@ export default {
             fields: 'phoneNumberModule/fields',
             items: 'phoneNumberModule/phoneNumbers',
             total: 'phoneNumberModule/total',
-            filteredItems: 'phoneNumberModule/filterPhoneNumber',
+            filteredItems: 'phoneNumberModule/filteredPhoneNumber',
             filteredPhoneNumbersCount:'phoneNumberModule/filteredPhoneNumbersCount',
             selectedPhoneNumber: 'phoneNumberModule/phoneNumber'
         }),
@@ -362,7 +362,9 @@ export default {
                 this.currentPage = 1;
                 let searchInFiltered = [...this.filteredItems]
                  searchInFiltered = searchInFiltered.filter(el => {
-                 return el.id.toString().includes(this.searchPhone)
+                 return el.id.toString().includes(this.searchPhone) ||
+                  el.phone_number.toString().includes(this.searchPhone) ||
+                  el.phone_type.toString().includes(this.searchPhone)
                  });
                 if(this.searchPhone) {
                   this.itemsCount = searchInFiltered.length

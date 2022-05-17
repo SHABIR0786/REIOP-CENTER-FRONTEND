@@ -402,12 +402,13 @@ export default {
               } else {
                 this.currentPage = 1;
                 let searchInFiltered = [...this.filteredItems]
+                const Instance = this;
                  searchInFiltered = searchInFiltered.filter(el => {
-                 return  el.seller_address.toLocaleLowerCase().includes(this.searchSeller.toLocaleLowerCase())||
-                   el.seller_city.toLocaleLowerCase().includes(this.searchSeller.toLocaleLowerCase())  ||
-                   el.seller_state.toLocaleLowerCase().includes(this.searchSeller.toLocaleLowerCase()) ||
-                   el.seller_zip.toLocaleLowerCase().includes(this.searchSeller.toLocaleLowerCase())   ||
-                   el.id.toString().includes(this.searchSeller)
+                 return  el.seller_mailing_address.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())||
+                   el.seller_mailing_city.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())  ||
+                   el.seller_mailing_state.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase()) ||
+                   el.seller_mailing_zip.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())   ||
+                   el.id.toString().includes(Instance.searchSeller)
                  });
                 if(this.searchSeller) {
                   this.itemsCount = searchInFiltered.length

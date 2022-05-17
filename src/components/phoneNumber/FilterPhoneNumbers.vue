@@ -441,16 +441,18 @@ export default {
         this.incomingList.Group.push(e.list_group)
         this.incomingList.Type.push(e.list_type)
         this.incomingList.Source.push(e.list_source)
-        let runYear = e.run_year.split(",")
-        let runMonth = e.run_month.split(",")
-        for(let i = 0; i < runYear.length; i++){
+        let runYear = e.run_year?.split(",")
+        let runMonth = e.run_month?.split(",")
+        for(let i = 0; i < runYear?.length; i++){
           this.incomingList.RunDate.push(runMonth[i]+'/'+runYear[i])
         }
       });
       this.phoneData = this.propsData
+      if(this.phoneData?.length > 0) {
       this.phoneData.forEach(el => {
           this.incomingList.Errors.push(el.phone_error_type)
       })
+      }
 
       if(localStorage.getItem('phone-applied-filters')) {
         let lastFilters = JSON.parse(localStorage.getItem('phone-applied-filters'))
