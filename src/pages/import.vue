@@ -437,4 +437,7 @@ export default {
     margin-left: 1rem;
     margin-right:1rem !important;
 }
+.import-container{
+  height:100% !important;
+}
 </style>

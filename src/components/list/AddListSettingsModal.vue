@@ -10,7 +10,7 @@
                 <b-row>
                     <b-col cols="12">
                         <b-input-group :prepend="list" class="mb-2">
-                            <b-form-input v-model="listField"></b-form-input>
+                            <b-form-input @keyup.enter="sendRequest()" v-model="listField"></b-form-input>
                         </b-input-group>
                     </b-col>
                 </b-row>

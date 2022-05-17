@@ -67,20 +67,26 @@
             <template #head(actions)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
-            <template #head(created_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            <template #head(seller_id)="scope">
+                <div style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(email_address)="scope">
+              <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
             </template>
             <template #head(email_validity)="scope">
-              <div class="text-nowrap" style="width: 200px;">{{scope.label}}</div>
+              <div style="width: 60px;">{{scope.label}}</div>
+            </template>
+            <template #head(email_skip_source)="scope">
+              <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(created_at)="scope">
+                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
             <template #head(email_error)="scope">
               <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
             </template>
-            <template #head(email_address)="scope">
-              <div class="text-nowrap" style="width: 200px;">{{scope.label}}</div>
-            </template>
-            <template #head(seller_id)="scope">
-              <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+            <template #head(email_error_type)="scope">
+              <div style="width: 150px;">{{scope.label}}</div>
             </template>
             <template #head(updated_at)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
@@ -282,6 +288,10 @@ export default {
     }
     .b-table-sticky-header {
         max-height: calc(100vh - 360px) !important;
+    }
+    table th {
+      vertical-align: inherit !important;
+      height: 64px;
     }
 </style>
 

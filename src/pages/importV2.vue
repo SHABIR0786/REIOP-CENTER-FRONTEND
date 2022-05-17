@@ -16,7 +16,7 @@
                     </b-col>
                     <b-col cols="4">
                         <b-form-input v-model="searchImport" placeholder="Search"></b-form-input>
-                    </b-col>
+                  </b-col>
                 </b-row>
             </div>
             <b-table
@@ -38,9 +38,17 @@
                         <strong>Loading...</strong>
                     </div>
                 </template>
-
+              <template #head(file_name)="scope">
+                    <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+                </template>
                 <template #head(actions)="scope">
                     <div class="text-nowrap" style="width: 70px;">{{scope.label}}</div>
+                </template>
+                <template #head(error_number)="scope">
+                    <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                </template>
+                <template #head(total_row_number)="scope">
+                    <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
                 </template>
               <template #head(percentage)="scope">
                     <div class="text-nowrap" style="width: 90px;">{{scope.label}}</div>
@@ -397,3 +405,9 @@ export default {
   }
 }
 </script>
+<style>
+    table th {
+      vertical-align: inherit !important;
+      height: 64px;
+    }
+</style>

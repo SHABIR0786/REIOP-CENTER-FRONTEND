@@ -38,7 +38,6 @@
             <strong>Loading...</strong>
           </div>
         </template>
-
         <template #head(actions)="scope">
           <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
         </template>
@@ -54,11 +53,23 @@
         <template #head()="scope">
           <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
         </template>
+        <template #head(name)="scope">
+          <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+        </template>
+        <template #head(owner)="scope">
+          <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+        </template>
 
         <template v-slot:cell(id)="data">
           <div :title="data.item.id">
             <p class="user-email">{{data.item.id}}</p>
           </div>
+        </template>
+        <template v-slot:cell(name)="data">
+            <div v-b-tooltip.hover :title="data.item.name">{{ data.item.name }}</div>
+        </template>
+          <template v-slot:cell(owner)="data">
+            <div v-b-tooltip.hover :title="data.item.owner">{{ data.item.owner }}</div>
         </template>
 
         <template v-slot:cell(actions)="data">
@@ -212,5 +223,9 @@ export default {
 
   .filter-icon {
     font-size: 25px;
+  }
+  table th {
+    vertical-align: inherit !important;
+    height: 64px;
   }
 </style>

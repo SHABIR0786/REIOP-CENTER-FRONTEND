@@ -3,8 +3,8 @@ import * as api from "../Services/api"
 const state = {
     subject_fields: [
         {key:"id", label: "Id", sortable: true},
-        {key: "subject_error_type", label: "Error"},
-        {key: "file_name", label: "File Name"},
+        {key: "subject_error_type", label: "Error", sortable: true},
+        {key: "file_name", label: "File Name", sortable: true},
         {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
         {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
         {key: "subject_city", label: "Subject City", sortable: true},
@@ -28,13 +28,13 @@ const state = {
     ],
     phone_fields: [
         {key:"id", label: "ID", sortable: true},
-        {key: "phone_error_type", label: "Error"},
-        {key: "file_name", label: "File Name"},
+        {key: "phone_error_type", label: "Error", sortable:true},
+        {key: "file_name", label: "File Name", sortable: true},
         {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "phone_number", label: "Phone Number", sortable: true},
         {key: "phone_type", label: "Phone Type", sortable: true},
         {key: "phone_validity", label: "Phone Validity", sortable: true},
-        {key: "phone_skip_source", label: "Phone Skip Source"},
+        {key: "phone_skip_source", label: "Phone Skip Source", sortable: true},
 
         // Custom Fields
 
@@ -43,8 +43,8 @@ const state = {
     ],
     email_fields: [
         {key:"id", label: "ID", sortable: true},
-        {key: "email_error_type", label: "Error"},
-        {key: "file_name", label: "File Name"},
+        {key: "email_error_type", label: "Error", sortable:true},
+        {key: "file_name", label: "File Name", sortable: true},
         {key: "seller_id",label: "Seller ID", sortable: true},
         {key: "email_address", label: "Email Address", sortable: true},
         {key: "email_validity", label: "Email Validity", sortable: true},
@@ -58,21 +58,19 @@ const state = {
     seller_fields: [
         {key: "id", label: "ID", sortable: true},
         {key: "seller_error_type", label: "Error Type", sortable: true},
-        {key: "file_name", label: "File Name"},
+        {key: "file_name", label: "File Name", sortable:true},
         // {key: "seller_total_subjects", label: "Total Subjects", sortable: true},
         // {key: "seller_total_phones", label: "Total Phones", sortable: true},
         // {key: "seller_total_emails", label: "Total Emails", sortable: true},
         {key: "seller_first_name", label: "First Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
         {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
-        {key: "seller_mailing_address", label: "Mailing Address"},
-        {key: "seller_mailing_address_line2", label: "Mailing Address Line2"},
-        {key: "seller_mailing_state", label: "Mailing State"},
-        {key: "seller_mailing_city", label: "Mailing City"},
-        {key: "seller_mailing_zip", label: "Mailing Zip"},
+        {key: "seller_mailing_address", label: "Mailing Address", sortable:true,},
+        {key: "seller_mailing_address_line2", label: "Mailing Address Line2", sortable:true},
+        {key: "seller_mailing_state", label: "Mailing State", sortable:true},
+        {key: "seller_mailing_city", label: "Mailing City", sortable:true},
+        {key: "seller_mailing_zip", label: "Mailing Zip", sortable:true},
         // {key: "seller_company_owned", label: "Company Owned"},
-
-
         // Custom Fields
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},
@@ -81,13 +79,13 @@ const state = {
     golden_fields: [
         {key: "id", label: "ID", sortable: true},
         {key: "golden_error_type", label: "Error Type", sortable: true},
-        {key: "file_name", label: "File Name"},
+        {key: "file_name", label: "File Name", sortable:true},
         {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "golden_address_address", label: "Golden Address", sortable: true},
+        {key: "golden_address_address_line2", label: "Golden Address Line2", sortable:true},
         {key: "golden_address_city",  label: "Golden City", sortable: true},
-        {key: "golden_address_state", label: "Golden State"},
-        {key: "golden_address_zip", label: "Golden Zip"},
-        {key: "golden_address_address_line2", label: "Golden Address Line2"},
+        {key: "golden_address_state", label: "Golden State", sortable: true},
+        {key: "golden_address_zip", label: "Golden Zip", sortable: true},
 
         // Custom Fields
         {key:"created_at", label: "Created Date", sortable: true},

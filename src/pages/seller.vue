@@ -66,16 +66,16 @@
                 <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
             </template>
             <template #head(actions)="scope">
-                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                <div style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(seller_total_subjects)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 60px;">{{scope.label}}</div>
             </template>
             <template #head(seller_total_phones)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 50px;">{{scope.label}}</div>
             </template>
             <template #head(seller_total_emails)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 50px;">{{scope.label}}</div>
             </template>
             <template #head(seller_first_name)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
@@ -86,11 +86,29 @@
             <template #head(seller_last_name)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
+            <template #head(seller_mailing_address)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_mailing_address_line2)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_mailing_city)="scope">
+                <div style="width: 100px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_company_owned)="scope">
+                <div style="width: 70px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_error)="scope">
+                <div style="width: 50px;">{{scope.label}}</div>
+            </template>
+            <template #head(seller_error_type)="scope">
+                <div style="width: 150px;">{{scope.label}}</div>
+            </template>
             <template #head(seller_mailing_state)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 50px;">{{scope.label}}</div>
             </template>
             <template #head(seller_mailing_zip)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+                <div style="width: 50px;">{{scope.label}}</div>
             </template>
             <template #head(created_at)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
@@ -322,5 +340,9 @@ export default {
     }
     .b-table-sticky-header {
         max-height: calc(100vh - 372px) !important;
+    }
+    table th {
+      vertical-align: inherit !important;
+      height: 64px;
     }
 </style>

@@ -206,19 +206,24 @@
             }
         });
         if (!this.market.includes('Add a new Market')){
-          this.market.push('Add a new Market')
+          this.market = this.market.sort();
+          this.market.unshift('Add a new Market')
         }
         if (!this.group.includes('Add a new Group')){
-          this.group.push('Add a new Group')
+          this.group = this.group.sort();
+          this.group.unshift('Add a new Group')
         }
         if (!this.type.includes('Add a new Type')){
-          this.type.push('Add a new Type')
+          this.type = this.type.sort();
+          this.type.unshift('Add a new Type')
         }
         if (!this.source.includes('Add a new Source')){
-          this.source.push('Add a new Source')
+          this.source = this.source.sort();
+          this.source.unshift('Add a new Source')
         }
         if (!this.skipSource.includes('Add a new Skip Source')){
-          this.skipSource.push('Add a new Skip Source')
+          this.skipSource = this.skipSource.sort();
+          this.skipSource.unshift('Add a new Skip Source')
         }
 
         if (this.importDetails && this.importDetails.pull_settings) {
