@@ -50,7 +50,9 @@
                    :is-have-mapped-items="isHaveMappedItems"
                    :is-skip-validate="skipValidate"
                    :is-skip-trace="isSkippedData"
-                   @modalResponse="confirmImport"></confirm-modal>
+                   :is-combined-data="isCombinedData"
+                   @modalResponse="confirmImport">
+    </confirm-modal>
     <div v-if="!isSkippedData">
       <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
         <template v-slot:sellerFill>
@@ -94,6 +96,7 @@ export default {
       jsonSheet: [],
       tableLabels: ['emails', 'golden_addresses', 'lists', 'phones', 'sellers', 'subjects'],
       uploadedFields: [],
+      listPullSettings : '',
       uploadedAllFields: [],
       selectedFields: [],
       fromField: '',
@@ -105,6 +108,7 @@ export default {
       isHaveMappedItems: false,
       showSellerFillModal: false,
       skipValidate: false,
+      isCombinedData: false,
       list: {
         list_market: '',
         list_group: '',
@@ -282,7 +286,12 @@ export default {
       // Combined data
 
       if (this.upload_type === 'combined') {
-        this.list_settings = 'Combined Data'
+        this.isCombinedData = false;
+         let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source','list_pull_date'];
+         let requiredListSettingsExist = requiredListSettingsFields.every(setting => mappedFields.includes(setting));
+         if (!requiredListSettingsExist){
+           this.isCombinedData = true;
+         }
       }
       this.showConfirmModal = true;
     },
@@ -400,11 +409,16 @@ export default {
         })
         mapping.push({fromField: fromF, toField: toItem, action: ""});
       })
+      if (!this.list_settings){
+        this.listPullSettings = 'Combined Data'
+      }else {
+        this.listPullSettings = this.list_settings
+      }
       await this.$store.dispatch('importModule/uploadExcelDataV2', {
         file: this.file,
         mappedItems: mapping,
         url: this.url,
-        list: this.list_settings,
+        list: this.listPullSettings,
         uploadType: this.importTypes[this.upload_type],
         skipSource: this.skip_variant,
         mapOrder: this.mappedItems,
