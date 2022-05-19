@@ -186,19 +186,19 @@
           this.skipSource = this.skipSourceList
         }
         this.lists.forEach(e => {
-            if((this.market.indexOf(e.list_market)) === -1){
+            if((this.market.indexOf(e.list_market)) === -1 && e.list_market){
               this.market.push(e.list_market)
             }
-            if((this.group.indexOf(e.list_group)) === -1){
+            if((this.group.indexOf(e.list_group)) === -1 && e.list_group){
               this.group.push(e.list_group);
             }
-            if((this.type.indexOf(e.list_type)) === -1){
+            if((this.type.indexOf(e.list_type)) === -1 && e.list_type){
               this.type.push(e.list_type);
             }
-            if((this.source.indexOf(e.list_source)) === -1){
+            if((this.source.indexOf(e.list_source)) === -1 && e.list_source){
               this.source.push(e.list_source);
             }
-            if((this.skipSource.indexOf(e.list_skip_source)) === -1){
+            if((this.skipSource.indexOf(e.list_skip_source)) === -1 && e.list_skip_source){
               this.skipSource.push(e.list_skip_source);
             }
             if((this.pull_date.indexOf(e.list_pull_date)) === -1){

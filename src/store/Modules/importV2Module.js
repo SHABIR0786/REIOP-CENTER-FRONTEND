@@ -91,6 +91,7 @@ const actions = {
         delete data.emails_count;
         delete data.phones_count;
         delete data.subjects_count;
+        delete data.sellers_count;
         return await api.put(`/batches/${data.id}`, {...data}).then((response) => {
             commit('EDIT_IMPORT', data)
             return response
