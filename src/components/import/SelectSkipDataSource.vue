@@ -90,7 +90,7 @@
           this.source = this.sourceList
         }else {
           this.lists.forEach(e => {
-            if (e.list_skip_source !== null){
+            if (e.list_skip_source ){
               this.source.push(e.list_skip_source)
             }
           })
