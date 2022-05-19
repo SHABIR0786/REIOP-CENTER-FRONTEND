@@ -230,7 +230,7 @@ export default {
       }
 
       // If User map Sellers, then check if all required Sellers field are mapped
-      let requiredSellersFields = ['seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
+      let requiredSellersFields = ['seller_first_name','seller_last_name','seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
 
       if (this.isSkippedData && (!requiredSubjectExist && !requiredSellersFields)) {
         this.isHaveMappedItems = false;
@@ -254,7 +254,7 @@ export default {
       if (sellerMapped) {
         let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
 
-        if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
+        if (this.isSkippedData && (requiredSubjectExist && requiredSellersExist)) {
           this.isHaveMappedItems = true;
         }
 
