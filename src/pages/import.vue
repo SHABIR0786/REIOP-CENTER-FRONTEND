@@ -225,15 +225,15 @@ export default {
       })
 
       let requiredSubjectExist = requiredSubjectsFields.every(msub => mappedFields.includes(msub));
-      if (!this.isSkippedData) {
+      if (!this.isSkippedData && !this.skipValidate) {
         this.isHaveMappedItems = !!requiredSubjectExist;
       }
 
       // If User map Sellers, then check if all required Sellers field are mapped
       let requiredSellersFields = ['seller_first_name','seller_last_name','seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
-
-      if (this.isSkippedData && (!requiredSubjectExist && !requiredSellersFields)) {
-        this.isHaveMappedItems = false;
+      let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
+      if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
+        this.isHaveMappedItems = true;
       }
       const sellerMapped = mappedFields.find(element => {
         if (element.includes('seller')) {
@@ -252,9 +252,7 @@ export default {
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_state')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_zip')).length);
       if (sellerMapped) {
-        let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
-
-        if (this.isSkippedData && (requiredSubjectExist && requiredSellersExist)) {
+        if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
           this.isHaveMappedItems = true;
         }
 
