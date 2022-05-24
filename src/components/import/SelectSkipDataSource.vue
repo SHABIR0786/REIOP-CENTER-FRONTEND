@@ -15,7 +15,7 @@
                   <b-row class="mb-2">
                     <b-col cols="9" class="mx-auto">
                       <b-input-group prepend="Skip Source">
-                        <b-form-select v-model="skipOptions.skip_source" :options="source" @change="addNewField($event)"></b-form-select>
+                        <b-form-select v-model.trim="skipOptions.skip_source" :options="source" @change="addNewField($event)"></b-form-select>
                       </b-input-group>
                     </b-col>
                   </b-row>
@@ -67,6 +67,7 @@
         computed: {
           ...mapGetters({
             sourceList: 'listModule/skipSourceList',
+            sourceListFromDB: 'listModule/sourceListFromDB',
           })
         },
         props: ['importDetails','lists'],
@@ -81,7 +82,8 @@
               settingSection: '',
             }
         },
-      mounted() {
+      async mounted() {
+        await this.$store.dispatch('listModule/getSourceListFromDB')
         if (this.importDetails && this.importDetails.skip_options) {
           this.skipOptions = this.importDetails.skip_options;
           //this.source = this.importDetails.skip_options
@@ -89,11 +91,13 @@
         if (this.sourceList.length > 0) {
           this.source = this.sourceList
         }else {
-          this.lists.forEach(e => {
-            if (e.list_skip_source ){
-              this.source.push(e.list_skip_source)
-            }
-          })
+         if (this.sourceListFromDB){
+           this.sourceListFromDB.forEach(e => {
+           if (e.list_skip_source ){
+             this.source.push(e.list_skip_source)
+           }
+         })
+         }
         }
 
         if (!this.source.includes('Add a new Skip Source')){
@@ -109,9 +113,13 @@
               }
             },
             add (response) {
-                if(this.source.indexOf(response) === -1){
+              let index = this.source.findIndex(item => response.toLowerCase() === item.toLowerCase())
+                if(index){
                   this.source.splice(this.source.length -1, 0, response);
+
                   this.$store.dispatch('listModule/saveSkipSourceList', this.source)
+                } else {
+                  this.source.splice(index, 1, response)
                 }
                 this.skipOptions.skip_source = response;
                 this.showSettingsModal = false;
@@ -122,7 +130,7 @@
             goBack() {
                 this.$emit('goBack', 'SkipSource');
             }
-        }
+        },
     }
 </script>
 
