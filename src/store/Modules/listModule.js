@@ -27,7 +27,7 @@ const state = {
     typeList: [],
     sourceList: [],
     skipSourceList: [],
-    list: [],
+    list: {},
     subjectRelatedList: [],
     sameDate:null,
     sameSource:null,
