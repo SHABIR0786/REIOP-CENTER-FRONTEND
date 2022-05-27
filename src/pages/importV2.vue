@@ -280,6 +280,7 @@ export default {
 
       setSkipOption (response) {
         this.importDetails.skip_variant = response;
+        this.importDetails.pull_settings = {};
         if (response === 'skip_trace') {
           this.importDetails.upload_type = 'skip_trace'
           this.statusBackSkip =true;
@@ -292,6 +293,7 @@ export default {
         } else {
           this.statusBackValidity =true;
           this.importDetails.upload_type = 'skip_validity'
+          this.importDetails.pull_settings = {};
           this.step_1 = false;
           this.step_2 = false;
           this.step_2_skip = false;
@@ -303,7 +305,6 @@ export default {
 
       setSkipSource (response) {
           if(response) {
-
               this.importDetails.skip_options = response;
               this.statusBackSkip = true;
               this.step_1 = false;

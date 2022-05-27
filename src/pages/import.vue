@@ -50,7 +50,9 @@
                    :is-have-mapped-items="isHaveMappedItems"
                    :is-skip-validate="skipValidate"
                    :is-skip-trace="isSkippedData"
-                   @modalResponse="confirmImport"></confirm-modal>
+                   :is-combined-data="isCombinedData"
+                   @modalResponse="confirmImport">
+    </confirm-modal>
     <div v-if="!isSkippedData">
       <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
         <template v-slot:sellerFill>
@@ -94,6 +96,7 @@ export default {
       jsonSheet: [],
       tableLabels: ['emails', 'golden_addresses', 'lists', 'phones', 'sellers', 'subjects'],
       uploadedFields: [],
+      listPullSettings : '',
       uploadedAllFields: [],
       selectedFields: [],
       fromField: '',
@@ -105,6 +108,7 @@ export default {
       isHaveMappedItems: false,
       showSellerFillModal: false,
       skipValidate: false,
+      isCombinedData: false,
       list: {
         list_market: '',
         list_group: '',
@@ -221,15 +225,15 @@ export default {
       })
 
       let requiredSubjectExist = requiredSubjectsFields.every(msub => mappedFields.includes(msub));
-      if (!this.isSkippedData) {
+      if (!this.isSkippedData && !this.skipValidate) {
         this.isHaveMappedItems = !!requiredSubjectExist;
       }
 
       // If User map Sellers, then check if all required Sellers field are mapped
-      let requiredSellersFields = ['seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
-
-      if (this.isSkippedData && (!requiredSubjectExist && !requiredSellersFields)) {
-        this.isHaveMappedItems = false;
+      let requiredSellersFields = ['seller_first_name','seller_last_name','seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
+      let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
+      if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
+        this.isHaveMappedItems = true;
       }
       const sellerMapped = mappedFields.find(element => {
         if (element.includes('seller')) {
@@ -248,8 +252,6 @@ export default {
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_state')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_zip')).length);
       if (sellerMapped) {
-        let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
-
         if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
           this.isHaveMappedItems = true;
         }
@@ -282,7 +284,12 @@ export default {
       // Combined data
 
       if (this.upload_type === 'combined') {
-        this.list_settings = 'Combined Data'
+        this.isCombinedData = false;
+         let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source','list_pull_date'];
+         let requiredListSettingsExist = requiredListSettingsFields.every(setting => mappedFields.includes(setting));
+         if (!requiredListSettingsExist){
+           this.isCombinedData = true;
+         }
       }
       this.showConfirmModal = true;
     },
@@ -400,11 +407,16 @@ export default {
         })
         mapping.push({fromField: fromF, toField: toItem, action: ""});
       })
+      if (!this.list_settings){
+        this.listPullSettings = 'Combined Data'
+      }else {
+        this.listPullSettings = this.list_settings
+      }
       await this.$store.dispatch('importModule/uploadExcelDataV2', {
         file: this.file,
         mappedItems: mapping,
         url: this.url,
-        list: this.list_settings,
+        list: this.listPullSettings,
         uploadType: this.importTypes[this.upload_type],
         skipSource: this.skip_variant,
         mapOrder: this.mappedItems,
