@@ -53,20 +53,21 @@
                    :is-combined-data="isCombinedData"
                    @modalResponse="confirmImport">
     </confirm-modal>
-    <div v-if="!isSkippedData">
       <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
         <template v-slot:sellerFill>
-          <b-row>With two sellers mapped you must map two mailing addresses. You can use the same mailing address fields
-            if your import has one address for both sellers.
-          </b-row>
-          <b-row>The target fields that would be required to map are:</b-row>
-          <b-row>. seller_mailing_address,</b-row>
-          <b-row>. seller_mailing_city,</b-row>
-          <b-row>. seller_mailing_state,</b-row>
-          <b-row> . seller_mailing_zip.</b-row>
+          <div v-if="!isSkippedData">
+            <b-row>With two sellers mapped you must map two mailing addresses. You can use the same mailing address fields
+              if your import has one address for both sellers.
+            </b-row>
+            <b-row>The target fields that would be required to map are:</b-row>
+            <b-row>. seller_mailing_address,</b-row>
+            <b-row>. seller_mailing_city,</b-row>
+            <b-row>. seller_mailing_state,</b-row>
+            <b-row> . seller_mailing_zip.</b-row>
+          </div>
+          <div>You must map a full mailing address, full subject address, or both before being able to import skip traced data.</div>
         </template>
       </seller-modal>
-    </div>
   </b-container>
 </template>
 
@@ -230,7 +231,10 @@ export default {
       }
 
       // If User map Sellers, then check if all required Sellers field are mapped
-      let requiredSellersFields = ['seller_first_name','seller_last_name','seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
+      let requiredSellersFields = ['seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
+      if (this.isSkippedData){
+        requiredSellersFields.push('seller_first_name','seller_last_name');
+      }
       let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
       if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
         this.isHaveMappedItems = true;
@@ -251,15 +255,14 @@ export default {
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_city')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_state')).length);
       addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_zip')).length);
+      if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
+        this.isHaveMappedItems = true;
+      }
       if (sellerMapped) {
-        if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
-          this.isHaveMappedItems = true;
-        }
-
         const sellersNamesAdrCountEqual = addressCount.filter(element => element !== sellersCount)
-        if (requiredSellersExist && !sellersNamesAdrCountEqual.length) {
+        if (requiredSellersExist && (sellersCount === 0 || !sellersNamesAdrCountEqual.length)) {
           this.showConfirmModal = true;
-        } else if (!this.isSkippedData) {
+        } else  {
           this.showSellerFillModal = true;
           return;
         }

@@ -23,7 +23,7 @@
       </b-container>
 
       <b-container fluid v-if="!isHaveMappedItems && isSkipTrace">
-        <h4 class="text-center">You must map a full mailing address, subject address, or both before being able to import skip traced data.</h4>
+        <h4 class="text-center">You must map a full mailing address, full subject address, or both before being able to import skip traced data.</h4>
       </b-container>
 
       <b-container fluid v-if="!isHaveMappedItems && isSkipValidate">
