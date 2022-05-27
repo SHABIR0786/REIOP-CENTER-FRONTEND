@@ -414,7 +414,7 @@ export default {
       this.$emit('filter', filters, filterValue, this.allData)
     },
     closeFilterModal(){
-      if(!this.appliedFilters && +localStorage.getItem('email-filters-count') === 0){
+      // if(!this.appliedFilters && +localStorage.getItem('email-filters-count') === 0){
         this.allData = {
           Market:[],
           Group:[],
@@ -431,7 +431,7 @@ export default {
           Errors:[],
           RunDate:[],
         }
-      }
+      // }
       this.$emit('cancel')
     },
     async updateDataChanges() {
@@ -443,7 +443,7 @@ export default {
         this.incomingList.Source.push(e.list_source)
         let runYear = e.run_year?.split(",")
         let runMonth = e.run_month?.split(",")
-        for(let i = 0; i < runYear?.length; i++){
+        for(let i = 0; i < runYear?.length; i++) {
           this.incomingList.RunDate.push(runMonth[i]+'/'+runYear[i])
         }
       });
@@ -451,34 +451,6 @@ export default {
       this.emailData.forEach(el => {
           this.incomingList.Errors.push(el.email_error_type)
       })
-
-      if(localStorage.getItem('email-applied-filters')) {
-        let lastFilters = JSON.parse(localStorage.getItem('email-applied-filters'))
-        for(let category in lastFilters){
-          this.allFilters[category] = lastFilters[category].filter(value => this.incomingList[category].includes(value));
-        }
-        let filterValue = 0;
-        for (let i in this.allFilters){
-          filterValue += this.allFilters[i].length
-        }
-        localStorage.removeItem('email-applied-filters')
-        localStorage.setItem('email-applied-filters', JSON.stringify(this.allFilters))
-        localStorage.setItem('email-filters-count', filterValue)
-      }
-
-      if(localStorage.getItem('email-data-after-filtering')) {
-        let lastAllData = JSON.parse(localStorage.getItem('email-data-after-filtering'))
-        for(let category in lastAllData){
-          this.allData[category] = lastAllData[category].filter(value => this.incomingList[category].includes(value));
-        }
-        let filterValue = 0;
-        for (let i in this.allFilters){
-          filterValue += this.allFilters[i].length
-        }
-        localStorage.removeItem('email-data-after-filtering')
-        localStorage.setItem('email-data-after-filtering',JSON.stringify(this.allData))
-        localStorage.setItem('email-filters-count', filterValue)
-      }
       this.$emit('finish-process')
     },
   },

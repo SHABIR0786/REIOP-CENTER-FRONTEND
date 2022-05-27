@@ -411,10 +411,10 @@ export default {
         this.appliedFilters = true;
         this.activeTab = 'allFilters';
       }
-      this.$emit('filter', filters, filterValue, this.allData)
+      this.$emit('filter', filters, filterValue)
     },
     closeFilterModal(){
-      if(!this.appliedFilters && +localStorage.getItem('phone-filters-count') === 0){
+      // if(!this.appliedFilters && +localStorage.getItem('phone-filters-count') === 0){
         this.allData = {
           Market:[],
           Group:[],
@@ -431,7 +431,7 @@ export default {
           Errors:[],
           RunDate:[],
         }
-      }
+      // }
       this.$emit('cancel')
     },
     async updateDataChanges() {
@@ -452,34 +452,6 @@ export default {
       this.phoneData.forEach(el => {
           this.incomingList.Errors.push(el.phone_error_type)
       })
-      }
-
-      if(localStorage.getItem('phone-applied-filters')) {
-        let lastFilters = JSON.parse(localStorage.getItem('phone-applied-filters'))
-        for(let category in lastFilters){
-          this.allFilters[category] = lastFilters[category].filter(value => this.incomingList[category].includes(value));
-        }
-        let filterValue = 0;
-        for (let i in this.allFilters){
-          filterValue += this.allFilters[i].length
-        }
-        localStorage.removeItem('phone-applied-filters')
-        localStorage.setItem('phone-applied-filters', JSON.stringify(this.allFilters))
-        localStorage.setItem('phone-filters-count', filterValue)
-      }
-
-      if(localStorage.getItem('phone-data-after-filtering')) {
-        let lastAllData = JSON.parse(localStorage.getItem('phone-data-after-filtering'))
-        for(let category in lastAllData){
-          this.allData[category] = lastAllData[category].filter(value => this.incomingList[category].includes(value));
-        }
-        let filterValue = 0;
-        for (let i in this.allFilters){
-          filterValue += this.allFilters[i].length
-        }
-        localStorage.removeItem('phone-data-after-filtering')
-        localStorage.setItem('phone-data-after-filtering',JSON.stringify(this.allData))
-        localStorage.setItem('phone-filters-count', filterValue)
       }
       this.$emit('finish-process')
     },

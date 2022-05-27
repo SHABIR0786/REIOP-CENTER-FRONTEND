@@ -45,7 +45,7 @@
             sort-icon-left
             :busy="isBusy"
             :fields="fields"
-            :items="items"
+            :items="filteredOrAllData"
             responsive
             :per-page="0"
             :current-page="currentPage"
@@ -216,16 +216,7 @@ export default {
         this.$store.dispatch('goldenAddressModule/getTotal')
          try {
           this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('golden-applied-filters'))
-          let filterValue = 0;
-          for (let i in filters){
-            filterValue += filters[i].length
-          }
-          if(filterValue) {
-            this.filter(filters, filterValue)
-          } else {
-            await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
-          }
+          await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -241,17 +232,12 @@ export default {
         
     },
     methods: {
-        async filter(data,filterValue, dataAfterFiltering){
+        async filter(data,filterValue) {
             this.filtersName = data
             await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", {page: 1, perPage: this.perPage, filter: data})
-            localStorage.setItem('golden-applied-filters', JSON.stringify(data))
-            if(dataAfterFiltering) {
-            localStorage.setItem('golden-data-after-filtering', JSON.stringify(dataAfterFiltering))
-            localStorage.setItem('golden-filters-count', filterValue)
-            }
             if (!filterValue){
                 if(!this.items.length){
-                await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
             }
                 this.filteredOrAllData = this.items
                 this.itemsCount = this.total
@@ -312,16 +298,7 @@ export default {
             this.$store.dispatch('goldenAddressModule/getTotal')
             try {
             // this.$store.dispatch('uxModule/setLoading')
-            const filters = JSON.parse(localStorage.getItem('golden-applied-filters'))
-            let filterValue = 0;
-            for (let i in filters){
-                filterValue += filters[i].length
-            }
-            if(filterValue) {
-                this.filter(filters, filterValue)
-            } else {
-                await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
-            }
+            await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
             } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')

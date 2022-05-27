@@ -9,6 +9,10 @@ const mutations = {
         const findIndex = state.templates.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.templates.splice(findIndex, 1, { ...payload })
     },
+    EDIT_TEMPLATE(state, payload) {
+        const findIndex = state.templates.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.templates.splice(findIndex, 1, { ...payload })
+    },
     TEMPLATES_LIST(state, payload) {
         // const data = [...payload]
         state.templates = payload
@@ -36,6 +40,18 @@ const actions = {
         }
         return await api.post(`/templates`, {...data}).then((response) => {
             commit('ADD_TEMPLATE', data)
+            return response
+        })
+    },
+    async editTemplate({ commit }, template) {
+        let id = template.id;
+        delete template.id;
+        const data = {
+            name: template.name || 'Template',
+            configuration: JSON.stringify(template)
+        }
+        return await api.put(`/templates/${id}`, {...data}).then((response) => {
+            commit('EDIT_TEMPLATE', data)
             return response
         })
     },

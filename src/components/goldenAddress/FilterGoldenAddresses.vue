@@ -411,10 +411,10 @@ export default {
         this.appliedFilters = true;
         this.activeTab = 'allFilters';
       }
-      this.$emit('filter', filters, filterValue, this.allData)
+      this.$emit('filter', filters, filterValue)
     },
     closeFilterModal(){
-      if(!this.appliedFilters && +localStorage.getItem('golden-filters-count') === 0){
+      // if(!this.appliedFilters && +localStorage.getItem('golden-filters-count') === 0){
         this.allData = {
           Market:[],
           Group:[],
@@ -430,7 +430,7 @@ export default {
           Source:[],
           Errors:[],
           RunDate:[],
-        }
+        // }
       }
       this.$emit('cancel')
     },
@@ -452,33 +452,6 @@ export default {
           this.incomingList.Errors.push(el.golden_error_type)
       })
 
-      if(localStorage.getItem('golden-applied-filters')) {
-        let lastFilters = JSON.parse(localStorage.getItem('golden-applied-filters'))
-        for(let category in lastFilters){
-          this.allFilters[category] = lastFilters[category].filter(value => this.incomingList[category].includes(value));
-        }
-        let filterValue = 0;
-        for (let i in this.allFilters){
-          filterValue += this.allFilters[i].length
-        }
-        localStorage.removeItem('golden-applied-filters')
-        localStorage.setItem('golden-applied-filters', JSON.stringify(this.allFilters))
-        localStorage.setItem('golden-filters-count', filterValue)
-      }
-
-      if(localStorage.getItem('golden-data-after-filtering')) {
-        let lastAllData = JSON.parse(localStorage.getItem('golden-data-after-filtering'))
-        for(let category in lastAllData){
-          this.allData[category] = lastAllData[category].filter(value => this.incomingList[category].includes(value));
-        }
-        let filterValue = 0;
-        for (let i in this.allFilters){
-          filterValue += this.allFilters[i].length
-        }
-        localStorage.removeItem('golden-data-after-filtering')
-        localStorage.setItem('golden-data-after-filtering',JSON.stringify(this.allData))
-        localStorage.setItem('golden-filters-count', filterValue)
-      }
       this.$emit('finish-process')
     },
   },

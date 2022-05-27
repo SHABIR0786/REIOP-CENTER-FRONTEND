@@ -60,6 +60,7 @@ const mutations = {
     },
     FILTER_PHONE_NUMBER(state, payload) {
         const filteredData = [...payload.data]
+        console.log(filteredData)
         filteredData.forEach(e => {
             e.list_stack = e.lists.length;
             e.total_sellers = e.sellers.length;

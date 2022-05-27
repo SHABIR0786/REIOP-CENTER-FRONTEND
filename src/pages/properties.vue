@@ -1,19 +1,44 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
+        <div class="properties-header">
         <h3>Properties</h3>
+        <div class="boxes">
+            <div>{{total}} Subjects</div>
+            <div>{{sellerTotal}} Sellers</div>
+            <div>{{phoneNumberTotal}} Phones</div>
+            <div>{{emailTotal}} Emails</div>
+            <div>{{goldenAddressTotal}} Golden Addresses</div>
+        </div>
+        </div>
+        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="selectedTemplate"></slide-pop-up-filter>
+        <hr>
         <div>
+            <b-row class="text-end mb-3">
+                <!-- <b-col cols="8" class="d-flex align-items-center">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                </b-col> -->
+                <b-col cols="12"  class="d-flex justify-content-end">
+                    <b-form-input class="col-6 filter d-flex align-items-center" v-model="searchProperty" placeholder="Search"></b-form-input>
+                </b-col>
+            </b-row>
             <b-row class="text-end">
-                <b-col cols="12" class="d-flex justify-content-end">
+                <!-- <b-col cols="12" class="d-flex justify-content-end">
                     <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
                         <b-icon icon="filter" aria-hidden="true"></b-icon> Filter</b-button>
                     <b-button variant="outline-primary" class="filter d-flex align-items-center">
                         <b-icon icon="x" aria-hidden="true"></b-icon> Reset</b-button>
+                </b-col> -->
+                <div class="d-flex justify-content-end col-12">
+                <b-col cols="2">
+                    <b-button variant="primary" class="filter float-right" @click="showCustomModalView = true">Custom View</b-button>
                 </b-col>
-                <b-col cols="12" class="d-flex justify-content-end">
-                    <b-button variant="primary" class="filter d-flex align-items-center mt-2" @click="showCustomModalView = true">Custom View</b-button>
+                    <p class="pr-3 pt-1">or</p>
+                 <b-col cols="4 p-0">
+                    <b-form-select class="select-template w-100 float-right" v-model="selectedTemplate" @change="getTemplate($event)" :options="templatesToExport"></b-form-select>
                 </b-col>
+                </div>
             </b-row>
-            <b-row class="mt-2">
+            <!-- <b-row class="mt-2">
                 <b-col cols="8">
                         <div class="info latest d-flex justify-content-center ml-0" @click="showFileType = !showFileType">
                             <div>Export</div>
@@ -27,30 +52,24 @@
                     <b-form-select class="select-template mr-2" v-model="selectedTemplate" @change="getTemplate($event)" :options="templatesToExport"></b-form-select>
                 </b-col>
             </b-row>
-            <hr>
-            <b-row class="mb-3">
-                <b-col cols="8" class="d-flex align-items-center">
-                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
-                </b-col>
-                <b-col cols="4">
-                    <b-form-input v-model="searchProperty" placeholder="Search"></b-form-input>
-                </b-col>
-            </b-row>
+            <hr> -->
         </div>
-        <hr>
-        <div class="d-flex align-items-center mb-4">
+        <!-- <hr> -->
+        <!-- <div class="d-flex align-items-center mb-4">
             <b-form-checkbox  @change="selectAll" v-model='allSelected'></b-form-checkbox>
             <b-button variant="primary" :disabled='!bulkDeleteItems.length' class="filter d-flex align-items-center" @click="bulkDelete">
                 <b-icon icon="trash" aria-hidden="true"></b-icon>Delete Selected</b-button>
-        </div>
+        </div> -->
+        
         <b-table
+            style="margin-left:20px;"
             id="subject-table"
             small
             striped
             sort-icon-left
             hover
             :busy="isBusy"
-            :fields="fields"
+            :fields="propertyFields"
             :items="items"
             responsive
             :per-page="0"
@@ -68,8 +87,8 @@
             </template>
             <template v-slot:cell(delete)="data">
                 <b-form-checkbox :value='data.item.id' v-model='bulkDeleteItems'></b-form-checkbox>
-<!--                                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>-->
-<!--                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>-->
+                               <!-- <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+               <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
             </template>
             <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
@@ -139,7 +158,7 @@
                 <div v-b-tooltip.hover :title="data.item.subject_type">{{ data.item.subject_type }}</div>
             </template>
         </b-table>
-        <b-row>
+        <b-row style="margin-left:20px;">
             <b-col class="d-flex align-items-center">
                 <b-form-group
                         label="Show"
@@ -167,9 +186,9 @@
             </b-col>
         </b-row>
         <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
-        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-        <custom-view :showModal="showCustomModalView" @cancel="showCustomModalView=false" @save="saveCustomView"></custom-view>
+        <custom-view-v2 :customViews="templatesToExport" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view-v2>
         <filter-properties :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" @save="triggerFilter"></filter-properties>
     </div>
 </template>
@@ -179,8 +198,9 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 import AddSubjectModal from "../components/subject/AddSubjectModal";
-import CustomView from "../components/properties/CustomView";
+import CustomViewV2 from "../components/properties/CustomViewV2";
 import FilterProperties from "../components/properties/FilterProperties";
+import SlidePopUpFilter from "../components/properties/SlidePopUpFilter";
 
 export default {
     name: "Properties",
@@ -189,11 +209,54 @@ export default {
         EditSubjectModal,
         DeleteModal,
         AddSubjectModal,
-        CustomView,
-        FilterProperties
+        CustomViewV2,
+        FilterProperties,
+        SlidePopUpFilter
     },
     data () {
         return {
+                allFields: [
+                //Subject
+                {key:"id", label: "Id", sortable: true},
+                {key: "actions", label: "Actions"},
+                {key: "total_sellers", label: "Total Sellers", sortable: true},
+                {key: "list_stack", label: "List Stack", sortable: true},
+
+                {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true, visible: false},
+                // {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
+                {key: "subject_city", label: "Subject City", sortable: true, visible: false},
+                {key: "subject_state", label: "Subject State", sortable: true, visible: false},
+                {key: "subject_zip", label: "Subject Zip", sortable: true},
+                {key: "subject_country", label: "Subject County", sortable: true},
+                // {key: "subject_market", label: "Market", sortable: true},
+                {key: "subject_type", label: "Subject Type", sortable: true},
+                {key: "subject_age", label: "Subject Age", sortable: true},
+
+
+                // Custom Fields
+                // {key: "subject_last_marked_date", label: "Last Marketed Date", sortable: true},
+                // {key: "subject_last_exported_date", label: "Last Exported Date", sortable: true},
+                // {key: "subject_pull_date", label: "Pull Date", sortable: true},
+                // {key: "subject_skip_trace_date", label: "Skip Trace Date", sortable: true},
+
+                {key:"created_at", label: "Created Date", sortable: true},
+                {key:"updated_at", label: "Updated Date", sortable: true},
+                {key:"user_id", label: "Uploaded By", sortable: true},
+
+                //List
+                {key:"list_market", label: "Markets", sortable: true, visible: false},
+                {key:"list_group", label: "Group", sortable: true},
+                {key:"list_type", label: "Type", sortable: true},
+                {key:"list_source", label: "Source", sortable: true},
+
+                //Seller
+                {key: "seller_first_name", label: "First Name", sortable: true},
+                {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
+                {key: "seller_mailing_address", label: "Mailing Address"},
+                {key: "seller_mailing_state", label: "Mailing State"},
+                {key: "seller_mailing_city", label: "Mailing City"},
+                {key: "seller_mailing_zip", label: "Mailing Zip"},
+            ],
             isBusy: false,
             showModal: false,
             perPage: 20,
@@ -213,6 +276,7 @@ export default {
             ],
             bulkDeleteItems: [],
             allSelected: false,
+            propertyFields: [],
         }
     },
     computed: {
@@ -221,6 +285,10 @@ export default {
           fields: 'propertyModule/fields',
           items: 'propertyModule/subjects',
           total: 'propertyModule/total',
+          sellerTotal: 'sellerModule/total',
+          phoneNumberTotal: 'phoneNumberModule/total',
+          emailTotal: 'emailModule/total',
+          goldenAddressTotal: 'goldenAddressModule/total',
           templates: 'templatesModule/templates'
         }),
         rows() { return this.total ? this.total : 1 }
@@ -228,6 +296,11 @@ export default {
     async created () {
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('propertyModule/getTotal')
+        this.$store.dispatch('sellerModule/getTotal')
+        this.$store.dispatch('phoneNumberModule/getTotal')
+        this.$store.dispatch('emailModule/getTotal')
+        this.$store.dispatch('goldenAddressModule/getTotal')
+        this.$store.dispatch('emailModule/getTotal')
         try {
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage})
             await this.$store.dispatch("templatesModule/getAllTemplates")
@@ -241,6 +314,22 @@ export default {
             this.showModal = true
             this.editedItem = { ...item }
         },
+        showCustomView(template) {
+            this.showCustomModalView = false;
+            const fields = [
+                {key:"delete", label: ""},
+                {key:"id", label: "Id", sortable: true},
+                {key: "actions", label: "Actions"},
+            ];
+            for(let key in template) {
+                if(key !== 'name' && template[key] !== false) {
+                    let obj = this.allFields.find(o => o['key'] === key);
+                    fields.push(obj);
+                }
+            }
+
+            this.propertyFields = [...this.fields];
+        },
         save(item) {
             // this.showModal = false
             this.$store.dispatch('propertyModule/editSubject', {...item})
@@ -249,7 +338,7 @@ export default {
             this.showAddModal = false
             this.$store.dispatch('propertyModule/addSubject', {...item})
         },
-        deleteItem(item){
+        deleteItem(item) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
         },
@@ -266,18 +355,32 @@ export default {
             this.showFileType = false;
             this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, template: this.selectedTemplate, fileType: fileType});
         },
-        saveCustomView(template, type) {
+       async saveCustomView(template, type) {
           this.showCustomModalView = false;
-          if (type === 'saveAndMakeTemplate' && template) {
+          if (type === 'save' && template) {
             const templateDuplication = Object.assign({}, template);
             const keys = Object.keys(templateDuplication);
             keys.forEach(key => {
               if (!templateDuplication[key]) {
                 delete templateDuplication[key];
               }
-            })
+            });
 
-            this.$store.dispatch('templatesModule/createTemplate', templateDuplication);
+            let response = await this.$store.dispatch('templatesModule/createTemplate', templateDuplication);
+            if(response.template) {
+                response = response.template;
+            this.templatesToExport.push({ value: response.id, text: response.name });
+            }
+          }else if(type == 'update') {
+            const templateDuplication = Object.assign({}, template);
+            const keys = Object.keys(templateDuplication);
+            keys.forEach(key => {
+              if (!templateDuplication[key]) {
+                delete templateDuplication[key];
+              }
+            });
+             await this.$store.dispatch('templatesModule/editTemplate', templateDuplication);
+             await this.$store.dispatch("templatesModule/getAllTemplates")
           }
         },
         triggerFilter(filter) {
@@ -297,6 +400,8 @@ export default {
         },
         getTemplate (event) {
           this.$store.dispatch("propertyModule/getTemplate", {id: event})
+          this.propertyFields = [...this.fields];
+          this.propertyFields.unshift({key:"delete", label: ""});
         },
         bulkDelete () {
             this.$store.dispatch('propertyModule/deleteMultipleSubjects', this.bulkDeleteItems).then(
@@ -325,6 +430,8 @@ export default {
                 this.templatesToExport.push(template);
             })
         }
+        this.propertyFields = [...this.fields];
+        this.propertyFields.unshift({key:"delete", label: ""});
     },
     watch: {
         currentPage: {
@@ -341,7 +448,8 @@ export default {
             handler: function () {
                 this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty})
             }
-        }
+        },
+
     }
 }
 </script>
@@ -356,6 +464,9 @@ export default {
         display: flex;
         align-items: center;
         cursor: pointer;
+    }
+    .list-page.main-content.wide-content{
+        position:relative;
     }
 
     .latest {
@@ -383,6 +494,24 @@ export default {
     table th {
       vertical-align: inherit !important;
       height: 64px;
+    }
+    .properties-header .boxes {
+        float:right;
+    }
+    .properties-header .boxes div{
+        border: 1px solid #d3d8de;
+        border-radius: 0.25rem;
+        color: #3e3e3e;
+        text-align: center;
+        display: inline-block;
+        padding-top: 10px;
+        width: 167px;
+        padding-bottom: 10px;
+        margin-left: 10px;
+        cursor:pointer;
+    }
+    .properties-header h3{
+        display:inline-block;
     }
 </style>
 

@@ -72,15 +72,20 @@ const mutations = {
         state.sellers = JSON.stringify(SELLER)
     },
     FILTER_SELLER(state, payload) {
-        const filteredData = [...payload.data]
-        filteredData.forEach(e => {
-            e.list_stack = e.lists.length;
-            e.total_subjects = e.subjects.length;
-            e.created_at = e.created_at.split('T')[0];
-            e.updated_at = e.updated_at.split('T')[0];
-        })
-        state.filteredSeller =JSON.stringify(filteredData);
-        state.filteredSellersCount =payload.total;
+        if(payload){
+            const filteredData = [...payload.data]
+            filteredData.forEach(e => {
+                e.list_stack = e.lists.length;
+                e.total_subjects = e.subjects.length;
+                e.created_at = e.created_at.split('T')[0];
+                e.updated_at = e.updated_at.split('T')[0];
+            })
+            state.filteredSeller =JSON.stringify(filteredData);
+            state.filteredSellersCount =payload.total;
+        } else {
+            state.filteredSeller = [];
+            state.filteredSellersCount = 0;
+        }
     },
     SET_SELLER(state, payload) {
         state.seller = JSON.stringify(payload);

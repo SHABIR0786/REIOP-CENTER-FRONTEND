@@ -261,16 +261,7 @@ export default {
         this.$store.dispatch('subjectModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('subject-applied-filters'))
-          let filterValue = 0;
-          for (let i in filters){
-            filterValue += filters[i].length
-          }
-          if(filterValue) {
-            this.filter(filters, filterValue)
-          } else {
             await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
-          }
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -286,14 +277,9 @@ export default {
     },
     methods: {
 
-     async filter(data,filterValue, dataAfterFiltering){
+     async filter(data,filterValue){
          this.filtersName = data
          await this.$store.dispatch("subjectModule/filterSubject", {page: 1, perPage: this.perPage, filter: data})
-         localStorage.setItem('subject-applied-filters', JSON.stringify(data))
-         if(dataAfterFiltering) {
-           localStorage.setItem('subject-data-after-filtering', JSON.stringify(dataAfterFiltering))
-           localStorage.setItem('subject-filters-count', filterValue)
-         }
          if (!filterValue){
             if(!this.items.length){
               await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
@@ -356,16 +342,7 @@ export default {
         this.$store.dispatch('subjectModule/getTotal')
         try {
          // this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('subject-applied-filters'))
-          let filterValue = 0;
-          for (let i in filters){
-            filterValue += filters[i].length
-          }
-          if(filterValue) {
-            this.filter(filters, filterValue)
-          } else {
             await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage})
-          }
          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
           this.$store.dispatch('uxModule/hideLoader')

@@ -46,7 +46,7 @@
             hover
             :busy="isBusy"
             :fields="fields"
-            :items="items"
+            :items="filteredOrAllData"
             responsive
             :per-page="0"
             :current-page="currentPage"
@@ -244,18 +244,9 @@ export default {
     async created () {
         this.$store.dispatch('sellerModule/getTotal')
         try {
-          this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('seller-applied-filters'))
-          let filterValue = 0;
-          for (let i in filters){
-            filterValue += filters[i].length
-          }
-          if(filterValue) {
-            this.filter(filters, filterValue)
-          } else {
-            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
-          }
-          this.$store.dispatch('uxModule/hideLoader')
+        this.$store.dispatch('uxModule/setLoading')
+        await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
+        this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
@@ -277,17 +268,7 @@ export default {
     async doCreatedOperation() {
         this.$store.dispatch('sellerModule/getTotal')
         try {
-         // this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('seller-applied-filters'))
-          let filterValue = 0;
-          for (let i in filters){
-            filterValue += filters[i].length
-          }
-          if(filterValue) {
-            this.filter(filters, filterValue)
-          } else {
             await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
-          }
          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
           this.$store.dispatch('uxModule/hideLoader')
@@ -301,14 +282,9 @@ export default {
         this.filteredOrAllData = this.items;
         this.itemsCount = this.total;
       },
-    async filter(data,filterValue, dataAfterFiltering){
+    async filter(data,filterValue){
          this.filtersName = data
          await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: data})
-         localStorage.setItem('seller-applied-filters', JSON.stringify(data))
-         if(dataAfterFiltering) {
-           localStorage.setItem('seller-data-after-filtering', JSON.stringify(dataAfterFiltering))
-           localStorage.setItem('seller-filters-count', filterValue)
-         }
          if (!filterValue){
             if(!this.items.length){
               await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})

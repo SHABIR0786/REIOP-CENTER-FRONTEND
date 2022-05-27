@@ -15,10 +15,6 @@
                         <div>Added This Month</div>
                     </div>
                 </b-col>
-<!--                <b-col cols="4" class="d-flex justify-content-end">-->
-<!--                    <b-button variant="primary" class="add-seller" @click="addItem()">-->
-<!--                        <b-icon icon="plus" aria-hidden="true"></b-icon> Add Phone</b-button>-->
-<!--                </b-col>-->
             </b-row>
             <hr>
             <b-row class="mb-3">
@@ -45,7 +41,7 @@
             sort-icon-left
             :busy="isBusy"
             :fields="fields"
-            :items="items"
+            :items="filteredOrAllData"
             responsive
             :per-page="0"
             :current-page="currentPage"
@@ -196,7 +192,7 @@ export default {
             fields: 'phoneNumberModule/fields',
             items: 'phoneNumberModule/phoneNumbers',
             total: 'phoneNumberModule/total',
-            filteredItems: 'phoneNumberModule/filteredPhoneNumber',
+            filteredPhoneNumber: 'phoneNumberModule/filteredPhoneNumber',
             filteredPhoneNumbersCount:'phoneNumberModule/filteredPhoneNumbersCount',
             selectedPhoneNumber: 'phoneNumberModule/phoneNumber'
         }),
@@ -206,16 +202,7 @@ export default {
         this.$store.dispatch('phoneNumberModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('phone-applied-filters'))
-          let filterValue = 0;
-          for (let i in filters){
-            filterValue += filters[i].length
-          }
-          if(filterValue) {
-            this.filter(filters, filterValue)
-          } else {
-            await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage})
-          }
+          await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage})
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -230,22 +217,17 @@ export default {
       this.itemsCount = this.total;
     },
     methods: {
-        async filter(data,filterValue, dataAfterFiltering){
+        async filter(data,filterValue){
          this.filtersName = data
-         await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {page: 1, perPage: this.perPage, filter: data})
-         localStorage.setItem('phone-applied-filters', JSON.stringify(data))
-         if(dataAfterFiltering) {
-           localStorage.setItem('phone-data-after-filtering', JSON.stringify(dataAfterFiltering))
-           localStorage.setItem('phone-filters-count', filterValue)
-         }
-         if (!filterValue){
+        await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {page: 1, perPage: this.perPage, filter: data})
+         if (!filterValue) {
             if(!this.items.length){
               await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage})
            }
             this.filteredOrAllData = this.items
             this.itemsCount = this.total
           }else{
-            this.filteredOrAllData = this.filteredItems
+            this.filteredOrAllData = this.filteredPhoneNumber
             this.itemsCount = this.filteredPhoneNumbersCount
           }
             this.showFilterPropertiesModal =false
@@ -300,18 +282,8 @@ export default {
         async doCreatedOperation() {
         this.$store.dispatch('phoneNumberModule/getTotal')
         try {
-         // this.$store.dispatch('uxModule/setLoading')
-          const filters = JSON.parse(localStorage.getItem('phone-applied-filters'))
-          let filterValue = 0;
-          for (let i in filters){
-            filterValue += filters[i].length
-          }
-          if(filterValue) {
-            this.filter(filters, filterValue)
-          } else {
-            await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage})
-          }
-         this.$store.dispatch('uxModule/hideLoader')
+          await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage})
+          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
           this.$store.dispatch('uxModule/hideLoader')
         }
@@ -333,7 +305,7 @@ export default {
                 this.filteredOrAllData = this.items
               }else{
                 await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
-                this.filteredOrAllData = this.filteredItems
+                this.filteredOrAllData = this.filteredPhoneNumber
               }
             }
             },
@@ -344,13 +316,13 @@ export default {
                 this.filteredOrAllData = this.items
               }else{
                 await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: 1, perPage: this.perPage, filter: this.filtersName })
-                this.filteredOrAllData = this.filteredItems
+                this.filteredOrAllData = this.filteredPhoneNumber
               }
                 }
             },
             searchPhone: {
                 handler: async function () {
-            if (!this.total || (this.filteredItems.length == 0)) {
+            if (!this.total || (this.filteredPhoneNumber.length == 0)) {
                 await this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone })
                 if(this.searchPhone == '') {
                   this.itemsCount = this.total;
@@ -360,7 +332,7 @@ export default {
                 this.filteredOrAllData = this.items;
               } else {
                 this.currentPage = 1;
-                let searchInFiltered = [...this.filteredItems]
+                let searchInFiltered = [...this.filteredPhoneNumber]
                  searchInFiltered = searchInFiltered.filter(el => {
                  return el.id.toString().includes(this.searchPhone) ||
                   el.phone_number.toString().includes(this.searchPhone) ||

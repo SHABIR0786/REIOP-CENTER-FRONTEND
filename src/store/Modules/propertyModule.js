@@ -1,4 +1,6 @@
 import * as api from "../Services/api"
+import axios from "axios";
+
 const defaultFields = [
     //Subject
     {key:"delete", label: ""},
@@ -120,6 +122,9 @@ const mutations = {
         })
         state.subjects = JSON.stringify(data);
     },
+    ADD_EXPORT(state, payload) {
+        console.log(state, payload);
+    },
     EDIT_SUBJECT(state, payload) {
         const SUBJECTS = JSON.parse(state.subjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
@@ -194,7 +199,7 @@ const actions = {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
-
+            
             if(response && response.subjects && response.subjects.data) {
                 commit('SET_ALL_SUBJECTS', response.subjects.data)
                 commit('GET_TOTAL', response.subjects.total)
@@ -260,6 +265,27 @@ const actions = {
         }
         return await api.get(`/properties/export${params}`).then(() => {console.log('success')});
     },
+    async storeExport({ commit }, data) {
+        return await api.post(`/properties/export`, {...data}).then(async (response) => {
+            commit ('ADD_EXPORT', response.count);
+            if(response && response.id) {
+                axios({
+                    url: `${process.env.VUE_APP_API_URL}/properties/download/${response.id}`, // File URL Goes Here
+                    method: 'GET',
+                    responseType: 'blob',
+                }).then((res) => {
+                    console.log(res);
+                     const a = document.createElement('a');
+                     document.body.appendChild(a);
+                     const url = window.URL.createObjectURL(new Blob([res.data]));
+                     a.href = url;
+                     a.download = 'export.csv';
+                     a.click();
+                });
+            }
+            return response
+        })
+    },
     async getTemplate({ commit }, data) {
         if(data.id !== null) {
             return await api.get(`/templates/${data.id}`).then((response) => {
@@ -281,7 +307,7 @@ const getters = {
         if (typeof subjects === 'string') {
             return JSON.parse(subjects);
         }
-
+        
         return [];
     },
     total: ({total}) => total
