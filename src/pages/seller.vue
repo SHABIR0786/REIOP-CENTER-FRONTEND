@@ -227,6 +227,14 @@ export default {
             showAddModal: false,
             bulkDeleteItems: [],
             allSelected: false,
+            filtersName:{
+              Market:[],
+              Group:[],
+              Type:[],
+              Source:[],
+              Errors:[],
+              RunDate:[],
+            },
         }
     },
     computed: {
@@ -345,7 +353,7 @@ export default {
     watch: {
         currentPage: {
             handler: async function() {
-                if (!this.total){
+              if (!this.total){
                 await  this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
                 this.filteredOrAllData = this.items
               } else {

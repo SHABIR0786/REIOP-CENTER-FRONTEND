@@ -184,6 +184,14 @@ export default {
             showAddModal: false,
             bulkDeleteItems: [],
             allSelected: false,
+            filtersName:{
+              Market:[],
+              Group:[],
+              Type:[],
+              Source:[],
+              Errors:[],
+              RunDate:[],
+            },
         }
     },
     computed: {

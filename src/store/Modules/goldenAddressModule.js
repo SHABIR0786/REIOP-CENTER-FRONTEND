@@ -57,7 +57,7 @@ const mutations = {
         const filteredData = [...payload.data]
         if(filteredData?.length > 0) {
         filteredData.forEach(e => {
-            e.list_stack = e.lists.length;
+            // e.list_stack = e.lists.length;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
