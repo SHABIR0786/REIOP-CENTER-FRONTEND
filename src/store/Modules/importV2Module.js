@@ -106,7 +106,7 @@ const actions = {
     },
 
     async getTotal({ commit }) {
-        return await api.get(`/totals/lists`).then((response) => {
+        return await api.get(`/totals/imports`).then((response) => {
             if (response && response.count > -1) {
                 commit ('GET_TOTAL', response.count);
             }
@@ -152,6 +152,7 @@ const actions = {
 }
 
 const getters = {
+    total: ({total}) => total,
     fields: ({ fields }) => fields,
     imports: ({ imports }) => imports,
     editData: ({ editData }) => editData,

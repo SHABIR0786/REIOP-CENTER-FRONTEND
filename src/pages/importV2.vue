@@ -178,6 +178,7 @@ export default {
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('importV2Module/getTotal')
         this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: 50})
         this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: 50})
         try {
@@ -192,7 +193,7 @@ export default {
           fields: 'importV2Module/fields',
           items: 'importV2Module/imports',
           lists: 'listModule/lists',
-          total: 'listModule/total',
+          total: 'importV2Module/total',
           editData: 'importV2Module/editData',
       }),
       rows() { return this.total ? this.total : 1 },
