@@ -324,7 +324,7 @@ export default {
     watch: {
         currentPage: {
             handler: async function() {
-            if (!this.total){
+            if (!this.totalFilters){
                 await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
                 this.filteredOrAllData = this.items
               }else{
@@ -335,7 +335,7 @@ export default {
         },
         perPage: {
             handler: async function () {
-            if (!this.total) {
+            if (!this.totalFilters) {
                 await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: 1, perPage: this.perPage, search: this.searchGoldenAddress})
                 this.filteredOrAllData = this.items
               } else {

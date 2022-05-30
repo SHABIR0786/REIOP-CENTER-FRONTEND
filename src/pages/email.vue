@@ -333,7 +333,7 @@ export default {
     watch: {
         currentPage: {
             handler: async function() {
-              if (!this.total){
+              if (!this.totalFilters){
                 await this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
                 this.filteredOrAllData = this.items
               }else{
@@ -344,7 +344,7 @@ export default {
         },
         perPage: {
             handler: async function () {
-                if (!this.total){
+                if (!this.totalFilters){
                 await this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage, search: this.searchEmail})
                 this.filteredOrAllData = this.items
               }else{
