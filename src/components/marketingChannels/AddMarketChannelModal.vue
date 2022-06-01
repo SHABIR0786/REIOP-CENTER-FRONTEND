@@ -55,6 +55,11 @@
                 },
             }
         },
+        watch: {
+            showModal:function(){
+               this.marketingChannels.marketing_channel_name = "";
+             }
+        }
     }
 </script>
 

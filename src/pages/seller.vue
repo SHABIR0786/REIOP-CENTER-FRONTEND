@@ -290,16 +290,16 @@ export default {
         this.filteredOrAllData = this.items;
         this.itemsCount = this.total;
       },
-    async filter(data,filterValue){
+    async filter(data,filterValue) {
          this.filtersName = data
          await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: data})
-         if (!filterValue){
-            if(!this.items.length){
+         if (!filterValue) {
+            if(!this.items.length) {
               await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
            }
             this.filteredOrAllData = this.items
             this.itemsCount = this.total
-          }else{
+          } else {
             this.filteredOrAllData = this.filteredItems
             this.itemsCount = this.filteredSellersCount
           }
@@ -388,11 +388,14 @@ export default {
                 let searchInFiltered = [...this.filteredItems]
                 const Instance = this;
                  searchInFiltered = searchInFiltered.filter(el => {
-                 return  el.seller_mailing_address.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())||
-                   el.seller_mailing_city.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())  ||
-                   el.seller_mailing_state.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase()) ||
-                   el.seller_mailing_zip.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())   ||
-                   el.id.toString().includes(Instance.searchSeller)
+                 return  el.seller_mailing_address?.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())||
+                   el.seller_first_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+                   el.seller_last_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+                   el.seller_middle_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+                   el.seller_mailing_city?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())  ||
+                   el.seller_mailing_state?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase()) ||
+                   el.seller_mailing_zip?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())   ||
+                   el.id.toString()?.includes(Instance.searchSeller.toLocaleLowerCase())
                  });
                 if(this.searchSeller) {
                   this.itemsCount = searchInFiltered.length

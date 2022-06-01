@@ -14,7 +14,7 @@ export const state = {
     ],
     uploadedFields: [],
     uploaded: false,
-    importVisibleFields: [],
+    importVisibleFields: []
 }
 
 export const mutations = {
@@ -138,7 +138,7 @@ export const getters = {
     listFields: ({ listFields }) => listFields,
     uploadedFields: ({ uploadedFields }) => uploadedFields,
     mappedHeader: ({ mappedHeader }) => mappedHeader,
-    schemas: ({ schemas }) => schemas,
+    schemas: ({ schemas }) => schemas
 }
 
 export default {

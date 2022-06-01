@@ -22,13 +22,14 @@
             <b-table
                     id="list-table"
                     small
+                    ref="table"
                     striped
                     sort-icon-left
                     hover
                     responsive
                     :busy="isBusy"
                     :fields="fields"
-                    :items="items"
+                    :items="filteredItems"
                     :per-page="0"
                     :sticky-header="true"
             >
@@ -63,7 +64,7 @@
                 </template>
                 <template v-slot:cell(percentage)="data">
                     <div :title="data.item.id">
-                        <p class="user-email">{{Math.round((data.item.is_processed / (data.item.is_processed + data.item.is_processing)) * 100)}}%</p>
+                        <p class="user-email">{{data.item.percentage}}%</p>
                     </div>
                 </template>
                 <template v-slot:cell(import_type)="data">
@@ -172,7 +173,10 @@ export default {
         showNoErrorsModal: false,
         currentItemErrorLines: null,
         statusBackSkip:false,
-        statusBackValidity:false
+        statusBackValidity:false,
+        intervalId:null,
+        filteredItems: []
+
 
       }
     },
@@ -180,7 +184,12 @@ export default {
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('importV2Module/getTotal')
         this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: 50})
-        this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: 50})
+       await this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: 50})
+       this.filteredItems = this.items;
+       const Instance = this;
+       this.filteredItems.forEach((item)=>{
+         Instance.getLivePercentage(item);
+       });
         try {
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -199,6 +208,29 @@ export default {
       rows() { return this.total ? this.total : 1 },
     },
     methods: {
+      getLivePercentage(item) {
+      let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);
+      let index = this.filteredItems.findIndex(x=>x.id == item.id);
+      this.filteredItems[index].percentage =  percentage;
+      if(percentage != 100) {
+        // const Instance = this;
+       this.intervalId = setInterval(async () => {
+            var progress = await this.$store.dispatch("importV2Module/showBatch", item.id);
+            if(progress.batch) {
+            progress = progress.batch;
+            let is_processed =  progress.total_jobs - progress.pending_jobs;
+            let is_processing = progress.pending_jobs;
+            let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
+            let index = this.filteredItems.findIndex(x=>x.id == item.id);
+            this.filteredItems[index].percentage = progresspercentage;
+            this.$refs.table.refresh();
+            if(progresspercentage == 100) {
+             clearInterval(this.intervalId);
+            }
+            }
+        }, 10000);
+      }
+      },
       editItem(item) {
         this.$store.dispatch('importV2Module/showEditModal', {...item})
         this.isReload = true
@@ -398,6 +430,11 @@ export default {
             this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
         }
       },
+    },
+    beforeDestroy() {
+      if(this.intervalId) {
+        clearInterval(this.intervalId);
+      }
     },
   watch: {
     searchImport: {

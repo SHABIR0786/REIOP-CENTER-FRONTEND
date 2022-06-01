@@ -16,6 +16,7 @@ const state = {
     total: 0,
     editData: {},
     isSkipValidation: false,
+    uploadProgress: {}
 }
 
 const mutations = {
@@ -42,6 +43,9 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
+    },
+    SET_SHOW(state, payload) {
+        state.uploadProgress = payload;
     },
     EDIT_IMPORT(state, payload) {
         payload.is_processing =  payload.pending_jobs;
@@ -104,7 +108,12 @@ const actions = {
             return response
         })
     },
-
+    async showBatch ({commit}, id) {
+        return await api.get(`/batches/${id}`).then((response) => {
+            commit('SET_SHOW', response)
+            return response;
+        });
+    },
     async getTotal({ commit }) {
         return await api.get(`/totals/imports`).then((response) => {
             if (response && response.count > -1) {
@@ -156,7 +165,9 @@ const getters = {
     fields: ({ fields }) => fields,
     imports: ({ imports }) => imports,
     editData: ({ editData }) => editData,
-    isSkipValidation: (state) => state.isSkipValidation
+    isSkipValidation: (state) => state.isSkipValidation,
+    uploadProgress: ({uploadProgress}) => uploadProgress
+
 }
 
 export default {
