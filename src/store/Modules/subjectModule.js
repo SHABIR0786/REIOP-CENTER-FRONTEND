@@ -5,9 +5,8 @@ const state = {
         {key:"delete", label: ""},
         {key:"id", label: "Id", sortable: true},
         {key: "actions", label: "Actions"},
-        {key: "total_sellers", label: "Total Sellers", sortable: true},
-        {key: "list_stack", label: "List Stack", sortable: true},
-
+        {key: "total_sellers", label: "Total Sellers"},
+        {key: "list_stack", label: "List Stack"},
         {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
         {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
         {key: "subject_city", label: "Subject City", sortable: true},
@@ -74,6 +73,7 @@ const mutations = {
     },
 
     FILTER_SUBJECT(state, payload) {
+        if(payload.data) {
         const filteredData = [...payload.data]
         filteredData.forEach(e => {
             e.list_stack = e.lists.length;
@@ -83,6 +83,10 @@ const mutations = {
         })
         state.filteredSubject =JSON.stringify(filteredData);
         state.filteredSubjectsCount =payload.total;
+    } else {
+        state.filteredSubject = [];
+        state.filteredSubjectsCount = 0;
+    }
     },
     SET_SUBJECT(state, payload) {
         state.subject = {...payload};
@@ -101,8 +105,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllSubjects({ commit, dispatch }, {page, perPage}) {
-        return await api.get(`/subjects?page=${page}&perPage=${perPage}`).then((response) => {
+    async getAllSubjects({ commit, dispatch }, {page, perPage, sortBy, sortDesc}) {
+        return await api.get(`/subjects?page=${page}&perPage=${perPage}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
@@ -123,8 +127,8 @@ const actions = {
             return response
         })
     },
-    async searchSubjects({ commit, dispatch }, {page, perPage, search}) {
-        return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+    async searchSubjects({ commit, dispatch }, {page, perPage, search, sortBy, sortDesc}) {
+        return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

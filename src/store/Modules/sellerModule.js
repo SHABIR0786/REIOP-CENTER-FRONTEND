@@ -6,9 +6,9 @@ const state = {
         {key:"id", label: "ID", sortable: true},
         {key: "actions", label: "Actions"},
 
-        {key: "seller_total_subjects", label: "Total Subjects", sortable: true},
-        {key: "seller_total_phones", label: "Total Phones", sortable: true},
-        {key: "seller_total_emails", label: "Total Emails", sortable: true},
+        {key: "seller_total_subjects", label: "Total Subjects"},
+        {key: "seller_total_phones", label: "Total Phones"},
+        {key: "seller_total_emails", label: "Total Emails"},
 
         {key: "seller_first_name", label: "First Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
@@ -104,8 +104,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllSellers({ commit }, {page, perPage}) {
-        return await api.get(`/sellers?page=${page}&perPage=${perPage}`).then((response) => {
+    async getAllSellers({ commit }, {page, perPage, sortBy, sortDesc}) {
+        return await api.get(`/sellers?page=${page}&perPage=${perPage}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.sellers && response.sellers.data) {
                 commit('SET_ALL_SELLERS', response.sellers.data)
             }
@@ -121,8 +121,8 @@ const actions = {
             return response
         })
     },
-    async searchSellers({ commit }, {page, perPage, search}) {
-        return await api.get(`/sellers?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+    async searchSellers({ commit }, {page, perPage, search, sortBy, sortDesc}) {
+        return await api.get(`/sellers?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.sellers && response.sellers.data) {
                 commit('SET_ALL_SELLERS', response.sellers.data)
             }

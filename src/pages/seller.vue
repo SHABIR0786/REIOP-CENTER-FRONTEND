@@ -43,10 +43,12 @@
             small
             striped
             sort-icon-left
+            no-local-sorting
             hover
             :busy="isBusy"
             :fields="fields"
             :items="filteredOrAllData"
+            @sort-changed="sortingChanged"
             responsive
             :per-page="0"
             :current-page="currentPage"
@@ -235,6 +237,8 @@ export default {
               Errors:[],
               RunDate:[],
             },
+            sortBy: 'id',
+            sortDesc: false
         }
     },
     computed: {
@@ -253,7 +257,7 @@ export default {
         this.$store.dispatch('sellerModule/getTotal')
         try {
         this.$store.dispatch('uxModule/setLoading')
-        await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
+        await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
         this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -269,6 +273,17 @@ export default {
 
     },
     methods: {
+    async sortingChanged(ctx) {
+        this.sortBy = ctx.sortBy;
+        this.sortDesc = ctx.sortDesc;
+        if (!this.totalFilters){
+            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+            this.filteredOrAllData = this.items;
+        } else {
+             await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc})
+            this.filteredOrAllData = this.filteredItems
+        }
+    },
     filtersCount(total){
         this.totalFilters = total
         return  total
@@ -276,7 +291,7 @@ export default {
     async doCreatedOperation() {
         this.$store.dispatch('sellerModule/getTotal')
         try {
-            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
           this.$store.dispatch('uxModule/hideLoader')
@@ -292,10 +307,10 @@ export default {
       },
     async filter(data,filterValue) {
          this.filtersName = data
-         await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: data})
+         await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
          if (!filterValue) {
             if(!this.items.length) {
-              await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
+              await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
            }
             this.filteredOrAllData = this.items
             this.itemsCount = this.total
@@ -337,7 +352,7 @@ export default {
         },
         bulkDelete () {
             this.$store.dispatch('sellerModule/deleteMultipleSellers', this.bulkDeleteItems).then(() => {
-              this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+              this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
               this.$store.dispatch('sellerModule/getTotal')
             })
         },
@@ -354,10 +369,10 @@ export default {
         currentPage: {
             handler: async function() {
               if (!this.totalFilters){
-                await  this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+                await  this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               } else {
-                await this.$store.dispatch("sellerModule/filterSeller", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
+                await this.$store.dispatch("sellerModule/filterSeller", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
             }
@@ -365,10 +380,10 @@ export default {
         perPage: {
             handler: async function () {
             if (!this.totalFilters){
-                this.$store.dispatch('sellerModule/getAllSellers', {page: 1, perPage: this.perPage, search: this.searchSeller})
+                this.$store.dispatch('sellerModule/getAllSellers', {page: 1, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("sellerModule/filterSeller", { page: 1, perPage: this.perPage, filter: this.filtersName })
+                await this.$store.dispatch("sellerModule/filterSeller", { page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
             }
@@ -376,7 +391,7 @@ export default {
         searchSeller: {
             handler: async function () {
                 if (!this.total || (this.filteredItems.length == 0)) {
-                await this.$store.dispatch('sellerModule/searchSellers', { page: this.currentPage, perPage: this.perPage, search: this.searchSeller })
+                await this.$store.dispatch('sellerModule/searchSellers', { page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 if(this.searchSeller == '') {
                   this.itemsCount = this.total;
                 } else { 

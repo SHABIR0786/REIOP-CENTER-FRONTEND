@@ -223,7 +223,7 @@
         <h3>Export</h3>
         </div>
         <div class="card-body export-card-body">
-          <div class="export-number">
+          <div @click="BackStep(1)" class="export-number">
             <span>1</span>
             <b>Export Type</b>
           </div>
@@ -238,7 +238,7 @@
             </b-form-select>
             </div>
           </div>
-          <div class="export-number">
+          <div @click="BackStep(2)" class="export-number">
             <span>2</span>
             <b v-if="stepNumber > 2">Marketing Export Details</b>
           </div>
@@ -277,7 +277,7 @@
             </b-form-select>
             </div>
           </div>
-          <div class="export-number">
+          <div @click="BackStep(3)" class="export-number">
             <span>3</span>
           </div>
           <div class="step3">
@@ -493,6 +493,15 @@ computed: {
     },
   },
   methods: {
+    BackStep(number) {
+      if(number == 1) {
+        this.stepNumber = number;
+      } else if(number == 2 && this.export_type != null) {
+        this.stepNumber = number;
+      } else if(number == 3) {
+        this.checkNextStep();
+      }
+    },
     exportfile() {
       if(this.marketing_period) {
             this.marketing_end_date = moment(this.marketing_start_date).add(this.marketing_period * 7 ,'days').format('YYYY-MM-DD');
@@ -704,6 +713,9 @@ computed: {
   display: inline-block;
   margin: 0px;
   margin-left: 10px;
+}
+.export-number {
+  cursor:pointer;
 }
 .export-number span {
   height: 25px;

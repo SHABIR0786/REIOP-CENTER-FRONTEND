@@ -43,9 +43,11 @@
             striped
             hover
             sort-icon-left
+            no-local-sorting
             :busy="isBusy"
             :fields="fields"
             :items="filteredOrAllData"
+            @sort-changed="sortingChanged"
             responsive
             :per-page="0"
             :current-page="currentPage"
@@ -205,6 +207,8 @@ export default {
               Errors:[],
               RunDate:[],
             },
+            sortBy: 'id',
+            sortDesc: false
         }
     },
     computed: {
@@ -224,7 +228,7 @@ export default {
         this.$store.dispatch('goldenAddressModule/getTotal')
          try {
           this.$store.dispatch('uxModule/setLoading')
-          await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
+          await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -240,12 +244,23 @@ export default {
         
     },
     methods: {
+        async sortingChanged(ctx) {
+            this.sortBy = ctx.sortBy;
+            this.sortDesc = ctx.sortDesc;
+            if (!this.totalFilters) {
+                await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress, sortBy:this.sortBy,sortDesc:this.sortDesc})
+                this.filteredOrAllData = this.items
+            } else {
+                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                this.filteredOrAllData = this.filteredItems
+            }
+        },
         async filter(data,filterValue) {
             this.filtersName = data
-            await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", {page: 1, perPage: this.perPage, filter: data})
+            await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", {page: 1, perPage: this.perPage, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
             if (!filterValue){
                 if(!this.items.length){
-            await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
             }
                 this.filteredOrAllData = this.items
                 this.itemsCount = this.total
@@ -286,7 +301,7 @@ export default {
         },
         bulkDelete () {
             this.$store.dispatch('goldenAddressModule/deleteMultipleGoldenAddress', this.bulkDeleteItems).then(() => {
-              this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
+              this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress, sortBy:this.sortBy,sortDesc:this.sortDesc})
               this.$store.dispatch('goldenAddressModule/getTotal')
             })
         },
@@ -306,7 +321,7 @@ export default {
             this.$store.dispatch('goldenAddressModule/getTotal')
             try {
             // this.$store.dispatch('uxModule/setLoading')
-            await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
             this.$store.dispatch('uxModule/hideLoader')
             } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -325,10 +340,10 @@ export default {
         currentPage: {
             handler: async function() {
             if (!this.totalFilters){
-                await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
+                await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName })
+                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
             }
@@ -336,10 +351,10 @@ export default {
         perPage: {
             handler: async function () {
             if (!this.totalFilters) {
-                await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: 1, perPage: this.perPage, search: this.searchGoldenAddress})
+                await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {page: 1, perPage: this.perPage, search: this.searchGoldenAddress, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               } else {
-                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: 1, perPage: this.perPage, filter: this.filtersName })
+                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
             }
@@ -347,7 +362,7 @@ export default {
         searchGoldenAddress: {
             handler: async function () {
                 if (!this.total || (this.filteredItems.length == 0)) {
-                await this.$store.dispatch('goldenAddressModule/searchGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress})
+                await this.$store.dispatch('goldenAddressModule/searchGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 if(this.searchGoldenAddress == '') {
                   this.itemsCount = this.total;
                 } else { 
