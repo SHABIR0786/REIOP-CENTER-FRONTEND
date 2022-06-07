@@ -55,6 +55,11 @@ const mutations = {
     },
 
     SHOW_EDIT_MODAL(state, payload) {
+        if (payload.import_type.includes('Skip Trace')){
+            payload.subjects_count = 0
+            payload.sellers_count = 0
+            payload.error_subjects = 0
+        }
         const date = payload.created_at;
         payload.created_at = new Date(date * 1000).toLocaleString();
         payload.is_processed = payload.total_jobs - payload.pending_jobs;
