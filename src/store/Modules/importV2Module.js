@@ -16,7 +16,8 @@ const state = {
     total: 0,
     editData: {},
     isSkipValidation: false,
-    uploadProgress: {}
+    uploadProgress: {},
+    showImportFirstPage: false,
 }
 
 const mutations = {
@@ -76,6 +77,9 @@ const mutations = {
     },
     SET_SKIP_VALIDATION(state, bool) {
         state.isSkipValidation = bool;
+    },
+    SHOW_IMPORT_FIRST_PAGE(state, bool) {
+        state.showImportFirstPage = bool
     }
 }
 
@@ -162,6 +166,9 @@ const actions = {
     },
     setSkipValidation({ commit }, bool) {
         commit('SET_SKIP_VALIDATION', bool)
+    },
+    showImportFirstPage({ commit }, bool) {
+        commit("SHOW_IMPORT_FIRST_PAGE", bool)
     }
 }
 
@@ -171,7 +178,9 @@ const getters = {
     imports: ({ imports }) => imports,
     editData: ({ editData }) => editData,
     isSkipValidation: (state) => state.isSkipValidation,
-    uploadProgress: ({uploadProgress}) => uploadProgress
+    uploadProgress: ({uploadProgress}) => uploadProgress,
+    showImportFirstPage: ({ showImportFirstPage }) => showImportFirstPage
+
 
 }
 

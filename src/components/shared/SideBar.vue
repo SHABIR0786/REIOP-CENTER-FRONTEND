@@ -18,7 +18,7 @@
                     </router-link>
                 </li>
                 <li :class="$route.name==='Import' ? 'active-tab' : ''">
-                    <router-link :to="'/import-v2'">
+                    <router-link @click.native="clickDuringImport" :to="'/import-v2'">
                         <span :title="'ImportV2'"><b-icon :icon="'upload'"></b-icon></span>
                         <p v-if="!isCollapsed">Import</p>
                     </router-link>
@@ -160,7 +160,12 @@ export default {
         changeCollapseStatus () {
             this.isCollapseOpen = !this.isCollapseOpen;
             this.collapseIcon = this.isCollapseOpen ? 'chevron-compact-up' : 'chevron-compact-down';
+        },
+      clickDuringImport(){
+        if(this.$route.path === '/import-v2') {
+          this.$store.dispatch('importV2Module/showImportFirstPage', true)
         }
+      }
     }
 }
 </script>
