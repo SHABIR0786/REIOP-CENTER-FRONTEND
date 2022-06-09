@@ -204,6 +204,7 @@ export default {
           lists: 'listModule/lists',
           total: 'importV2Module/total',
           editData: 'importV2Module/editData',
+          showImportFirstPage: 'importV2Module/showImportFirstPage'
       }),
       rows() { return this.total ? this.total : 1 },
     },
@@ -445,6 +446,19 @@ export default {
           search: this.searchImport
         })
       }
+    },
+    showImportFirstPage(v) {
+      if(v) {
+        this.showImportTable = true;
+        this.step_1 = false;
+        this.step_2 = false;
+        this.step_2_skip = false;
+        this.step_3 = false;
+        this.step_3_skip =false;
+        this.step_4 = false;
+        this.importDetails = {};
+      }
+      this.$store.dispatch('importV2Module/showImportFirstPage', false)
     }
   }
 }
