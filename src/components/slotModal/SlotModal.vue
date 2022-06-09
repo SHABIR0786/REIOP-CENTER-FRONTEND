@@ -2,14 +2,14 @@
     <b-modal v-model="showModal" @close="$emit('modalResponse', false)">
         <template #modal-header>
             <div class="w-100" style="font-size: 20px;color:white " >
-              Info
+              Import Error
             </div>
 
         </template>
         <b-container fluid >
           <slot name="userExist"></slot>
           <slot class="text-center" name="noError"></slot>
-          <slot name="sellerFill"></slot>
+          <slot class="text-center" name="sellerFill"></slot>
           <slot class="text-center" name="requiredMappingFields"></slot>
         </b-container>
 
