@@ -176,64 +176,8 @@ export default {
       }
     }
   },
-  async created() {
-    await this.$store.dispatch('importModule/loadVisibleFields')
-    if (this.upload_type && !this.skip_variant) {
-      this.$store.dispatch('importV2Module/setSkipValidation', false)
-      if (this.upload_type === 'single') {
-        this.importedFields = {
-          seller: this.sellerFields,
-          subject: this.subjectFields,
-        }
-      } else if (this.upload_type === 'appended') {
-        this.importedFields = {
-          seller: this.sellerFields,
-          subject: this.subjectFields,
-          phone: this.phoneNumberFields.filter(function (el) {
-            return el.field === "phone_number" || el.field === "phone_type"
-          }),
-          email: this.emailFields.filter(function (el) {
-            return el.field === "email_address"
-          }),
-        }
-      } else {
-        this.importedFields = {
-          seller: this.sellerFields,
-          subject: this.subjectFields,
-          list: this.listFields,
-        }
-      }
-    } else if (this.skip_variant) {
-      if (this.skip_variant === 'skip_trace') {
-        this.$store.dispatch('importV2Module/setSkipValidation', true)
-        this.importedFields = {
-          email: this.emailFields.filter(function (el) {
-            return el.field === "email_address"
-          }),
-          golden_address: this.goldenAddressFields,
-          phone: this.phoneNumberFields.filter(function (el) {
-            return el.field === "phone_number" || el.field === "phone_type"
-          }),
-          seller: this.sellerFields.filter(function (el) {
-            return el.field !== "seller_company_owned"
-          }),
-          subject: this.subjectFields.filter(function (el) {
-            return el.field !== "subject_type" && el.field !== "subject_age" && el.field !== "subject_county"
-          }),
-        }
-      } else if (this.skip_variant === 'validate') {
-        this.skipValidate = true;
-        this.$store.dispatch('importV2Module/setSkipValidation', false)
-        this.importedFields = {
-          email: this.emailFields.filter(function (el) {
-            return el.field !== "email_skip_source"
-          }),
-          phone: this.phoneNumberFields.filter(function (el) {
-            return el.field === "phone_number" || el.field === "phone_validity"
-          }),
-        }
-      }
-    }
+  created() {
+    this.targetFields();
   },
   methods: {
     sellerFill() {
@@ -391,6 +335,8 @@ export default {
     },
     previewFile(e) {
       this.$store.dispatch('uxModule/setLoading')
+      this.mappedItems = []
+      this.targetFields();
       let $this     = this
       let files     = e.target.files, f = files[0]
       this.file     = e.target.files[0];
@@ -514,7 +460,67 @@ export default {
         skipValidate: this.skipValidate,
       })
        location.reload()
+    },
+    async targetFields(){
+      await this.$store.dispatch('importModule/loadVisibleFields')
+      if (this.upload_type && !this.skip_variant) {
+        this.$store.dispatch('importV2Module/setSkipValidation', false)
+        if (this.upload_type === 'single') {
+          this.importedFields = {
+            seller: this.sellerFields,
+            subject: this.subjectFields,
+          }
+        } else if (this.upload_type === 'appended') {
+          this.importedFields = {
+            seller: this.sellerFields,
+            subject: this.subjectFields,
+            phone: this.phoneNumberFields.filter(function (el) {
+              return el.field === "phone_number" || el.field === "phone_type"
+            }),
+            email: this.emailFields.filter(function (el) {
+              return el.field === "email_address"
+            }),
+          }
+        } else {
+          this.importedFields = {
+            seller: this.sellerFields,
+            subject: this.subjectFields,
+            list: this.listFields,
+          }
+        }
+      } else if (this.skip_variant) {
+        if (this.skip_variant === 'skip_trace') {
+          this.$store.dispatch('importV2Module/setSkipValidation', true)
+          this.importedFields = {
+            email: this.emailFields.filter(function (el) {
+              return el.field === "email_address"
+            }),
+            golden_address: this.goldenAddressFields,
+            phone: this.phoneNumberFields.filter(function (el) {
+              return el.field === "phone_number" || el.field === "phone_type"
+            }),
+            seller: this.sellerFields.filter(function (el) {
+              return el.field !== "seller_company_owned"
+            }),
+            subject: this.subjectFields.filter(function (el) {
+              return el.field !== "subject_type" && el.field !== "subject_age" && el.field !== "subject_county"
+            }),
+          }
+        } else if (this.skip_variant === 'validate') {
+          this.skipValidate = true;
+          this.$store.dispatch('importV2Module/setSkipValidation', false)
+          this.importedFields = {
+            email: this.emailFields.filter(function (el) {
+              return el.field !== "email_skip_source"
+            }),
+            phone: this.phoneNumberFields.filter(function (el) {
+              return el.field === "phone_number" || el.field === "phone_validity"
+            }),
+          }
+        }
+      }
     }
+
   }
 }
 </script>
