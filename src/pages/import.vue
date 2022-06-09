@@ -51,12 +51,11 @@
                    :is-have-mapped-items="isHaveMappedItems"
                    :is-skip-validate="skipValidate"
                    :is-skip-trace="isSkippedData"
-                   :is-combined-data="isCombinedData"
                    @modalResponse="confirmImport">
     </confirm-modal>
       <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
         <template v-slot:sellerFill>
-          <div v-if="!isSkippedData">
+          <div v-if="!isSkippedData && sellerMapped ">
             <b-row>With two sellers mapped you must map two mailing addresses. You can use the same mailing address fields
               if your import has one address for both sellers.
             </b-row>
@@ -66,7 +65,24 @@
             <b-row>. seller_mailing_state,</b-row>
             <b-row> . seller_mailing_zip.</b-row>
           </div>
-          <div>You must map a full mailing address, full subject address, or both before being able to import skip traced data.</div>
+          <div>
+            <div v-if="missingSellersData.length">
+            <b>Missing fields to complete seller's mapping.</b><br>
+            {{missingSellersData.join(', ')}}
+            </div>
+           <div v-if="missingSubjectsData.length">
+             <b>Missing fields to complete subject's mapping.</b><br>
+             {{missingSubjectsData.join(', ')}}
+           </div>
+           <div v-if="missingListData.length">
+            <b>Missing fields to complete list mapping.</b><br>
+            {{missingListData.join(', ')}}
+           </div>
+            <div v-if="missingValidateData.length">
+              <b>Missing fields to complete validate mapping.</b><br>
+              {{missingValidateData.join(', ')}}
+            </div>
+          </div>
         </template>
       </seller-modal>
   </b-container>
@@ -109,8 +125,15 @@ export default {
       showConfirmModal: false,
       isHaveMappedItems: false,
       showSellerFillModal: false,
+      missingSellersData: [],
+      missingSubjectsData: [],
+      missingListData: [],
+      sellersNamesAdrCountEqual: [],
+      requiredSellersFields: [],
+      missingValidateData:[],
       skipValidate: false,
-      isCombinedData: false,
+      isCombinedImport: false,
+      sellerMapped:false,
       list: {
         list_market: '',
         list_group: '',
@@ -154,70 +177,25 @@ export default {
       }
     }
   },
-  async created() {
-    await this.$store.dispatch('importModule/loadVisibleFields')
-    if (this.upload_type && !this.skip_variant) {
-      this.$store.dispatch('importV2Module/setSkipValidation', false)
-      if (this.upload_type === 'single') {
-        this.importedFields = {
-          seller: this.sellerFields,
-          subject: this.subjectFields,
-        }
-      } else if (this.upload_type === 'appended') {
-        this.importedFields = {
-          seller: this.sellerFields,
-          subject: this.subjectFields,
-          phone: this.phoneNumberFields.filter(function (el) {
-            return el.field === "phone_number" || el.field === "phone_type"
-          }),
-          email: this.emailFields.filter(function (el) {
-            return el.field === "email_address"
-          }),
-        }
-      } else {
-        this.importedFields = {
-          seller: this.sellerFields,
-          subject: this.subjectFields,
-          list: this.listFields,
-        }
-      }
-    } else if (this.skip_variant) {
-      if (this.skip_variant === 'skip_trace') {
-        this.$store.dispatch('importV2Module/setSkipValidation', true)
-        this.importedFields = {
-          email: this.emailFields.filter(function (el) {
-            return el.field === "email_address"
-          }),
-          golden_address: this.goldenAddressFields,
-          phone: this.phoneNumberFields.filter(function (el) {
-            return el.field === "phone_number" || el.field === "phone_type"
-          }),
-          seller: this.sellerFields.filter(function (el) {
-            return el.field !== "seller_company_owned"
-          }),
-          subject: this.subjectFields.filter(function (el) {
-            return el.field !== "subject_type" && el.field !== "subject_age" && el.field !== "subject_county"
-          }),
-        }
-      } else if (this.skip_variant === 'validate') {
-        this.skipValidate = true;
-        this.$store.dispatch('importV2Module/setSkipValidation', false)
-        this.importedFields = {
-          email: this.emailFields.filter(function (el) {
-            return el.field !== "email_skip_source"
-          }),
-          phone: this.phoneNumberFields.filter(function (el) {
-            return el.field === "phone_number" || el.field === "phone_validity"
-          }),
-        }
-      }
-    }
+  created() {
+    this.targetFields();
   },
   methods: {
     sellerFill() {
       this.showSellerFillModal = false
+      this.missingSellersData = [];
+      this.missingSubjectsData = [];
+      this.missingListData = [];
+      this.sellersNamesAdrCountEqual = [];
+      this.requiredSellersFields = [];
+      this.sellerMapped = false;
+      this.missingValidateData = [];
     },
     confirm(item) {
+
+      if (this.upload_type === 'combined') {
+        this.isCombinedImport = true
+      }
       // Check if all required Subjects field are mapped
       let requiredSubjectsFields = ['subject_address', 'subject_city', 'subject_state', 'subject_zip'];
       let mappedFields           = []
@@ -227,9 +205,6 @@ export default {
       })
 
       let requiredSubjectExist = requiredSubjectsFields.every(msub => mappedFields.includes(msub));
-      if (!this.isSkippedData && !this.skipValidate) {
-        this.isHaveMappedItems = !!requiredSubjectExist;
-      }
 
       // If User map Sellers, then check if all required Sellers field are mapped
       let requiredSellersFields = ['seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
@@ -245,29 +220,69 @@ export default {
           return true;
         }
       });
+      const subjectMapped = mappedFields.find(element => {
+        if (element.includes('subject')) {
+          return true;
+        }
+      });
+
+      if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
+        this.isHaveMappedItems = true;
+      }
+
       var namesCounts    = [];
       namesCounts.push(mappedFields.filter(x => x.includes('seller_first_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_last_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_middle_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_full_name')).length);
       var sellersCount = Math.max.apply(null, namesCounts);
-      var addressCount = [];
-      addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_address')).length);
-      addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_city')).length);
-      addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_state')).length);
-      addressCount.push(mappedFields.filter(x => x.includes('seller_mailing_zip')).length);
-      if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
-        this.isHaveMappedItems = true;
+      var mappedSellerAddresses = [];
+      mappedSellerAddresses.push(mappedFields.filter(x => x.includes('seller_mailing_address')));
+      mappedSellerAddresses.push(mappedFields.filter(x => x.includes('seller_mailing_city')));
+      mappedSellerAddresses.push(mappedFields.filter(x => x.includes('seller_mailing_state')));
+      mappedSellerAddresses.push(mappedFields.filter(x => x.includes('seller_mailing_zip')));
+
+      var addressLengths =  [];
+      for(let i in mappedSellerAddresses) {
+        addressLengths.push(mappedSellerAddresses[i].length)
       }
+      var addressMaxLength = Math.max.apply(null, addressLengths);
+
+      let missingSubjectData = requiredSubjectsFields.filter(ms => !mappedFields.includes(ms));
+      let missingSellersData = requiredSellersFields.filter(ms => !mappedFields.includes(ms) );
+
+      if (subjectMapped && missingSubjectData.length && !this.isSkippedData && !this.skipValidate) {
+          this.missingSubjectsData = missingSubjectData;
+          this.showSellerFillModal = true;
+          if (!sellerMapped && !this.isCombinedImport){
+            return;
+          }
+      }
+
       if (sellerMapped) {
-        const sellersNamesAdrCountEqual = addressCount.filter(element => element !== sellersCount)
+        this.sellerMapped = true;
+        const sellersNamesAdrCountEqual = mappedSellerAddresses.filter(element => element.length !== sellersCount)
         if (requiredSellersExist && (sellersCount === 0 || !sellersNamesAdrCountEqual.length)) {
           this.showConfirmModal = true;
-        } else  {
-          this.showSellerFillModal = true;
+          return;
+        } else if(!missingSellersData.length ) {
+            if (sellersCount >= addressMaxLength){
+              missingSellersData = sellersNamesAdrCountEqual
+            }else if(sellersCount < addressMaxLength){
+              for(let i in sellersNamesAdrCountEqual) {
+                requiredSellersFields =  requiredSellersFields.filter(el => sellersNamesAdrCountEqual[i][0] !== el)
+              }
+              missingSellersData = requiredSellersFields;
+            }
+          }
+
+        this.missingSellersData = missingSellersData;
+        this.showSellerFillModal = true;
+        if (this.missingSubjectsData && !this.isCombinedImport){
           return;
         }
       }
+      // Validate data
       if (this.skipValidate && item.length) {
 
         let mappedValidateFields = [];
@@ -276,26 +291,42 @@ export default {
         })
 
         let requiredPhonesFields = ['phone_number', 'phone_validity'];
-        let requiredPhoneExist   = requiredPhonesFields.every(Ph => mappedValidateFields.includes(Ph));
+        let missingPhoneField   = requiredPhonesFields.filter(Ph => !mappedValidateFields.includes(Ph));
 
         let requiredEmailFields = ['email_address', 'email_validity'];
-        let requiredEmailExist  = requiredEmailFields.every(Em => mappedValidateFields.includes(Em));
+        let missingEmailFields  = requiredEmailFields.filter(Em => !mappedValidateFields.includes(Em));
 
-        if (requiredPhoneExist || requiredEmailExist) {
+        if (missingEmailFields.length !==2 && missingEmailFields.length ){
+          this.missingValidateData.push(missingEmailFields);
+          this.showSellerFillModal = true;
+          if (missingPhoneField.length === 2){
+            return;
+          }
+        }
+        if (missingPhoneField.length !==2 && missingPhoneField.length ){
+          this.missingValidateData.push(missingPhoneField);
+          this.showSellerFillModal = true;
+          return;
+        }
+        if (missingPhoneField || missingEmailFields) {
           this.isHaveMappedItems = true;
         }
       }
+
       // Combined data
 
       if (this.upload_type === 'combined') {
-        this.isCombinedData = false;
+
          let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source','list_pull_date'];
-         let requiredListSettingsExist = requiredListSettingsFields.every(setting => mappedFields.includes(setting));
-         if (!requiredListSettingsExist){
-           this.isCombinedData = true;
+         let missingListData = requiredListSettingsFields.filter(ms => !mappedFields.includes(ms));
+         if (missingListData){
+           this.missingListData = missingListData;
+           this.showSellerFillModal = true;
+           return;
          }
       }
-      this.showConfirmModal = true;
+        this.showConfirmModal = true;
+
     },
     confirmImport(response) {
       this.showConfirmModal = false;
@@ -305,6 +336,8 @@ export default {
     },
     previewFile(e) {
       this.$store.dispatch('uxModule/setLoading')
+      this.mappedItems = []
+      this.targetFields();
       let $this     = this
       let files     = e.target.files, f = files[0]
       this.file     = e.target.files[0];
@@ -438,7 +471,67 @@ export default {
         skipValidate: this.skipValidate,
       })
        location.reload()
+    },
+    async targetFields(){
+      await this.$store.dispatch('importModule/loadVisibleFields')
+      if (this.upload_type && !this.skip_variant) {
+        this.$store.dispatch('importV2Module/setSkipValidation', false)
+        if (this.upload_type === 'single') {
+          this.importedFields = {
+            seller: this.sellerFields,
+            subject: this.subjectFields,
+          }
+        } else if (this.upload_type === 'appended') {
+          this.importedFields = {
+            seller: this.sellerFields,
+            subject: this.subjectFields,
+            phone: this.phoneNumberFields.filter(function (el) {
+              return el.field === "phone_number" || el.field === "phone_type"
+            }),
+            email: this.emailFields.filter(function (el) {
+              return el.field === "email_address"
+            }),
+          }
+        } else {
+          this.importedFields = {
+            seller: this.sellerFields,
+            subject: this.subjectFields,
+            list: this.listFields,
+          }
+        }
+      } else if (this.skip_variant) {
+        if (this.skip_variant === 'skip_trace') {
+          this.$store.dispatch('importV2Module/setSkipValidation', true)
+          this.importedFields = {
+            email: this.emailFields.filter(function (el) {
+              return el.field === "email_address"
+            }),
+            golden_address: this.goldenAddressFields,
+            phone: this.phoneNumberFields.filter(function (el) {
+              return el.field === "phone_number" || el.field === "phone_type"
+            }),
+            seller: this.sellerFields.filter(function (el) {
+              return el.field !== "seller_company_owned"
+            }),
+            subject: this.subjectFields.filter(function (el) {
+              return el.field !== "subject_type" && el.field !== "subject_age" && el.field !== "subject_county"
+            }),
+          }
+        } else if (this.skip_variant === 'validate') {
+          this.skipValidate = true;
+          this.$store.dispatch('importV2Module/setSkipValidation', false)
+          this.importedFields = {
+            email: this.emailFields.filter(function (el) {
+              return el.field !== "email_skip_source"
+            }),
+            phone: this.phoneNumberFields.filter(function (el) {
+              return el.field === "phone_number" || el.field === "phone_validity"
+            }),
+          }
+        }
+      }
     }
+
   }
 }
 </script>
