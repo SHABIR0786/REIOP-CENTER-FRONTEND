@@ -40,7 +40,7 @@ const state = {
 
 const mutations = {
     SET_ALL_SELLERS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
@@ -49,6 +49,8 @@ const mutations = {
             e.seller_total_subjects = e.subjects.length;
         })
         state.sellers = JSON.stringify(data);
+        state.total = payload.total;
+
     },
     EDIT_SELLER(state, payload) {
         const SELLER = JSON.parse(state.sellers)
@@ -80,8 +82,8 @@ const mutations = {
                 e.created_at = e.created_at.split('T')[0];
                 e.updated_at = e.updated_at.split('T')[0];
             })
-            state.filteredSeller =JSON.stringify(filteredData);
-            state.filteredSellersCount =payload.total;
+            state.filteredSeller = JSON.stringify(filteredData);
+            state.filteredSellersCount = payload.total;
         } else {
             state.filteredSeller = [];
             state.filteredSellersCount = 0;
@@ -104,10 +106,10 @@ const mutations = {
 }
 
 const actions = {
-    async getAllSellers({ commit }, {page, perPage, sortBy, sortDesc}) {
-        return await api.get(`/sellers?page=${page}&perPage=${perPage}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
+    async getAllSellers({ commit }, {page, perPage, search, sortBy, sortDesc}) {
+        return await api.get(`/sellers?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.sellers && response.sellers.data) {
-                commit('SET_ALL_SELLERS', response.sellers.data)
+                commit('SET_ALL_SELLERS', response.sellers)
             }
 
             return response
@@ -124,7 +126,7 @@ const actions = {
     async searchSellers({ commit }, {page, perPage, search, sortBy, sortDesc}) {
         return await api.get(`/sellers?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.sellers && response.sellers.data) {
-                commit('SET_ALL_SELLERS', response.sellers.data)
+                commit('SET_ALL_SELLERS', response.sellers)
             }
 
             return response

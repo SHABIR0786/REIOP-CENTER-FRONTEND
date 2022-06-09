@@ -16,6 +16,7 @@
     <div class="mt-4 parent">
       <div class="child">
         <fields-card
+            class="uploaded-fields-card"
             :fromField="fromField"
             :tableFields="uploadedFields"
             :title="`Uploaded Fields`"
@@ -23,7 +24,7 @@
         />
       </div>
       <div class="child">
-        <fields-card class="target-section h-100"
+        <fields-card class="target-section"
                      :toField="toField"
                      :importedFields="importedFields"
                      :title="`Target Fields`"
@@ -35,7 +36,7 @@
         <b-button class="w-100" variant="primary" @click="mapFields" :disabled="!(fromField && toField)">Map</b-button>
       </div>
       <div class="child">
-        <mapped-fields class="mapped-fields h-100" :items="mappedItems"
+        <mapped-fields class="mapped-fields" :items="mappedItems"
                        @clearMappedItem="clearMappedItem"></mapped-fields>
         <b-row class="text-right mt-5">
         </b-row>
@@ -380,6 +381,16 @@ export default {
 
       this.fromField = null
       this.toField   = null
+
+    setTimeout(() => {
+      let element = document.querySelector('.mapped-fields .card-body');
+      if(element) {
+        // element.scrollTop = element.scrollHeight;
+        element.scroll({ top: (element.scrollHeight + 150), behavior: 'smooth' });
+
+      }
+    }, 100);
+
     },
     clearMappedItem(index) {
       let table = this.mappedItems[index].toField.split('_')[0];
@@ -437,12 +448,7 @@ export default {
   color: red !important;
 }
 
-.field-section, .target-section {
-  max-height: 70vh;
-  overflow: auto;
-}
-
-.mapped-fields {
+.mapped-fields .card-body{
   max-height: 70vh;
   overflow: auto;
 }
@@ -478,5 +484,10 @@ export default {
 }
 .import-container{
   height:100% !important;
+}
+.uploaded-fields-card .card-body,.field-section .card-body{
+  max-height:70vh;
+  overflow-y:scroll;
+
 }
 </style>

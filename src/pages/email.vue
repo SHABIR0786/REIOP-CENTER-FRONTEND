@@ -136,7 +136,8 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{(currentPage*perPage)>itemsCount?itemsCount:(currentPage*perPage)}} of {{itemsCount}} entries</p>
+
             </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
@@ -193,6 +194,7 @@ export default {
               Source:[],
               Errors:[],
               RunDate:[],
+              SkipSource:[],
             },
             sortBy: 'id',
             sortDesc: false
@@ -211,7 +213,7 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        this.$store.dispatch('emailModule/getTotal')
+        // this.$store.dispatch('emailModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
           // const filters = JSON.parse(localStorage.getItem('email-applied-filters'))
@@ -222,7 +224,7 @@ export default {
           // if(filterValue) {
           //   this.filter(filters, filterValue)
           // } else {
-            await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+            await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
           // }
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -246,21 +248,21 @@ export default {
                 await this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
         },
         async filter(data,filterValue){
          this.filtersName = data
-         await this.$store.dispatch("emailModule/filterEmail", {page: 1, perPage: this.perPage, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
+         await this.$store.dispatch("emailModule/filterEmail", {page: 1, perPage: this.perPage, search: this.searchEmail, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
         //  localStorage.setItem('email-applied-filters', JSON.stringify(data))
         //  if(dataAfterFiltering) {
         //    localStorage.setItem('email-data-after-filtering', JSON.stringify(dataAfterFiltering))
         //    localStorage.setItem('email-filters-count', filterValue)
         //  }
-         if (!filterValue){
+         if (!filterValue) {
             if(!this.items.length){
-              await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+              await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
            }
             this.filteredOrAllData = this.items
             this.itemsCount = this.total
@@ -305,8 +307,8 @@ export default {
         },
         bulkDelete () {
             this.$store.dispatch('emailModule/deleteMultipleEmails', this.bulkDeleteItems).then(() => {
-              this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail})
-              this.$store.dispatch('emailModule/getTotal')
+              this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
+              // this.$store.dispatch('emailModule/getTotal')
             })
         },
         selectAll () {
@@ -318,7 +320,7 @@ export default {
             }
         },
         async doCreatedOperation() {
-        this.$store.dispatch('emailModule/getTotal')
+        // this.$store.dispatch('emailModule/getTotal')
         try {
          // this.$store.dispatch('uxModule/setLoading')
           const filters = JSON.parse(localStorage.getItem('email-applied-filters'))
@@ -329,7 +331,7 @@ export default {
           if(filterValue) {
             this.filter(filters, filterValue)
           } else {
-            await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+            await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
           }
          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -352,7 +354,7 @@ export default {
                 await this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("emailModule/filterEmail", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch("emailModule/filterEmail", { page: this.currentPage, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
             }
@@ -363,39 +365,46 @@ export default {
                 await this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
             }
         },
         searchEmail: {
             handler: async function () {
-            if (!this.total || (this.filteredItems.length == 0)) {
+            // if (!this.total || (this.filteredItems.length == 0)) {
+                if (!this.totalFilters) {
+
                 await this.$store.dispatch('emailModule/searchEmails', { page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                if(this.searchEmail == '') {
+                // if(this.searchEmail == '') {
                   this.itemsCount = this.total;
-                } else { 
-                this.itemsCount = this.items.length
-                }
+                // } else { 
+                // this.itemsCount = this.items.length
+                // }
                 this.filteredOrAllData = this.items;
-              } else {
-                this.currentPage = 1;
-                let searchInFiltered = [...this.filteredItems]
-                 searchInFiltered = searchInFiltered.filter(el => {
-                 return  el.email_address.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())||
-                   el.email_city.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())  ||
-                   el.email_state.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase()) ||
-                   el.email_zip.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())   ||
-                   el.id.toString().includes(this.searchEmail)
-                 });
-                if(this.searchEmail) {
-                  this.itemsCount = searchInFiltered.length
                 } else {
-                  this.itemsCount = this.total;
+                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                this.filteredOrAllData = this.filteredItems
+                this.itemsCount = this.filteredEmailsCount
                 }
-                this.filteredOrAllData =  searchInFiltered
-                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
-              }
+              // } else {
+              //   this.currentPage = 1;
+              //   let searchInFiltered = [...this.filteredItems]
+              //    searchInFiltered = searchInFiltered.filter(el => {
+              //    return  el.email_address.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())||
+              //      el.email_city.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())  ||
+              //      el.email_state.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase()) ||
+              //      el.email_zip.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())   ||
+              //      el.id.toString().includes(this.searchEmail)
+              //    });
+              //   if(this.searchEmail) {
+              //     this.itemsCount = searchInFiltered.length
+              //   } else {
+              //     this.itemsCount = this.total;
+              //   }
+              //   this.filteredOrAllData =  searchInFiltered
+              //   // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+              // }
             }
         },
         isFinishedFilterEmails() {

@@ -29,12 +29,13 @@ const state = {
 
 const mutations = {
     SET_ALL_EMAILS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.emails = JSON.stringify(data);
+        state.total = payload.total;
     },
     EDIT_EMAIL(state, payload) {
         const EMAIL = JSON.parse(state.emails)
@@ -60,7 +61,8 @@ const mutations = {
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.filteredEmail =JSON.stringify(filteredData);
-        state.filteredEmailsCount =payload.total;
+        state.filteredEmailsCount = payload.total;
+        state.total = payload.total;
     },
     SET_EMAIL(state, payload) {
         state.email = {...payload};
@@ -85,14 +87,14 @@ const mutations = {
 }
 
 const actions = {
-    async getAllEmails({ commit, dispatch }, {page, perPage, sortBy, sortDesc}) {
-        return await api.get(`/emails?page=${page}&perPage=${perPage}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
+    async getAllEmails({ commit, dispatch }, {page, perPage, search, sortBy, sortDesc}) {
+        return await api.get(`/emails?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
 
             if (response && response.emails && response.emails.data) {
-                commit('SET_ALL_EMAILS', response.emails.data)
+                commit('SET_ALL_EMAILS', response.emails)
             }
 
             return response
@@ -105,7 +107,7 @@ const actions = {
             }
 
             if (response && response.emails && response.emails.data) {
-                commit('SET_ALL_EMAILS', response.emails.data)
+                commit('SET_ALL_EMAILS', response.emails)
             }
 
             return response
@@ -169,7 +171,6 @@ const getters = {
         if (typeof emails === 'string') {
             return JSON.parse(emails);
         }
-
         return [];
     },
     total: ({total}) => total,

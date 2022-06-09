@@ -187,7 +187,7 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{itemsCount}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{(currentPage*perPage)>itemsCount?itemsCount:(currentPage*perPage)}} of {{itemsCount}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
@@ -242,6 +242,7 @@ export default {
               Source:[],
               Errors:[],
               RunDate:[],
+              SkipSource:[],
             },
             searchInFiltered: {},
             sortBy: 'id',
@@ -262,10 +263,10 @@ export default {
 
     },
     async created () {
-        this.$store.dispatch('subjectModule/getTotal')
+        // this.$store.dispatch('subjectModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-            await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+            await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc})
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -284,19 +285,19 @@ export default {
            this.sortBy = ctx.sortBy;
            this.sortDesc = ctx.sortDesc;
             if (!this.totalFilters){
-              await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc});
+              await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc});
               this.filteredOrAllData = this.items;
             } else {
-              await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName,sortBy:this.sortBy,sortDesc:this.sortDesc })
+              await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage, search: this.searchSubject, filter: this.filtersName,sortBy:this.sortBy,sortDesc:this.sortDesc })
               this.filteredOrAllData = this.filteredItems
             }
         },
      async filter(data,filterValue) {
          this.filtersName = data
-         await this.$store.dispatch("subjectModule/filterSubject", {page: 1, perPage: this.perPage, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
+         await this.$store.dispatch("subjectModule/filterSubject", {page: 1, perPage: this.perPage, search: this.searchSubject, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
          if (!filterValue){
             if(!this.items.length) {
-              await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+              await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc})
            }
             this.filteredOrAllData = this.items
             this.itemsCount = this.total
@@ -337,7 +338,7 @@ export default {
         bulkDelete () {
             this.$store.dispatch('subjectModule/deleteMultipleSubjects', this.bulkDeleteItems).then(() => {
               this.$store.dispatch('subjectModule/getAllSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc})
-              this.$store.dispatch('subjectModule/getTotal')
+            //   this.$store.dispatch('subjectModule/getTotal')
             })
         },
         selectAll () {
@@ -353,10 +354,10 @@ export default {
         return  total
       },
       async doCreatedOperation() {
-        this.$store.dispatch('subjectModule/getTotal')
+        // this.$store.dispatch('subjectModule/getTotal')
         try {
          // this.$store.dispatch('uxModule/setLoading')
-            await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+            await this.$store.dispatch("subjectModule/getAllSubjects", {page: 1, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc})
          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
           this.$store.dispatch('uxModule/hideLoader')
@@ -375,52 +376,60 @@ export default {
         currentPage: {
             handler: async function() {
               if (!this.totalFilters){
-                await this.$store.dispatch('subjectModule/getAllSubjects', { page: this.currentPage, perPage: this.perPage,sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch('subjectModule/getAllSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName,sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage,search: this.searchSubject, filter: this.filtersName,sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
             }
         },
         perPage: {
             handler: async function () {
+            this.$store.dispatch('uxModule/setLoading')
               if (!this.totalFilters){
                 await this.$store.dispatch('subjectModule/getAllSubjects', { page: 1, perPage: this.perPage, search: this.searchSubject,sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("subjectModule/filterSubject", { page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch("subjectModule/filterSubject", { page: 1, perPage: this.perPage, search: this.searchSubject, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
+
               }
+            this.$store.dispatch('uxModule/hideLoader')
             }
         },
         searchSubject: {
             handler: async function () {
-              if (!this.total || (this.filteredItems.length == 0)) {
+            //   if (!this.total || (this.filteredItems.length == 0)) {
+                if (!this.totalFilters){
                 await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                if(this.searchSubject == '') {
-                  this.itemsCount = this.total;
-                } else { 
-                this.itemsCount = this.items.length
-                }
+                // if(this.searchSubject == '') {
+                //   this.itemsCount = this.total;
+                // } else { 
+                // this.itemsCount = this.items.length
+                // }
+                this.itemsCount = this.total;
                 this.filteredOrAllData = this.items;
               } else {
-                this.currentPage = 1;
-                let searchInFiltered = [...this.filteredItems]
-                 searchInFiltered = searchInFiltered.filter(el => {
-                 return  el.subject_address.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())||
-                   el.subject_city.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())  ||
-                   el.subject_state.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase()) ||
-                   el.subject_zip.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())   ||
-                   el.id.toString().includes(this.searchSubject)
-                 });
-                if(this.searchSubject) {
-                  this.itemsCount = searchInFiltered.length
-                } else {
-                  this.itemsCount = this.total;
-                }
-                this.filteredOrAllData =  searchInFiltered
-                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+              await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage, search: this.searchSubject, filter: this.filtersName,sortBy:this.sortBy,sortDesc:this.sortDesc })
+              this.filteredOrAllData = this.filteredItems
+              this.itemsCount = this.filteredSubjectsCount
+            //     this.currentPage = 1;
+            //     let searchInFiltered = [...this.filteredItems]
+            //      searchInFiltered = searchInFiltered.filter(el => {
+            //      return  el.subject_address.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())||
+            //        el.subject_city.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())  ||
+            //        el.subject_state.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase()) ||
+            //        el.subject_zip.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())   ||
+            //        el.id.toString().includes(this.searchSubject)
+            //      });
+            //     if(this.searchSubject) {
+            //       this.itemsCount = searchInFiltered.length
+            //     } else {
+            //       this.itemsCount = this.total;
+            //     }
+            //     this.filteredOrAllData =  searchInFiltered
+            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
               }
             }
         },

@@ -138,7 +138,8 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{itemsCount}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{(currentPage*perPage)>itemsCount?itemsCount:(currentPage*perPage)}} of {{itemsCount}} entries</p>
+
             </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="itemsCount" :per-page="perPage" aria-controls="subject-table"></b-pagination>
@@ -193,6 +194,8 @@ export default {
               Source:[],
               Errors:[],
               RunDate:[],
+              SkipSource:[],
+
             },
             sortBy: 'id',
             sortDesc: false
@@ -211,10 +214,10 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        this.$store.dispatch('phoneNumberModule/getTotal')
+        // this.$store.dispatch('phoneNumberModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage, sortBy:this.sortBy, sortDesc:this.sortDesc})
+          await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage, search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc})
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -236,16 +239,16 @@ export default {
                 await this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: this.currentPage, perPage: this.perPage,search: this.searchPhone, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredPhoneNumber
               }
         },
         async filter(data,filterValue){
          this.filtersName = data
-        await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {page: 1, perPage: this.perPage, filter: data, sortBy:this.sortBy, sortDesc:this.sortDesc})
+        await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {page: 1, perPage: this.perPage, search: this.searchPhone, filter: data, sortBy:this.sortBy, sortDesc:this.sortDesc})
          if (!filterValue) {
             if(!this.items.length){
-              await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage, sortBy:this.sortBy, sortDesc:this.sortDesc})
+              await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage,search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc})
            }
             this.filteredOrAllData = this.items
             this.itemsCount = this.total
@@ -287,7 +290,7 @@ export default {
         bulkDelete () {
             this.$store.dispatch('phoneNumberModule/deleteMultiplePhoneNumber', this.bulkDeleteItems).then(() => {
               this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {page: this.currentPage, perPage: this.perPage, search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc})
-              this.$store.dispatch('phoneNumberModule/getTotal')
+            //   this.$store.dispatch('phoneNumberModule/getTotal')
             })
         },
         selectAll () {
@@ -303,9 +306,9 @@ export default {
             return  total
         },
         async doCreatedOperation() {
-        this.$store.dispatch('phoneNumberModule/getTotal')
+        // this.$store.dispatch('phoneNumberModule/getTotal')
         try {
-          await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage, sortBy:this.sortBy, sortDesc:this.sortDesc})
+          await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {page: 1, perPage: this.perPage,search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc})
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
           this.$store.dispatch('uxModule/hideLoader')
@@ -327,7 +330,7 @@ export default {
                 await this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy, sortDesc:this.sortDesc })
+                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: this.currentPage, perPage: this.perPage, search: this.searchPhone, filter: this.filtersName, sortBy:this.sortBy, sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredPhoneNumber
               }
             }
@@ -338,37 +341,45 @@ export default {
                 await this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', { page: 1, perPage: this.perPage, search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy, sortDesc:this.sortDesc })
+                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: 1, perPage: this.perPage, search: this.searchPhone, filter: this.filtersName, sortBy:this.sortBy, sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredPhoneNumber
               }
                 }
             },
             searchPhone: {
                 handler: async function () {
-            if (!this.total || (this.filteredPhoneNumber.length == 0)) {
+            // if (!this.total || (this.filteredPhoneNumber.length == 0)) {
+                if (!this.totalFilters) {
                 await this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc })
-                if(this.searchPhone == '') {
-                  this.itemsCount = this.total;
-                } else { 
-                this.itemsCount = this.items.length
-                }
+                // if(this.searchPhone == '') {
+                //   this.itemsCount = this.total;
+                // } else { 
+                // this.itemsCount = this.items.length
+                // }
+                this.itemsCount = this.total;
                 this.filteredOrAllData = this.items;
               } else {
-                this.currentPage = 1;
-                let searchInFiltered = [...this.filteredPhoneNumber]
-                 searchInFiltered = searchInFiltered.filter(el => {
-                 return el.id.toString().includes(this.searchPhone) ||
-                  el.phone_number.toString().includes(this.searchPhone) ||
-                  el.phone_type.toString().includes(this.searchPhone)
-                 });
-                if(this.searchPhone) {
-                  this.itemsCount = searchInFiltered.length
-                } else {
-                  this.itemsCount = this.total;
-                }
-                this.filteredOrAllData =  searchInFiltered
-                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: 1, perPage: this.perPage, search: this.searchPhone, filter: this.filtersName, sortBy:this.sortBy, sortDesc:this.sortDesc })
+                this.filteredOrAllData = this.filteredPhoneNumber
+                this.itemsCount = this.filteredPhoneNumbersCount
+
               }
+            //    else {
+            //     this.currentPage = 1;
+            //     let searchInFiltered = [...this.filteredPhoneNumber]
+            //      searchInFiltered = searchInFiltered.filter(el => {
+            //      return el.id.toString().includes(this.searchPhone) ||
+            //       el.phone_number.toString().includes(this.searchPhone) ||
+            //       el.phone_type.toString().includes(this.searchPhone)
+            //      });
+            //     if(this.searchPhone) {
+            //       this.itemsCount = searchInFiltered.length
+            //     } else {
+            //       this.itemsCount = this.total;
+            //     }
+            //     this.filteredOrAllData =  searchInFiltered
+            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+            //   }
                 }
             },
         isFinishedFilterPhoneNumbers() {

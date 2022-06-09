@@ -195,7 +195,7 @@
             <b-tab @click="tab('Source')">
               <template v-slot:title>
                 <div class="d-flex justify-content-between align-items-center">
-                  <span class="">Source</span>
+                  <span class="">List Source</span>
                   <span
                     v-if="allFilters.Source.length > 0"
                     class="filter-count"
@@ -218,7 +218,7 @@
                       placeholder="Search"
                     ></b-form-input>
                   </b-row>
-                  <b-card no-body :header="this.activeTab">
+                  <b-card no-body header="List Source">
                     <b-list-group flush>
                       <b-list-group-item
                         class="
@@ -236,6 +236,54 @@
                 </div>
               </b-card-text>
             </b-tab>
+
+            <!-- Company Owned  -->
+            <b-tab @click="tab('CompanyOwned')">
+              <template v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Company Owned</span>
+                  <span
+                    v-if="allFilters.CompanyOwned.length > 0"
+                    class="filter-count"
+                    >{{ allFilters.CompanyOwned.length }}</span
+                  >
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                    class="btn btn-light filter align-items-center m-2"
+                    v-for="(result, index) in allFilters.CompanyOwned"
+                    :key="result"
+                    @click="resetFilter(result, index)"
+                    >{{ result }} <b-icon icon="x" aria-hidden="true"></b-icon
+                  ></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input
+                      v-model="searchSeller"
+                      placeholder="Search"
+                    ></b-form-input>
+                  </b-row>
+                  <b-card no-body header="Company Owned">
+                    <b-list-group flush>
+                      <b-list-group-item
+                        class="
+                          flex-column
+                          align-items-start
+                          list-group-item-light
+                        "
+                        v-for="(result, index) in filteredOrAllData"
+                        :key="result"
+                        @click="addFilter(result, index)"
+                        >{{ result }}</b-list-group-item
+                      >
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+
+            <!-- End of Company Owned  -->
             <b-tab @click="tab('Errors')">
               <template v-slot:title>
                 <div class="d-flex justify-content-between align-items-center">
@@ -324,6 +372,34 @@
                 </div>
               </b-card-text>
             </b-tab>
+            <b-tab @click="tab('SkipSource')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Skip Source</span>
+                  <span v-if="allFilters.SkipSource.length > 0" class="filter-count">{{ allFilters.SkipSource.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.SkipSource"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="Skip Source">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
           </b-tabs>
         </b-card>
       </div>
@@ -378,6 +454,8 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
+        SkipSource:[],
+        CompanyOwned:[],
       },
       allFilters: {
         Market: [],
@@ -386,6 +464,8 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
+        SkipSource:[],
+        CompanyOwned:[],
       },
       incomingList: {
         Market: [],
@@ -394,6 +474,8 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
+        SkipSource:[],
+        CompanyOwned:[],
       },
       searchSeller: "",
       activeTab: "allFilters",
@@ -425,17 +507,21 @@ export default {
   watch: {
     showModal() {
       if (
-        this
-          .showModal /* && !this.appliedFilters && +localStorage.getItem('seller-filters-count') === 0*/
+        this.showModal /* && !this.appliedFilters && +localStorage.getItem('seller-filters-count') === 0*/
       ) {
         this.seller = this.propsData;
         this.seller.forEach((el) => {
           if (
             el.seller_error_type &&
             !this.allData.Errors.includes(el.seller_error_type) &&
-            !this.allFilters.Errors.includes(el.seller_error_type)
-          ) {
+            !this.allFilters.Errors.includes(el.seller_error_type)) {
             this.allData.Errors.push(el.seller_error_type);
+          }
+          if (
+            el.seller_company_owned &&
+            !this.allData.CompanyOwned.includes(el.seller_company_owned) &&
+            !this.allFilters.CompanyOwned.includes(el.seller_company_owned)) {
+            this.allData.CompanyOwned.push(el.seller_company_owned);
           }
         });
         this.lists.forEach((el) => {
@@ -467,6 +553,9 @@ export default {
           ) {
             this.allData.Source.push(el.list_source);
           }
+            if (el.list_skip_source && !this.allData.SkipSource.includes(el.list_skip_source) && !this.allFilters.SkipSource.includes(el.list_skip_source)){
+              this.allData.SkipSource.push(el.list_skip_source)
+            }
           if (el.run_year && el.run_month) {
             let runYear = el.run_year.split(",");
             let runMonth = el.run_month.split(",");
@@ -541,9 +630,7 @@ export default {
     },
     clearAllFilters(allFilters) {
       if (typeof allFilters === "object") {
-        allFilters.Market.forEach((e) => {
-          this.allData.Market.push(e);
-        });
+        allFilters.Market.forEach((e) => {this.allData.Market.push(e)});
         allFilters.Group.forEach((e) => {
           this.allData.Group.push(e);
         });
@@ -553,8 +640,12 @@ export default {
         allFilters.Source.forEach((e) => {
           this.allData.Source.push(e);
         });
+        allFilters.SkipSource.forEach(e => {this.allData.SkipSource.push(e)});
         allFilters.Errors.forEach((e) => {
           this.allData.Errors.push(e);
+        });
+        allFilters.CompanyOwned.forEach((e) => {
+          this.allData.CompanyOwned.push(e);
         });
         allFilters.RunDate.forEach((e) => {
           this.allData.RunDate.push(e);
@@ -566,6 +657,8 @@ export default {
           Source: [],
           Errors: [],
           RunDate: [],
+          SkipSource: [],
+          CompanyOwned: [],
         };
       }
       for (let category in this.allData) {
@@ -592,6 +685,9 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
+        SkipSource:[],
+        CompanyOwned: [],
+
       };
       this.allFilters = {
         Market: [],
@@ -600,13 +696,16 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
+        SkipSource: [],
+        CompanyOwned: [],
+
       };
       }
       this.$emit("cancel");
     },
     async updateDataChanges() {
       await this.$store.dispatch("listModule/getAllLists", {
-        page: this.currentPage,
+        page: 1,
         perPage: this.perPage,
       });
       this.lists.forEach((e) => {
@@ -614,6 +713,7 @@ export default {
         this.incomingList.Group.push(e.list_group);
         this.incomingList.Type.push(e.list_type);
         this.incomingList.Source.push(e.list_source);
+        this.incomingList.SkipSource.push(e.list_skip_source)
         let runYear = e.run_year?.split(",");
         let runMonth = e.run_month?.split(",");
         for (let i = 0; i < runYear?.length; i++) {
@@ -623,6 +723,9 @@ export default {
       this.sellerData = this.propsData;
       this.sellerData.forEach((el) => {
         this.incomingList.Errors.push(el.seller_error_type);
+      });
+         this.sellerData.forEach((el) => {
+        this.incomingList.CompanyOwned.push(el.seller_company_owned);
       });
 
       if(localStorage.getItem('seller-applied-filters')) {

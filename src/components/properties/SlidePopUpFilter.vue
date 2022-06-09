@@ -637,6 +637,17 @@ computed: {
     },
 
   },
+  mounted(){
+    document.querySelector('body').addEventListener('click',function(e){
+      if(!e.target.closest('.checkbox-select__dropdown') && !e.target.closest('.checkbox-select')) {
+        if(document.querySelectorAll('.checkbox-select__dropdown')) {
+        document.querySelectorAll('.checkbox-select__dropdown').forEach(function(elem){
+          elem.style.display = 'none';
+        });
+        }
+      }
+    })
+  }
 };
 </script>
 <style>

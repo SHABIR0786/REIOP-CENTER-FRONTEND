@@ -42,7 +42,7 @@ const state = {
 
 const mutations = {
     SET_ALL_SUBJECTS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.list_stack = e.lists.length;
             e.created_at = e.created_at.split('T')[0];
@@ -55,6 +55,7 @@ const mutations = {
             })
         })
         state.subjects = JSON.stringify(data);
+        state.total = payload.total;
     },
     EDIT_SUBJECT(state, payload) {
         const SUBJECTS = JSON.parse(state.subjects)
@@ -105,14 +106,14 @@ const mutations = {
 }
 
 const actions = {
-    async getAllSubjects({ commit, dispatch }, {page, perPage, sortBy, sortDesc}) {
-        return await api.get(`/subjects?page=${page}&perPage=${perPage}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
+    async getAllSubjects({ commit, dispatch }, {page, perPage, search, sortBy, sortDesc}) {
+        return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
 
             if(response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', response.subjects.data)
+                commit('SET_ALL_SUBJECTS', response.subjects)
             }
 
             return response
@@ -134,7 +135,7 @@ const actions = {
             }
 
             if(response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', response.subjects.data)
+                commit('SET_ALL_SUBJECTS', response.subjects)
             }
 
             return response

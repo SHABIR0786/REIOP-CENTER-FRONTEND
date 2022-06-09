@@ -168,8 +168,7 @@
                         label-cols-md="4"
                         label-cols-lg="3"
                         label-size="xs"
-                        class="mb-0"
-                >
+                        class="mb-0">
                     <b-form-select
                             id="show-select"
                             v-model="perPage"
@@ -180,7 +179,7 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{itemsCount}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{(currentPage*perPage)>itemsCount?itemsCount:(currentPage*perPage)}} of {{itemsCount}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="itemsCount" :per-page="perPage" aria-controls="seller-table"></b-pagination>
@@ -238,7 +237,7 @@ export default {
               RunDate:[],
             },
             sortBy: 'id',
-            sortDesc: false
+            sortDesc: true
         }
     },
     computed: {
@@ -254,10 +253,9 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        this.$store.dispatch('sellerModule/getTotal')
         try {
         this.$store.dispatch('uxModule/setLoading')
-        await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+        await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
         this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -277,10 +275,10 @@ export default {
         this.sortBy = ctx.sortBy;
         this.sortDesc = ctx.sortDesc;
         if (!this.totalFilters){
-            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
             this.filteredOrAllData = this.items;
         } else {
-             await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc})
+             await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, search: this.searchSeller, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc})
             this.filteredOrAllData = this.filteredItems
         }
     },
@@ -289,9 +287,8 @@ export default {
         return  total
       },
     async doCreatedOperation() {
-        this.$store.dispatch('sellerModule/getTotal')
         try {
-            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+            await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
           this.$store.dispatch('uxModule/hideLoader')
@@ -307,10 +304,10 @@ export default {
       },
     async filter(data,filterValue) {
          this.filtersName = data
-         await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
+         await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage, search: this.searchSeller, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
          if (!filterValue) {
             if(!this.items.length) {
-              await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, sortBy:this.sortBy,sortDesc:this.sortDesc})
+              await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
            }
             this.filteredOrAllData = this.items
             this.itemsCount = this.total
@@ -353,7 +350,6 @@ export default {
         bulkDelete () {
             this.$store.dispatch('sellerModule/deleteMultipleSellers', this.bulkDeleteItems).then(() => {
               this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
-              this.$store.dispatch('sellerModule/getTotal')
             })
         },
         selectAll () {
@@ -372,54 +368,66 @@ export default {
                 await  this.$store.dispatch('sellerModule/getAllSellers', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               } else {
-                await this.$store.dispatch("sellerModule/filterSeller", { page: this.currentPage, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch("sellerModule/filterSeller", { page: this.currentPage, perPage: this.perPage, search: this.searchSeller, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
             }
         },
         perPage: {
             handler: async function () {
+            this.$store.dispatch('uxModule/setLoading')
             if (!this.totalFilters){
                 this.$store.dispatch('sellerModule/getAllSellers', {page: 1, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
               }else{
-                await this.$store.dispatch("sellerModule/filterSeller", { page: 1, perPage: this.perPage, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                await this.$store.dispatch("sellerModule/filterSeller", { page: 1, perPage: this.perPage, search: this.searchSeller, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
+            this.$store.dispatch('uxModule/hideLoader')
             }
         },
         searchSeller: {
             handler: async function () {
-                if (!this.total || (this.filteredItems.length == 0)) {
+                // if (!this.total || (this.filteredItems.length == 0)) {
+                if (!this.totalFilters) {
                 await this.$store.dispatch('sellerModule/searchSellers', { page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                if(this.searchSeller == '') {
-                  this.itemsCount = this.total;
-                } else { 
-                this.itemsCount = this.items.length
-                }
+                // if(this.searchSeller == '') {
+                //   this.itemsCount = this.total;
+                // } 
+                // else { 
+                // this.itemsCount = this.items.length
+                // }
+                this.itemsCount = this.total;
                 this.filteredOrAllData = this.items;
-              } else {
-                this.currentPage = 1;
-                let searchInFiltered = [...this.filteredItems]
-                const Instance = this;
-                 searchInFiltered = searchInFiltered.filter(el => {
-                 return  el.seller_mailing_address?.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())||
-                   el.seller_first_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
-                   el.seller_last_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
-                   el.seller_middle_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
-                   el.seller_mailing_city?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())  ||
-                   el.seller_mailing_state?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase()) ||
-                   el.seller_mailing_zip?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())   ||
-                   el.id.toString()?.includes(Instance.searchSeller.toLocaleLowerCase())
-                 });
-                if(this.searchSeller) {
-                  this.itemsCount = searchInFiltered.length
                 } else {
-                  this.itemsCount = this.total;
+                await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage,search: this.searchSeller, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc})
+                this.filteredOrAllData = this.filteredItems
+                this.itemsCount = this.filteredSellersCount
+                
                 }
-                this.filteredOrAllData =  searchInFiltered
-                // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
-              }
+            //   } 
+            //   else {
+            //     this.currentPage = 1;
+            //     let searchInFiltered = [...this.filteredItems]
+            //     const Instance = this;
+            //      searchInFiltered = searchInFiltered.filter(el => {
+            //      return  el.seller_mailing_address?.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())||
+            //        el.seller_first_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+            //        el.seller_last_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+            //        el.seller_middle_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+            //        el.seller_mailing_city?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())  ||
+            //        el.seller_mailing_state?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase()) ||
+            //        el.seller_mailing_zip?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())   ||
+            //        el.id.toString()?.includes(Instance.searchSeller.toLocaleLowerCase())
+            //      });
+            //     if(this.searchSeller) {
+            //       this.itemsCount = searchInFiltered.length
+            //     } else {
+            //       this.itemsCount = this.total;
+            //     }
+            //     this.filteredOrAllData =  searchInFiltered
+            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+            //   }
 
 
             }
