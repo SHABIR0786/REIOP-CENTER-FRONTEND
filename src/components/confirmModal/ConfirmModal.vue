@@ -1,14 +1,14 @@
 <template>
     <b-modal v-model="showModal" @close="$emit('modalResponse', false)">
         <template #modal-header>
-            <div class="w-100" style="font-size: 20px;color:white " v-if="isHaveMappedItems && !isCombinedData">
+            <div class="w-100" style="font-size: 20px;color:white " v-if="isHaveMappedItems ">
               Confirm
             </div>
             <div class="w-100"  style="font-size: 20px;color:white " v-else>
               Error!
             </div>
         </template>
-        <b-container fluid v-if="isHaveMappedItems && !isSkipTrace && !isSkipValidate && !isCombinedData">
+        <b-container fluid v-if="isHaveMappedItems && !isSkipTrace && !isSkipValidate">
             <h4 class="text-center">Are you ready to upload this spreadsheet?</h4>
         </b-container>
 
@@ -29,14 +29,11 @@
       <b-container fluid v-if="!isHaveMappedItems && isSkipValidate">
         <h4 class="text-center">Please map either "email and email validity" pair or "phone and phone validity" pair or all options together</h4>
       </b-container>
-      <b-container fluid v-if="isHaveMappedItems && isCombinedData">
-        <h4 class="text-center">You must map a <br> list_type, list_group, list_market, list_source, list_pull_date <br> before being able to import combined data.</h4>
-      </b-container>
       <b-container fluid v-if="isHaveMappedItems && isSkipValidate">
         <h4 class="text-center">Are you ready to validate data?</h4>
       </b-container>
         <template #modal-footer>
-            <div class="w-100" v-if="isHaveMappedItems && !isCombinedData">
+            <div class="w-100" v-if="isHaveMappedItems ">
                 <b-button
                         variant="primary"
                         size="sm"
@@ -78,10 +75,6 @@
           },
           isSkipTrace: {
               type: Boolean,
-            default: false,
-          },
-          isCombinedData: {
-            type: Boolean,
             default: false,
           },
 
