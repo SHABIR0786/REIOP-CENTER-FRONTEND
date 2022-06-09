@@ -60,6 +60,7 @@ const mutations = {
             payload.subjects_count = 0
             payload.sellers_count = 0
             payload.error_subjects = 0
+            payload.error_sellers = 0
         }
         const date = payload.created_at;
         payload.created_at = new Date(date * 1000).toLocaleString();

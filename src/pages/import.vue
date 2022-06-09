@@ -251,12 +251,15 @@ export default {
       let missingSubjectData = requiredSubjectsFields.filter(ms => !mappedFields.includes(ms));
       let missingSellersData = requiredSellersFields.filter(ms => !mappedFields.includes(ms) );
 
-      if (subjectMapped && missingSubjectData.length && !this.isSkippedData && !this.skipValidate) {
-          this.missingSubjectsData = missingSubjectData;
-          this.showSellerFillModal = true;
-          if (!sellerMapped && !this.isCombinedImport){
-            return;
+      if (subjectMapped && !this.isSkippedData && !this.skipValidate) {
+          if (missingSubjectData.length ){
+            this.missingSubjectsData = missingSubjectData;
+            this.showSellerFillModal = true;
+            if (!sellerMapped && !this.isCombinedImport){
+              return;
+            }
           }
+          this.isHaveMappedItems = true;
       }
 
       if (sellerMapped) {
