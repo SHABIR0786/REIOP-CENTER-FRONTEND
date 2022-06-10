@@ -251,7 +251,7 @@ export default {
       let missingSubjectData = requiredSubjectsFields.filter(ms => !mappedFields.includes(ms));
       let missingSellersData = requiredSellersFields.filter(ms => !mappedFields.includes(ms) );
 
-      if (subjectMapped && !this.isSkippedData && !this.skipValidate) {
+      if (subjectMapped  && !this.skipValidate) {
           if (missingSubjectData.length ){
             this.missingSubjectsData = missingSubjectData;
             this.showSellerFillModal = true;
