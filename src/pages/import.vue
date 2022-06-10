@@ -258,8 +258,9 @@ export default {
             if (!sellerMapped && !this.isCombinedImport){
               return;
             }
+          }else {
+            this.isHaveMappedItems = true;
           }
-          this.isHaveMappedItems = true;
       }
 
       if (sellerMapped) {
