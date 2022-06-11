@@ -12,7 +12,7 @@
             <h4 class="text-center">Are you ready to upload this spreadsheet?</h4>
         </b-container>
 
-        <b-container fluid v-if="!isHaveMappedItems && !isSkipTrace && !isSkipValidate">
+        <b-container fluid v-if="!isHaveMappedItems && !isSkipTrace && !isSkipValidate && !isCombinedImport">
           <h5 class="text-sm-center"> There are required fields you must map:<br>
             subject_address, subject_city,<br>
             subject_state, subject_zip </h5>
@@ -28,6 +28,9 @@
 
       <b-container fluid v-if="!isHaveMappedItems && isSkipValidate">
         <h4 class="text-center">Please map either "email and email validity" pair or "phone and phone validity" pair or all options together</h4>
+      </b-container>
+      <b-container fluid v-if="!isHaveMappedItems && isCombinedImport">
+        <h4 class="text-center">You must map a <br> list_type, list_group, list_market, list_source, list_pull_date <br> before being able to import combined data.</h4>
       </b-container>
       <b-container fluid v-if="isHaveMappedItems && isSkipValidate">
         <h4 class="text-center">Are you ready to validate data?</h4>
@@ -77,7 +80,10 @@
               type: Boolean,
             default: false,
           },
-
+          isCombinedImport: {
+            type: Boolean,
+            default: false,
+          },
         },
     }
 </script>
