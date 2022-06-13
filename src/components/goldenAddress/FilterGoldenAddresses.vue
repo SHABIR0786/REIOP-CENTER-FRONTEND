@@ -336,6 +336,9 @@ export default {
             if (el.golden_error_type && !this.allData.Errors.includes(el.golden_error_type)  && !this.allFilters.Errors.includes(el.golden_error_type)){
               this.allData.Errors.push(el.golden_error_type)
             }
+            if (el.golden_skip_source && !this.allData.SkipSource.includes(el.golden_skip_source) && !this.allFilters.SkipSource.includes(el.golden_skip_source)){
+              this.allData.SkipSource.push(el.golden_skip_source)
+            }
           })
 
           this.lists.forEach(el =>{
@@ -350,9 +353,6 @@ export default {
             }
             if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
               this.allData.Source.push(el.list_source)
-            }
-            if (el.list_skip_source && !this.allData.SkipSource.includes(el.list_skip_source) && !this.allFilters.SkipSource.includes(el.list_skip_source)){
-              this.allData.SkipSource.push(el.list_skip_source)
             }
             if (el.run_year &&  el.run_month){
               let runYear = el.run_year.split(",")

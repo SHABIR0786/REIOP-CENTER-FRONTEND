@@ -8,6 +8,7 @@ const state = {
         {key: "actions", stickyColumn: true, label: "Actions"},
         {key: "golden_address_address", label: "Golden Address", sortable: true},
         {key: "golden_address_address_line2", label: "Golden Address Line 2", sortable: true},
+        {key: "golden_skip_source", label: "Skip Source", sortable: true},
         {key: "golden_address_city", label: "Golden City", sortable: true},
         {key: "golden_address_state", label: "Golden State", sortable: true},
         {key: "golden_address_zip", label: "Golden Zip", sortable: true},

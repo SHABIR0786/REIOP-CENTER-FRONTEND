@@ -244,6 +244,7 @@
           </div>
           <div class="step2" >
             <div v-if="stepNumber == 2">
+            <div v-if="export_type == 1">
             <b-form-select
               class="select-template w-100 mb-3"
               v-model="marketing_channel"
@@ -272,9 +273,26 @@
               class="select-template w-100 mt-1 mb-3"
               v-model="marketing_period"
               @change="checkNextStep($event)"
-              :options="MarketingLength"
+              :options="MarketingLength">
+            </b-form-select>
+            </div>
+            <div v-if="export_type == 2">
+            <b-form-select
+              class="select-template w-100 mb-3"
+              v-model="skip_source"
+              @change="checkNextStep($event)"
+              :options="skipTraceSources"
             >
             </b-form-select>
+            <b-form-datepicker
+              class="mb-3"
+              v-model="skip_date"
+              @change="checkNextStep($event)"
+              type="text"
+              placeholder="Select Skiptrace Attempt Date"
+              autocomplete="off"
+            ></b-form-datepicker>
+            </div>
             </div>
           </div>
           <div @click="BackStep(3)" class="export-number">
@@ -356,13 +374,15 @@ export default {
         Type:[],
         Source:[]
       },
-      selectedAll:{
+      selectedAll: {
         Market:false,
         Group:false,
         Type:false,
         Source:false 
       },
-      savedMarketingChannels: [],
+      savedMarketingChannels: [
+        {value:null, text:'Select Marketing Channel'}
+      ],
       isShowMarketDropDown: false,
       isGroupDropDown: false,
       isTypeDropDown: false,
@@ -379,6 +399,9 @@ export default {
         { value: 1, text: "To Market" },
         { value: 2, text: "To SkipTrace" },
         { value: 3, text: "Miscellaneous Reason" },
+      ],
+      skipTraceSources: [
+        {value: null, text:"Select Skiptrace Source"}
       ],
       MarketingLength: [
         { value: null, text: "Choose Marketing Length" },
@@ -399,7 +422,7 @@ export default {
       isShowSlidePopUp: false,
       showSaveFilterModal: false,
       SelectExportAmount: [
-        { value: "", text: "Select Export Amount" },
+        { value: null, text: "Select Export Amount" },
         { value: 1, text: "Export all in the value" },
         { value: 2, text: "Export Selected" },
         { value: 3, text: "Export {(Total in view / 5)}" },
@@ -422,7 +445,9 @@ computed: {
     ...mapGetters({
       MarketingChannels: 'marketingChannelModule/marketingChannels',
       lists: 'listModule/lists',
-      filters: 'filtersModule/filters'
+      filters: 'filtersModule/filters',
+      sourceList: 'listModule/skipSourceList',
+      sourceListFromDB: 'listModule/sourceListFromDB',
     }),
     totalFilters() {
       let total = 0
@@ -455,7 +480,7 @@ computed: {
         }
         marketingChannel.value = e.id;
         marketingChannel.text = e.marketing_channel_name;
-        this.savedMarketingChannels.push(marketingChannel);
+        this.savedMarketingChannels.push(marketingChannel); 
       });
       await this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
         this.lists.forEach(el =>{
@@ -480,7 +505,10 @@ computed: {
     marketing_end_date: function() {
       this.checkNextStep();
     },
-    marketing_period: function(){
+    marketing_period: function() {
+      this.checkNextStep();
+    },
+    skip_date: function() {
       this.checkNextStep();
     },
     isShowSlidePopUp: function() {
@@ -526,15 +554,29 @@ computed: {
       this.$store.dispatch('propertyModule/storeExport', exportSubject);
     },
     checkNextStep() {
-      if(this.export_type != null && this.marketing_channel != null && this.marketing_start_date != null && (this.marketing_end_date != null || this.marketing_period != null)) {
+      if(this.export_type != null) {
+
+      if(this.export_type == 1 && this.marketing_channel != null && this.marketing_start_date != null && (this.marketing_end_date != null || this.marketing_period != null)) {
         this.stepNumber = 3;
       }
+      if(this.export_type == 2 && this.skip_source != null && this.skip_date != null) {
+        this.stepNumber = 3;
+      }
+      if(this.export_type == 3) {
+        this.stepNumber = 3;
+      }
+
+     }
     },
     showMarketDropdown() {
           this.isShowMarketDropDown = !this.isShowMarketDropDown;
     },
     changeExportType() {
+      if(this.export_type == 3) {
+      this.stepNumber = 3;
+      } else {
       this.stepNumber = 2;
+      }
     },
     changeFilter() {
        var filter = this.filters.find(x=>x.id == this.selectedFilter);
@@ -637,8 +679,13 @@ computed: {
     },
 
   },
-  mounted(){
-    document.querySelector('body').addEventListener('click',function(e){
+  async mounted(){
+    const Instance = this;
+     await this.$store.dispatch('listModule/getSourceListFromDB');
+    this.sourceListFromDB.forEach(function(item) {
+      Instance.skipTraceSources.push(item.list_skip_source)
+    });
+document.querySelector('body').addEventListener('click',function(e){
       if(!e.target.closest('.checkbox-select__dropdown') && !e.target.closest('.checkbox-select')) {
         if(document.querySelectorAll('.checkbox-select__dropdown')) {
         document.querySelectorAll('.checkbox-select__dropdown').forEach(function(elem){

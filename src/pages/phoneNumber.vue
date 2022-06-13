@@ -24,7 +24,12 @@
                     <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
-                    <b-form-input v-model="searchPhone" placeholder="Search"></b-form-input>
+                    <b-input-group class="mt-3">
+                        <b-form-input v-model="searchPhone" @keyup.enter="search" placeholder="Search"></b-form-input>
+                        <b-input-group-append>
+                        <b-button @click="search" variant="primary">Search</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
                 </b-col>
             </b-row>
         </div>
@@ -232,6 +237,40 @@ export default {
       this.itemsCount = this.total;
     },
     methods: {   
+        async search() {
+            // if (!this.total || (this.filteredPhoneNumber.length == 0)) {
+                if (!this.totalFilters) {
+                await this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc })
+                // if(this.searchPhone == '') {
+                //   this.itemsCount = this.total;
+                // } else { 
+                // this.itemsCount = this.items.length
+                // }
+                this.itemsCount = this.total;
+                this.filteredOrAllData = this.items;
+              } else {
+                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: 1, perPage: this.perPage, search: this.searchPhone, filter: this.filtersName, sortBy:this.sortBy, sortDesc:this.sortDesc })
+                this.filteredOrAllData = this.filteredPhoneNumber
+                this.itemsCount = this.filteredPhoneNumbersCount
+
+              }
+            //    else {
+            //     this.currentPage = 1;
+            //     let searchInFiltered = [...this.filteredPhoneNumber]
+            //      searchInFiltered = searchInFiltered.filter(el => {
+            //      return el.id.toString().includes(this.searchPhone) ||
+            //       el.phone_number.toString().includes(this.searchPhone) ||
+            //       el.phone_type.toString().includes(this.searchPhone)
+            //      });
+            //     if(this.searchPhone) {
+            //       this.itemsCount = searchInFiltered.length
+            //     } else {
+            //       this.itemsCount = this.total;
+            //     }
+            //     this.filteredOrAllData =  searchInFiltered
+            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+            //   }
+        },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
             this.sortDesc = ctx.sortDesc;
@@ -344,42 +383,6 @@ export default {
                 await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: 1, perPage: this.perPage, search: this.searchPhone, filter: this.filtersName, sortBy:this.sortBy, sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredPhoneNumber
               }
-                }
-            },
-            searchPhone: {
-                handler: async function () {
-            // if (!this.total || (this.filteredPhoneNumber.length == 0)) {
-                if (!this.totalFilters) {
-                await this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', { page: this.currentPage, perPage: this.perPage, search: this.searchPhone, sortBy:this.sortBy, sortDesc:this.sortDesc })
-                // if(this.searchPhone == '') {
-                //   this.itemsCount = this.total;
-                // } else { 
-                // this.itemsCount = this.items.length
-                // }
-                this.itemsCount = this.total;
-                this.filteredOrAllData = this.items;
-              } else {
-                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", { page: 1, perPage: this.perPage, search: this.searchPhone, filter: this.filtersName, sortBy:this.sortBy, sortDesc:this.sortDesc })
-                this.filteredOrAllData = this.filteredPhoneNumber
-                this.itemsCount = this.filteredPhoneNumbersCount
-
-              }
-            //    else {
-            //     this.currentPage = 1;
-            //     let searchInFiltered = [...this.filteredPhoneNumber]
-            //      searchInFiltered = searchInFiltered.filter(el => {
-            //      return el.id.toString().includes(this.searchPhone) ||
-            //       el.phone_number.toString().includes(this.searchPhone) ||
-            //       el.phone_type.toString().includes(this.searchPhone)
-            //      });
-            //     if(this.searchPhone) {
-            //       this.itemsCount = searchInFiltered.length
-            //     } else {
-            //       this.itemsCount = this.total;
-            //     }
-            //     this.filteredOrAllData =  searchInFiltered
-            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
-            //   }
                 }
             },
         isFinishedFilterPhoneNumbers() {

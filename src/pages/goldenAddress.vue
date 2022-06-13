@@ -28,7 +28,12 @@
                   <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
-                    <b-form-input v-model="searchGoldenAddress" placeholder="Search"></b-form-input>
+                    <b-input-group class="mt-3">
+                        <b-form-input v-model="searchGoldenAddress" @keyup.enter="search" placeholder="Search"></b-form-input>
+                        <b-input-group-append>
+                        <b-button @click="search" variant="primary">Search</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
                 </b-col>
             </b-row>
         </div>
@@ -80,6 +85,9 @@
             <template #head(golden_address_address_line2)="scope">
                 <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
             </template>
+            <template #head(golden_skip_source)="scope">
+                <div class="text-nowrap" style="width: 90px;">{{scope.label}}</div>
+            </template>
             <template #head(golden_address_city)="scope">
                 <div style="width: 100px;">{{scope.label}}</div>
             </template>
@@ -113,6 +121,9 @@
             </template>
             <template v-slot:cell(golden_address_address_line2)="data">
                 <div v-b-tooltip.hover :title="data.item.golden_address_address_line2">{{ data.item.golden_address_address_line2 }}</div>
+            </template>
+            <template v-slot:cell(golden_skip_source)="data">
+                <div v-b-tooltip.hover :title="data.item.golden_skip_source">{{ data.item.golden_skip_source }}</div>
             </template>
             <template v-slot:cell(golden_address_city)="data">
                 <div v-b-tooltip.hover :title="data.item.golden_address_city">{{ data.item.golden_address_city }}</div>
@@ -246,6 +257,40 @@ export default {
         
     },
     methods: {
+        async search() {
+            // if (!this.total || (this.filteredItems.length == 0)) {
+                if (!this.totalFilters) {
+                await this.$store.dispatch('goldenAddressModule/searchGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress, sortBy:this.sortBy,sortDesc:this.sortDesc})
+                // if(this.searchGoldenAddress == '') {
+                  this.itemsCount = this.total;
+                // } else { 
+                // this.itemsCount = this.items.length
+                // }
+                this.filteredOrAllData = this.items;
+              }  else {
+                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: 1, perPage: this.perPage, search: this.searchGoldenAddress, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                this.filteredOrAllData = this.filteredItems
+                this.itemsCount = this.filteredGoldenAddressesCount
+
+            //     this.currentPage = 1;
+            //     let searchInFiltered = [...this.filteredItems]
+            //      searchInFiltered = searchInFiltered.filter(el => {
+            //      return  el.golden_address_address.includes(this.searchGoldenAddress)||
+            //        el.golden_address_city.includes(this.searchGoldenAddress)  ||
+            //        el.golden_address_state.includes(this.searchGoldenAddress) ||
+            //        el.golden_address_zip.includes(this.searchGoldenAddress)   ||
+            //        el.id.toString().includes(this.searchGoldenAddress)
+            //      });
+            //     if(this.searchGoldenAddress) {
+            //       this.itemsCount = searchInFiltered.length
+            //     } else {
+            //       this.itemsCount = this.total;
+            //     }
+            //     this.filteredOrAllData =  searchInFiltered
+            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+            //   }
+            }
+        },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
             this.sortDesc = ctx.sortDesc;
@@ -359,42 +404,6 @@ export default {
                 await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: 1, perPage: this.perPage, search: this.searchGoldenAddress, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
-            }
-        },
-        searchGoldenAddress: {
-            handler: async function () {
-                // if (!this.total || (this.filteredItems.length == 0)) {
-                if (!this.totalFilters) {
-                await this.$store.dispatch('goldenAddressModule/searchGoldenAddresses', {page: this.currentPage, perPage: this.perPage, search: this.searchGoldenAddress, sortBy:this.sortBy,sortDesc:this.sortDesc})
-                // if(this.searchGoldenAddress == '') {
-                  this.itemsCount = this.total;
-                // } else { 
-                // this.itemsCount = this.items.length
-                // }
-                this.filteredOrAllData = this.items;
-              }  else {
-                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", { page: 1, perPage: this.perPage, search: this.searchGoldenAddress, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                this.filteredOrAllData = this.filteredItems
-                this.itemsCount = this.filteredGoldenAddressesCount
-
-            //     this.currentPage = 1;
-            //     let searchInFiltered = [...this.filteredItems]
-            //      searchInFiltered = searchInFiltered.filter(el => {
-            //      return  el.golden_address_address.includes(this.searchGoldenAddress)||
-            //        el.golden_address_city.includes(this.searchGoldenAddress)  ||
-            //        el.golden_address_state.includes(this.searchGoldenAddress) ||
-            //        el.golden_address_zip.includes(this.searchGoldenAddress)   ||
-            //        el.id.toString().includes(this.searchGoldenAddress)
-            //      });
-            //     if(this.searchGoldenAddress) {
-            //       this.itemsCount = searchInFiltered.length
-            //     } else {
-            //       this.itemsCount = this.total;
-            //     }
-            //     this.filteredOrAllData =  searchInFiltered
-            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
-            //   }
-            }
             }
         },
         isFinishedFilterGoldenAddresses() {
