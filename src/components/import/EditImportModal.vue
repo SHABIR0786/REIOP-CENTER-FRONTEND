@@ -58,6 +58,13 @@
                     </b-row>
                     <b-row>
                       <b-col cols="12">
+                        <b-input-group prepend="Seller Errors" class="mb-2">
+                          <b-form-input readonly v-model="editData.error_sellers"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
                         <b-input-group prepend="Phone Errors" class="mb-2">
                           <b-form-input readonly v-model="editData.error_phones"></b-form-input>
                         </b-input-group>
@@ -276,6 +283,7 @@ export default {
                 created_at: '',
                 user_id: '',
                 error_subjects: '',
+                error_sellers: '',
                 error_emails: '',
                 error_goldens: '',
                 error_phones: '',

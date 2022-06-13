@@ -16,7 +16,8 @@ const state = {
     total: 0,
     editData: {},
     isSkipValidation: false,
-    uploadProgress: {}
+    uploadProgress: {},
+    showImportFirstPage: false,
 }
 
 const mutations = {
@@ -59,6 +60,7 @@ const mutations = {
             payload.subjects_count = 0
             payload.sellers_count = 0
             payload.error_subjects = 0
+            payload.error_sellers = 0
         }
         const date = payload.created_at;
         payload.created_at = new Date(date * 1000).toLocaleString();
@@ -76,6 +78,9 @@ const mutations = {
     },
     SET_SKIP_VALIDATION(state, bool) {
         state.isSkipValidation = bool;
+    },
+    SHOW_IMPORT_FIRST_PAGE(state, bool) {
+        state.showImportFirstPage = bool
     }
 }
 
@@ -162,6 +167,9 @@ const actions = {
     },
     setSkipValidation({ commit }, bool) {
         commit('SET_SKIP_VALIDATION', bool)
+    },
+    showImportFirstPage({ commit }, bool) {
+        commit("SHOW_IMPORT_FIRST_PAGE", bool)
     }
 }
 
@@ -171,7 +179,9 @@ const getters = {
     imports: ({ imports }) => imports,
     editData: ({ editData }) => editData,
     isSkipValidation: (state) => state.isSkipValidation,
-    uploadProgress: ({uploadProgress}) => uploadProgress
+    uploadProgress: ({uploadProgress}) => uploadProgress,
+    showImportFirstPage: ({ showImportFirstPage }) => showImportFirstPage
+
 
 }
 
