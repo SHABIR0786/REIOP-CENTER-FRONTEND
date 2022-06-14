@@ -10,7 +10,7 @@ const state = {
         {key: "subject_city", label: "Subject City", sortable: true},
         {key: "subject_state", label: "Subject State", sortable: true},
         {key: "subject_zip", label: "Subject Zip", sortable: true},
-        {key: "subject_country", label: "Subject County", sortable: true},
+        {key: "subject_county", label: "Subject County", sortable: true},
         {key: "subject_market", label: "Market", sortable: true},
         {key: "subject_type", label: "Subject Type", sortable: true},
         {key: "subject_age", label: "Subject Age", sortable: true},
@@ -59,9 +59,6 @@ const state = {
         {key: "id", label: "ID", sortable: true},
         {key: "seller_error_type", label: "Error Type", sortable: true},
         {key: "file_name", label: "File Name", sortable:true},
-        // {key: "seller_total_subjects", label: "Total Subjects", sortable: true},
-        // {key: "seller_total_phones", label: "Total Phones", sortable: true},
-        // {key: "seller_total_emails", label: "Total Emails", sortable: true},
         {key: "seller_first_name", label: "First Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
         {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
@@ -70,7 +67,7 @@ const state = {
         {key: "seller_mailing_state", label: "Mailing State", sortable:true},
         {key: "seller_mailing_city", label: "Mailing City", sortable:true},
         {key: "seller_mailing_zip", label: "Mailing Zip", sortable:true},
-        // {key: "seller_company_owned", label: "Company Owned"},
+
         // Custom Fields
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"user_name", label: "Uploaded By", sortable: true},
