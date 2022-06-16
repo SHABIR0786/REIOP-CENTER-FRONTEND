@@ -607,7 +607,7 @@ export default {
         }),
     },
     mounted () {
-        this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'list_total_individual_list' )
+        this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'total_running_lists' && s.key !== 'list_total_individual_list' )
     },
     watch: {
         showModal() {

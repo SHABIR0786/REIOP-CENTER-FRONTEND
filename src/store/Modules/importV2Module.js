@@ -35,6 +35,7 @@ const mutations = {
             process.is_processed = e.total_jobs - e.pending_jobs;
             process.file_name = e.file_name;
             process.user_id = e.user_id;
+            process.user_name = e.user_name;
             process.import_type = e.import_type;
             process.extension = e.extension;
             process.created_at = new Date(date * 1000).toLocaleString();
