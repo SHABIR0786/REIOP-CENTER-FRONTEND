@@ -195,6 +195,9 @@ export default {
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
+        if(this.$route.query.batch_id) {
+          this.editItem(this.filteredItems.find(el => el.id === this.$route.query.batch_id))
+        }
     },
     computed: {
       ...mapGetters({
