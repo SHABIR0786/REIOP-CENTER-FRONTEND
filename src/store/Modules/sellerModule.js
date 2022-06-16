@@ -36,6 +36,7 @@ const state = {
     seller: {},
     filteredSeller: {},
     filteredSellersCount: 0,
+    filterList: [],
 }
 
 const mutations = {
@@ -92,6 +93,11 @@ const mutations = {
     SET_SELLER(state, payload) {
         state.seller = JSON.stringify(payload);
     },
+    SELLER_FILTER_LIST(state, payload) {
+        if(payload.data) {
+            state.filterList = JSON.stringify(payload.data);            
+        }
+    },
     DELETE_MULTIPLE_SELLERS(state, payload) {
         const SELLER = JSON.parse(state.sellers)
         const findIndex = SELLER.findIndex(({ id }) => id === payload)
@@ -102,6 +108,7 @@ const mutations = {
         state.sellers = [];
         state.total = 0;
         state.seller = {};
+        state.filterList = [];
     },
 }
 
@@ -135,6 +142,13 @@ const actions = {
     async filterSeller({ commit }, data) {
         return await api.post(`/sellers/filter`, {...data}).then((response) => {
             commit('FILTER_SELLER', response.sellers)
+            return response
+        })
+    },
+    
+    async SellerfilterList({ commit }, data) {
+        return await api.post(`/sellers/filterList`, {...data}).then((response) => {
+            commit('SELLER_FILTER_LIST', response.lists)
             return response
         })
     },
@@ -210,6 +224,7 @@ const getters = {
     },
 
     filteredSellersCount: ({filteredSellersCount}) => filteredSellersCount,
+    filterList : ({filterList}) => filterList,
     filteredSeller: ({ filteredSeller }) => {
         if (typeof filteredSeller === 'string') {
             return JSON.parse(filteredSeller);

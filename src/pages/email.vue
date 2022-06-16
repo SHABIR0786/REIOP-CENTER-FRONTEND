@@ -151,7 +151,7 @@
         <edit-email-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-email-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-email-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-email-modal>
-        <filter-emails @filter="filter" @finish-process="isFinishedFilterEmails = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-emails>
+        <filter-emails :search="searchEmail" @filter="filter" @finish-process="isFinishedFilterEmails = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-emails>
 
 
     </div>

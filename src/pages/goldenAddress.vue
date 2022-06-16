@@ -170,9 +170,9 @@
             </b-col>
         </b-row>
         <edit-golden-address-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-golden-address-modal>
-        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-golden-address-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-golden-address-modal>
-        <filter-golden-addresses @filter="filter" @finish-process="isFinishedFilterGoldenAddresses = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-golden-addresses>
+        <filter-golden-addresses :search="searchGoldenAddress"  @filter="filter" @finish-process="isFinishedFilterGoldenAddresses = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-golden-addresses>
 
     </div>
 </template>

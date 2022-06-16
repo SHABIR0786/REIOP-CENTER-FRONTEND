@@ -25,6 +25,7 @@ const state = {
     email: {},
     filteredEmail: {},
     filteredEmailsCount: 0,
+    filterList: [],
 }
 
 const mutations = {
@@ -64,6 +65,11 @@ const mutations = {
         state.filteredEmailsCount = payload.total;
         state.total = payload.total;
     },
+    EMAIL_FILTER_LIST(state, payload) {
+        if(payload.data) {
+            state.filterList = JSON.stringify(payload.data);            
+        }
+    },
     SET_EMAIL(state, payload) {
         state.email = {...payload};
     },
@@ -83,6 +89,7 @@ const mutations = {
         state.emails = [];
         state.total = 0;
         state.email = {};
+        state.filterList = [];
     },
 }
 
@@ -124,6 +131,12 @@ const actions = {
     async filterEmail({ commit }, data) {
         return await api.post(`/emails/filter`, {...data}).then((response) => {
             commit('FILTER_EMAIL', response.emails)
+            return response
+        })
+    },
+    async emailFilterList({ commit }, data) {
+        return await api.post(`/emails/filterList`, {...data}).then((response) => {
+            commit('EMAIL_FILTER_LIST', response.lists)
             return response
         })
     },
@@ -176,6 +189,7 @@ const getters = {
     total: ({total}) => total,
     filteredEmailsCount: ({filteredEmailsCount}) => filteredEmailsCount,
     email: ({email}) => email,
+    filterList: ({filterList}) => filterList,
     filteredEmail: ({ filteredEmail }) => {
         if (typeof filteredEmail === 'string') {
             return JSON.parse(filteredEmail);

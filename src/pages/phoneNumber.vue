@@ -153,7 +153,7 @@
         <edit-phone-number-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-phone-number-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-phone-number-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-phone-number-modal>
-        <filter-phone-numbers @filter="filter" @finish-process="isFinishedFilterPhoneNumbers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-phone-numbers>
+        <filter-phone-numbers :search="searchPhone" @filter="filter" @finish-process="isFinishedFilterPhoneNumbers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-phone-numbers>
     </div>
 </template>
 <script>

@@ -28,6 +28,7 @@ const state = {
     goldenAddress: {},
     filteredGoldenAddress: {},
     filteredGoldenAddressesCount: 0,
+    filterList: [],
 }
 
 const mutations = {
@@ -67,6 +68,12 @@ const mutations = {
         state.filteredGoldenAddress =JSON.stringify(filteredData);
         state.filteredGoldenAddressesCount =payload.total;
     },
+    GOLDEN_FILTER_LIST(state, payload) {
+        if(payload.data) {
+            state.filterList = JSON.stringify(payload.data);            
+        }
+    },
+
     SET_GOLDEN_ADDRESS(state, payload) {
         state.goldenAddress = {...payload};
     },
@@ -85,6 +92,7 @@ const mutations = {
     VUEX_STORE(state) {
         state.goldenAddresses = [];
         state.total = 0;
+        state.filterList = [];
     },
 }
 
@@ -125,6 +133,12 @@ const actions = {
     async filterGoldenAddress({ commit }, data) {
         return await api.post(`/golden-addresses/filter`, {...data}).then((response) => {
             commit('FILTER_GOLDEN_ADDRESS', response.golden_addresses)
+            return response
+        })
+    },
+    async goldenFilterList({ commit }, data) {
+        return await api.post(`/golden-addresses/filterList`, {...data}).then((response) => {
+            commit('GOLDEN_FILTER_LIST', response.lists)
             return response
         })
     },
@@ -176,6 +190,7 @@ const getters = {
     },
     total: ({total}) => total,
     filteredGoldenAddressesCount: ({filteredGoldenAddressesCount}) => filteredGoldenAddressesCount,
+    filterList: ({filterList}) => filterList,
     filteredGoldenAddress: ({ filteredGoldenAddress }) => {
         if (typeof filteredGoldenAddress === 'string') {
             return JSON.parse(filteredGoldenAddress);
