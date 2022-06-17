@@ -28,7 +28,12 @@
                   <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
-                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                      <b-input-group class="mt-3">
+                        <b-form-input v-model="searchSubject" @keyup.enter="search" placeholder="Search"></b-form-input>
+                        <b-input-group-append>
+                        <b-button @click="search" variant="primary">Search</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
                 </b-col>
             </b-row>
         </div>
@@ -175,8 +180,7 @@
                         label-cols-md="4"
                         label-cols-lg="3"
                         label-size="xs"
-                        class="mb-0"
-                >
+                        class="mb-0">
                     <b-form-select
                             id="show-select"
                             v-model="perPage"
@@ -196,7 +200,7 @@
         <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-        <filter-subjects @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
+        <filter-subjects :search="searchSubject" @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
     </div>
 </template>
 <script>
@@ -281,6 +285,39 @@ export default {
       this.itemsCount = this.total;
     },
     methods: {
+       async search() {
+  //   if (!this.total || (this.filteredItems.length == 0)) {
+            if (!this.totalFilters){
+                await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                // if(this.searchSubject == '') {
+                //   this.itemsCount = this.total;
+                // } else { 
+                // this.itemsCount = this.items.length
+                // }
+                this.itemsCount = this.total;
+                this.filteredOrAllData = this.items;
+              } else {
+              await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage, search: this.searchSubject, filter: this.filtersName,sortBy:this.sortBy,sortDesc:this.sortDesc })
+              this.filteredOrAllData = this.filteredItems
+              this.itemsCount = this.filteredSubjectsCount
+            //     this.currentPage = 1;
+            //     let searchInFiltered = [...this.filteredItems]
+            //      searchInFiltered = searchInFiltered.filter(el => {
+            //      return  el.subject_address.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())||
+            //        el.subject_city.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())  ||
+            //        el.subject_state.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase()) ||
+            //        el.subject_zip.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())   ||
+            //        el.id.toString().includes(this.searchSubject)
+            //      });
+            //     if(this.searchSubject) {
+            //       this.itemsCount = searchInFiltered.length
+            //     } else {
+            //       this.itemsCount = this.total;
+            //     }
+            //     this.filteredOrAllData =  searchInFiltered
+            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+              }
+        },
        async sortingChanged(ctx) {
            this.sortBy = ctx.sortBy;
            this.sortDesc = ctx.sortDesc;
@@ -396,41 +433,6 @@ export default {
 
               }
             this.$store.dispatch('uxModule/hideLoader')
-            }
-        },
-        searchSubject: {
-            handler: async function () {
-            //   if (!this.total || (this.filteredItems.length == 0)) {
-                if (!this.totalFilters){
-                await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                // if(this.searchSubject == '') {
-                //   this.itemsCount = this.total;
-                // } else { 
-                // this.itemsCount = this.items.length
-                // }
-                this.itemsCount = this.total;
-                this.filteredOrAllData = this.items;
-              } else {
-              await this.$store.dispatch("subjectModule/filterSubject", { page: this.currentPage, perPage: this.perPage, search: this.searchSubject, filter: this.filtersName,sortBy:this.sortBy,sortDesc:this.sortDesc })
-              this.filteredOrAllData = this.filteredItems
-              this.itemsCount = this.filteredSubjectsCount
-            //     this.currentPage = 1;
-            //     let searchInFiltered = [...this.filteredItems]
-            //      searchInFiltered = searchInFiltered.filter(el => {
-            //      return  el.subject_address.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())||
-            //        el.subject_city.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())  ||
-            //        el.subject_state.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase()) ||
-            //        el.subject_zip.toLocaleLowerCase().includes(this.searchSubject.toLocaleLowerCase())   ||
-            //        el.id.toString().includes(this.searchSubject)
-            //      });
-            //     if(this.searchSubject) {
-            //       this.itemsCount = searchInFiltered.length
-            //     } else {
-            //       this.itemsCount = this.total;
-            //     }
-            //     this.filteredOrAllData =  searchInFiltered
-            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
-              }
             }
         },
       isFinishedFilterSubjects() {

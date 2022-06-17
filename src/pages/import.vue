@@ -59,6 +59,7 @@
                    :is-have-mapped-items="isHaveMappedItems"
                    :is-skip-validate="skipValidate"
                    :is-skip-trace="isSkippedData"
+                   :is-combined-import="isCombinedImport"
                    @modalResponse="confirmImport">
     </confirm-modal>
       <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
@@ -242,7 +243,11 @@ export default {
         if (!(item['toField'].includes('subject_address_line2')) && !(item['toField'].includes('seller_mailing_address_line2')))
           mappedFields.push(item['toField'])
       })
-
+      if (!mappedFields.length){
+        this.isHaveMappedItems = false;
+        this.showConfirmModal = true;
+        return;
+      }
       let requiredSubjectExist = requiredSubjectsFields.every(msub => mappedFields.includes(msub));
 
       // If User map Sellers, then check if all required Sellers field are mapped
@@ -265,10 +270,6 @@ export default {
         }
       });
 
-      if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
-        this.isHaveMappedItems = true;
-      }
-
       var namesCounts    = [];
       namesCounts.push(mappedFields.filter(x => x.includes('seller_first_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_last_name')).length);
@@ -290,85 +291,137 @@ export default {
       let missingSubjectData = requiredSubjectsFields.filter(ms => !mappedFields.includes(ms));
       let missingSellersData = requiredSellersFields.filter(ms => !mappedFields.includes(ms) );
 
-      if (subjectMapped  && !this.skipValidate) {
-          if (missingSubjectData.length ){
+        if (subjectMapped && !this.skipValidate) {
+          if (missingSubjectData.length) {
             this.missingSubjectsData = missingSubjectData;
             this.showSellerFillModal = true;
-            if (!sellerMapped && !this.isCombinedImport){
+            if (!sellerMapped && !this.isCombinedImport) {
               return;
             }
-          }else {
+          } else {
             this.isHaveMappedItems = true;
           }
-      }
+        }
 
-      if (sellerMapped) {
-        this.sellerMapped = true;
-        const sellersNamesAdrCountEqual = mappedSellerAddresses.filter(element => element.length !== sellersCount)
-        if (requiredSellersExist && (sellersCount === 0 || !sellersNamesAdrCountEqual.length)) {
-          this.showConfirmModal = true;
-          return;
-        } else if(!missingSellersData.length ) {
-            if (sellersCount >= addressMaxLength){
+        if (sellerMapped) {
+          this.sellerMapped               = true;
+          const sellersNamesAdrCountEqual = mappedSellerAddresses.filter(element => element.length !== sellersCount)
+          if (requiredSellersExist && (sellersCount === 0 || !sellersNamesAdrCountEqual.length)) {
+            this.showConfirmModal = true;
+            return;
+          } else if (!missingSellersData.length) {
+            if (sellersCount >= addressMaxLength) {
               missingSellersData = sellersNamesAdrCountEqual
-            }else if(sellersCount < addressMaxLength){
-              for(let i in sellersNamesAdrCountEqual) {
-                requiredSellersFields =  requiredSellersFields.filter(el => sellersNamesAdrCountEqual[i][0] !== el)
+            } else if (sellersCount < addressMaxLength) {
+              for (let i in sellersNamesAdrCountEqual) {
+                requiredSellersFields = requiredSellersFields.filter(el => sellersNamesAdrCountEqual[i][0] !== el)
               }
               missingSellersData = requiredSellersFields;
             }
           }
 
-        this.missingSellersData = missingSellersData;
-        this.showSellerFillModal = true;
-        if (this.missingSubjectsData && !this.isCombinedImport){
-          return;
-        }
-      }
-      // Validate data
-      if (this.skipValidate && item.length) {
-
-        let mappedValidateFields = [];
-        item.forEach(item => {
-          mappedValidateFields.push(item['toField'])
-        })
-
-        let requiredPhonesFields = ['phone_number', 'phone_validity'];
-        let missingPhoneField   = requiredPhonesFields.filter(Ph => !mappedValidateFields.includes(Ph));
-
-        let requiredEmailFields = ['email_address', 'email_validity'];
-        let missingEmailFields  = requiredEmailFields.filter(Em => !mappedValidateFields.includes(Em));
-
-        if (missingEmailFields.length !==2 && missingEmailFields.length ){
-          this.missingValidateData.push(missingEmailFields);
+          this.missingSellersData  = missingSellersData;
           this.showSellerFillModal = true;
-          if (missingPhoneField.length === 2){
+          if (this.missingSubjectsData && !this.isCombinedImport) {
             return;
           }
         }
-        if (missingPhoneField.length !==2 && missingPhoneField.length ){
-          this.missingValidateData.push(missingPhoneField);
-          this.showSellerFillModal = true;
-          return;
-        }
-        if (missingPhoneField || missingEmailFields) {
+
+        // Validate data
+
+        if (this.skipValidate ) {
+          let mappedValidateFields = [];
+          item.forEach(item => {
+            mappedValidateFields.push(item['toField'])
+          })
+
+          let requiredPhonesFields = ['phone_number', 'phone_validity'];
+          let missingPhoneField    = requiredPhonesFields.filter(Ph => !mappedValidateFields.includes(Ph));
+          let mappedPhoneCount = mappedValidateFields.filter(x => x.includes('phone_number')).length
+          let mappedPhoneTypeCount = mappedValidateFields.filter(x => x.includes('phone_validity')).length
+
+
+          let requiredEmailFields = ['email_address', 'email_validity'];
+          let missingEmailFields  = requiredEmailFields.filter(Em => !mappedValidateFields.includes(Em));
+          let mappedEmailCount = mappedValidateFields.filter(x => x.includes('email_address')).length
+          let mappedEmailTypeCount = mappedValidateFields.filter(x => x.includes('email_validity')).length
+
+          let emailMappedCorrect = (mappedEmailCount === mappedEmailTypeCount);
+
+          if (missingEmailFields.length === 1 && emailMappedCorrect) {
+            this.missingValidateData.push(missingEmailFields);
+            if (missingPhoneField.length === 2 ) {
+              this.showSellerFillModal = true;
+              return;
+            }
+          }
+          if (missingPhoneField.length === 1 && emailMappedCorrect) {
+            this.missingValidateData.push(missingPhoneField);
+            this.showSellerFillModal = true;
+            return;
+          }
+          if (mappedPhoneCount > mappedPhoneTypeCount)
+          {
+            let diffCount = '('+(mappedPhoneCount - mappedPhoneTypeCount)+')'
+            this.missingValidateData.push('phone_validity ' + diffCount);
+            if (emailMappedCorrect){
+              this.showSellerFillModal = true;
+              return;
+            }
+
+          }
+          if (mappedPhoneCount < mappedPhoneTypeCount)
+          {
+            let diffCount = '('+(mappedPhoneTypeCount - mappedPhoneCount)+')'
+            this.missingValidateData.push('phone_number '+ diffCount);
+            if (emailMappedCorrect){
+              this.showSellerFillModal = true;
+              return;
+            }
+          }
+
+          if (mappedEmailCount > mappedEmailTypeCount)
+          {
+            let diffCount = '('+(mappedEmailCount - mappedEmailTypeCount)+')'
+            this.missingValidateData.push('email_validity ' + diffCount);
+            this.showSellerFillModal = true;
+            return;
+
+          }
+          if (mappedEmailCount < mappedEmailTypeCount)
+          {
+            let diffCount = '('+(mappedEmailTypeCount - mappedEmailCount)+')'
+            this.missingValidateData.push('email_address ' + diffCount);
+            this.showSellerFillModal = true;
+            return;
+          }
+
+          if (missingPhoneField.length === 0 && missingEmailFields.length === 1){
+            this.showSellerFillModal = true;
+            return;
+          }
+
           this.isHaveMappedItems = true;
         }
-      }
 
-      // Combined data
+        // Combined data
 
-      if (this.upload_type === 'combined') {
+        if (this.upload_type === 'combined') {
 
-         let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source','list_pull_date'];
-         let missingListData = requiredListSettingsFields.filter(ms => !mappedFields.includes(ms));
-         if (missingListData){
-           this.missingListData = missingListData;
-           this.showSellerFillModal = true;
-           return;
-         }
-      }
-        this.showConfirmModal = true;
+          let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source', 'list_pull_date'];
+          let missingListData            = requiredListSettingsFields.filter(ms => !mappedFields.includes(ms));
+          if (missingListData.length) {
+            this.missingListData     = missingListData;
+            this.showSellerFillModal = true;
+            return;
+          }
+          if(!sellerMapped && !subjectMapped){
+            this.isHaveMappedItems = true;
+          }else if((subjectMapped && missingSubjectData.length) || (sellerMapped && missingSellersData.length)) {
+            return;
+          }
+        }
+      this.showConfirmModal = true;
 
     },
     createMapping(){

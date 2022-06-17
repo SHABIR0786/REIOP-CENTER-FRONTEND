@@ -34,6 +34,7 @@ const state = {
 
     ],
     subjects: [],
+    filterList: [],
     total: 0,
     subject: {},
     filteredSubject: {},
@@ -72,7 +73,11 @@ const mutations = {
     GET_TOTAL(state, payload) {
         state.total = payload;
     },
-
+    SUBJECT_FILTER_LIST(state, payload) {
+        if(payload.data) {
+            state.filterList = JSON.stringify(payload.data);            
+        }
+    },
     FILTER_SUBJECT(state, payload) {
         if(payload.data) {
         const filteredData = [...payload.data]
@@ -102,6 +107,7 @@ const mutations = {
         state.subjects = [];
         state.total = 0;
         state.subject = {};
+        state.filterList = [];
     },
 }
 
@@ -166,7 +172,12 @@ const actions = {
         })
     },
 
-
+    async SubjectfilterList({ commit }, data) {
+        return await api.post(`/subjects/filterList`, {...data}).then((response) => {
+            commit('SUBJECT_FILTER_LIST', response.lists)
+            return response
+        })
+    },
     async deleteSubject({ commit }, data) {
         return await api.deleteAPI(`/subjects/${data}`).then((response) => {
             commit('DELETE_SUBJECT', data)
@@ -204,6 +215,7 @@ const getters = {
     total: ({total}) => total,
     filteredSubjectsCount: ({filteredSubjectsCount}) => filteredSubjectsCount,
     subject: ({subject}) => subject,
+    filterList: ({filterList}) => filterList,
     filteredSubject: ({ filteredSubject }) => {
         if (typeof filteredSubject === 'string') {
             return JSON.parse(filteredSubject);

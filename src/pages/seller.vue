@@ -29,7 +29,12 @@
                   <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
                 </b-col>
                 <b-col cols="4">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                       <b-input-group class="mt-3">
+                        <b-form-input v-model="searchSeller" @keyup.enter="search" placeholder="Search"></b-form-input>
+                        <b-input-group-append>
+                        <b-button @click="search" variant="primary">Search</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
                 </b-col>
             </b-row>
         </div>
@@ -186,9 +191,9 @@
             </b-col>
         </b-row>
         <edit-seller-modal :showModal="showModal" :propsSeller="editedItem" @cancel="showModal=false" @save="save"></edit-seller-modal>
-        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-seller-modal :showModal="showAddModal" @cancel="showAddModal=false" @save="add"></add-seller-modal>
-        <filter-sellers @filter="filter" @finish-process="isFinishedFilterSellers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-sellers>
+        <filter-sellers :search="searchSeller" @filter="filter" @finish-process="isFinishedFilterSellers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-sellers>
     </div>
 </template>
 <script>
@@ -271,6 +276,48 @@ export default {
 
     },
     methods: {
+        async search(){
+        // if (!this.total || (this.filteredItems.length == 0)) {
+                if (!this.totalFilters) {
+                await this.$store.dispatch('sellerModule/searchSellers', { page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                // if(this.searchSeller == '') {
+                //   this.itemsCount = this.total;
+                // } 
+                // else { 
+                // this.itemsCount = this.items.length
+                // }
+                this.itemsCount = this.total;
+                this.filteredOrAllData = this.items;
+                } else {
+                await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage,search: this.searchSeller, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc})
+                this.filteredOrAllData = this.filteredItems
+                this.itemsCount = this.filteredSellersCount
+                
+                }
+            //   } 
+            //   else {
+            //     this.currentPage = 1;
+            //     let searchInFiltered = [...this.filteredItems]
+            //     const Instance = this;
+            //      searchInFiltered = searchInFiltered.filter(el => {
+            //      return  el.seller_mailing_address?.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())||
+            //        el.seller_first_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+            //        el.seller_last_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+            //        el.seller_middle_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
+            //        el.seller_mailing_city?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())  ||
+            //        el.seller_mailing_state?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase()) ||
+            //        el.seller_mailing_zip?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())   ||
+            //        el.id.toString()?.includes(Instance.searchSeller.toLocaleLowerCase())
+            //      });
+            //     if(this.searchSeller) {
+            //       this.itemsCount = searchInFiltered.length
+            //     } else {
+            //       this.itemsCount = this.total;
+            //     }
+            //     this.filteredOrAllData =  searchInFiltered
+            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
+            //   }
+        },
     async sortingChanged(ctx) {
         this.sortBy = ctx.sortBy;
         this.sortDesc = ctx.sortDesc;
@@ -384,52 +431,6 @@ export default {
                 this.filteredOrAllData = this.filteredItems
               }
             this.$store.dispatch('uxModule/hideLoader')
-            }
-        },
-        searchSeller: {
-            handler: async function () {
-                // if (!this.total || (this.filteredItems.length == 0)) {
-                if (!this.totalFilters) {
-                await this.$store.dispatch('sellerModule/searchSellers', { page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                // if(this.searchSeller == '') {
-                //   this.itemsCount = this.total;
-                // } 
-                // else { 
-                // this.itemsCount = this.items.length
-                // }
-                this.itemsCount = this.total;
-                this.filteredOrAllData = this.items;
-                } else {
-                await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage,search: this.searchSeller, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc})
-                this.filteredOrAllData = this.filteredItems
-                this.itemsCount = this.filteredSellersCount
-                
-                }
-            //   } 
-            //   else {
-            //     this.currentPage = 1;
-            //     let searchInFiltered = [...this.filteredItems]
-            //     const Instance = this;
-            //      searchInFiltered = searchInFiltered.filter(el => {
-            //      return  el.seller_mailing_address?.toLocaleLowerCase().includes(Instance.searchSeller.toLocaleLowerCase())||
-            //        el.seller_first_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
-            //        el.seller_last_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
-            //        el.seller_middle_name?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())||
-            //        el.seller_mailing_city?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())  ||
-            //        el.seller_mailing_state?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase()) ||
-            //        el.seller_mailing_zip?.toLocaleLowerCase()?.includes(Instance.searchSeller.toLocaleLowerCase())   ||
-            //        el.id.toString()?.includes(Instance.searchSeller.toLocaleLowerCase())
-            //      });
-            //     if(this.searchSeller) {
-            //       this.itemsCount = searchInFiltered.length
-            //     } else {
-            //       this.itemsCount = this.total;
-            //     }
-            //     this.filteredOrAllData =  searchInFiltered
-            //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
-            //   }
-
-
             }
         },
         isFinishedFilterSellers() {

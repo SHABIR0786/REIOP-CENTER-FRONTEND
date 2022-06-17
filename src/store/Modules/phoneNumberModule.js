@@ -26,6 +26,7 @@ const state = {
     phoneNumber: {},
     filteredPhoneNumber: {},
     filteredPhoneNumbersCount: 0,
+    filterList: [],
 }
 
 const mutations = {
@@ -73,6 +74,11 @@ const mutations = {
     SET_PHONE_NUMBER(state, payload) {
         state.phoneNumber = {...payload};
     },
+    PHONE_FILTER_LIST(state, payload) {
+        if(payload.data) {
+            state.filterList = JSON.stringify(payload.data);            
+        }
+    },
     DELETE_MULTIPLE_ITEMS(state, payload) {
         const PHONE = JSON.parse(state.phoneNumbers)
         const findIndex =PHONE.findIndex(({ id }) => id === payload)
@@ -83,6 +89,7 @@ const mutations = {
         state.phoneNumbers = [];
         state.total = 0;
         state.phoneNumber = {};
+        state.filterList = [];
     },
 }
 
@@ -112,6 +119,13 @@ const actions = {
     async filterPhoneNumber({ commit }, data) {
         return await api.post(`/phones/filter`, {...data}).then((response) => {
             commit('FILTER_PHONE_NUMBER', response.phones)
+            return response
+        })
+    },
+
+    async  phoneFilterList({ commit }, data) {
+        return await api.post(`/phones/filterList`, {...data}).then((response) => {
+            commit('PHONE_FILTER_LIST', response.lists)
             return response
         })
     },
@@ -177,6 +191,7 @@ const getters = {
     },
     total: ({total}) => total,
     filteredPhoneNumbersCount: ({filteredPhoneNumbersCount}) => filteredPhoneNumbersCount,
+    filterList : ({filterList}) => filterList,
     phoneNumber: ({phoneNumber}) => phoneNumber,
     filteredPhoneNumber: ({ filteredPhoneNumber }) => {
         if (typeof filteredPhoneNumber === 'string') {

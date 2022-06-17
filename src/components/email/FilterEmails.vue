@@ -264,13 +264,10 @@ export default {
       type: Array,
       default: null,
     },
-    currentPage: {
-      type: Number,
-      default: 1,
+    search: {
+      type: String,
+      default: '',
     },
-  },
-  mounted() {
-    this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
   },
   data() {
     return {
@@ -329,45 +326,47 @@ export default {
     }
   },
   watch: {
-    showModal() {
+   async showModal() {
       if (this.showModal /* && !this.appliedFilters && +localStorage.getItem('email-filters-count') === 0*/){
           this.email = this.propsData
-          this.email.forEach(el => {
-            if (el.email_error_type && !this.allData.Errors.includes(el.email_error_type)  && !this.allFilters.Errors.includes(el.email_error_type)){
-              this.allData.Errors.push(el.email_error_type)
-            }
-          })
+          let response = await this.$store.dispatch("emailModule/emailFilterList", {filter: this.allFilters, search: this.search});
+          this.MapFilters(response);
+        //   this.email.forEach(el => {
+        //     if (el.email_error_type && !this.allData.Errors.includes(el.email_error_type)  && !this.allFilters.Errors.includes(el.email_error_type)){
+        //       this.allData.Errors.push(el.email_error_type)
+        //     }
+        //     if (el.email_skip_source && !this.allData.SkipSource.includes(el.email_skip_source) && !this.allFilters.SkipSource.includes(el.email_skip_source)){
+        //       this.allData.SkipSource.push(el.email_skip_source)
+        //     }
+        //   })
 
-          this.lists.forEach(el =>{
-            if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
-              this.allData.Market.push(el.list_market)
-            }
-            if (el.list_group && !this.allData.Group.includes(el.list_group) && !this.allFilters.Group.includes(el.list_group)){
-              this.allData.Group.push(el.list_group)
-            }
-            if (el.list_type && !this.allData.Type.includes(el.list_type) && !this.allFilters.Type.includes(el.list_type)){
-              this.allData.Type.push(el.list_type)
-            }
-            if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
-              this.allData.Source.push(el.list_source)
-            }
-            if (el.list_skip_source && !this.allData.SkipSource.includes(el.list_skip_source) && !this.allFilters.SkipSource.includes(el.list_skip_source)){
-              this.allData.SkipSource.push(el.list_skip_source)
-            }
-            if (el.run_year &&  el.run_month){
-              let runYear = el.run_year.split(",")
-              let runMonth = el.run_month.split(",")
-              for(let i = 0; i < runYear.length; i++){
-               let  run_date = runMonth[i]+'/'+runYear[i];
-                if (!this.allData.RunDate.includes(run_date) && !this.allFilters.RunDate.includes(run_date)){
-                  this.allData.RunDate.push(run_date)
-                }
-              }
-            }
-          });
-        for(let category in this.allData){
-          this.allData[category].sort((a, b) => a.localeCompare(b))
-        }
+        //   this.lists.forEach(el =>{
+        //     if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
+        //       this.allData.Market.push(el.list_market)
+        //     }
+        //     if (el.list_group && !this.allData.Group.includes(el.list_group) && !this.allFilters.Group.includes(el.list_group)){
+        //       this.allData.Group.push(el.list_group)
+        //     }
+        //     if (el.list_type && !this.allData.Type.includes(el.list_type) && !this.allFilters.Type.includes(el.list_type)){
+        //       this.allData.Type.push(el.list_type)
+        //     }
+        //     if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
+        //       this.allData.Source.push(el.list_source)
+        //     }
+        //     if (el.run_year &&  el.run_month){
+        //       let runYear = el.run_year.split(",")
+        //       let runMonth = el.run_month.split(",")
+        //       for(let i = 0; i < runYear.length; i++){
+        //        let  run_date = runMonth[i]+'/'+runYear[i];
+        //         if (!this.allData.RunDate.includes(run_date) && !this.allFilters.RunDate.includes(run_date)){
+        //           this.allData.RunDate.push(run_date)
+        //         }
+        //       }
+        //     }
+        //   });
+        // for(let category in this.allData){
+        //   this.allData[category].sort((a, b) => a.localeCompare(b))
+        // }
       }
     },
     searchEmail: {
@@ -386,7 +385,65 @@ export default {
     tab(currentTub){
       this.activeTab = currentTub;
     },
-    addFilter (item, index) {
+    MapFilters(response) {
+        this.allData = {
+        Market:[],
+        Group:[],
+        Type:[],
+        Source:[],
+        Errors:[],
+        RunDate:[],
+        SkipSource:[]
+          };
+      if(response.email_error_type) {
+        response.email_error_type.forEach(el=>{
+          if (el && !this.allData.Errors.includes(el)  && !this.allFilters.Errors.includes(el)) {
+          this.allData.Errors.push(el);
+        }
+        });
+      }
+      if(response.email_skip_source){
+        response.email_skip_source.forEach(el=>{
+        if (el && !this.allData.SkipSource.includes(el) && !this.allFilters.SkipSource.includes(el)){
+              this.allData.SkipSource.push(el)
+        }
+        });
+      }
+
+      if(response.lists) {
+      response.lists.forEach(el => {
+            if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
+              this.allData.Market.push(el.list_market)
+            }
+            if (el.list_group && !this.allData.Group.includes(el.list_group) && !this.allFilters.Group.includes(el.list_group)){
+              this.allData.Group.push(el.list_group)
+            }
+            if (el.list_type && !this.allData.Type.includes(el.list_type) && !this.allFilters.Type.includes(el.list_type)){
+              this.allData.Type.push(el.list_type)
+            }
+            if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
+              this.allData.Source.push(el.list_source)
+            }
+            if (el.list_skip_source && !this.allData.SkipSource.includes(el.list_skip_source) && !this.allFilters.SkipSource.includes(el.list_skip_source)){
+              this.allData.SkipSource.push(el.list_skip_source)
+            }
+            if (el.list_run_year &&  el.list_run_month){
+              let runYear = el.list_run_year.split(",")
+              let runMonth = el.list_run_month.split(",")
+              for(let i = 0; i < runYear.length; i++){
+               let  run_date = runMonth[i]+'/'+runYear[i];
+                if (!this.allData.RunDate.includes(run_date) && !this.allFilters.RunDate.includes(run_date)){
+                  this.allData.RunDate.push(run_date)
+                }
+              }
+            }
+          });
+        for(let category in this.allData){
+          this.allData[category].sort((a, b) => a.localeCompare(b))
+        }
+      }
+    },
+  async  addFilter (item, index) {
       if (this.searchEmail){
         this.allFilters[this.activeTab].push(item);
         this.filtered = this.filtered.filter(e => e !== item);
@@ -395,8 +452,10 @@ export default {
         this.allFilters[this.activeTab].push(item);
         this.allData[this.activeTab].splice(index, 1)
       }
+      let response = await this.$store.dispatch("emailModule/emailFilterList", {filter: this.allFilters, search: this.search});
+      this.MapFilters(response);
     },
-    resetFilter (item,index) {
+   async resetFilter (item,index) {
       if (this.activeTab === 'allFilters'){
         this.allData[index].push(item);
         this.allFilters[index] = this.allFilters[index].filter(e => e !== item);
@@ -414,8 +473,10 @@ export default {
       for(let category in this.allData){
         this.allData[category].sort((a, b) => a.localeCompare(b))
       }
+      let response = await this.$store.dispatch("emailModule/emailFilterList", {filter: this.allFilters, search: this.search});
+      this.MapFilters(response);
     },
-    clearAllFilters(allFilters){
+   async clearAllFilters(allFilters){
       if (typeof allFilters === 'object'){
         allFilters.Market.forEach(e => {this.allData.Market.push(e)});
         allFilters.Group.forEach(e => {this.allData.Group.push(e)});
@@ -437,6 +498,8 @@ export default {
       for(let category in this.allData){
         this.allData[category].sort((a, b) => a.localeCompare(b))
       }
+        let response = await this.$store.dispatch("emailModule/emailFilterList", {filter: this.allFilters, search: this.search});
+        this.MapFilters(response);
     },
     applyFilters(filters){
       let filterValue = 0;
@@ -473,23 +536,23 @@ export default {
       this.$emit('cancel')
     },
     async updateDataChanges() {
-      await this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
-      this.lists.forEach(e => {
-        this.incomingList.Market.push(e.list_market)
-        this.incomingList.Group.push(e.list_group)
-        this.incomingList.Type.push(e.list_type)
-        this.incomingList.Source.push(e.list_source)
-        this.incomingList.SkipSource.push(e.list_skip_source)
-        let runYear = e.run_year?.split(",")
-        let runMonth = e.run_month?.split(",")
-        for(let i = 0; i < runYear?.length; i++) {
-          this.incomingList.RunDate.push(runMonth[i]+'/'+runYear[i])
-        }
-      });
-      this.emailData = this.propsData
-      this.emailData.forEach(el => {
-          this.incomingList.Errors.push(el.email_error_type)
-      })
+      // await this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
+      // this.lists.forEach(e => {
+      //   this.incomingList.Market.push(e.list_market)
+      //   this.incomingList.Group.push(e.list_group)
+      //   this.incomingList.Type.push(e.list_type)
+      //   this.incomingList.Source.push(e.list_source)
+      //   this.incomingList.SkipSource.push(e.list_skip_source)
+      //   let runYear = e.run_year?.split(",")
+      //   let runMonth = e.run_month?.split(",")
+      //   for(let i = 0; i < runYear?.length; i++) {
+      //     this.incomingList.RunDate.push(runMonth[i]+'/'+runYear[i])
+      //   }
+      // });
+      // this.emailData = this.propsData
+      // this.emailData.forEach(el => {
+      //     this.incomingList.Errors.push(el.email_error_type)
+      // })
       this.$emit('finish-process')
     },
   },

@@ -8,6 +8,7 @@ const state = {
         {key: "actions", stickyColumn: true, label: "Actions"},
         {key: "golden_address_address", label: "Golden Address", sortable: true},
         {key: "golden_address_address_line2", label: "Golden Address Line 2", sortable: true},
+        {key: "golden_skip_source", label: "Skip Source", sortable: true},
         {key: "golden_address_city", label: "Golden City", sortable: true},
         {key: "golden_address_state", label: "Golden State", sortable: true},
         {key: "golden_address_zip", label: "Golden Zip", sortable: true},
@@ -27,6 +28,7 @@ const state = {
     goldenAddress: {},
     filteredGoldenAddress: {},
     filteredGoldenAddressesCount: 0,
+    filterList: [],
 }
 
 const mutations = {
@@ -66,6 +68,12 @@ const mutations = {
         state.filteredGoldenAddress =JSON.stringify(filteredData);
         state.filteredGoldenAddressesCount =payload.total;
     },
+    GOLDEN_FILTER_LIST(state, payload) {
+        if(payload.data) {
+            state.filterList = JSON.stringify(payload.data);            
+        }
+    },
+
     SET_GOLDEN_ADDRESS(state, payload) {
         state.goldenAddress = {...payload};
     },
@@ -84,6 +92,7 @@ const mutations = {
     VUEX_STORE(state) {
         state.goldenAddresses = [];
         state.total = 0;
+        state.filterList = [];
     },
 }
 
@@ -124,6 +133,12 @@ const actions = {
     async filterGoldenAddress({ commit }, data) {
         return await api.post(`/golden-addresses/filter`, {...data}).then((response) => {
             commit('FILTER_GOLDEN_ADDRESS', response.golden_addresses)
+            return response
+        })
+    },
+    async goldenFilterList({ commit }, data) {
+        return await api.post(`/golden-addresses/filterList`, {...data}).then((response) => {
+            commit('GOLDEN_FILTER_LIST', response.lists)
             return response
         })
     },
@@ -175,6 +190,7 @@ const getters = {
     },
     total: ({total}) => total,
     filteredGoldenAddressesCount: ({filteredGoldenAddressesCount}) => filteredGoldenAddressesCount,
+    filterList: ({filterList}) => filterList,
     filteredGoldenAddress: ({ filteredGoldenAddress }) => {
         if (typeof filteredGoldenAddress === 'string') {
             return JSON.parse(filteredGoldenAddress);
