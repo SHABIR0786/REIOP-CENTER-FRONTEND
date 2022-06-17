@@ -14,7 +14,9 @@ export const state = {
     ],
     uploadedFields: [],
     uploaded: false,
-    importVisibleFields: []
+    importVisibleFields: [],
+    mappingTemplates:[{ value: null, text: 'Select Optional Mapping Template' }],
+    mappingTemplate:{}
 }
 
 export const mutations = {
@@ -59,6 +61,12 @@ export const mutations = {
            }
         });
     },
+    SET_MAPPINGTEMPLATES(state, payload) {
+        state.mappingTemplates = payload
+    },
+    SET_MAPPINGTEMPLATE(state, payload) {
+        state.mappingTemplate = payload
+    },
     VUEX_STORE(state) {
         state.emailFields = [];
         state.goldenAddressFields = 0;
@@ -68,6 +76,8 @@ export const mutations = {
         state.subjectFields = {};
         state.uploadedFields = {};
         state.importVisibleFields = {};
+        state.mappingTemplates=[{ value: null, text: 'Select Optional Mapping Template' }];
+        state.mappingTemplate={};
     },
 }
 
@@ -83,7 +93,7 @@ export const actions = {
         })
     },
 
-    async uploadExcelDataV2({ commit }, {file, mappedItems, url, list, uploadType, skipSource, mapOrder,skipData,skipValidate}) {
+    async uploadExcelDataV2({ commit }, {file, mappedItems, url, list, uploadType, skipSource, mapOrder,skipData,skipValidate, createUpdateMapping, mapping, selectedMappingTemplate}) {
         const config = {headers: {'content-type': 'multipart/form-data; charset=UTF-8'}}
 
         let data = new FormData();
@@ -94,7 +104,10 @@ export const actions = {
         data.append('skipSource', skipSource);
         data.append('importType', uploadType);
         data.append('skipValidate', skipValidate);
-
+        data.append('createUpdateMapping', createUpdateMapping);
+        data.append('mapping',JSON.stringify(mapping));
+        data.append('selectedMappingTemplate', selectedMappingTemplate);
+        
         const mapObject = {};
         mappedItems.forEach(map => {
             mapObject[map.fromField] = map.toField;
@@ -124,6 +137,21 @@ export const actions = {
             }
         });
     },
+    async loadMappingTemplates ({ commit },{import_type}) {
+        return await api.get('/mapping-templates?import_type='+import_type).then((response) => {
+            if (response && response.templates) {
+                commit('SET_MAPPINGTEMPLATES', response.templates);
+            }
+        });
+    },
+    async getMappingTemplate ({ commit },{id}) {
+        return await api.get('/mapping-template/'+id).then((response) => {
+            if (response && response.template) {
+                commit('SET_MAPPINGTEMPLATE', response.template);
+            }
+        });
+    },
+    
     async deleteVuexStore({ commit }) {
         commit ('VUEX_STORE');
     },
@@ -138,7 +166,9 @@ export const getters = {
     listFields: ({ listFields }) => listFields,
     uploadedFields: ({ uploadedFields }) => uploadedFields,
     mappedHeader: ({ mappedHeader }) => mappedHeader,
-    schemas: ({ schemas }) => schemas
+    schemas: ({ schemas }) => schemas,
+    mappingTemplates: ({ mappingTemplates }) => mappingTemplates,
+    mappingTemplate: ({ mappingTemplate }) => mappingTemplate,
 }
 
 export default {

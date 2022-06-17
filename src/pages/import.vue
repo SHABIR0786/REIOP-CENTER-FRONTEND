@@ -13,6 +13,11 @@
         ></b-form-file>
       </b-col>
     </b-row>
+    <b-row>
+      <b-col cols="4" md="4">
+        <b-form-select v-model="selectedMappingTemplate" @change="getMappingTemplate($event)" :options="mappingTemplates" size="sm" class="mt-3"></b-form-select>
+      </b-col>
+    </b-row>
     <div class="mt-4 parent">
       <div class="child">
         <fields-card
@@ -44,7 +49,10 @@
     </div>
     <b-row>
       <b-col class="text-right" cols="12" md="12">
-        <b-btn variant="primary" @click="confirm(mappedItems)">Import</b-btn>
+        
+        <b-btn class="mr-2" variant="primary" :disabled=isDisable @click="createMapping()">Save Mapping Template and Import</b-btn>
+        <span>OR</span>
+        <b-btn class="ml-2"  variant="primary" @click="confirm(mappedItems)">Import</b-btn>
       </b-col>
     </b-row>
     <confirm-modal :showModal="showConfirmModal"
@@ -85,6 +93,16 @@
           </div>
         </template>
       </seller-modal>
+      <mapping-modal
+        :showModal="showCreateMapping"
+        :selectedMappingTemplate="selectedMappingTemplate"
+        :mappingTemplates="mappingTemplates"
+        :mapping="mapping"
+        @modalResponse="createMappingTemplateAndImport"
+        @modalClose="closeMappingTemplate"
+      >
+      </mapping-modal>
+      
   </b-container>
 </template>
 
@@ -95,6 +113,7 @@ import FieldsCard from "@/components/import/FieldsCard"
 import MappedFields from '../components/import/MappedFields.vue'
 import ConfirmModal from "../components/confirmModal/ConfirmModal";
 import SellerModal from "../components/slotModal/SlotModal";
+import MappingModal from "../components/mappingModal/MappingModal";
 
 const utf8 = require('utf8');
 
@@ -105,6 +124,7 @@ export default {
     FieldsCard,
     MappedFields,
     ConfirmModal,
+    MappingModal,
     SellerModal
   },
   data() {
@@ -123,6 +143,7 @@ export default {
       mappedItems: [],
       importedFields: {},
       showConfirmModal: false,
+      showCreateMapping: false,
       isHaveMappedItems: false,
       showSellerFillModal: false,
       missingSellersData: [],
@@ -153,6 +174,16 @@ export default {
         skip_trace: 'Updating Records With Skip Trace Data',
         skip_validity: 'Updating Records With Phone and/or Email Validity',
       },
+      selectedMappingTemplate: null,
+      updateMappingTemplate: null,
+      createUpdateMapping: false,
+      mapping:{
+        name: null,
+        description: null
+      },
+      // mappingTemplates: [
+      //   { value: null, text: 'Select Optional Mapping Template' }],
+      
     }
   },
   computed: {
@@ -166,7 +197,9 @@ export default {
       listFields: 'importModule/listFields',
       schemas: 'importModule/schemas',
       importFields: 'importModule/importFields',
-      skippedValidation: 'importV2Module/isSkipValidation'
+      skippedValidation: 'importV2Module/isSkipValidation',
+      mappingTemplates: 'importModule/mappingTemplates',
+      mappingTemplate: 'importModule/mappingTemplate',
     }),
     isSkippedData: {
       get() {
@@ -174,11 +207,17 @@ export default {
       },
       set(newVal) {
         return newVal
-      }
+      },
+    },
+    isDisable() {
+      return !(this.mappedItems.length > 0 && this.file != null);
     }
   },
   created() {
     this.targetFields();
+  },
+  mounted(){
+    this.getMappingTemplates();
   },
   methods: {
     sellerFill() {
@@ -332,6 +371,25 @@ export default {
         this.showConfirmModal = true;
 
     },
+    createMapping(){
+      this.showCreateMapping = false;
+      this.showCreateMapping = true;
+    },
+    closeMappingTemplate(){
+      this.showCreateMapping = false;
+      this.createUpdateMapping = false;
+    },
+    createMappingTemplateAndImport(selectedMapping, cmapping){
+      
+      this.showConfirmModal = false;
+      this.showCreateMapping = false;
+      this.createUpdateMapping = true;
+      this.updateMappingTemplate = selectedMapping;
+      
+      this.mapping = cmapping;
+      this.confirm(this.mappedItems)
+      
+    },
     confirmImport(response) {
       this.showConfirmModal = false;
       if (response) {
@@ -341,6 +399,8 @@ export default {
     previewFile(e) {
       this.$store.dispatch('uxModule/setLoading')
       this.mappedItems = []
+      this.selectedMappingTemplate = null;
+      this.updateMappingTemplate = null;
       this.targetFields();
       let $this     = this
       let files     = e.target.files, f = files[0]
@@ -473,8 +533,30 @@ export default {
         mapOrder: this.mappedItems,
         skipData: this.skip_data,
         skipValidate: this.skipValidate,
+        createUpdateMapping: this.createUpdateMapping,
+        mapping: this.mapping,
+        selectedMappingTemplate: this.updateMappingTemplate,
       })
        location.reload()
+    },
+    async getMappingTemplates(){
+      await this.$store.dispatch('importModule/loadMappingTemplates',{import_type:this.importTypes[this.upload_type]});
+    },
+    async getMappingTemplate(id){
+      if(id){
+        this.$store.dispatch('uxModule/setLoading')
+        await this.$store.dispatch('importModule/getMappingTemplate',{id:id});
+        
+        if(this.mappingTemplate && this.mappingTemplate.mapping_fields && this.mappingTemplate.mapping_fields.length){
+         this.mappedItems = this.mappingTemplate.mapping_fields.map(function(mapping_field) {
+            return {fromField: mapping_field.uploaded_field, toField: mapping_field.target_field, action: ""}
+          });
+          this.mapping.name = this.mappingTemplate.name;
+          this.mapping.description = this.mappingTemplate.description;
+          console.log(this.mappedItems);
+        }
+        this.$store.dispatch('uxModule/hideLoader');
+      }
     },
     async targetFields(){
       await this.$store.dispatch('importModule/loadVisibleFields')
