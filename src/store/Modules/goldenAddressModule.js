@@ -130,13 +130,33 @@ const actions = {
             return response
         })
     },
-    async filterGoldenAddress({ commit }, data) {
+    async filterGoldenAddress({ commit }, param) {
+        let data = Object.assign({}, JSON.parse(JSON.stringify(param)));
+        if(data.filter){
+            let keys = Object.keys(data.filter);
+            for(let i = 0; i < keys.length; i++) {
+                let index =  data.filter[keys[i]].findIndex(x=>x == "Blank");
+              if(index != -1) {
+                data.filter[keys[i]][index] = " ";
+              }
+            }
+        }
         return await api.post(`/golden-addresses/filter`, {...data}).then((response) => {
             commit('FILTER_GOLDEN_ADDRESS', response.golden_addresses)
             return response
         })
     },
-    async goldenFilterList({ commit }, data) {
+    async goldenFilterList({ commit }, param) {
+        let data = Object.assign({}, JSON.parse(JSON.stringify(param)));
+        if(data.filter){
+            let keys = Object.keys(data.filter);
+            for(let i = 0; i < keys.length; i++) {
+                let index =  data.filter[keys[i]].findIndex(x=>x == "Blank");
+              if(index != -1) {
+                data.filter[keys[i]][index] = " ";
+              }
+            }
+        }
         return await api.post(`/golden-addresses/filterList`, {...data}).then((response) => {
             commit('GOLDEN_FILTER_LIST', response.lists)
             return response

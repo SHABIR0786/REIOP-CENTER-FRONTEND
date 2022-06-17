@@ -396,14 +396,14 @@ export default {
         RunDate:[],
         SkipSource:[]
           };
-      if(response.phone_error_type) {
+      if(response?.phone_error_type?.length > 0) {
         response.phone_error_type.forEach(el=>{
           if (el && !this.allData.Errors.includes(el)  && !this.allFilters.Errors.includes(el)) {
           this.allData.Errors.push(el);
         }
         });
       }
-      if(response.phone_skip_source){
+      if(response?.phone_skip_source?.length > 0){
         response.phone_skip_source.forEach(el=>{
         if (el && !this.allData.SkipSource.includes(el) && !this.allFilters.SkipSource.includes(el)){
               this.allData.SkipSource.push(el)
@@ -411,7 +411,7 @@ export default {
         });
       }
 
-      if(response.lists) {
+      if(response?.lists?.length > 0) {
       response.lists.forEach(el => {
             if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
               this.allData.Market.push(el.list_market)
@@ -442,6 +442,15 @@ export default {
         for(let category in this.allData){
           this.allData[category].sort((a, b) => a.localeCompare(b))
         }
+      }
+
+      if(response?.lists?.length > 0) {
+        let AllFilters = Object.keys(this.allData);
+          AllFilters.forEach(item=> {
+          if(this.allFilters[item].findIndex(x=>x == 'Blank') == -1) {
+            this.allData[item].unshift("Blank");
+          }
+          });
       }
     },
    async addFilter (item, index) {

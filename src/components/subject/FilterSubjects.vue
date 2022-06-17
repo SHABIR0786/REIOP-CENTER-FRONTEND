@@ -360,8 +360,8 @@ export default {
             RunDate:[],
             SkipSource:[],
           };
-      console.log(response.subject_error_type);
-      if(response.subject_error_type) {
+
+      if(response?.subject_error_type?.length > 0) {
         response.subject_error_type.forEach(el=>{
           // console.log(el);
           if (el && !this.allData.Errors.includes(el)  && !this.allFilters.Errors.includes(el)) {
@@ -369,7 +369,7 @@ export default {
         }
         });
       }
-      if(response.lists) {
+      if(response?.lists?.length > 0) {
       response.lists.forEach(el => {
             if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
               this.allData.Market.push(el.list_market)
@@ -401,6 +401,15 @@ export default {
           this.allData[category].sort((a, b) => a.localeCompare(b))
         }
       }
+
+    if(response?.lists?.length > 0) {
+        let AllFilters = Object.keys(this.allData);
+          AllFilters.forEach(item=> {
+          if(this.allFilters[item].findIndex(x=>x == 'Blank') == -1) {
+            this.allData[item].unshift("Blank");
+          }
+          });
+        }
     },
   async addFilter (item, index) {
       if (this.searchSubject){
@@ -411,11 +420,11 @@ export default {
         this.allFilters[this.activeTab].push(item);
         this.allData[this.activeTab].splice(index, 1)
       }
-         let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
+         let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: Object.assign({},this.allFilters), search: this.search});
          this.MapFilters(response);
     },
    async resetFilter (item,index) {
-      if (this.activeTab === 'allFilters'){
+      if (this.activeTab === 'allFilters') {
         this.allData[index].push(item);
         this.allFilters[index] = this.allFilters[index].filter(e => e !== item);
       }else{
@@ -458,7 +467,8 @@ export default {
       for(let category in this.allData) {
         this.allData[category].sort((a, b) => a.localeCompare(b))
       }
-      let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search:this.search});
+
+      let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: Object.assign({},this.allFilters), search:this.search});
       this.MapFilters(response);
     },
     applyFilters(filters){

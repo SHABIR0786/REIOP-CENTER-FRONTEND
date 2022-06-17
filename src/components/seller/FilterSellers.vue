@@ -595,7 +595,7 @@ export default {
     tab(currentTub) {
       this.activeTab = currentTub;
     },
-        MapFilters(response) {
+    MapFilters(response) {
         this.allData = {
         Market: [],
         Group: [],
@@ -606,15 +606,15 @@ export default {
         SkipSource:[],
         CompanyOwned:[],
           };
-      if(response.seller_errors_types) {
+      if(response?.seller_errors_types?.length > 0) {
         response.seller_errors_types.forEach(el=>{
-          console.log(el);
           if (el && !this.allData.Errors.includes(el)  && !this.allFilters.Errors.includes(el)) {
           this.allData.Errors.push(el);
         }
         });
       }
-        if(response.seller_company_owned) {
+
+      if(response?.seller_company_owned?.length > 0) {
        response.seller_company_owned.forEach(el=>{
           if (el &&!this.allData.CompanyOwned.includes(el) &&
             !this.allFilters.CompanyOwned.includes(el)) {
@@ -624,7 +624,7 @@ export default {
         }
  
 
-      if(response.lists) {
+      if(response?.lists?.length > 0) {
       response.lists.forEach(el => {
             if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
               this.allData.Market.push(el.list_market)
@@ -656,7 +656,17 @@ export default {
           this.allData[category].sort((a, b) => a.localeCompare(b))
         }
       }
+
+      if(response?.lists?.length > 0) {
+        let AllFilters = Object.keys(this.allData);
+          AllFilters.forEach(item=> {
+          if(this.allFilters[item].findIndex(x=>x == 'Blank') == -1) {
+            this.allData[item].unshift("Blank");
+          }
+          });
+      }
     },
+
   async  addFilter(item, index) {
       if (this.searchSeller) {
         this.allFilters[this.activeTab].push(item);

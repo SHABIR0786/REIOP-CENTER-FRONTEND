@@ -139,14 +139,34 @@ const actions = {
             return response
         })
     },
-    async filterSeller({ commit }, data) {
+    async filterSeller({ commit }, param) {
+        let data = Object.assign({}, JSON.parse(JSON.stringify(param)));
+        if(data.filter){
+            let keys = Object.keys(data.filter);
+            for(let i = 0; i < keys.length; i++) {
+                let index =  data.filter[keys[i]].findIndex(x=>x == "Blank");
+              if(index != -1) {
+                data.filter[keys[i]][index] = " ";
+              }
+            }
+        }
         return await api.post(`/sellers/filter`, {...data}).then((response) => {
             commit('FILTER_SELLER', response.sellers)
             return response
         })
     },
     
-    async SellerfilterList({ commit }, data) {
+    async SellerfilterList({ commit }, param) {
+        let data = Object.assign({}, JSON.parse(JSON.stringify(param)));
+        if(data.filter){
+            let keys = Object.keys(data.filter);
+            for(let i = 0; i < keys.length; i++) {
+                let index =  data.filter[keys[i]].findIndex(x=>x == "Blank");
+              if(index != -1) {
+                data.filter[keys[i]][index] = " ";
+              }
+            }
+        }
         return await api.post(`/sellers/filterList`, {...data}).then((response) => {
             commit('SELLER_FILTER_LIST', response.lists)
             return response

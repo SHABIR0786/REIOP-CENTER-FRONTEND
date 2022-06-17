@@ -271,6 +271,7 @@ export default {
               this.showModal = true
             });
         }
+
       this.filteredOrAllData = this.items;
       this.itemsCount = this.total;
 
@@ -291,8 +292,7 @@ export default {
                 } else {
                 await this.$store.dispatch("sellerModule/filterSeller", {page: 1, perPage: this.perPage,search: this.searchSeller, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.filteredItems
-                this.itemsCount = this.filteredSellersCount
-                
+                this.itemsCount = this.filteredSellersCount;
                 }
             //   } 
             //   else {
