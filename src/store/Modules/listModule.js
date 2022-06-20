@@ -72,6 +72,11 @@ const mutations = {
     SHOW_TABS(state, payload) {
         state.tabData = payload;
     },
+    RELATED_IMPORTS(state, payload) {
+        payload.data.forEach(data => {
+            state.tabData.data.find(el => el.list_run_year === data.list_run_year && el.list_run_month === data.list_run_month).imports = payload.data
+        })
+    },
     DELETE_MULTIPLE_LISTS(state, payload) {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload)
@@ -218,6 +223,12 @@ const actions = {
     async currentModal({ commit }, {data, page, perPage}) {
         return await api.get(`/lists/modal?listHash=${data}&page=${page}&perPage=${perPage}`, {...data}).then((response) => {
             commit('SHOW_TABS', response.tabData)
+            return response
+        })
+    },
+    async relatedImports({ commit }, {data,runYear,runMonth, page, perPage}) {
+        return await api.get(`/lists/relatedImports?listHash=${data}&runYear=${runYear}&runMonth=${runMonth}&page=${page}&perPage=${perPage}`, {...data}).then((response) => {
+            commit('RELATED_IMPORTS', response.relatedImports)
             return response
         })
     },
