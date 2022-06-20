@@ -141,11 +141,11 @@
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                   </template>
                   <template #cell(id)="row">
-                    <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+                    <b-button size="sm" @click="showImport(row)" class="mr-2">
                       {{ row.detailsShowing ? 'Hide' : 'Show'}} Imports
                     </b-button>
                   </template>
-                  <template #row-details>
+                  <template #row-details="row">
                     <div class="w-100 mw-100 px-2 mt-3">
                       <b-card class="details-card text-center">
                         <b-table
@@ -156,7 +156,7 @@
                             hover
                             :busy="isBusy"
                             :fields="importFields"
-                            :items="importItems"
+                            :items="row.item.imports"
                             responsive
                             :per-page="0"
                             :sticky-header="true"
@@ -234,6 +234,10 @@ export default {
           this.isReadOnly = true;
           this.$emit('save', this.list);
       },
+      async showImport(row){
+        await this.$store.dispatch(`listModule/relatedImports`,{data:row.item.list_hash, runYear:row.item.list_run_year,runMonth:row.item.list_run_month, page: 1, perPage:this.perPage})
+        row.toggleDetails();
+     },
       currentModal(){
         this.currentPage = 1;
         this.$store.dispatch(`listModule/currentModal`,{data:this.propsData.list_hash, page: 1, perPage:this.perPage})
@@ -247,7 +251,7 @@ export default {
         this.$store.dispatch('subjectModule/deleteSubject', item.id)
       },
       openRelatedImports(item){
-        const route = '/import-v2?batch_id='+item.id;
+        const route = '/import-v2?batch_id='+item.process_id;
         let routeData = this.$router.resolve({path: route});
         window.open(routeData.href, '_blank');
       }
@@ -265,7 +269,6 @@ export default {
           subjectTableFields: null,
           modalName:'sellers',
           tableName:'Seller',
-          importFieldsForList:[],
           list: {
             list_type: '',
             list_group: '',
@@ -302,7 +305,7 @@ export default {
             {key:"error_number", label: "Error Lines", sortable: true},
             {key:"total_row_number", label: "Total Lines", sortable: true},
             {key:"created_at", label: "Created Date", sortable: true},
-            {key:"id", label: "Process ID", sortable: true},
+            {key:"process_id", label: "Process ID", sortable: true},
             {key:"user_name", label: "Uploaded By", sortable: true},
           ],
         }
@@ -311,7 +314,6 @@ export default {
       ...mapGetters({
         sellerFields: 'sellerModule/fields',
         tabData: 'listModule/tabData',
-        importItems:'importV2Module/imports',
         total: 'listModule/total'
       }),
       rows() { return this.tabData.total ? this.tabData.total : 1 }

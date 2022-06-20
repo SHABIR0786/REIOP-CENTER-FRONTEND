@@ -218,27 +218,6 @@
                         </div>
                       </template>
                     </b-table>
-<!--                    <b-row>-->
-<!--                      <b-col class="d-flex align-items-center">-->
-<!--                        <b-form-group-->
-<!--                            label="Show"-->
-<!--                            label-for="show-select"-->
-<!--                            label-cols-sm="6"-->
-<!--                            label-cols-md="4"-->
-<!--                            label-cols-lg="3"-->
-<!--                            label-size="xs"-->
-<!--                            class="mb-0"-->
-<!--                        >-->
-<!--                          <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
-<!--                        </b-form-group>-->
-<!--                      </b-col>-->
-<!--                      <b-col class="d-flex align-items-center justify-content-center">-->
-<!--                        <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
-<!--                      </b-col>-->
-<!--                      <b-col class="d-flex justify-content-end">-->
-<!--                        <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
-<!--                      </b-col>-->
-<!--                    </b-row>-->
                   </b-tab>
                   <b-tab :title="(subject.sellers?subject.sellers.length:'') +' Related Sellers'">
                         <b-col>
