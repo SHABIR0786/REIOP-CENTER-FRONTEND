@@ -460,7 +460,7 @@ computed: {
       lists: 'listModule/lists',
       filters: 'filtersModule/filters',
       sourceList: 'listModule/skipSourceList',
-      sourceListFromDB: 'listModule/sourceListFromDB',
+      skipSourceListFromDB: 'listModule/skipSourceListFromDB',
     }),
     totalFilters() {
       let total = 0
@@ -702,8 +702,8 @@ computed: {
   },
   async mounted(){
     const Instance = this;
-     await this.$store.dispatch('listModule/getSourceListFromDB');
-    this.sourceListFromDB.forEach(function(item) {
+     await this.$store.dispatch('listModule/getSkipSourceListFromDB');
+    this.skipSourceListFromDB.forEach(function(item) {
       Instance.skipTraceSources.push(item.list_skip_source)
     });
 document.querySelector('body').addEventListener('click',function(e){
