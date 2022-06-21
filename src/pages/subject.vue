@@ -22,16 +22,21 @@
             </b-row>
             <hr>
             <b-row class="mb-3">
-                <b-col cols="8" class="d-flex align-items-center">
+                <b-col cols="6" class="d-flex align-items-center">
                   <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon></b-button>
-                  <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
+                    <b-button  v-if="totalFilters > 0" variant="outline-primary" @click="clearAllFilters()" class="filter d-flex float-right r-0 align-items-right mr-2">
+                    <b-icon icon="x" aria-hidden="true"></b-icon> Clear All </b-button>
+                  <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
                 </b-col>
-                <b-col cols="4">
+                <b-col cols="6">
                       <b-input-group class="mt-3">
                         <b-form-input v-model="searchSubject" @keyup.enter="search" placeholder="Search"></b-form-input>
                         <b-input-group-append>
                         <b-button @click="search" variant="primary">Search</b-button>
+                        </b-input-group-append>
+                        <b-input-group-append>
+                        <b-button @click="clearsearch" variant="outline-primary" :disabled="searchSubject.length == 0"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </b-col>
@@ -200,7 +205,7 @@
         <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-        <filter-subjects :search="searchSubject" @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
+        <filter-subjects  ref="filtersubjects" :search="searchSubject" @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-subjects>
     </div>
 </template>
 <script>
@@ -240,13 +245,12 @@ export default {
             itemsCount:0,
             totalFilters:0,
             filtersName:{
-              Market:[],
-              Group:[],
-              Type:[],
-              Source:[],
-              Errors:[],
-              RunDate:[],
-              SkipSource:[],
+                Market:[],
+                Group:[],
+                Type:[],
+                Source:[],
+                Errors:[],
+                RunDate:[],
             },
             searchInFiltered: {},
             sortBy: 'id',
@@ -285,6 +289,22 @@ export default {
       this.itemsCount = this.total;
     },
     methods: {
+       async clearAllFilters() {
+        this.$refs.filtersubjects.clearAllFilters();
+        this.filtersName= {
+          Market:[],
+          Group:[],
+          Type:[],
+          Source:[],
+          Errors:[],
+          RunDate:[],
+        },
+        await this.search();
+        },
+       async clearsearch() {
+            this.searchSubject = '';
+            await this.search();
+        },  
        async search() {
   //   if (!this.total || (this.filteredItems.length == 0)) {
             if (!this.totalFilters){
@@ -453,6 +473,10 @@ export default {
       text-align: center;
       width: 20px;
       height: 20px;
+    }
+    .filter-top{
+      margin-left: -5px;
+      margin-top: -30px;
     }
     .info {
         border: 1px solid black;

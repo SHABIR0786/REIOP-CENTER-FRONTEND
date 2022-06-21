@@ -372,34 +372,6 @@
                 </div>
               </b-card-text>
             </b-tab>
-            <b-tab @click="tab('SkipSource')" >
-              <template  v-slot:title>
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="">Skip Source</span>
-                  <span v-if="allFilters.SkipSource.length > 0" class="filter-count">{{ allFilters.SkipSource.length }}</span>
-                </div>
-              </template>
-              <b-card-text>
-                <div>
-                  <b-button
-                      class="btn btn-light filter align-items-center m-2"
-                      v-for="(result,index) in allFilters.SkipSource"
-                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
-                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
-                  <b-row class="m-2 mb-3">
-                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
-                  </b-row>
-                  <b-card no-body header="Skip Source">
-                    <b-list-group flush>
-                      <b-list-group-item
-                          class="flex-column align-items-start list-group-item-light "
-                          v-for="(result,index) in filteredOrAllData"
-                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
-                    </b-list-group>
-                  </b-card>
-                </div>
-              </b-card-text>
-            </b-tab>
           </b-tabs>
         </b-card>
       </div>
@@ -454,7 +426,6 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
-        SkipSource:[],
         CompanyOwned:[],
       },
       allFilters: {
@@ -464,7 +435,6 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
-        SkipSource:[],
         CompanyOwned:[],
       },
       incomingList: {
@@ -474,7 +444,6 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
-        SkipSource:[],
         CompanyOwned:[],
       },
       searchSeller: "",
@@ -482,6 +451,7 @@ export default {
       filtered: [],
       perPage: 20,
       appliedFilters: false,
+      filtersAlreadyApplied: null,
     }
   },
   computed: {
@@ -555,9 +525,6 @@ export default {
         //   ) {
         //     this.allData.Source.push(el.list_source);
         //   }
-        //     if (el.list_skip_source && !this.allData.SkipSource.includes(el.list_skip_source) && !this.allFilters.SkipSource.includes(el.list_skip_source)){
-        //       this.allData.SkipSource.push(el.list_skip_source)
-        //     }
         //   if (el.run_year && el.run_month) {
         //     let runYear = el.run_year.split(",");
         //     let runMonth = el.run_month.split(",");
@@ -603,7 +570,6 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
-        SkipSource:[],
         CompanyOwned:[],
           };
       if(response?.seller_errors_types?.length > 0) {
@@ -637,9 +603,6 @@ export default {
             }
             if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
               this.allData.Source.push(el.list_source)
-            }
-            if (el.list_skip_source && !this.allData.SkipSource.includes(el.list_skip_source) && !this.allFilters.SkipSource.includes(el.list_skip_source)){
-              this.allData.SkipSource.push(el.list_skip_source)
             }
             if (el.list_run_year &&  el.list_run_month){
               let runYear = el.list_run_year.split(",")
@@ -706,7 +669,7 @@ export default {
       let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
       this.MapFilters(response);
     },
-   async clearAllFilters(allFilters) {
+   async clearAllFilters(allFilters = this.allFilters) {
       if (typeof allFilters === "object") {
         allFilters.Market.forEach((e) => {this.allData.Market.push(e)});
         allFilters.Group.forEach((e) => {
@@ -718,7 +681,6 @@ export default {
         allFilters.Source.forEach((e) => {
           this.allData.Source.push(e);
         });
-        allFilters.SkipSource.forEach(e => {this.allData.SkipSource.push(e)});
         allFilters.Errors.forEach((e) => {
           this.allData.Errors.push(e);
         });
@@ -735,7 +697,6 @@ export default {
           Source: [],
           Errors: [],
           RunDate: [],
-          SkipSource: [],
           CompanyOwned: [],
         };
       }
@@ -746,6 +707,7 @@ export default {
       this.MapFilters(response);
     },
     applyFilters(filters) {
+      this.filtersAlreadyApplied = JSON.parse(JSON.stringify(filters));
       let filterValue = 0;
       for (let i in filters) {
         filterValue += filters[i].length;
@@ -757,7 +719,7 @@ export default {
       this.$emit("filter", filters, filterValue);
     },
     closeFilterModal() {
-      if(!this.appliedFilters && +localStorage.getItem('seller-filters-count') === 0){
+      if(!this.appliedFilters){
       this.allData = {
         Market: [],
         Group: [],
@@ -765,7 +727,6 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
-        SkipSource:[],
         CompanyOwned: [],
 
       };
@@ -776,10 +737,12 @@ export default {
         Source: [],
         Errors: [],
         RunDate: [],
-        SkipSource: [],
         CompanyOwned: [],
-
       };
+      } else {
+        if(this.filtersAlreadyApplied) {
+          this.allFilters = JSON.parse(JSON.stringify(this.filtersAlreadyApplied));
+        }
       }
       this.$emit("cancel");
     },
@@ -793,7 +756,6 @@ export default {
       //   this.incomingList.Group.push(e.list_group);
       //   this.incomingList.Type.push(e.list_type);
       //   this.incomingList.Source.push(e.list_source);
-      //   this.incomingList.SkipSource.push(e.list_skip_source)
       //   let runYear = e.run_year?.split(",");
       //   let runMonth = e.run_month?.split(",");
       //   for (let i = 0; i < runYear?.length; i++) {

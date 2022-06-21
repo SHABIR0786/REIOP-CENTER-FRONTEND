@@ -16,11 +16,11 @@
       ><b-icon icon="chevron-double-left"></b-icon></span>
     <div class="filter-body" v-if="isShowSlidePopUp">
       <div class="card filter-card">
-        <div class="card-header p-2 d-flex justify-content-around col-12">
+        <div class="card-header p-1 d-flex justify-content-around col-12">
           <b-col cols="2 p-0 m-0">
             <h3>Filter</h3>
           </b-col>
-          <b-col cols="10">
+          <b-col cols="7 p-0 m-0">
             <b-form-select
               class="select-template w-100 float-right"
               v-model="selectedFilter"
@@ -28,6 +28,14 @@
               :options="savedFilters"
             >
             </b-form-select>
+          </b-col>
+          <b-col cols="3" class="p-0 m-0">
+           <b-button
+            v-bind:class="{ 'save-filter-btn' : allFilters.Market.length > 0}"
+            class="float-right"
+            :disabled="allFilters.Market.length == 0"
+            @click="showSaveFilterModal = !showSaveFilterModal"
+            >Save Filter</b-button>
           </b-col>
         </div>
         <div class="card-body filter-card-body">
@@ -207,15 +215,14 @@
             </b-collapse>
           </div>
         </div>
-        <div class="card-footer p-2">
+        <!-- <div class="card-footer p-2">
           <b-button
             v-bind:class="{ 'save-filter-btn' : allFilters.Market.length > 0}"
             class="float-right"
             :disabled="allFilters.Market.length == 0"
             @click="showSaveFilterModal = !showSaveFilterModal"
-            >Save Filter</b-button
-          >
-        </div>
+            >Save Filter</b-button>
+        </div> -->
       </div>
       <!-- Export  -->
       <div class="card mt-2 export-card">
@@ -345,6 +352,12 @@ export default {
     },
     search: {
       type: String
+    },
+    sortBy: {
+      type: String
+    },
+    sortDesc: {
+      type: Boolean
     }
   },
   components: {
@@ -549,7 +562,9 @@ computed: {
         filter: this.selectedFilter,
         fileType: 'csv',
         filters: this.allFilters,
-        search: this.search
+        search: this.search,
+        sortBy: this.sortBy,
+        sortDesc: this.sortDesc
       }
       this.$store.dispatch('propertyModule/storeExport', exportSubject);
     },
@@ -581,6 +596,7 @@ computed: {
     changeFilter() {
        var filter = this.filters.find(x=>x.id == this.selectedFilter);
         this.allFilters = JSON.parse(filter.configuration);
+        this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
     },
     triggerSaveFilter(filterName) {
       this.showSaveFilterModal = false;
@@ -623,6 +639,8 @@ computed: {
         } else {
             this.selectedAll[filtertype] = 'not_accepted';
         }
+        this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
+
     },
     addFilter(FilterType,param) {
         if(this.allFilters[FilterType].findIndex(x=>x == param) == -1) {
@@ -636,6 +654,7 @@ computed: {
         } else {
            this.selectedAll[FilterType] = 'not_accepted';
         }
+        this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
     },
     selectAllMarket(FilterType,isAccepted) {
         if(isAccepted == 'accepted') {
@@ -653,6 +672,7 @@ computed: {
             }
            });
         }
+        this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
     },
     clearAllFilters() {
     // Unselect all the filters checkboxes.
@@ -676,6 +696,7 @@ computed: {
           Errors:[],
           RunDate:[],
         }
+    this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
     },
 
   },
@@ -879,7 +900,7 @@ document.querySelector('body').addEventListener('click',function(e){
 .filter-card .filter-card-body::-webkit-scrollbar-thumb:hover,.export-card .export-card-body::-webkit-scrollbar-thumb:hover ,.slidepopup::-webkit-scrollbar-thumb:hover{
   background: #555; 
 }
-.checkbox-select{
+.checkbox-select {
   position: relative;
 }
 </style>

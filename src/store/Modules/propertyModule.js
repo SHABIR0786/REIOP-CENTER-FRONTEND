@@ -71,7 +71,7 @@ const state = {
 
 const mutations = {
     SET_ALL_SUBJECTS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             if(e.lists) {
                 let list_market = [];
@@ -121,6 +121,7 @@ const mutations = {
             e.total_sellers = e.sellers.length;
         })
         state.subjects = JSON.stringify(data);
+        state.total = payload.total;
     },
     ADD_EXPORT(state, payload) {
         console.log(state, payload);
@@ -137,6 +138,9 @@ const mutations = {
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
+    },
+    GET_TOTALS(state, payload) {
+        state.totals = payload;
     },
     ADD_SUBJECT(state, payload) {
         const SUBJECTS = JSON.parse(state.subjects)
@@ -168,54 +172,55 @@ const mutations = {
     VUEX_STORE(state) {
         state.subjects = [];
         state.total = 0;
+        state.totals = {};
     },
 
 }
 
 const actions = {
-    async getAllSubjects({ commit, dispatch }, {page, perPage}) {
-        return await api.get(`/subjects?page=${page}&perPage=${perPage}`).then((response) => {
+    async getAllSubjects({ commit, dispatch }, {page, perPage,search, sortBy, sortDesc}) {
+        return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
 
             if(response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', response.subjects.data)
+                commit('SET_ALL_SUBJECTS', response.subjects)
             }
 
             return response
         })
     },
-    async getAllSubjectsV2({ commit, dispatch }, {page, perPage, filter}) {
-        let params = '?page=' + page + '&perPage=' + perPage;
-        if (filter) {
-            const keys = Object.keys(filter);
-            keys.forEach(key => {
-                params = params + '&' + key + '=' + filter[key];
-            })
-        }
+    async getAllSubjectsV2({ commit, dispatch }, data) {
+        // let params = '?page=' + page + '&perPage=' + perPage;
+        // if (filter) {
+        //     const keys = Object.keys(filter);
+        //     keys.forEach(key => {
+        //         params = params + '&' + key + '=' + filter[key];
+        //     })
+        // }
 
-        return await api.get(`/subjectsV2${params}`).then((response) => {
+        return await api.post(`/subjectsV2`,{...data}).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
             
             if(response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', response.subjects.data)
+                commit('SET_ALL_SUBJECTS', response.subjects)
                 commit('GET_TOTAL', response.subjects.total)
             }
 
             return response
         })
     },
-    async searchSubjects({ commit, dispatch }, {page, perPage, search}) {
-        return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+    async searchSubjects({ commit, dispatch }, {page, perPage, search,sortBy, sortDesc}) {
+        return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
 
             if(response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', response.subjects.data)
+                commit('SET_ALL_SUBJECTS', response.subjects)
             }
 
             return response
@@ -253,6 +258,14 @@ const actions = {
             return response
         })
     },
+    async getTotals({ commit }, data) {
+        return await api.post(`/properties/getTotals`,{...data}).then((response) => {
+            if (response) {
+                commit ('GET_TOTALS', response);
+            }
+            return response
+        })
+    },
     // eslint-disable-next-line no-empty-pattern
     async exportProperties({}, data) {
         let params = '?type=' + data.fileType;
@@ -274,7 +287,6 @@ const actions = {
                     method: 'GET',
                     responseType: 'blob',
                 }).then((res) => {
-                    console.log(res);
                      const a = document.createElement('a');
                      document.body.appendChild(a);
                      const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -310,7 +322,8 @@ const getters = {
         
         return [];
     },
-    total: ({total}) => total
+    total: ({total}) => total,
+    totals: ({totals}) => totals
 }
 
 export default {

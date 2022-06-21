@@ -22,16 +22,21 @@
             </b-row>
             <hr>
             <b-row class="mb-3">
-                <b-col cols="8" class="d-flex align-items-center">
+                <b-col cols="6" class="d-flex align-items-center">
                   <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon></b-button>
-                  <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
+                    <b-button  v-if="totalFilters > 0" variant="outline-primary" @click="clearAllFilters()" class="filter d-flex float-right r-0 align-items-right mr-2">
+                    <b-icon icon="x" aria-hidden="true"></b-icon> Clear All </b-button>
+                  <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
                 </b-col>
-                <b-col cols="4">
+                <b-col cols="6">
                     <b-input-group class="mt-3">
                         <b-form-input v-model="searchEmail" @keyup.enter="search" placeholder="Search"></b-form-input>
                         <b-input-group-append>
                         <b-button @click="search" variant="primary">Search</b-button>
+                        </b-input-group-append>
+                        <b-input-group-append>
+                        <b-button @click="clearsearch" variant="outline-primary" :disabled="searchEmail.length == 0"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </b-col>
@@ -151,7 +156,7 @@
         <edit-email-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-email-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-email-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-email-modal>
-        <filter-emails :search="searchEmail" @filter="filter" @finish-process="isFinishedFilterEmails = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-emails>
+        <filter-emails ref="filterEmail" :search="searchEmail" @filter="filter" @finish-process="isFinishedFilterEmails = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-emails>
 
 
     </div>
@@ -246,6 +251,23 @@ export default {
 
     },
     methods: {
+        async clearsearch() {
+            this.searchEmail = '';
+            await this.search();
+        },
+        async clearAllFilters() {
+            this.$refs.filterEmail.clearAllFilters();
+            this.filtersName = {
+            Market:[],
+            Group:[],
+            Type:[],
+            Source:[],
+            Errors:[],
+            RunDate:[],
+            SkipSource:[],
+        },
+        await this.search();
+        },
         async search() {
               // if (!this.total || (this.filteredItems.length == 0)) {
               if (!this.totalFilters) {
@@ -429,7 +451,10 @@ export default {
         align-items: center;
         justify-content: space-between;
     }
-
+    .filter-top{
+      margin-left: -5px;
+      margin-top: -30px;
+    }
     .total {
         background-color: #F9CB9C;
     }

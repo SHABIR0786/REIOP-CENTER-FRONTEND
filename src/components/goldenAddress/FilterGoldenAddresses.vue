@@ -303,6 +303,7 @@ export default {
       filtered:[],
       perPage: 20,
       appliedFilters: false,
+      filtersAlreadyApplied: null,
     }
   },
   computed: {
@@ -485,7 +486,7 @@ export default {
       let response = await this.$store.dispatch("goldenAddressModule/goldenFilterList", {filter: this.allFilters, search: this.search});
       this.MapFilters(response);
     },
-    async clearAllFilters(allFilters) {
+    async clearAllFilters(allFilters = this.allFilters) {
       if (typeof allFilters === 'object'){
         allFilters.Market.forEach(e => {this.allData.Market.push(e)});
         allFilters.Group.forEach(e => {this.allData.Group.push(e)});
@@ -510,7 +511,8 @@ export default {
         let response = await this.$store.dispatch("goldenAddressModule/goldenFilterList", {filter: this.allFilters, search: this.search});
         this.MapFilters(response);
     },
-    applyFilters(filters){
+    applyFilters(filters) {
+      this.filtersAlreadyApplied = JSON.parse(JSON.stringify(filters));
       let filterValue = 0;
       for (let i in filters){
         filterValue += filters[i].length
@@ -522,7 +524,7 @@ export default {
       this.$emit('filter', filters, filterValue)
     },
     closeFilterModal(){
-      // if(!this.appliedFilters && +localStorage.getItem('golden-filters-count') === 0){
+      if(!this.appliedFilters){
         this.allData = {
           Market:[],
           Group:[],
@@ -541,6 +543,12 @@ export default {
           RunDate:[],
           SkipSource:[],
         // }
+      } 
+    } 
+     else {
+        if(this.filtersAlreadyApplied) {
+          this.allFilters = JSON.parse(JSON.stringify(this.filtersAlreadyApplied));
+        }
       }
       this.$emit('cancel')
     },

@@ -3,14 +3,14 @@
         <div class="properties-header">
         <h3>Properties</h3>
         <div class="boxes">
-            <div>{{total}} Subjects</div>
-            <div>{{sellerTotal}} Sellers</div>
-            <div>{{phoneNumberTotal}} Phones</div>
-            <div>{{emailTotal}} Emails</div>
-            <div>{{goldenAddressTotal}} Golden Addresses</div>
+            <div>{{totals.subjectsCount}} Subjects</div>
+            <div>{{totals.sellersCount}} Sellers</div>
+            <div>{{totals.phonesCount}} Phones</div>
+            <div>{{totals.emailsCount}} Emails</div>
+            <div>{{totals.goldenAddressesCount}} Golden Addresses</div>
         </div>
         </div>
-        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="selectedTemplate"></slide-pop-up-filter>
+        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="selectedTemplate" @filterProperties="filterProperties"  :sortBy="sortBy" :sortDesc="sortDesc"></slide-pop-up-filter>
         <hr>
         <div>
             <b-row class="text-end mb-3">
@@ -18,7 +18,17 @@
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
                 </b-col> -->
                 <b-col cols="12"  class="d-flex justify-content-end">
-                    <b-form-input class="col-6 filter d-flex align-items-center" v-model="searchProperty" placeholder="Search"></b-form-input>
+                    <b-input-group class="col-6 d-flex align-items-center">
+                        <b-form-input v-model="searchProperty" @keyup.enter="search" placeholder="Search"></b-form-input>
+                        <b-input-group-append>
+                        <b-button @click="search" variant="primary">Search</b-button>
+                        </b-input-group-append>
+                        <b-input-group-append>
+                        <b-button @click="clearsearch" variant="outline-primary" :disabled="searchProperty.length == 0"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
+                        </b-input-group-append>
+                    </b-input-group>
+
+
                 </b-col>
             </b-row>
             <b-row class="text-end">
@@ -67,6 +77,8 @@
             small
             striped
             sort-icon-left
+            no-local-sorting
+            @sort-changed="sortingChanged"
             hover
             :busy="isBusy"
             :fields="propertyFields"
@@ -277,6 +289,15 @@ export default {
             bulkDeleteItems: [],
             allSelected: false,
             propertyFields: [],
+            totals: {},
+            filtersName: {
+                "Market": [],
+                "Group": [],
+                "Type": [],
+                "Source": []
+            },
+            sortBy: 'id',
+            sortDesc: false
         }
     },
     computed: {
@@ -285,24 +306,25 @@ export default {
           fields: 'propertyModule/fields',
           items: 'propertyModule/subjects',
           total: 'propertyModule/total',
-          sellerTotal: 'sellerModule/total',
-          phoneNumberTotal: 'phoneNumberModule/total',
-          emailTotal: 'emailModule/total',
-          goldenAddressTotal: 'goldenAddressModule/total',
+          filteredItems: 'subjectModule/filteredSubject',
           templates: 'templatesModule/templates'
         }),
+         filtersCount(){
+            let total = 0
+            for (let item in this.filtersName) {
+                total += this.filtersName[item].length
+            }
+        return total;
+        },
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
         this.$store.dispatch('uxModule/setLoading')
+        this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName})
         this.$store.dispatch('propertyModule/getTotal')
-        this.$store.dispatch('sellerModule/getTotal')
-        this.$store.dispatch('phoneNumberModule/getTotal')
-        this.$store.dispatch('emailModule/getTotal')
-        this.$store.dispatch('goldenAddressModule/getTotal')
-        this.$store.dispatch('emailModule/getTotal')
+
         try {
-            await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage,filter: this.filtersName})
             await this.$store.dispatch("templatesModule/getAllTemplates")
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -310,6 +332,37 @@ export default {
         }
     },
     methods: {
+        async sortingChanged(ctx) {
+           this.sortBy = ctx.sortBy;
+           this.sortDesc = ctx.sortDesc;
+            if (this.filtersCount > 0) {
+                await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: this.filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
+            } else {
+                await this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
+            }
+        },
+      async  clearsearch(){
+            this.searchProperty = '';
+        if(this.filtersCount > 0) {
+            await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: this.filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
+        } else {
+        this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
+        }
+        this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search: this.searchProperty});
+        },
+    async search() {
+        if(this.filtersCount > 0) {
+            await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: this.filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
+        } else {
+        this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
+        }
+        this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search: this.searchProperty});
+    },
+     async filterProperties(filtersName) {
+        this.filtersName = filtersName;
+            await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
+            this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search:this.searchProperty});
+        },
         editItem(item) {
             this.showModal = true
             this.editedItem = { ...item }
@@ -436,17 +489,12 @@ export default {
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty})
+                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty, fitler: this.filtersName})
             }
         },
         perPage: {
             handler: function () {
-                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: 1, perPage: this.perPage, search: this.searchProperty})
-            }
-        },
-        searchProperty: {
-            handler: function () {
-                this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty})
+                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: 1, perPage: this.perPage, search: this.searchProperty, fitler: this.filtersName})
             }
         },
 
