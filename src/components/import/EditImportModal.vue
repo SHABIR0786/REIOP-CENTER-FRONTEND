@@ -184,6 +184,20 @@
                         </b-input-group>
                       </b-col>
                     </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group  prepend="Source" class="mb-2">
+                          <b-form-input :readonly="isReadOnly" v-model="editData.list_source"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group  prepend="Skip Source" class="mb-2">
+                          <b-form-input :readonly="isReadOnly" v-model="editData.list_skip_source"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
                     </b-col>
                 </b-row>
               <b-row >
