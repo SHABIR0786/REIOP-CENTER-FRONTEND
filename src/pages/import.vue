@@ -599,14 +599,16 @@ export default {
       if(id){
         this.$store.dispatch('uxModule/setLoading')
         await this.$store.dispatch('importModule/getMappingTemplate',{id:id});
-        
+        const that = this;
         if(this.mappingTemplate && this.mappingTemplate.mapping_fields && this.mappingTemplate.mapping_fields.length){
-         this.mappedItems = this.mappingTemplate.mapping_fields.map(function(mapping_field) {
-            return {fromField: mapping_field.uploaded_field, toField: mapping_field.target_field, action: ""}
+         this.mappingTemplate.mapping_fields.map(function(mapping_field) {
+            that.fromField = mapping_field.uploaded_field;
+            that.toField = mapping_field.target_field;
+            that.mapFields();
+            // return {fromField: mapping_field.uploaded_field, toField: mapping_field.target_field, action: ""}
           });
           this.mapping.name = this.mappingTemplate.name;
           this.mapping.description = this.mappingTemplate.description;
-          console.log(this.mappedItems);
         }
         this.$store.dispatch('uxModule/hideLoader');
       }
