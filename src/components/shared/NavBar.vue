@@ -23,6 +23,12 @@
               <b-dropdown-item>
                 <router-link class="link-label" to="/companyTypes"><b-icon icon="building"></b-icon> Company Types</router-link>
               </b-dropdown-item>
+              <b-dropdown-item >
+                <router-link class="link-label" to="/sourceLists"><b-icon icon="folder-check"></b-icon> Source Lists</router-link>
+              </b-dropdown-item>
+              <b-dropdown-item >
+                <router-link class="link-label" to="/skipSourceLists"><b-icon icon="folder-symlink"></b-icon> Skip Source Lists</router-link>
+              </b-dropdown-item>
               <b-dropdown-item>
                 <router-link class="link-label" to="/marketingChannels"><b-icon icon="building"></b-icon> Marketing Channels</router-link>
               </b-dropdown-item>

@@ -17,6 +17,8 @@ import phoneTypes from "@/pages/phoneTypes";
 import subjectTypes from "@/pages/subjectTypes";
 import companyTypes from "@/pages/companyTypes";
 import marketingChannels from "@/pages/marketingChannels";
+import sourceLists from "@/pages/sourceLists";
+import skipSourceLists from "@/pages/skipSourceLists";
 
 export const routes = [
     {name: "Login", path: "/login", component: Login, title: "Login", isNavbar: false},
@@ -37,6 +39,8 @@ export const routes = [
     {name: "PhoneTypes", path: "/phoneTypes", component: phoneTypes, title: "Phone Types", isNavbar: false, meta: {requireAuth: true}},
     {name: "SubjectTypes", path: "/subjectTypes", component: subjectTypes, title: "Subject Types", isNavbar: false, meta: {requireAuth: true}},
     {name: "CompanyTypes", path: "/companyTypes", component: companyTypes, title: "Company Types", isNavbar: false, meta: {requireAuth: true}},
+    {name: "SourceLists", path: "/sourceLists", component: sourceLists, title: "Source Lists", isNavbar: false, meta: {requireAuth: true}},
+    {name: "SkipSourceLists", path: "/skipSourceLists", component: skipSourceLists, title: "Skip Source Lists", isNavbar: false, meta: {requireAuth: true}},
     {name: "marketingChannels", path: "/marketingChannels", component: marketingChannels, title: "Marketing Channels", isNavbar: false, meta: {requireAuth: true}},
 
 ]
