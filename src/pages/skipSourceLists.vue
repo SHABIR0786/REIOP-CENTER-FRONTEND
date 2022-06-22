@@ -33,8 +33,8 @@
           </div>
         </template>
 
-        <template #head(actions)="scope">
-          <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+        <template #head(action)="scope">
+          <div class="text-nowrap" style="width: 40px;">{{scope.label}}</div>
         </template>
 
         <template #head(id)="scope">
@@ -59,6 +59,9 @@
             <p class="user-email">{{data.index + 1}}</p>
           </div>
         </template>
+        <template v-slot:cell(action)="data">
+          <b-icon class="cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+        </template>
       </b-table>
       <b-row>
         <b-col class="d-flex align-items-center">
@@ -82,17 +85,20 @@
         </b-col>
       </b-row>
     </div>
+    <edit-source-modal :showModal="showEditModal" :propsData="editedItem" :modalTitle="sourceTitle" :sourceType="sourceType" @cancel="showEditModal=false" @save="save"></edit-source-modal>
   </div>
 </template>
 
 <script>
 import {BIcon} from "bootstrap-vue";
 import {mapGetters} from "vuex";
+import EditSourceModal from "../components/sourceListsModal/EditSourceModal";
 
 export default {
   name: "skipSourceLists",
   components: {
     BIcon,
+    EditSourceModal,
   },
   data () {
     return {
@@ -100,15 +106,18 @@ export default {
       showModal: false,
       perPage: 20,
       currentPage: 1,
-      editedItem: {},
       showDeleteModal: false,
       itemToDelete: {},
       pageOptions: [10, 20, 50],
       search: '',
-      showAddModal: false,
+      editedItem: {},
       showEditModal: false,
+      sourceTitle: 'Skip Source',
+      sourceType : 'list_skip_source',
+
       fields: [
         {key:"id", label: "Id", sortable: true},
+        {key: "action", label: "Action"},
         {key: "list_skip_source", label: "Skip Source Lists", sortable: true},
         {key: "user_name", label: "Uploaded By"},
 
@@ -133,7 +142,17 @@ export default {
       this.$store.dispatch('uxModule/hideLoader')
     }
   },
+  methods: {
+    editItem(item) {
+      this.showEditModal = true
+      this.editedItem = { ...item }
+    },
+    save(source) {
+      this.showModal = false
+      this.$store.dispatch('listModule/editSource', {...source})
+    },
 
+  },
   watch: {
     currentPage: {
       handler: function() {
