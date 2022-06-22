@@ -19,12 +19,12 @@
                 </b-col> -->
                 <b-col cols="12"  class="d-flex justify-content-end">
                     <b-input-group class="col-6 d-flex align-items-center">
+                        <b-input-group-append v-if="isPropertySearched">
+                        <b-button @click="clearsearch" variant="outline-primary"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
+                        </b-input-group-append>
                         <b-form-input v-model="searchProperty" @keyup.enter="search" placeholder="Search"></b-form-input>
                         <b-input-group-append>
                         <b-button @click="search" variant="primary">Search</b-button>
-                        </b-input-group-append>
-                        <b-input-group-append>
-                        <b-button @click="clearsearch" variant="outline-primary" :disabled="searchProperty.length == 0"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
                         </b-input-group-append>
                     </b-input-group>
 
@@ -297,7 +297,8 @@ export default {
                 "Source": []
             },
             sortBy: 'id',
-            sortDesc: false
+            sortDesc: false,
+            isPropertySearched:false
         }
     },
     computed: {
@@ -349,6 +350,7 @@ export default {
         this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
         }
         this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search: this.searchProperty});
+        this.isPropertySearched = false;
         },
     async search() {
         if(this.filtersCount > 0) {
@@ -357,6 +359,11 @@ export default {
         this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
         }
         this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search: this.searchProperty});
+        if(this.searchProperty.length == 0) {
+            this.isPropertySearched = false;
+        } else {
+            this.isPropertySearched = true;
+        }
     },
      async filterProperties(filtersName) {
         this.filtersName = filtersName;
