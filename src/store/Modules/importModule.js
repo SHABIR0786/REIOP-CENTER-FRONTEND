@@ -108,6 +108,11 @@ export const actions = {
         data.append('mapping',JSON.stringify(mapping));
         data.append('selectedMappingTemplate', selectedMappingTemplate);
         
+        const mapFieldsObj = {};
+        mapOrder.forEach(map => {
+            mapFieldsObj[map.toField] = map.fromField;
+        })
+
         const mapObject = {};
         mappedItems.forEach(map => {
             mapObject[map.fromField] = map.toField;
@@ -117,6 +122,7 @@ export const actions = {
             mapSequence[map.fromField] = map.toField;
         })
         data.append('mapOrder', JSON.stringify(mapSequence));
+        data.append('mapFields', JSON.stringify(mapFieldsObj));
         data.append('map', JSON.stringify(mapObject));
         if (list === 'Combined Data'){
             return await api.post('/combinedUpload', data, config).then((response) => {
