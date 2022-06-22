@@ -32,12 +32,12 @@
                 </b-col>
                 <b-col cols="6">
                        <b-input-group class="mt-3">
+                        <b-input-group-append v-if="isClearSearch">
+                        <b-button @click="clearsearch" variant="outline-primary"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
+                        </b-input-group-append>
                         <b-form-input v-model="searchSeller" @keyup.enter="search" placeholder="Search"></b-form-input>
                         <b-input-group-append>
                         <b-button @click="search" variant="primary">Search</b-button>
-                        </b-input-group-append>
-                        <b-input-group-append>
-                        <b-button @click="clearsearch" variant="outline-primary" :disabled="searchSeller.length == 0"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </b-col>
@@ -248,7 +248,8 @@ export default {
                 CompanyOwned:[],
             },
             sortBy: 'id',
-            sortDesc: true
+            sortDesc: true,
+            isClearSearch:false
         }
     },
     computed: {
@@ -286,6 +287,7 @@ export default {
        async clearsearch() {
             this.searchSeller = '';
             await this.search();
+            this.isClearSearch = false;
         }, 
         async clearAllFilters() {
         this.$refs.filterSellers.clearAllFilters();
@@ -300,7 +302,7 @@ export default {
         },
         await this.search();
         },
-        async search(){
+        async search() {
         // if (!this.total || (this.filteredItems.length == 0)) {
                 if (!this.totalFilters) {
                 await this.$store.dispatch('sellerModule/searchSellers', { page: this.currentPage, perPage: this.perPage, search: this.searchSeller, sortBy:this.sortBy,sortDesc:this.sortDesc })
@@ -340,6 +342,11 @@ export default {
             //     this.filteredOrAllData =  searchInFiltered
             //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
             //   }
+            if(this.searchSeller.length == 0) {
+                this.isClearSearch = false;
+            } else {
+                this.isClearSearch = true;
+            }
         },
     async sortingChanged(ctx) {
         this.sortBy = ctx.sortBy;

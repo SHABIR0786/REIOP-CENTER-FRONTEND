@@ -315,7 +315,7 @@
               max-rows="6">
             </b-form-textarea>
             <b-form-select
-              class="select-template w-100 mt-2 mb-3"
+              class="select-template export-amount-select w-100 mt-2 mb-3"
               v-model="export_amount"
               :options="SelectExportAmount">
             </b-form-select>
@@ -706,7 +706,7 @@ computed: {
     this.sourceListFromDB.forEach(function(item) {
       Instance.skipTraceSources.push(item.list_skip_source)
     });
-document.querySelector('body').addEventListener('click',function(e){
+document.querySelector('body').addEventListener('click',function(e) {
       if(!e.target.closest('.checkbox-select__dropdown') && !e.target.closest('.checkbox-select')) {
         if(document.querySelectorAll('.checkbox-select__dropdown')) {
         document.querySelectorAll('.checkbox-select__dropdown').forEach(function(elem){
@@ -719,6 +719,9 @@ document.querySelector('body').addEventListener('click',function(e){
 };
 </script>
 <style>
+.export-amount-select{
+  font-size:14px !important;
+}
 .slidepopup {
   position: fixed;
   overflow-y:scroll;

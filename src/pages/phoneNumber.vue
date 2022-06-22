@@ -27,12 +27,12 @@
                 </b-col>
                 <b-col cols="6">
                     <b-input-group class="mt-3">
+                        <b-input-group-append v-if="isPhoneSearched">
+                        <b-button @click="clearsearch" variant="outline-primary"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
+                        </b-input-group-append>
                         <b-form-input v-model="searchPhone" @keyup.enter="search" placeholder="Search"></b-form-input>
                         <b-input-group-append>
                         <b-button @click="search" variant="primary">Search</b-button>
-                        </b-input-group-append>
-                        <b-input-group-append>
-                        <b-button @click="clearsearch" variant="outline-primary" :disabled="searchPhone.length == 0"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </b-col>
@@ -207,7 +207,8 @@ export default {
                 SkipSource:[],
             },
             sortBy: 'id',
-            sortDesc: false
+            sortDesc: false,
+            isPhoneSearched: false
         }
     },
     computed: {
@@ -244,6 +245,7 @@ export default {
         async clearsearch() {
             this.searchPhone = '';
             await this.search();
+            this.isPhoneSearched = false;
         },
         async clearAllFilters() {
             this.$refs.filterPhone.clearAllFilters();
@@ -291,6 +293,11 @@ export default {
             //     this.filteredOrAllData =  searchInFiltered
             //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
             //   }
+            if(this.searchPhone.length == 0) {
+                this.isPhoneSearched = false;
+            } else {
+                this.isPhoneSearched = true;
+            }
         },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
