@@ -201,7 +201,7 @@
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
         <custom-view-v2 :customViews="templatesToExport" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view-v2>
-        <filter-properties :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" @save="triggerFilter"></filter-properties>
+        <!-- <filter-properties :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" @save="triggerFilter"></filter-properties> -->
     </div>
 </template>
 <script>
@@ -211,7 +211,6 @@ import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 import AddSubjectModal from "../components/subject/AddSubjectModal";
 import CustomViewV2 from "../components/properties/CustomViewV2";
-import FilterProperties from "../components/properties/FilterProperties";
 import SlidePopUpFilter from "../components/properties/SlidePopUpFilter";
 
 export default {
@@ -222,7 +221,6 @@ export default {
         DeleteModal,
         AddSubjectModal,
         CustomViewV2,
-        FilterProperties,
         SlidePopUpFilter
     },
     data () {
@@ -366,9 +364,16 @@ export default {
         }
     },
      async filterProperties(filtersName) {
+        this.$store.dispatch('uxModule/setLoading')
+         try {
         this.filtersName = filtersName;
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
             this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search:this.searchProperty});
+            this.$store.dispatch('uxModule/hideLoader')
+         } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+        }
+
         },
         editItem(item) {
             this.showModal = true
@@ -388,7 +393,7 @@ export default {
                 }
             }
 
-            this.propertyFields = [...this.fields];
+            this.propertyFields = [...fields];
         },
         save(item) {
             // this.showModal = false

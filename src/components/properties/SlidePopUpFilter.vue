@@ -1,8 +1,9 @@
 <template>
   <div class="slidepopup" v-bind:class="{ show: isShowSlidePopUp }">
   <div class="innerslidepopup">
-    <span v-if="!isShowSlidePopUp" class="filter-and-export"
+    <span v-if="!isShowSlidePopUp && !isExporting" class="filter-and-export"
       >Filter and Export</span>
+      <span v-if="!isShowSlidePopUp && isExporting" class="filter-and-export"> <b-spinner small></b-spinner> Exporting</span>
     <span
       v-if="!isShowSlidePopUp"
       @click="isShowSlidePopUp = !isShowSlidePopUp"
@@ -78,7 +79,8 @@
                     <span class="checkbox-select__title">Select Included Market</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isShowMarketDropDown">
-                    <ul id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
+                  <loading-bars v-if="isListLoading"></loading-bars>
+                    <ul v-if="!isListLoading" id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
                     <li>
                         <b-form-checkbox
                             id="all_channels"
@@ -121,7 +123,8 @@
                     <span class="checkbox-select__title">Select Included Group</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isGroupDropDown">
-                    <ul id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
+                <loading-bars v-if="isListLoading"></loading-bars>
+                    <ul v-if="!isListLoading" id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
                     <li>
                         <b-form-checkbox
                             id="all_group"
@@ -154,7 +157,8 @@
                     <span class="checkbox-select__title">Select Included Type</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isTypeDropDown">
-                    <ul id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
+                <loading-bars v-if="isListLoading"></loading-bars>
+                    <ul v-if="!isListLoading" id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
                     <li>
                         <b-form-checkbox
                             id="all_type"
@@ -187,7 +191,8 @@
                     <span class="checkbox-select__title">Select Included Type</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isSourceDropDown">
-                    <ul id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
+                <loading-bars v-if="isListLoading"></loading-bars>
+                    <ul v-if="!isListLoading" id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
                     <li>
                         <b-form-checkbox
                             id="all_source"
@@ -323,7 +328,8 @@
           </div>
         </div>
         <div class="card-footer">
-          <b-button class="float-right" v-bind:class="{'save-filter-btn':(export_amount != null && notes != null)}" :disabled="export_amount == null && notes == null" @click="exportfile()">Export</b-button>
+        {{export_amount}}
+          <b-button class="float-right" v-bind:class="{'save-filter-btn':(export_amount != null)}" @click="exportfile()" :disabled="isExportDisabled"> <span v-if="isExporting"> <b-spinner small></b-spinner> Exporting</span><span v-if="!isExporting">Export</span></b-button>
         </div>
       </div>
     </div>
@@ -341,6 +347,7 @@
 import {mapGetters} from "vuex";
 import moment from 'moment'
 import SaveFilterModal from "./SaveFilterModal";
+import loadingBars from "../loader/loadingBars";
 export default {
   name: "SlidePopUpFilter",
   props: {
@@ -362,6 +369,7 @@ export default {
   },
   components: {
     SaveFilterModal,
+    loadingBars
   },
   data() {
     return {
@@ -452,6 +460,8 @@ export default {
           text: "Export {(Total in view / 5) + ((Total in view / 5) * 4)}",
         },
       ],
+      isListLoading: true,
+      isExporting: false,
     };
   },
 computed: {
@@ -472,6 +482,13 @@ computed: {
     },
     MarketFilterCount() {
         return this.allFilters.Market.length > 0;
+    },
+    isExportDisabled() {
+      if(this.export_amount == null || this.isExporting){
+        return true;
+      } else {
+        return false;
+      }
     }
   },
  async created() {
@@ -510,6 +527,7 @@ computed: {
               this.allData.Source.push(el.list_source)
             }
           });
+      this.isListLoading = false;
   },   
   watch:{
     marketing_start_date: function() {
@@ -543,7 +561,7 @@ computed: {
         this.checkNextStep();
       }
     },
-    exportfile() {
+   async exportfile() {
       if(this.marketing_period) {
             this.marketing_end_date = moment(this.marketing_start_date).add(this.marketing_period * 7 ,'days').format('YYYY-MM-DD');
       }
@@ -566,7 +584,9 @@ computed: {
         sortBy: this.sortBy,
         sortDesc: this.sortDesc
       }
-      this.$store.dispatch('propertyModule/storeExport', exportSubject);
+      this.isExporting = true;
+     await this.$store.dispatch('propertyModule/storeExport', exportSubject);
+      this.isExporting = false;
     },
     checkNextStep() {
       if(this.export_type != null) {
@@ -832,7 +852,7 @@ document.querySelector('body').addEventListener('click',function(e) {
 }
 .checkbox-select__dropdown{
     position:absolute;
-    width: 372px;
+    width: 364px;
     background: white;
     border-radius: 10px;
     z-index: 10;
@@ -885,22 +905,29 @@ document.querySelector('body').addEventListener('click',function(e) {
   position:relative;
 }
 /* width */
-.filter-card .filter-card-body::-webkit-scrollbar ,.export-card .export-card-body::-webkit-scrollbar,.slidepopup::-webkit-scrollbar {
+.filter-card .filter-card-body::-webkit-scrollbar ,.export-card .export-card-body::-webkit-scrollbar,.slidepopup::-webkit-scrollbar,.checkbox-select__dropdown::-webkit-scrollbar {
   width: 5px;
 }
 
 /* Track */
-.filter-card .filter-card-body::-webkit-scrollbar-track, .export-card .export-card-body::-webkit-scrollbar-track,.slidepopup::-webkit-scrollbar-track {
+.filter-card .filter-card-body::-webkit-scrollbar-track, .export-card .export-card-body::-webkit-scrollbar-track,.slidepopup::-webkit-scrollbar-track,.checkbox-select__dropdown::-webkit-scrollbar-track {
   background: #f1f1f1; 
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  margin-top:4px;
+  margin-bottom:4px;
+
 }
  
 /* Handle */
-.filter-card .filter-card-body::-webkit-scrollbar-thumb, .export-card .export-card-body::-webkit-scrollbar-thumb,.slidepopup::-webkit-scrollbar-thumb {
+.filter-card .filter-card-body::-webkit-scrollbar-thumb, .export-card .export-card-body::-webkit-scrollbar-thumb,.slidepopup::-webkit-scrollbar-thumb,.checkbox-select__dropdown::-webkit-scrollbar-thumb {
   background: #888; 
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 /* Handle on hover */
-.filter-card .filter-card-body::-webkit-scrollbar-thumb:hover,.export-card .export-card-body::-webkit-scrollbar-thumb:hover ,.slidepopup::-webkit-scrollbar-thumb:hover{
+.filter-card .filter-card-body::-webkit-scrollbar-thumb:hover,.export-card .export-card-body::-webkit-scrollbar-thumb:hover ,.slidepopup::-webkit-scrollbar-thumb:hover,.checkbox-select__dropdown::-webkit-scrollbar-thumb:hover{
   background: #555; 
 }
 .checkbox-select {

@@ -286,7 +286,6 @@
                 if(this.selectedView) {
                     this.template.id = this.selectedView;
                     this.template.name = this.customViews.find(x=>x.value == this.selectedView).text;
-                    console.log(this.template);
                     this.$emit('save', Object.assign({},this.template), 'update');
                 } else {
                     this.$emit('save', Object.assign({},this.template), 'save');
