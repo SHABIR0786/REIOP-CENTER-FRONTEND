@@ -49,7 +49,7 @@
     </div>
     <b-row>
       <b-col class="text-right" cols="12" md="12">
-        
+
         <b-btn class="mr-2" variant="primary" :disabled=isDisable @click="createMapping()">Save Mapping Template and Import</b-btn>
         <span>OR</span>
         <b-btn class="ml-2"  variant="primary" @click="confirm(mappedItems)">Import</b-btn>
@@ -103,7 +103,7 @@
         @modalClose="closeMappingTemplate"
       >
       </mapping-modal>
-      
+
   </b-container>
 </template>
 
@@ -184,7 +184,7 @@ export default {
       },
       // mappingTemplates: [
       //   { value: null, text: 'Select Optional Mapping Template' }],
-      
+
     }
   },
   computed: {
@@ -252,24 +252,6 @@ export default {
 
       // If User map Sellers, then check if all required Sellers field are mapped
       let requiredSellersFields = ['seller_mailing_address', 'seller_mailing_city', 'seller_mailing_state', 'seller_mailing_zip'];
-      if (this.isSkippedData){
-        requiredSellersFields.push('seller_first_name','seller_last_name');
-      }
-      let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
-      if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
-        this.isHaveMappedItems = true;
-      }
-      const sellerMapped = mappedFields.find(element => {
-        if (element.includes('seller')) {
-          return true;
-        }
-      });
-      const subjectMapped = mappedFields.find(element => {
-        if (element.includes('subject')) {
-          return true;
-        }
-      });
-
       var namesCounts    = [];
       namesCounts.push(mappedFields.filter(x => x.includes('seller_first_name')).length);
       namesCounts.push(mappedFields.filter(x => x.includes('seller_last_name')).length);
@@ -281,6 +263,31 @@ export default {
       mappedSellerAddresses.push(mappedFields.filter(x => x.includes('seller_mailing_city')));
       mappedSellerAddresses.push(mappedFields.filter(x => x.includes('seller_mailing_state')));
       mappedSellerAddresses.push(mappedFields.filter(x => x.includes('seller_mailing_zip')));
+
+      let isSellerAddressMapped =  mappedSellerAddresses.find(el=>el.length)
+      if (this.isSkippedData && isSellerAddressMapped) {
+          requiredSellersFields.push('seller_first_name','seller_last_name');
+      }
+      let requiredSellersExist = requiredSellersFields.every(ms => mappedFields.includes(ms));
+      if (this.isSkippedData && (requiredSubjectExist || requiredSellersExist)) {
+        this.isHaveMappedItems = true;
+      }
+      let sellerMapped = null;
+      if (this.isSkippedData){
+         sellerMapped = isSellerAddressMapped
+      }else{
+        sellerMapped = mappedFields.find(element => {
+          if (element.includes('seller')) {
+            return true;
+          }
+        });
+      }
+
+      const subjectMapped = mappedFields.find(element => {
+        if (element.includes('subject')) {
+          return true;
+        }
+      });
 
       var addressLengths =  [];
       for(let i in mappedSellerAddresses) {
@@ -433,15 +440,15 @@ export default {
       this.createUpdateMapping = false;
     },
     createMappingTemplateAndImport(selectedMapping, cmapping){
-      
+
       this.showConfirmModal = false;
       this.showCreateMapping = false;
       this.createUpdateMapping = true;
       this.updateMappingTemplate = selectedMapping;
-      
+
       this.mapping = cmapping;
       this.confirm(this.mappedItems)
-      
+
     },
     confirmImport(response) {
       this.showConfirmModal = false;

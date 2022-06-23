@@ -99,8 +99,18 @@ const mutations = {
     SET_SOURCE_LIST(state, payload) {
         state.sourceList = payload
     },
+   EDIT_SOURCE_LIST(state, payload) {
+       const allSourceList = JSON.parse(state.allSourceList)
+       allSourceList.find(el => el.id === payload.id).list_source = payload.list_source
+       state.allSourceList = JSON.stringify(allSourceList)
+   },
     SET_SKIP_SOURCE_LIST(state, payload) {
         state.skipSourceList = payload
+    },
+    EDIT_SKIP_SOURCE_LIST(state, payload) {
+        const allSkipSourceList = JSON.parse(state.allSkipSourceList)
+        allSkipSourceList.find(el => el.id === payload.id).list_skip_source = payload.list_skip_source
+        state.allSkipSourceList = JSON.stringify(allSkipSourceList)
     },
     SET_SKIP_SOURCE_CHOOSE(state, payload) {
         state.sameSource = payload
@@ -189,7 +199,17 @@ const actions = {
             return response
         })
     },
-   async getSkipSourceListFromDB({ commit }) {
+    async editSource({ commit }, data) {
+        return await api.post(`/lists/editSource`,{...data}).then((response) => {
+            if (response && response.sourceType === 'list_source') {
+                commit('EDIT_SOURCE_LIST', data)
+            }else if(response && response.sourceType === 'list_skip_source'){
+                commit('EDIT_SKIP_SOURCE_LIST', data)
+            }
+            return response
+        })
+    },
+    async getSkipSourceListFromDB({ commit }) {
        return await api.get(`/lists/skipSource`).then((response) => {
            if (response ) {
                commit('GET_SKIP_SOURCE_LIST', response.skipSourceList)

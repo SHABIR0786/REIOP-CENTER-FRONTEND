@@ -39,8 +39,8 @@
           </div>
         </template>
 
-        <template #head(actions)="scope">
-          <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+        <template #head(action)="scope">
+          <div class="text-nowrap" style="width: 40px;">{{scope.label}}</div>
         </template>
 
         <template #head(id)="scope">
@@ -60,11 +60,9 @@
             <p class="user-email">{{data.index + 1}}</p>
           </div>
         </template>
-
-<!--        <template v-slot:cell(actions)="data">-->
-<!--          <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>-->
-<!--          <b-icon class="cursor-pointer" variant="danger" icon="trash" disabled @click="deleteItem(data.item)"></b-icon>-->
-<!--        </template>-->
+        <template v-slot:cell(action)="data">
+          <b-icon class="cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+        </template>
       </b-table>
       <b-row>
         <b-col class="d-flex align-items-center">
@@ -88,26 +86,20 @@
         </b-col>
       </b-row>
     </div>
-<!--    <add-type-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-type-modal>-->
-<!--    <edit-type-modal :showModal="showEditModal" :propsData="editedItem" @cancel="showEditModal=false" @save="save"></edit-type-modal>-->
-<!--    <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>-->
+    <edit-source-modal :showModal="showEditModal" :propsData="editedItem" :modalTitle="sourceTitle" :sourceType="sourceType" @cancel="showEditModal=false" @save="save"></edit-source-modal>
   </div>
 </template>
 
 <script>
 import {BIcon} from "bootstrap-vue";
 import {mapGetters} from "vuex";
-// import AddTypeModal from "../components/companyTypes/AddTypesModal";
-// import EditTypeModal from "../components/companyTypes/EditTypeModal";
-// import DeleteModal from "../components/deleteModal/DeleteModal";
+import EditSourceModal from "../components/sourceListsModal/EditSourceModal";
 
 export default {
   name: "sourceLists",
   components: {
     BIcon,
-    // AddTypeModal,
-    // EditTypeModal,
-    // DeleteModal
+    EditSourceModal,
   },
   data () {
     return {
@@ -116,14 +108,15 @@ export default {
       currentPage: 1,
       pageOptions: [10, 20, 50],
       search: '',
-      //showModal: false,
-      // editedItem: {},
-      // showDeleteModal: false,
-      // itemToDelete: {},
-      // showAddModal: false,
-      // showEditModal: false,
+      editedItem: {},
+      showEditModal: false,
+      sourceTitle : 'Source',
+      sourceType : 'list_source',
+
+
       fields: [
         {key:"id", label: "Id", sortable: true},
+        {key: "action", label: "Action"},
         {key: "list_source", label: "Source Lists", sortable: true},
         {key: "user_name", label: "Uploaded By"},
 
@@ -136,13 +129,11 @@ export default {
     ...mapGetters({
       isCollapsed: 'uxModule/isCollapsed',
       items: 'listModule/sourceListFromDB',
-     // total: 'companyTypesModule/total',
     }),
     rows() { return this.total ? this.total : 1 }
   },
   async created () {
     this.$store.dispatch('uxModule/setLoading')
-    //this.$store.dispatch('companyTypesModule/getTotal')
     try {
       await this.$store.dispatch("listModule/getSourceListFromDB", {page: 1, perPage: this.perPage})
       this.$store.dispatch('uxModule/hideLoader')
@@ -150,31 +141,17 @@ export default {
       this.$store.dispatch('uxModule/hideLoader')
     }
   },
-  //methods: {
-    // editItem(item) {
-    //   this.showEditModal = true
-    //   this.editedItem = { ...item }
-    // },
-    // save(item) {
-    //   // this.showModal = false
-    //   delete item.user_name;
-    //   this.$store.dispatch('companyTypesModule/editType', {...item})
-    // },
-    // add(item) {
-    //   this.showAddModal = false
-    //   this.$store.dispatch('companyTypesModule/addType', {...item})
-    // },
-    // deleteItem(item){
-    //   this.showDeleteModal = true;
-    //   this.itemToDelete = item;
-    // },
-    // modalResponse(response) {
-    //   this.showDeleteModal = false;
-    //   if (response) {
-    //     this.$store.dispatch('companyTypesModule/deleteType', this.itemToDelete.id)
-    //   }
-    // },
-  //},
+  methods: {
+    editItem(item) {
+      this.showEditModal = true
+      this.editedItem = { ...item }
+    },
+    save(source) {
+      this.showModal = false
+      this.$store.dispatch('listModule/editSource', {...source})
+    },
+
+  },
   watch: {
     currentPage: {
       handler: function() {
