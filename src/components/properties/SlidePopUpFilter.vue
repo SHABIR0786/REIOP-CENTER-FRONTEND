@@ -328,7 +328,6 @@
           </div>
         </div>
         <div class="card-footer">
-        {{export_amount}}
           <b-button class="float-right" v-bind:class="{'save-filter-btn':(export_amount != null)}" @click="exportfile()" :disabled="isExportDisabled"> <span v-if="isExporting"> <b-spinner small></b-spinner> Exporting</span><span v-if="!isExporting">Export</span></b-button>
         </div>
       </div>
