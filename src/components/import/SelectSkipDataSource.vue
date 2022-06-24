@@ -67,7 +67,7 @@
         computed: {
           ...mapGetters({
             sourceList: 'listModule/skipSourceList',
-            sourceListFromDB: 'listModule/sourceListFromDB',
+            skipSourceListFromDB: 'listModule/skipSourceListFromDB',
           })
         },
         props: ['importDetails','lists'],
@@ -83,7 +83,7 @@
             }
         },
       async mounted() {
-        await this.$store.dispatch('listModule/getSourceListFromDB')
+        await this.$store.dispatch('listModule/getSkipSourceListFromDB')
         if (this.importDetails && this.importDetails.skip_options) {
           this.skipOptions = this.importDetails.skip_options;
           //this.source = this.importDetails.skip_options
@@ -91,8 +91,8 @@
         if (this.sourceList.length > 0) {
           this.source = this.sourceList
         }else {
-         if (this.sourceListFromDB){
-           this.sourceListFromDB.forEach(e => {
+         if (this.skipSourceListFromDB){
+           this.skipSourceListFromDB.forEach(e => {
            if (e.list_skip_source ){
              this.source.push(e.list_skip_source)
            }

@@ -1,8 +1,9 @@
 <template>
   <div class="slidepopup" v-bind:class="{ show: isShowSlidePopUp }">
   <div class="innerslidepopup">
-    <span v-if="!isShowSlidePopUp" class="filter-and-export"
+    <span v-if="!isShowSlidePopUp && !isExporting" class="filter-and-export"
       >Filter and Export</span>
+      <span v-if="!isShowSlidePopUp && isExporting" class="filter-and-export"> <b-spinner small></b-spinner> Exporting</span>
     <span
       v-if="!isShowSlidePopUp"
       @click="isShowSlidePopUp = !isShowSlidePopUp"
@@ -16,11 +17,11 @@
       ><b-icon icon="chevron-double-left"></b-icon></span>
     <div class="filter-body" v-if="isShowSlidePopUp">
       <div class="card filter-card">
-        <div class="card-header p-2 d-flex justify-content-around col-12">
+        <div class="card-header p-1 d-flex justify-content-around col-12">
           <b-col cols="2 p-0 m-0">
             <h3>Filter</h3>
           </b-col>
-          <b-col cols="10">
+          <b-col cols="7 p-0 m-0">
             <b-form-select
               class="select-template w-100 float-right"
               v-model="selectedFilter"
@@ -28,6 +29,14 @@
               :options="savedFilters"
             >
             </b-form-select>
+          </b-col>
+          <b-col cols="3" class="p-0 m-0">
+           <b-button
+            v-bind:class="{ 'save-filter-btn' : allFilters.Market.length > 0}"
+            class="float-right"
+            :disabled="allFilters.Market.length == 0"
+            @click="showSaveFilterModal = !showSaveFilterModal"
+            >Save Filter</b-button>
           </b-col>
         </div>
         <div class="card-body filter-card-body">
@@ -70,7 +79,8 @@
                     <span class="checkbox-select__title">Select Included Market</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isShowMarketDropDown">
-                    <ul id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
+                  <loading-bars v-if="isListLoading"></loading-bars>
+                    <ul v-if="!isListLoading" id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
                     <li>
                         <b-form-checkbox
                             id="all_channels"
@@ -113,7 +123,8 @@
                     <span class="checkbox-select__title">Select Included Group</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isGroupDropDown">
-                    <ul id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
+                <loading-bars v-if="isListLoading"></loading-bars>
+                    <ul v-if="!isListLoading" id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
                     <li>
                         <b-form-checkbox
                             id="all_group"
@@ -146,7 +157,8 @@
                     <span class="checkbox-select__title">Select Included Type</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isTypeDropDown">
-                    <ul id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
+                <loading-bars v-if="isListLoading"></loading-bars>
+                    <ul v-if="!isListLoading" id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
                     <li>
                         <b-form-checkbox
                             id="all_type"
@@ -179,7 +191,8 @@
                     <span class="checkbox-select__title">Select Included Type</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isSourceDropDown">
-                    <ul id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
+                <loading-bars v-if="isListLoading"></loading-bars>
+                    <ul v-if="!isListLoading" id="customScroll" class="checkbox-select__filters-wrapp" data-simplebar-auto-hide="false">
                     <li>
                         <b-form-checkbox
                             id="all_source"
@@ -207,15 +220,14 @@
             </b-collapse>
           </div>
         </div>
-        <div class="card-footer p-2">
+        <!-- <div class="card-footer p-2">
           <b-button
             v-bind:class="{ 'save-filter-btn' : allFilters.Market.length > 0}"
             class="float-right"
             :disabled="allFilters.Market.length == 0"
             @click="showSaveFilterModal = !showSaveFilterModal"
-            >Save Filter</b-button
-          >
-        </div>
+            >Save Filter</b-button>
+        </div> -->
       </div>
       <!-- Export  -->
       <div class="card mt-2 export-card">
@@ -308,7 +320,7 @@
               max-rows="6">
             </b-form-textarea>
             <b-form-select
-              class="select-template w-100 mt-2 mb-3"
+              class="select-template export-amount-select w-100 mt-2 mb-3"
               v-model="export_amount"
               :options="SelectExportAmount">
             </b-form-select>
@@ -316,7 +328,7 @@
           </div>
         </div>
         <div class="card-footer">
-          <b-button class="float-right" v-bind:class="{'save-filter-btn':(export_amount != null && notes != null)}" :disabled="export_amount == null && notes == null" @click="exportfile()">Export</b-button>
+          <b-button class="float-right" v-bind:class="{'save-filter-btn':(export_amount != null)}" @click="exportfile()" :disabled="isExportDisabled"> <span v-if="isExporting"> <b-spinner small></b-spinner> Exporting</span><span v-if="!isExporting">Export</span></b-button>
         </div>
       </div>
     </div>
@@ -334,6 +346,7 @@
 import {mapGetters} from "vuex";
 import moment from 'moment'
 import SaveFilterModal from "./SaveFilterModal";
+import loadingBars from "../loader/loadingBars";
 export default {
   name: "SlidePopUpFilter",
   props: {
@@ -345,10 +358,17 @@ export default {
     },
     search: {
       type: String
+    },
+    sortBy: {
+      type: String
+    },
+    sortDesc: {
+      type: Boolean
     }
   },
   components: {
     SaveFilterModal,
+    loadingBars
   },
   data() {
     return {
@@ -439,6 +459,8 @@ export default {
           text: "Export {(Total in view / 5) + ((Total in view / 5) * 4)}",
         },
       ],
+      isListLoading: true,
+      isExporting: false,
     };
   },
 computed: {
@@ -447,7 +469,7 @@ computed: {
       lists: 'listModule/lists',
       filters: 'filtersModule/filters',
       sourceList: 'listModule/skipSourceList',
-      sourceListFromDB: 'listModule/sourceListFromDB',
+      skipSourceListFromDB: 'listModule/skipSourceListFromDB',
     }),
     totalFilters() {
       let total = 0
@@ -459,6 +481,13 @@ computed: {
     },
     MarketFilterCount() {
         return this.allFilters.Market.length > 0;
+    },
+    isExportDisabled() {
+      if(this.export_amount == null || this.isExporting){
+        return true;
+      } else {
+        return false;
+      }
     }
   },
  async created() {
@@ -497,6 +526,7 @@ computed: {
               this.allData.Source.push(el.list_source)
             }
           });
+      this.isListLoading = false;
   },   
   watch:{
     marketing_start_date: function() {
@@ -530,7 +560,7 @@ computed: {
         this.checkNextStep();
       }
     },
-    exportfile() {
+   async exportfile() {
       if(this.marketing_period) {
             this.marketing_end_date = moment(this.marketing_start_date).add(this.marketing_period * 7 ,'days').format('YYYY-MM-DD');
       }
@@ -549,9 +579,13 @@ computed: {
         filter: this.selectedFilter,
         fileType: 'csv',
         filters: this.allFilters,
-        search: this.search
+        search: this.search,
+        sortBy: this.sortBy,
+        sortDesc: this.sortDesc
       }
-      this.$store.dispatch('propertyModule/storeExport', exportSubject);
+      this.isExporting = true;
+     await this.$store.dispatch('propertyModule/storeExport', exportSubject);
+      this.isExporting = false;
     },
     checkNextStep() {
       if(this.export_type != null) {
@@ -581,6 +615,7 @@ computed: {
     changeFilter() {
        var filter = this.filters.find(x=>x.id == this.selectedFilter);
         this.allFilters = JSON.parse(filter.configuration);
+        this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
     },
     triggerSaveFilter(filterName) {
       this.showSaveFilterModal = false;
@@ -623,6 +658,8 @@ computed: {
         } else {
             this.selectedAll[filtertype] = 'not_accepted';
         }
+        this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
+
     },
     addFilter(FilterType,param) {
         if(this.allFilters[FilterType].findIndex(x=>x == param) == -1) {
@@ -636,6 +673,7 @@ computed: {
         } else {
            this.selectedAll[FilterType] = 'not_accepted';
         }
+        this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
     },
     selectAllMarket(FilterType,isAccepted) {
         if(isAccepted == 'accepted') {
@@ -653,6 +691,7 @@ computed: {
             }
            });
         }
+        this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
     },
     clearAllFilters() {
     // Unselect all the filters checkboxes.
@@ -676,16 +715,17 @@ computed: {
           Errors:[],
           RunDate:[],
         }
+    this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
     },
 
   },
   async mounted(){
     const Instance = this;
-     await this.$store.dispatch('listModule/getSourceListFromDB');
-    this.sourceListFromDB.forEach(function(item) {
+     await this.$store.dispatch('listModule/getSkipSourceListFromDB');
+    this.skipSourceListFromDB.forEach(function(item) {
       Instance.skipTraceSources.push(item.list_skip_source)
     });
-document.querySelector('body').addEventListener('click',function(e){
+document.querySelector('body').addEventListener('click',function(e) {
       if(!e.target.closest('.checkbox-select__dropdown') && !e.target.closest('.checkbox-select')) {
         if(document.querySelectorAll('.checkbox-select__dropdown')) {
         document.querySelectorAll('.checkbox-select__dropdown').forEach(function(elem){
@@ -698,6 +738,9 @@ document.querySelector('body').addEventListener('click',function(e){
 };
 </script>
 <style>
+.export-amount-select{
+  font-size:14px !important;
+}
 .slidepopup {
   position: fixed;
   overflow-y:scroll;
@@ -808,7 +851,7 @@ document.querySelector('body').addEventListener('click',function(e){
 }
 .checkbox-select__dropdown{
     position:absolute;
-    width: 372px;
+    width: 364px;
     background: white;
     border-radius: 10px;
     z-index: 10;
@@ -861,25 +904,32 @@ document.querySelector('body').addEventListener('click',function(e){
   position:relative;
 }
 /* width */
-.filter-card .filter-card-body::-webkit-scrollbar ,.export-card .export-card-body::-webkit-scrollbar,.slidepopup::-webkit-scrollbar {
+.filter-card .filter-card-body::-webkit-scrollbar ,.export-card .export-card-body::-webkit-scrollbar,.slidepopup::-webkit-scrollbar,.checkbox-select__dropdown::-webkit-scrollbar {
   width: 5px;
 }
 
 /* Track */
-.filter-card .filter-card-body::-webkit-scrollbar-track, .export-card .export-card-body::-webkit-scrollbar-track,.slidepopup::-webkit-scrollbar-track {
+.filter-card .filter-card-body::-webkit-scrollbar-track, .export-card .export-card-body::-webkit-scrollbar-track,.slidepopup::-webkit-scrollbar-track,.checkbox-select__dropdown::-webkit-scrollbar-track {
   background: #f1f1f1; 
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  margin-top:4px;
+  margin-bottom:4px;
+
 }
  
 /* Handle */
-.filter-card .filter-card-body::-webkit-scrollbar-thumb, .export-card .export-card-body::-webkit-scrollbar-thumb,.slidepopup::-webkit-scrollbar-thumb {
+.filter-card .filter-card-body::-webkit-scrollbar-thumb, .export-card .export-card-body::-webkit-scrollbar-thumb,.slidepopup::-webkit-scrollbar-thumb,.checkbox-select__dropdown::-webkit-scrollbar-thumb {
   background: #888; 
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 /* Handle on hover */
-.filter-card .filter-card-body::-webkit-scrollbar-thumb:hover,.export-card .export-card-body::-webkit-scrollbar-thumb:hover ,.slidepopup::-webkit-scrollbar-thumb:hover{
+.filter-card .filter-card-body::-webkit-scrollbar-thumb:hover,.export-card .export-card-body::-webkit-scrollbar-thumb:hover ,.slidepopup::-webkit-scrollbar-thumb:hover,.checkbox-select__dropdown::-webkit-scrollbar-thumb:hover{
   background: #555; 
 }
-.checkbox-select{
+.checkbox-select {
   position: relative;
 }
 </style>

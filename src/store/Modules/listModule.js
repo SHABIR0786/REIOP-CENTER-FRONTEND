@@ -31,7 +31,8 @@ const state = {
     subjectRelatedList: [],
     sameDate:null,
     sameSource:null,
-    allSkipSourceList:[]
+    allSkipSourceList:[],
+    allSourceList:[],
 }
 
 const mutations = {
@@ -95,11 +96,21 @@ const mutations = {
     SET_TYPE_LIST(state, payload) {
         state.typeList = payload
     },
-    SET_SOYRCE_LIST(state, payload) {
+    SET_SOURCE_LIST(state, payload) {
         state.sourceList = payload
     },
+   EDIT_SOURCE_LIST(state, payload) {
+       const allSourceList = JSON.parse(state.allSourceList)
+       allSourceList.find(el => el.id === payload.id).list_source = payload.list_source
+       state.allSourceList = JSON.stringify(allSourceList)
+   },
     SET_SKIP_SOURCE_LIST(state, payload) {
         state.skipSourceList = payload
+    },
+    EDIT_SKIP_SOURCE_LIST(state, payload) {
+        const allSkipSourceList = JSON.parse(state.allSkipSourceList)
+        allSkipSourceList.find(el => el.id === payload.id).list_skip_source = payload.list_skip_source
+        state.allSkipSourceList = JSON.stringify(allSkipSourceList)
     },
     SET_SKIP_SOURCE_CHOOSE(state, payload) {
         state.sameSource = payload
@@ -108,9 +119,22 @@ const mutations = {
         state.sameDate = payload
     },
     GET_SKIP_SOURCE_LIST(state, payload) {
-        state.allSkipSourceList = JSON.stringify(payload.skipSourceList);
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        });
+        state.allSkipSourceList = JSON.stringify(data);
     },
+    GET_SOURCE_LIST(state, payload) {
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+        });
 
+        state.allSourceList = JSON.stringify(data);
+    },
     SUBJECT_RELATED_LIST(state, payload) {
         payload.data.forEach(e =>{
             delete e.subjects;
@@ -143,7 +167,7 @@ const actions = {
         commit('SET_TYPE_LIST', payload)
     },
     saveSourceList({ commit }, payload) {
-        commit('SET_SOYRCE_LIST', payload)
+        commit('SET_SOURCE_LIST', payload)
     },
     saveSkipSourceList({ commit }, payload) {
         commit('SET_SKIP_SOURCE_LIST', payload)
@@ -167,10 +191,28 @@ const actions = {
             return response
         })
     },
-   async getSourceListFromDB({ commit }) {
+    async getSourceListFromDB({ commit }) {
+        return await api.get(`/lists/source`).then((response) => {
+            if (response ) {
+                commit('GET_SOURCE_LIST', response.sourceList)
+            }
+            return response
+        })
+    },
+    async editSource({ commit }, data) {
+        return await api.post(`/lists/editSource`,{...data}).then((response) => {
+            if (response && response.sourceType === 'list_source') {
+                commit('EDIT_SOURCE_LIST', data)
+            }else if(response && response.sourceType === 'list_skip_source'){
+                commit('EDIT_SKIP_SOURCE_LIST', data)
+            }
+            return response
+        })
+    },
+    async getSkipSourceListFromDB({ commit }) {
        return await api.get(`/lists/skipSource`).then((response) => {
            if (response ) {
-               commit('GET_SKIP_SOURCE_LIST', response)
+               commit('GET_SKIP_SOURCE_LIST', response.skipSourceList)
            }
            return response
        })
@@ -290,9 +332,15 @@ const getters = {
     typeList: state => state.typeList,
     sourceList: state => state.sourceList,
     skipSourceList: state => state.skipSourceList,
-    sourceListFromDB: ({ allSkipSourceList }) => {
+    skipSourceListFromDB: ({ allSkipSourceList }) => {
         if (typeof allSkipSourceList === 'string') {
             return JSON.parse(allSkipSourceList);
+        }
+        return [];
+    },
+    sourceListFromDB: ({ allSourceList }) => {
+        if (typeof allSourceList === 'string') {
+            return JSON.parse(allSourceList);
         }
         return [];
     },

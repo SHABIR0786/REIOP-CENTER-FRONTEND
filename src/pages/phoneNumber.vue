@@ -18,13 +18,18 @@
             </b-row>
             <hr>
             <b-row class="mb-3">
-                <b-col cols="8" class="d-flex align-items-center">
+                <b-col cols="6" class="d-flex align-items-center">
                     <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon></b-button>
-                    <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
+                    <b-button  v-if="totalFilters > 0" variant="outline-primary" @click="clearAllFilters()" class="filter d-flex float-right r-0 align-items-right mr-2">
+                    <b-icon icon="x" aria-hidden="true"></b-icon> Clear All </b-button>
+                    <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
                 </b-col>
-                <b-col cols="4">
+                <b-col cols="6">
                     <b-input-group class="mt-3">
+                        <b-input-group-append v-if="isPhoneSearched">
+                        <b-button @click="clearsearch" variant="outline-primary"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
+                        </b-input-group-append>
                         <b-form-input v-model="searchPhone" @keyup.enter="search" placeholder="Search"></b-form-input>
                         <b-input-group-append>
                         <b-button @click="search" variant="primary">Search</b-button>
@@ -153,7 +158,7 @@
         <edit-phone-number-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-phone-number-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-phone-number-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-phone-number-modal>
-        <filter-phone-numbers :search="searchPhone" @filter="filter" @finish-process="isFinishedFilterPhoneNumbers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-phone-numbers>
+        <filter-phone-numbers ref="filterPhone" :search="searchPhone" @filter="filter" @finish-process="isFinishedFilterPhoneNumbers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-phone-numbers>
     </div>
 </template>
 <script>
@@ -193,17 +198,17 @@ export default {
             bulkDeleteItems: [],
             allSelected: false,
             filtersName:{
-              Market:[],
-              Group:[],
-              Type:[],
-              Source:[],
-              Errors:[],
-              RunDate:[],
-              SkipSource:[],
-
+                Market:[],
+                Group:[],
+                Type:[],
+                Source:[],
+                Errors:[],
+                RunDate:[],
+                SkipSource:[],
             },
             sortBy: 'id',
-            sortDesc: false
+            sortDesc: false,
+            isPhoneSearched: false
         }
     },
     computed: {
@@ -237,6 +242,24 @@ export default {
       this.itemsCount = this.total;
     },
     methods: {   
+        async clearsearch() {
+            this.searchPhone = '';
+            await this.search();
+            this.isPhoneSearched = false;
+        },
+        async clearAllFilters() {
+            this.$refs.filterPhone.clearAllFilters();
+            this.filtersName = {
+            Market:[],
+            Group:[],
+            Type:[],
+            Source:[],
+            Errors:[],
+            RunDate:[],
+            SkipSource:[],
+        },
+        await this.search();
+        },
         async search() {
             // if (!this.total || (this.filteredPhoneNumber.length == 0)) {
                 if (!this.totalFilters) {
@@ -270,6 +293,11 @@ export default {
             //     this.filteredOrAllData =  searchInFiltered
             //     // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
             //   }
+            if(this.searchPhone.length == 0) {
+                this.isPhoneSearched = false;
+            } else {
+                this.isPhoneSearched = true;
+            }
         },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
@@ -405,7 +433,10 @@ export default {
         align-items: center;
         justify-content: space-between;
     }
-
+    .filter-top{
+      margin-left: -5px;
+      margin-top: -30px;
+    }
     .total {
         background-color: #F9CB9C;
     }

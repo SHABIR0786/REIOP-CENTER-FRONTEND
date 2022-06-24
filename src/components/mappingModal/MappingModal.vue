@@ -81,8 +81,6 @@ export default {
   },
   computed: {
     isDisable() {
-      console.log(this.mapping);
-      console.log(((this.mapping.name == null || this.mapping.description == null) || (this.mapping.name == "" || this.mapping.description == "" )));
       return (((this.mapping.name == null || this.mapping.description == null) || (this.mapping.name == "" || this.mapping.description == "" )));
     },
   },
