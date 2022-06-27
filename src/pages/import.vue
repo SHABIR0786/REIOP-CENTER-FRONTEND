@@ -232,9 +232,11 @@ export default {
       
       const that = this;
         if(this.mappedItems && this.mappedItems.length){
-         this.mappedItems.map(function(mapping_field, index) {
+          this.mappedItems.map(function(mapping_field, index) {
             that.clearMappedItem(index);
           });
+          this.targetFields();
+          this.uploadedFields = this.uploadedAllFields;
           this.mappedItems = [];
           this.mapping.name = null;
           this.mapping.description = null;
