@@ -554,7 +554,9 @@ export default {
       if (table === 'golden') {
         table = 'golden_address'
       }
-      this.uploadedFields.push(this.mappedItems[index].fromField)
+       if (!this.uploadedFields.includes(this.mappedItems[index].fromField)) {
+      this.uploadedFields.push(this.mappedItems[index].fromField)  
+        }
       if (table !== 'seller' && table !== 'email' && table !== 'phone') {
         this.importedFields[table].push({
           'label': this.mappedItems[index].toField,
