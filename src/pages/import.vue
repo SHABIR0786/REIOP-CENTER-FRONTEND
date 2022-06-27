@@ -229,19 +229,19 @@ export default {
   },
   methods: {
     clearTemplateMapping(){
+      this.$store.dispatch('uxModule/setLoading')
       
-      const that = this;
         if(this.mappedItems && this.mappedItems.length){
-          this.mappedItems.map(function(mapping_field, index) {
-            that.clearMappedItem(index);
-          });
+          const allFields =  JSON.parse(JSON.stringify(this.uploadedAllFields));
+          this.uploadedFields =allFields;
+          
           this.targetFields();
-          this.uploadedFields = this.uploadedAllFields;
           this.mappedItems = [];
           this.mapping.name = null;
           this.mapping.description = null;
           this.selectedMappingTemplate = null;
         }
+        this.$store.dispatch('uxModule/hideLoader');
     },
     sellerFill() {
       this.showSellerFillModal = false
