@@ -15,7 +15,11 @@
     </b-row>
     <b-row>
       <b-col cols="4" md="4">
-        <b-form-select v-model="selectedMappingTemplate" @change="getMappingTemplate($event)" :options="mappingTemplates" size="sm" class="mt-3"></b-form-select>
+        <b-form-select v-model="selectedMappingTemplate" :disabled="!hasFileAttached || selectedMappingTemplate != null" @change="getMappingTemplate($event)" :options="mappingTemplates" size="sm" class="mt-3"></b-form-select>
+        
+      </b-col>
+      <b-col cols="4" md="4">
+        <b-button variant="warning" v-show="selectedMappingTemplate != null" @click="clearTemplateMapping" class="mt-3">Clear Template Mapping</b-button>
       </b-col>
     </b-row>
     <div class="mt-4 parent">
@@ -212,6 +216,9 @@ export default {
     },
     isDisable() {
       return !(this.mappedItems.length > 0 && this.file != null);
+    },
+    hasFileAttached() {
+      return this.file != null;
     }
   },
   created() {
@@ -221,6 +228,19 @@ export default {
     this.getMappingTemplates();
   },
   methods: {
+    clearTemplateMapping(){
+      
+      const that = this;
+        if(this.mappedItems && this.mappedItems.length){
+         this.mappedItems.map(function(mapping_field, index) {
+            that.clearMappedItem(index);
+          });
+          this.mappedItems = [];
+          this.mapping.name = null;
+          this.mapping.description = null;
+          this.selectedMappingTemplate = null;
+        }
+    },
     sellerFill() {
       this.showSellerFillModal = false
       this.missingSellersData = [];
