@@ -2,6 +2,13 @@
   <b-container fluid :class="`import-container import main-content ${isCollapsed ? 'wide-content' : ''}`">
     <b-row>
       <b-col>
+        <b-alert v-model="showDismissibleAlert" :variant="alertVariant" dismissible>
+          {{alertMessage}}
+        </b-alert>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
         <b-form-file
             v-model="uploadedFile"
             @change="previewFile"
@@ -186,6 +193,9 @@ export default {
         name: null,
         description: null
       },
+      showDismissibleAlert: false,
+      alertVariant: 'danger',
+      alertMessage: null,
       // mappingTemplates: [
       //   { value: null, text: 'Select Optional Mapping Template' }],
 
@@ -591,7 +601,7 @@ export default {
       this.mappedItems.splice(index, 1)
     },
     async upload() {
-      await this.$store.dispatch('uxModule/setLoading')
+      this.$store.dispatch('uxModule/setLoading')
       const mapping = [];
       this.uploadedAllFields.forEach(fromF => {
         let toItem = '';
@@ -607,7 +617,7 @@ export default {
       }else {
         this.listPullSettings = this.list_settings
       }
-      await this.$store.dispatch('importModule/uploadExcelDataV2', {
+      let response = await this.$store.dispatch('importModule/uploadExcelDataV2', {
         file: this.file,
         mappedItems: mapping,
         url: this.url,
@@ -621,7 +631,16 @@ export default {
         mapping: this.mapping,
         selectedMappingTemplate: this.updateMappingTemplate,
       })
-       location.reload()
+      if(response.status == 200){
+        location.reload()
+
+      } else {
+        this.alertMessage = response.message;
+        this.alertVariant = 'danger';
+        this.showDismissibleAlert = true;
+        this.$store.dispatch('uxModule/hideLoader');
+      }
+      //  location.reload()
     },
     async getMappingTemplates(){
       await this.$store.dispatch('importModule/loadMappingTemplates',{import_type:this.importTypes[this.upload_type]});
