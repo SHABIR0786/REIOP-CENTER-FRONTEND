@@ -6,8 +6,8 @@ const defaultFields = [
     {key:"delete", label: ""},
     {key:"id", label: "Id", sortable: true},
     {key: "actions", label: "Actions"},
-    {key: "total_sellers", label: "Total Sellers", sortable: true},
-    {key: "list_stack", label: "List Stack", sortable: true},
+    {key: "total_sellers", label: "Total Sellers", sortable: false},
+    {key: "list_stack", label: "List Stack", sortable: false},
 
     {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true, visible: false},
     // {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
@@ -25,6 +25,10 @@ const state = {
     ],
     subjects: [],
     total: 0,
+    maxSellers: 0,
+    maxPhones: 0,
+    maxEmails: 0,
+    maxGoldenAddresses: 0,
     allFields: [
         //Subject
         {key:"id", label: "Id", sortable: true},
@@ -59,19 +63,17 @@ const state = {
         {key:"list_type", label: "Type", sortable: true},
         {key:"list_source", label: "Source", sortable: true},
 
-        //Seller
-        {key: "seller_first_name", label: "First Name", sortable: true},
-        {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
-        {key: "seller_mailing_address", label: "Mailing Address"},
-        {key: "seller_mailing_state", label: "Mailing State"},
-        {key: "seller_mailing_city", label: "Mailing City"},
-        {key: "seller_mailing_zip", label: "Mailing Zip"},
+
     ],
 }
 
 const mutations = {
     SET_ALL_SUBJECTS(state, payload) {
-        const data = [...payload.data]
+        const data = [...payload.data];
+        state.maxSellers = 0;
+        state.maxPhones = 0;
+        state.maxEmails = 0;
+        state.maxGoldenAddresses = 0;
         data.forEach(e => {
             if(e.lists) {
                 let list_market = [];
@@ -93,33 +95,68 @@ const mutations = {
             }
 
             if(e.sellers) {
-                let seller_first_name = [];
-                let seller_last_name = [];
-                let seller_mailing_address = [];
-                let seller_mailing_state = [];
-                let seller_mailing_city = [];
-                let seller_mailing_zip = [];
-                 e.sellers.forEach(seller => {
-                     if(seller.seller_first_name) seller_first_name.push(seller.seller_first_name);
-                     if(seller.seller_last_name) seller_last_name.push(seller.seller_last_name);
-                     if(seller.seller_mailing_address) seller_mailing_address.push(seller.seller_mailing_address);
-                     if(seller.seller_mailing_state) seller_mailing_state.push(seller.seller_mailing_state);
-                     if(seller.seller_mailing_city) seller_mailing_city.push(seller.seller_mailing_city);
-                     if(seller.seller_mailing_zip) seller_mailing_zip.push(seller.seller_mailing_zip);
-                 });
+                  e.sellers.forEach((seller,index) => {
+                    let sellerCount = index + 1;
+                    e[sellerCount+'_seller_full_name'] = seller.seller_full_name;
+                    e[sellerCount+'_seller_first_name'] = seller.seller_first_name;
+                    e[sellerCount+'_seller_last_name'] = seller.seller_last_name;
+                    e[sellerCount+'_seller_middle_name'] = seller.seller_middle_name;
+                    e[sellerCount+'_seller_mailing_address'] = seller.seller_mailing_address;
+                    e[sellerCount+'_seller_mailing_state'] = seller.seller_mailing_state;
+                    e[sellerCount+'_seller_mailing_city'] = seller.seller_mailing_city;
+                    e[sellerCount+'_seller_mailing_zip'] = seller.seller_mailing_zip;
 
-                 e.seller_first_name = seller_first_name.join(', ');
-                 e.seller_last_name = seller_last_name.join(', ');
-                 e.seller_mailing_address = seller_mailing_address.join(', ');
-                 e.seller_mailing_state = seller_mailing_state.join(', ');
-                 e.seller_mailing_city = seller_mailing_city.join(', ');
-                 e.seller_mailing_zip = seller_mailing_zip.join(', ');
+                    // Seller Phones
+                    seller.phones.forEach((phone,phoneIndex) => {
+                    let phoneCount = phoneIndex + 1;
+                    e['seller_'+sellerCount+'_phone_'+phoneCount+'_phone_number'] = phone.phone_number;
+                    e['seller_'+sellerCount+'_phone_'+phoneCount+'_phone_type'] = phone.phone_type;
+                    e['seller_'+sellerCount+'_phone_'+phoneCount+'_phone_validity'] = phone.phone_validity;
+                    e['seller_'+sellerCount+'_phone_'+phoneCount+'_phone_skip_source'] = phone.phone_skip_source;                    
+                    });
+
+                    // Seller Emails
+                    seller.emails.forEach((email,emailIndex) => {
+                        let emailCount = emailIndex + 1;
+                        e['seller_'+sellerCount+'_email_'+emailCount+'_email_address'] = email.email_address;
+                        e['seller_'+sellerCount+'_email_'+emailCount+'_email_validity'] = email.email_validity;
+                        e['seller_'+sellerCount+'_email_'+emailCount+'_email_skip_source'] = email.email_skip_source;
+                    });
+
+                    // Seller Golden Addresses
+                    seller.golden_addresses.forEach((golden,goldenIndex) => {
+                        let goldenCount = goldenIndex + 1;
+                        e['seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_address'] = golden.golden_address_address;
+                        e['seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_city'] = golden.golden_address_city;
+                        e['seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_state'] = golden.golden_address_state;
+                        e['seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_zip'] = golden.golden_address_zip;
+
+                    });
+
+                // get Max counts for Phones, Emails and Golden addresses
+                    if(seller.phones.length > state.maxPhones) {
+                        state.maxPhones = seller.phones.length;
+                    }
+
+                    if(seller.emails.length > state.maxEmails) {
+                        state.maxEmails = seller.emails.length;
+                    }
+
+                    if(seller.golden_addresses.length > state.maxGoldenAddresses) {
+                        state.maxGoldenAddresses = seller.golden_addresses.length;
+                    }
+                });
             }
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
             e.list_stack = e.lists.length;
             e.total_sellers = e.sellers.length;
+            if(e.sellers.length > state.maxSellers) {
+                state.maxSellers = e.sellers.length;
+            }
+            
         })
+
         state.subjects = JSON.stringify(data);
         state.total = payload.total;
     },
@@ -147,23 +184,6 @@ const mutations = {
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1, { ...payload })
     },
-    GET_TEMPLATE(state, payload) {
-        if(payload !== null) {
-            let parseData = JSON.parse(payload.configuration);
-            state.fields = [
-                {key:"id", label: "Id", sortable: true},
-                {key: "actions", label: "Actions"},
-            ];
-            for(let key in parseData) {
-                if(key !== 'name' && parseData[key] !== false) {
-                    let obj = state.allFields.find(o => o['key'] === key);
-                    state.fields.push(obj);
-                }
-            }
-        } else {
-            state.fields = [...defaultFields]
-        }
-    },
     DELETE_MULTIPLE_SUBJECTS(state, payload) {
         const SUBJECTS = JSON.parse(state.subjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload)
@@ -173,6 +193,11 @@ const mutations = {
         state.subjects = [];
         state.total = 0;
         state.totals = {};
+        state.maxSellers = 0;
+        state.template = {};
+        state.maxPhones = 0;
+        state.maxEmails = 0;
+        state.maxGoldenAddresses = 0;
     },
 
 }
@@ -192,14 +217,6 @@ const actions = {
         })
     },
     async getAllSubjectsV2({ commit, dispatch }, data) {
-        // let params = '?page=' + page + '&perPage=' + perPage;
-        // if (filter) {
-        //     const keys = Object.keys(filter);
-        //     keys.forEach(key => {
-        //         params = params + '&' + key + '=' + filter[key];
-        //     })
-        // }
-
         return await api.post(`/subjectsV2`,{...data}).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
@@ -298,16 +315,6 @@ const actions = {
             return response
         })
     },
-    async getTemplate({ commit }, data) {
-        if(data.id !== null) {
-            return await api.get(`/templates/${data.id}`).then((response) => {
-                commit('GET_TEMPLATE', response.template)
-                return response
-            })
-        } else {
-            commit('GET_TEMPLATE', null);
-        }
-    },
     async deleteVuexStore({ commit }) {
         commit ('VUEX_STORE');
     },
@@ -323,7 +330,12 @@ const getters = {
         return [];
     },
     total: ({total}) => total,
-    totals: ({totals}) => totals
+    totals: ({totals}) => totals,
+    maxSellers: ({maxSellers}) => maxSellers,
+    maxPhones: ({maxPhones}) => maxPhones,
+    maxEmails: ({maxEmails}) => maxEmails,
+    maxGoldenAddresses: ({maxGoldenAddresses}) => maxGoldenAddresses,
+    template: ({template}) => template
 }
 
 export default {

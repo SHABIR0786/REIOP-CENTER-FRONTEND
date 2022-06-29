@@ -1,7 +1,8 @@
 import * as api from "../Services/api";
 
 const state = {
-    templates: []
+    templates: [],
+    template: {},
 }
 
 const mutations = {
@@ -16,7 +17,18 @@ const mutations = {
     TEMPLATES_LIST(state, payload) {
         // const data = [...payload]
         state.templates = payload
-    }
+    },
+    GET_TEMPLATE(state, payload) {
+        if(payload !== null) {
+            let parseData = JSON.parse(payload.configuration);
+            state.template = parseData;
+        }
+    },
+    VUEX_STORE(state) {
+        state.templates = [];
+        state.template = {};
+
+    },
 };
 
 const actions = {
@@ -55,10 +67,21 @@ const actions = {
             return response
         })
     },
+    async getTemplate({ commit }, data) {
+        if(data.id !== null) {
+            return await api.get(`/templates/${data.id}`).then((response) => {
+                commit('GET_TEMPLATE', response.template)
+                return response
+            })
+        } else {
+            commit('GET_TEMPLATE', null);
+        }
+    },
  };
 
 const getters = {
     templates: ({ templates }) => templates,
+    template: ({ template}) => template
 }
 
 export default {

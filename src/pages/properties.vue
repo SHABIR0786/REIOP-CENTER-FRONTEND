@@ -10,7 +10,7 @@
             <div>{{totals.goldenAddressesCount}} Golden Addresses</div>
         </div>
         </div>
-        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="selectedTemplate" @filterProperties="filterProperties"  :sortBy="sortBy" :sortDesc="sortDesc"></slide-pop-up-filter>
+        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties"  :sortBy="sortBy" :sortDesc="sortDesc"></slide-pop-up-filter>
         <hr>
         <div>
             <b-row class="text-end mb-3">
@@ -145,7 +145,7 @@
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
             <template #head()="scope">
-                <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                <div style="width: 150px;">{{ scope.label }}</div>
             </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -296,7 +296,8 @@ export default {
             },
             sortBy: 'id',
             sortDesc: false,
-            isPropertySearched:false
+            isPropertySearched:false,
+            customViewTemplate:null,
         }
     },
     computed: {
@@ -305,8 +306,13 @@ export default {
           fields: 'propertyModule/fields',
           items: 'propertyModule/subjects',
           total: 'propertyModule/total',
+          maxSellers: 'propertyModule/maxSellers',
+          maxPhones: 'propertyModule/maxPhones',
+          maxEmails: 'propertyModule/maxEmails',
+          maxGoldenAddresses: 'propertyModule/maxGoldenAddresses',
           filteredItems: 'subjectModule/filteredSubject',
-          templates: 'templatesModule/templates'
+          templates: 'templatesModule/templates',
+          template: 'templatesModule/template'
         }),
          filtersCount(){
             let total = 0
@@ -315,13 +321,21 @@ export default {
             }
         return total;
         },
+        getCustomView(){
+            if(this.customViewTemplate){
+                let customViewTemplate = JSON.parse(JSON.stringify(this.customViewTemplate));
+                customViewTemplate.customView = true;
+                return customViewTemplate;
+            } else {
+                return this.propertyFields;
+            }
+        },
         rows() { return this.total ? this.total : 1 }
     },
-    async created () {
+    async created() {
         this.$store.dispatch('uxModule/setLoading')
         this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName})
         this.$store.dispatch('propertyModule/getTotal')
-
         try {
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage,filter: this.filtersName})
             await this.$store.dispatch("templatesModule/getAllTemplates")
@@ -331,7 +345,7 @@ export default {
         }
     },
     methods: {
-        async sortingChanged(ctx) {
+    async sortingChanged(ctx) {
            this.sortBy = ctx.sortBy;
            this.sortDesc = ctx.sortDesc;
             if (this.filtersCount > 0) {
@@ -357,6 +371,9 @@ export default {
         this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
         }
         this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search: this.searchProperty});
+           if(this.customViewTemplate){
+               this.showCustomView();
+            }
         if(this.searchProperty.length == 0) {
             this.isPropertySearched = false;
         } else {
@@ -369,6 +386,9 @@ export default {
         this.filtersName = filtersName;
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
             this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search:this.searchProperty});
+            if(this.customViewTemplate){
+               this.showCustomView();
+            }
             this.$store.dispatch('uxModule/hideLoader')
          } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -379,20 +399,155 @@ export default {
             this.showModal = true
             this.editedItem = { ...item }
         },
-        showCustomView(template) {
-            this.showCustomModalView = false;
-            const fields = [
-                {key:"delete", label: ""},
-                {key:"id", label: "Id", sortable: true},
-                {key: "actions", label: "Actions"},
-            ];
-            for(let key in template) {
-                if(key !== 'name' && template[key] !== false) {
-                    let obj = this.allFields.find(o => o['key'] === key);
-                    fields.push(obj);
+        addSellerFields(SellerFields, PhoneFields, EmailFields, GoldenAddressesFields) {
+            let fields = [];
+            
+            // Adding Seller Fields.
+            for(let z = 0; z < this.maxSellers; z++) {
+            for(let key of SellerFields) {
+                let sellerCount = z + 1;
+                    if(key == 'seller_full_name') {
+                        fields.push({key: sellerCount+'_seller_full_name', label: "Seller "+sellerCount +" Full Name", sortable: false});
+                    }
+                    if(key == 'seller_first_name') {
+                        fields.push({key: sellerCount+'_seller_first_name', label: "Seller "+sellerCount +" First Name", sortable: false});
+                    }
+                    if(key == 'seller_last_name') {
+                        fields.push({key: sellerCount+'_seller_last_name', label: "Seller "+sellerCount +" Last Name", sortable: false});
+                    }
+                    if(key == 'seller_middle_name') {
+                        fields.push({key: sellerCount+'_seller_middle_name', label: "Seller "+sellerCount +" Middle Name", sortable: false});
+                    }
+                    if(key == 'seller_mailing_address') {
+                        fields.push({key: sellerCount+'_seller_mailing_address', label: "Seller "+sellerCount +" Mailing Address", sortable: false});
+                    }
+                    if(key == 'seller_mailing_city') {
+                        fields.push({key: sellerCount+'_seller_mailing_city', label: "Seller "+sellerCount +" Mailing City", sortable: false});
+                    }
+                    if(key == 'seller_mailing_state') {
+                        fields.push({key: sellerCount+'_seller_mailing_state', label: "Seller "+sellerCount +" Mailing State", sortable: false});
+                    }
+                    if(key == 'seller_mailing_zip') {
+                        fields.push({key: sellerCount+'_seller_mailing_zip', label: "Seller "+sellerCount +" Mailing Zip", sortable: false});
+                    }
                 }
             }
+            if(this.maxPhones > 0) {
+            for(let ms = 0; ms < this.maxSellers; ms++) {
+               let sellerCount = ms + 1;
+            // Adding Phones Fields
+            for(let z = 0; z < this.maxPhones; z++) {
+            for(let key of PhoneFields) {
+                let phoneCount = z + 1;
+                    if(key == 'phone_number') {
+                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_number', label: "Seller "+sellerCount +" Phone "+ phoneCount +" Phone Number" , sortable: false});
+                    }
 
+                    if(key == 'phone_type') {
+                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_type', label: "Seller "+sellerCount +" Phone "+ phoneCount + " Phone Type", sortable: false});
+                    }
+
+                    if(key == 'phone_validity') {
+                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_validity', label: "Seller "+sellerCount +" Phone " + phoneCount + " Phone Validity", sortable: false});
+                    }
+
+                    if(key == 'phone_skip_source') {
+                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_skip_source', label: "Seller "+sellerCount +" Phone" + phoneCount + "phone Skip Source", sortable: false});
+                    }
+                }
+              }
+            }
+            }
+
+
+            // Adding Email Fields
+            if(this.maxEmails > 0) {
+            for(let ms = 0; ms < this.maxSellers; ms++) {
+               let sellerCount = ms + 1;
+            for(let z = 0; z < this.maxEmails; z++) {
+            for(let key of EmailFields) {
+                let emailCount = z + 1;
+                    if(key == 'email_address') {
+                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_address', label: "Seller "+sellerCount +" Email "+ emailCount +" Email Address" , sortable: false});
+                    }
+
+                    if(key == 'email_validity') {
+                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_validity', label: "Seller "+sellerCount +" Email "+ emailCount + " Email Validity", sortable: false});
+                    }
+
+                    if(key == 'email_skip_source') {
+                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_skip_source', label: "Seller "+sellerCount +" Email " + emailCount + " Email Skip Source", sortable: false});
+                    }
+                }
+              }
+            }
+            }
+
+            // Adding Golden Addresses Fields
+            if(this.maxGoldenAddresses > 0) {
+            for(let ms = 0; ms < this.maxSellers; ms++) {
+               let sellerCount = ms + 1;
+            for(let z = 0; z < this.maxGoldenAddresses; z++) {
+            for(let key of GoldenAddressesFields) {
+                let goldenCount = z + 1;
+                    if(key == 'golden_address_address') {
+                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_address', label: "Seller "+sellerCount +" Golden Address  "+ goldenCount +" Golden Address" , sortable: false});
+                    }
+                    if(key == 'golden_address_city') {
+                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_city', label: "Seller "+sellerCount +" Golden Address  "+ goldenCount + " Golden City", sortable: false});
+                    }
+                    if(key == 'golden_address_state') {
+                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_state', label: "Seller "+sellerCount +" Golden Address  " + goldenCount + " Golden State", sortable: false});
+                    }
+                    if(key == 'golden_address_zip') {
+                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_zip', label: "Seller "+sellerCount +" Golden Address  " + goldenCount + " Golden Zip", sortable: false});
+                    }
+                }
+              }
+            }
+            }
+                return fields;
+        },
+        showCustomView(template) {
+            if(template) {
+                this.customViewTemplate = template;
+            }
+            this.showCustomModalView = false;
+            let fields = [];
+            let isId = false;
+            let SellerFields = [];
+            let PhoneFields = [];
+            let EmailFields = [];
+            let GoldenAddressesFields = [];
+            for(let key in this.customViewTemplate) {
+                if(key !== 'name' && this.customViewTemplate[key] !== false) {
+                    if(key.includes("seller_")){
+                        SellerFields.push(key);
+                    } else if(key.includes("phone_")) {
+                        PhoneFields.push(key);
+                    } else if(key.includes("email_")) {
+                        EmailFields.push(key);
+                    } else if(key.includes("golden_address_")) {
+                        GoldenAddressesFields.push(key);
+                    } else {
+                    if(key == "id") {
+                       isId = true; 
+                    } else {
+                    let obj = this.allFields.find(o => o['key'] === key);
+                    fields.push(obj);
+                    }
+                    }
+                }
+            }
+            if(SellerFields.length > 0 || PhoneFields.length > 0 || EmailFields.length > 0 || GoldenAddressesFields.length > 0) {
+                let sellerFields = this.addSellerFields(SellerFields,PhoneFields,EmailFields,GoldenAddressesFields);
+                fields.unshift(...sellerFields);
+            }
+            if(isId) {
+                fields.unshift({key:"delete", label: ""},{key:"id", label: "Id", sortable: true},{key: "actions", label: "Actions"});
+            } else {
+                fields.unshift({key:"delete", label: ""},{key: "actions", label: "Actions"});
+            }
             this.propertyFields = [...fields];
         },
         save(item) {
@@ -430,7 +585,6 @@ export default {
                 delete templateDuplication[key];
               }
             });
-
             let response = await this.$store.dispatch('templatesModule/createTemplate', templateDuplication);
             if(response.template) {
                 response = response.template;
@@ -460,13 +614,11 @@ export default {
               }
             })
           }
-
           this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage, filter: this.filter})
         },
-        getTemplate (event) {
-          this.$store.dispatch("propertyModule/getTemplate", {id: event})
-          this.propertyFields = [...this.fields];
-          this.propertyFields.unshift({key:"delete", label: ""});
+        async getTemplate (event) {
+          await this.$store.dispatch("templatesModule/getTemplate", {id: event});
+          this.showCustomView(this.template);
         },
         bulkDelete () {
             this.$store.dispatch('propertyModule/deleteMultipleSubjects', this.bulkDeleteItems).then(
@@ -480,7 +632,6 @@ export default {
                     this.bulkDeleteItems.push(e.id);
                 });
             }
-
         }
     },
     mounted() {
@@ -500,13 +651,23 @@ export default {
     },
     watch: {
         currentPage: {
-            handler: function() {
-                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty, fitler: this.filtersName})
+            handler: async function() {
+            this.$store.dispatch('uxModule/setLoading')
+               await this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty, filter: this.filtersName})
+                if(this.customViewTemplate){
+                this.showCustomView();
+                }
+                this.$store.dispatch('uxModule/hideLoader')
             }
         },
         perPage: {
-            handler: function () {
-                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: 1, perPage: this.perPage, search: this.searchProperty, fitler: this.filtersName})
+          handler:async function () {
+            this.$store.dispatch('uxModule/setLoading')
+             await this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: 1, perPage: this.perPage, search: this.searchProperty, filter: this.filtersName})
+                if(this.customViewTemplate){
+                this.showCustomView();
+                }
+                this.$store.dispatch('uxModule/hideLoader')
             }
         },
 

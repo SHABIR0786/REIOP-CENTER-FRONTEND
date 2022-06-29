@@ -351,6 +351,9 @@ export default {
   name: "SlidePopUpFilter",
   props: {
     custom_view: {
+      type: [Array, Object]
+    },
+    template_id: {
       type: Number
     },
     selectedItems: {
@@ -576,6 +579,7 @@ computed: {
         selectedItems: this.selectedItems,
         export_amount: this.export_amount,
         custom_view: this.custom_view,
+        template_id: this.template_id,
         filter: this.selectedFilter,
         fileType: 'csv',
         filters: this.allFilters,
@@ -584,7 +588,7 @@ computed: {
         sortDesc: this.sortDesc
       }
       this.isExporting = true;
-     await this.$store.dispatch('propertyModule/storeExport', exportSubject);
+      await this.$store.dispatch('propertyModule/storeExport', exportSubject);
       this.isExporting = false;
     },
     checkNextStep() {
