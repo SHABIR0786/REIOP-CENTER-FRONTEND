@@ -15,7 +15,11 @@
     </b-row>
     <b-row>
       <b-col cols="4" md="4">
-        <b-form-select v-model="selectedMappingTemplate" @change="getMappingTemplate($event)" :options="mappingTemplates" size="sm" class="mt-3"></b-form-select>
+        <b-form-select v-model="selectedMappingTemplate" :disabled="!hasFileAttached || selectedMappingTemplate != null" @change="getMappingTemplate($event)" :options="mappingTemplates" size="sm" class="mt-3"></b-form-select>
+        
+      </b-col>
+      <b-col cols="4" md="4">
+        <b-button variant="warning" v-show="selectedMappingTemplate != null" @click="clearTemplateMapping" class="mt-3">Clear Template Mapping</b-button>
       </b-col>
     </b-row>
     <div class="mt-4 parent">
@@ -212,6 +216,9 @@ export default {
     },
     isDisable() {
       return !(this.mappedItems.length > 0 && this.file != null);
+    },
+    hasFileAttached() {
+      return this.file != null;
     }
   },
   created() {
@@ -221,6 +228,21 @@ export default {
     this.getMappingTemplates();
   },
   methods: {
+    clearTemplateMapping(){
+      this.$store.dispatch('uxModule/setLoading')
+      
+        if(this.mappedItems && this.mappedItems.length){
+          const allFields =  JSON.parse(JSON.stringify(this.uploadedAllFields));
+          this.uploadedFields =allFields;
+          
+          this.targetFields();
+          this.mappedItems = [];
+          this.mapping.name = null;
+          this.mapping.description = null;
+          this.selectedMappingTemplate = null;
+        }
+        this.$store.dispatch('uxModule/hideLoader');
+    },
     sellerFill() {
       this.showSellerFillModal = false
       this.missingSellersData = [];
@@ -554,7 +576,9 @@ export default {
       if (table === 'golden') {
         table = 'golden_address'
       }
-      this.uploadedFields.push(this.mappedItems[index].fromField)
+       if (!this.uploadedFields.includes(this.mappedItems[index].fromField)) {
+      this.uploadedFields.push(this.mappedItems[index].fromField)  
+        }
       if (table !== 'seller' && table !== 'email' && table !== 'phone') {
         this.importedFields[table].push({
           'label': this.mappedItems[index].toField,
