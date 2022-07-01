@@ -8,31 +8,37 @@
         <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right>
                 <template #button-content> {{ (user && user.name) ? user.name : "User"}}</template>
-                <b-dropdown-item>
+                <b-dropdown-item v-if="user && user.role == 'admin' && adminMode == false">
+                    <div @click="switchToAdminView()"><b-icon icon="person-bounding-box"></b-icon> Switch to Admin View</div>
+                </b-dropdown-item>
+                <b-dropdown-item v-if="user && user.role == 'admin' && adminMode == true">
+                    <div @click="switchToTeamView()"><b-icon icon="person-bounding-box"></b-icon> Switch to Team View</div>
+                </b-dropdown-item>
+                <b-dropdown-item v-if="adminMode == false">
                     <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Labels</router-link>
                 </b-dropdown-item>
-              <b-dropdown-item > <!--v-if="user && user.role === 'admin'"-->
+              <b-dropdown-item v-if="adminMode == false"> <!--v-if="user && user.role === 'admin'"-->
                 <router-link class="link-label" to="/teams"><b-icon icon="card-list"></b-icon> Teams</router-link>
               </b-dropdown-item>
-              <b-dropdown-item >
+              <b-dropdown-item  v-if="adminMode == false">
                 <router-link class="link-label" to="/phoneTypes"><b-icon icon="phone"></b-icon> Phone Types</router-link>
               </b-dropdown-item>
-              <b-dropdown-item >
+              <b-dropdown-item v-if="adminMode == false">
                 <router-link class="link-label" to="/subjectTypes"><b-icon icon="house"></b-icon> Subject Types</router-link>
               </b-dropdown-item>
-              <b-dropdown-item>
+              <b-dropdown-item v-if="adminMode == false">
                 <router-link class="link-label" to="/companyTypes"><b-icon icon="building"></b-icon> Company Types</router-link>
               </b-dropdown-item>
-              <b-dropdown-item >
+              <b-dropdown-item  v-if="adminMode == false">
                 <router-link class="link-label" to="/sourceLists"><b-icon icon="folder-check"></b-icon> Source Lists</router-link>
               </b-dropdown-item>
-              <b-dropdown-item >
+              <b-dropdown-item v-if="adminMode == false">
                 <router-link class="link-label" to="/skipSourceLists"><b-icon icon="folder-symlink"></b-icon> Skip Source Lists</router-link>
               </b-dropdown-item>
-              <b-dropdown-item>
+              <b-dropdown-item v-if="adminMode == false">
                 <router-link class="link-label" to="/marketingChannels"><b-icon icon="building"></b-icon> Marketing Channels</router-link>
               </b-dropdown-item>
-              <b-dropdown-item>
+              <b-dropdown-item v-if="adminMode == false">
                 <router-link class="link-label" to="/errors"><b-icon icon="exclamation-circle-fill" variant="warning"></b-icon> Errors</router-link>
               </b-dropdown-item>
                 <b-dropdown-item @click="logout"><b-icon icon="power"></b-icon> Logout</b-dropdown-item>
@@ -52,13 +58,20 @@ export default {
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            user: 'loginModule/getAuthUser'
+            user: 'loginModule/getAuthUser',
+            adminMode: 'loginModule/getAdminMode',
         })
     },
     methods: {
         async logout () {
             await this.$store.dispatch('loginModule/logout')
             this.$router.push({name: "Login"}).catch(() => {})
+        },
+        switchToAdminView() {
+            this.$store.dispatch('loginModule/switchToAdminView')
+        },
+        switchToTeamView() {
+            this.$store.dispatch('loginModule/switchToTeamView');
         }
     }
 }

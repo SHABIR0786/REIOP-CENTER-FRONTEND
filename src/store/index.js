@@ -22,6 +22,7 @@ import errorModule from "./Modules/errorModule"
 import importV2Module from "./Modules/importV2Module";
 import templatesModule from "./Modules/templatesModule";
 import teamModule from "./Modules/teamModule";
+import userModule from "./Modules/userModule";
 import phoneTypesModule from "./Modules/phoneTypesModule";
 import subjectTypesModule from "./Modules/subjectTypesModule";
 import companyTypesModule from "./Modules/companyTypesModule";
@@ -60,7 +61,8 @@ export default new Vuex.Store({
         subjectTypesModule: subjectTypesModule,
         companyTypesModule: companyTypesModule,
         marketingChannelModule: marketingChannelModule,
-        filtersModule: filtersModule
+        filtersModule: filtersModule,
+        userModule: userModule
 
     },
     state,

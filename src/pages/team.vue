@@ -101,7 +101,7 @@
     </div>
     <add-team-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-team-modal>
     <edit-team-modal :showModal="showEditModal" :propsData="editedItem" @cancel="showEditModal=false" @save="save"></edit-team-modal>
-    <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <confirm-modal :showModal="showUserExistModal"   @modalResponse="userExist">
       <template v-slot:userExist>A team already exists with this owner email. Please use a different owner email</template>
     </confirm-modal>

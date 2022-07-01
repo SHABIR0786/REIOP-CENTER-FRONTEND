@@ -5,6 +5,7 @@ export const state = {
     isLogged: false,
     accessToken: getLocalStorage('accessToken') || '',
     authUser: JSON.parse(getLocalStorage('authUser')) || {},
+    adminMode: getLocalStorage('adminMode') || false,
 }
 
 export const mutations = {
@@ -21,6 +22,9 @@ export const mutations = {
         state.accessToken = '';
         clearLocalStorage();
         clearSessionStorage();
+    },
+    SET_ADMIN_MODE(state, payload) {
+        state.adminMode = payload;
     }
 }
 
@@ -47,12 +51,22 @@ export const actions = {
         api.setHeader(null);
         commit('LOGOUT');
         window.location.href = '/login';
+    },
+    switchToAdminView({commit}) {
+        commit('SET_ADMIN_MODE',true);
+        setLocalStorage('adminMode',true);
+    },
+    switchToTeamView({commit}){
+        commit('SET_ADMIN_MODE', false)
+        setLocalStorage('adminMode',false);
+
     }
 }
 
 export const getters = {
     isLogged: ({ isLogged }) => isLogged,
-    getAuthUser: ({ authUser }) => authUser
+    getAuthUser: ({ authUser }) => authUser,
+    getAdminMode: ({adminMode}) => JSON.parse(adminMode),
 }
 
 export default {
