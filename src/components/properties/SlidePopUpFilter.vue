@@ -252,7 +252,9 @@
           </div>
           <div @click="BackStep(2)" class="export-number">
             <span>2</span>
-            <b v-if="stepNumber > 2">Marketing Export Details</b>
+            <b v-if="stepNumber > 2 && export_type == 1">Marketing Export Details</b>
+            <b v-if="stepNumber > 2 && export_type == 2">SkipTrace Export Details</b>
+            <b v-if="stepNumber > 2 && export_type == 3">Miscellaneous Reason Export Details</b>
           </div>
           <div class="step2" >
             <div v-if="stepNumber == 2">

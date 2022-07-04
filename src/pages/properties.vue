@@ -354,8 +354,10 @@ export default {
                 await this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
             }
         },
-      async  clearsearch(){
-            this.searchProperty = '';
+      async clearsearch() {
+        this.searchProperty = '';
+        this.$store.dispatch('uxModule/setLoading')
+        try {
         if(this.filtersCount > 0) {
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: this.filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
         } else {
@@ -363,8 +365,15 @@ export default {
         }
         this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search: this.searchProperty});
         this.isPropertySearched = false;
+        this.$store.dispatch('uxModule/hideLoader')
+        } catch(error) {
+            this.$store.dispatch('uxModule/hideLoader')
+        }
+    
         },
     async search() {
+        this.$store.dispatch('uxModule/setLoading')
+        try {
         if(this.filtersCount > 0) {
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: this.filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
         } else {
@@ -378,6 +387,10 @@ export default {
             this.isPropertySearched = false;
         } else {
             this.isPropertySearched = true;
+        }
+            this.$store.dispatch('uxModule/hideLoader')
+        } catch(error) {
+            this.$store.dispatch('uxModule/hideLoader')
         }
     },
      async filterProperties(filtersName) {
@@ -551,12 +564,25 @@ export default {
             this.propertyFields = [...fields];
         },
         save(item) {
+            this.$store.dispatch('uxModule/setLoading');
+            try {
             // this.showModal = false
             this.$store.dispatch('propertyModule/editSubject', {...item})
+            this.$store.dispatch('uxModule/hideLoader');
+            }catch(error) {
+                this.$store.dispatch('uxModule/hideLoader');
+            }
+            this.$store.dispatch('uxModule/hideLoader');
         },
         add(item) {
+            this.$store.dispatch('uxModule/setLoading');
+            try {
             this.showAddModal = false
-            this.$store.dispatch('propertyModule/addSubject', {...item})
+            this.$store.dispatch('propertyModule/addSubject', {...item});
+            this.$store.dispatch('uxModule/hideLoader');
+            }catch(error) {
+                this.$store.dispatch('uxModule/hideLoader');
+            }
         },
         deleteItem(item) {
             this.showDeleteModal = true;
@@ -565,7 +591,13 @@ export default {
         modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
-                this.$store.dispatch('propertyModule/deleteSubject', this.itemToDelete.id)
+            this.$store.dispatch('uxModule/setLoading');
+                try {
+                this.$store.dispatch('propertyModule/deleteSubject', this.itemToDelete.id);
+                this.$store.dispatch('uxModule/hideLoader');
+                }catch(error) {
+                this.$store.dispatch('uxModule/hideLoader');
+                }
             }
         },
         addItem() {
@@ -617,8 +649,11 @@ export default {
           this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage, filter: this.filter})
         },
         async getTemplate (event) {
-          await this.$store.dispatch("templatesModule/getTemplate", {id: event});
-          this.showCustomView(this.template);
+            this.$store.dispatch('uxModule/setLoading');
+            await this.$store.dispatch("templatesModule/getTemplate", {id: event});
+            this.showCustomView(this.template);
+            this.$store.dispatch('uxModule/hideLoader');
+
         },
         bulkDelete () {
             this.$store.dispatch('propertyModule/deleteMultipleSubjects', this.bulkDeleteItems).then(

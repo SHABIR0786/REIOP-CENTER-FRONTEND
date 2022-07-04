@@ -224,19 +224,9 @@ export default {
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
-        // this.$store.dispatch('emailModule/getTotal')
         try {
           this.$store.dispatch('uxModule/setLoading')
-          // const filters = JSON.parse(localStorage.getItem('email-applied-filters'))
-          // let filterValue = 0;
-          // for (let i in filters){
-          //   filterValue += filters[i].length
-          // }
-          // if(filterValue) {
-          //   this.filter(filters, filterValue)
-          // } else {
             await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
-          // }
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -271,46 +261,31 @@ export default {
         await this.search();
         },
         async search() {
-              // if (!this.total || (this.filteredItems.length == 0)) {
+          this.$store.dispatch('uxModule/setLoading')
+            try {
               if (!this.totalFilters) {
                 await this.$store.dispatch('emailModule/searchEmails', { page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                // if(this.searchEmail == '') {
                   this.itemsCount = this.total;
-                // } else { 
-                // this.itemsCount = this.items.length
-                // }
                 this.filteredOrAllData = this.items;
                 } else {
                 await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
                 this.itemsCount = this.filteredEmailsCount
                 }
-              // } else {
-              //   this.currentPage = 1;
-              //   let searchInFiltered = [...this.filteredItems]
-              //    searchInFiltered = searchInFiltered.filter(el => {
-              //    return  el.email_address.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())||
-              //      el.email_city.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())  ||
-              //      el.email_state.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase()) ||
-              //      el.email_zip.toLocaleLowerCase().includes(this.searchEmail.toLocaleLowerCase())   ||
-              //      el.id.toString().includes(this.searchEmail)
-              //    });
-              //   if(this.searchEmail) {
-              //     this.itemsCount = searchInFiltered.length
-              //   } else {
-              //     this.itemsCount = this.total;
-              //   }
-              //   this.filteredOrAllData =  searchInFiltered
-              //   // await this.$store.dispatch('subjectModule/searchSubjects', { page: this.currentPage, perPage: this.perPage, search: this.searchSubject })
-              // }
 
               if(this.searchEmail.length == 0) {
                 this.isEmailSearched = false;
               } else {
                 this.isEmailSearched = true;
               }
+            this.$store.dispatch('uxModule/hideLoader')
+          } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+          }
         },
         async sortingChanged(ctx) {
+            this.$store.dispatch('uxModule/setLoading')
+            try {
             this.sortBy = ctx.sortBy;
             this.sortDesc = ctx.sortDesc;
             if (!this.totalFilters){
@@ -320,15 +295,16 @@ export default {
                 await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
+          this.$store.dispatch('uxModule/hideLoader')
+          } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+          }
         },
         async filter(data,filterValue){
+          this.$store.dispatch('uxModule/setLoading')
+          try {
          this.filtersName = data
          await this.$store.dispatch("emailModule/filterEmail", {page: 1, perPage: this.perPage, search: this.searchEmail, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
-        //  localStorage.setItem('email-applied-filters', JSON.stringify(data))
-        //  if(dataAfterFiltering) {
-        //    localStorage.setItem('email-data-after-filtering', JSON.stringify(dataAfterFiltering))
-        //    localStorage.setItem('email-filters-count', filterValue)
-        //  }
          if (!filterValue) {
             if(!this.items.length){
               await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
@@ -340,6 +316,10 @@ export default {
             this.itemsCount = this.filteredEmailsCount
           }
           this.showFilterPropertiesModal =false
+          this.$store.dispatch('uxModule/hideLoader')
+          } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+          }
         },
         filtersCount(total){
         this.totalFilters = total
@@ -354,31 +334,47 @@ export default {
             });
         },
         save(item) {
-            // this.showModal = false
             this.$store.dispatch('emailModule/editEmail', {...item})
         },
         add(item) {
+          this.$store.dispatch('uxModule/setLoading')
+          try {
             this.showAddModal = false
             this.$store.dispatch('emailModule/addEmail', {...item})
+            this.$store.dispatch('uxModule/hideLoader')
+          } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+          }
         },
         deleteItem(item){
             this.showDeleteModal = true;
             this.itemToDelete = item;
         },
         modalResponse(response) {
+          this.$store.dispatch('uxModule/setLoading')
+          try {
             this.showDeleteModal = false;
             if (response) {
                 this.$store.dispatch('emailModule/deleteEmail', this.itemToDelete.id)
             }
+          this.$store.dispatch('uxModule/hideLoader')
+          } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+          } 
         },
         addItem() {
             this.showAddModal = true;
         },
         bulkDelete () {
+          this.$store.dispatch('uxModule/setLoading')
+          try {
             this.$store.dispatch('emailModule/deleteMultipleEmails', this.bulkDeleteItems).then(() => {
               this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
-              // this.$store.dispatch('emailModule/getTotal')
             })
+          this.$store.dispatch('uxModule/hideLoader')
+          } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+          }
         },
         selectAll () {
             this.bulkDeleteItems = [];
@@ -389,9 +385,7 @@ export default {
             }
         },
         async doCreatedOperation() {
-        // this.$store.dispatch('emailModule/getTotal')
         try {
-         // this.$store.dispatch('uxModule/setLoading')
           const filters = JSON.parse(localStorage.getItem('email-applied-filters'))
           let filterValue = 0;
           for (let i in filters){
@@ -419,6 +413,8 @@ export default {
     watch: {
         currentPage: {
             handler: async function() {
+            this.$store.dispatch('uxModule/setLoading')
+            try {
               if (!this.totalFilters){
                 await this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
@@ -426,16 +422,26 @@ export default {
                 await this.$store.dispatch("emailModule/filterEmail", { page: this.currentPage, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
               }
+            this.$store.dispatch('uxModule/hideLoader')
+          } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+          }
             }
         },
         perPage: {
             handler: async function () {
-              if (!this.totalFilters){
+            this.$store.dispatch('uxModule/setLoading')
+            try {
+              if (!this.totalFilters) {
                 await this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
                 this.filteredOrAllData = this.items
-              }else{
+              } else {
                 await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
                 this.filteredOrAllData = this.filteredItems
+              }
+              this.$store.dispatch('uxModule/hideLoader')
+              } catch (error) {
+                this.$store.dispatch('uxModule/hideLoader')
               }
             }
         },
