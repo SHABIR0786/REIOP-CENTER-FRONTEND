@@ -110,8 +110,9 @@
           <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
           <skip-variant v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipOption" @goBack="goBack"></skip-variant>
           <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
+          <notes v-if="step_4" :upload_type="importDetails.upload_type" :lists="lists" :importDetails="importDetails" @setNotesResponse="notesResponse" @goBack="goBack"></notes>
           <select-skip-data-source v-if="step_3_skip" :importDetails="importDetails" :lists="lists" @skipTraceData="setSkipSource" @goBack="goBack"></select-skip-data-source>
-          <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails"  @goBack="goBack"></map-fields>
+          <map-fields v-if="step_5" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails"  @goBack="goBack"></map-fields>
           <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
           <confirm-modal :showModal="showNoErrorsModal"  @modalResponse="showNoErrorsModal=false">
             <template v-slot:noError> <h4>No errors in this file</h4></template>
@@ -125,6 +126,7 @@ import ImportDownloads from "../components/import/ImportDownloads";
 import ImportType from "../components/import/ImportType";
 import UploadType from "../components/import/UploadType";
 import PullSettings from "../components/import/PullSettings";
+import Notes from "../components/import/Notes";
 import MapFields from "../components/import/MapFields";
 import DeleteModal from "../components/deleteModal/DeleteModal";
 import SkipVariant from "@/components/import/SkipVariant";
@@ -140,6 +142,7 @@ export default {
       ImportDownloads,
       UploadType,
       PullSettings,
+      Notes,
       MapFields,
       DeleteModal,
       EditImportModal,
@@ -160,6 +163,7 @@ export default {
         step_3: false,
         step_3_skip:false,
         step_4: false,
+        step_5: false,
         currentPage: 2,
         download_type: '',
         showImportTable: true,
@@ -273,6 +277,7 @@ export default {
              this.step_3 = false;
              this.step_3_skip = false;
              this.step_4 = false;
+             this.step_5 = false;
          } else {
              this.step_1 = false;
              this.step_2 = true;
@@ -280,6 +285,7 @@ export default {
              this.step_3 = false;
              this.step_3_skip = false;
              this.step_4 = false;
+             this.step_5 = false;
          }
        }
       },
@@ -292,12 +298,14 @@ export default {
           this.step_2 = false;
           this.step_3 = false;
           this.step_4 = true;
+          this.step_5 = false;
         }else {
           this.importDetails.upload_type = response;
           this.step_1 = false;
           this.step_2 = false;
           this.step_3 = true;
           this.step_4 = false;
+          this.step_5 = false;
         }
       },
 
@@ -310,11 +318,26 @@ export default {
           this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = true;
+          this.step_5 = false;
           this.statusBackSkip = false;
           this.statusBackValidity = false;
         }
       },
 
+    notesResponse (response) {
+      
+          this.importDetails.notes = response;
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false
+          this.step_3_skip = false;
+          this.step_3 = false;
+          this.step_4 = false;
+          this.step_5 = true;
+          this.statusBackSkip = false;
+          this.statusBackValidity = false;
+        
+      },
       setSkipOption (response) {
         this.importDetails.skip_variant = response;
         this.importDetails.pull_settings = {};
@@ -327,6 +350,7 @@ export default {
           this.step_3_skip = true;
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
         } else {
           this.statusBackValidity =true;
           this.importDetails.upload_type = 'skip_validity'
@@ -337,6 +361,7 @@ export default {
           this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = true;
+          this.step_5 = false;
         }
       },
 
@@ -350,21 +375,31 @@ export default {
               this.step_3 = false;
               this.step_3_skip = false;
               this.step_4 = true;
+              this.step_5 = false;
           }
       },
       goBack(response) {
+        console.log(response,this.importDetails.upload_type);
+        console.log("this.statusBackSkip",this.statusBackSkip);
+        console.log("this.statusBackValidity",this.statusBackValidity);
+        
+        console.log(response === 'Notes' &&
+          !this.importDetails.upload_type &&
+          !this.importDetails.upload_type == 'combined');
         if (response === 'UploadType') {
           this.step_1 = true;
           this.step_2 = false;
           this.step_2_skip = false
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
         } else if (response === 'PullSettings') {
           this.step_1 = false;
           this.step_2 = true;
           this.step_2_skip = false
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
         }
         else if(response === 'Combined'){
           this.step_1 = false;
@@ -373,6 +408,58 @@ export default {
           this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
+        } 
+        else if (response === 'Notes' &&
+          !this.importDetails.upload_type &&
+          !this.importDetails.upload_type == 'combined') {
+          this.step_1 = false;
+          this.step_2 = true;
+          this.step_2_skip = false
+          this.step_3_skip = false;
+          this.step_3 = false;
+          this.step_4 = false;
+          this.step_5 = false;
+        }
+        else if (response === 'Notes' &&
+            !this.statusBackSkip &&
+            !this.statusBackValidity) {
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false
+          this.step_3_skip = false;
+          this.step_3 = true;
+          this.step_4 = false;
+          this.step_5 = false;
+        } else if(response === 'Notes' &&
+            this.statusBackSkip){
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false
+          this.step_3_skip = true;
+          this.step_3 = false;
+          this.step_4 = false;
+          this.step_5 = false;
+          this.statusBackSkip =false
+        }else if(response === 'Notes' &&
+            this.statusBackValidity){
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = true
+          this.step_3_skip = false;
+          this.step_3 = false;
+          this.step_4 = false;
+          this.step_5 = false;
+          this.statusBackSkip =false
+        }
+        else if (response === 'MapFields') {
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false
+          this.step_3_skip = false;
+          this.step_3 = false;
+          this.step_4 = true;
+          this.step_5 = false;
         }
         else if (response === 'MapFields' &&
             !this.statusBackSkip &&
@@ -383,6 +470,7 @@ export default {
           this.step_3_skip = false;
           this.step_3 = true;
           this.step_4 = false;
+          this.step_5 = false;
         } else if(response === 'MapFields' &&
             this.statusBackSkip){
           this.step_1 = false;
@@ -391,6 +479,7 @@ export default {
           this.step_3_skip = true;
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
           this.statusBackSkip =false
         }else if(response === 'MapFields' &&
             this.statusBackValidity){
@@ -400,6 +489,7 @@ export default {
           this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
           this.statusBackSkip =false
         }
         else if (response === 'SkipSource') {
@@ -409,6 +499,7 @@ export default {
           this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
         }else if (response === 'SkipOption') {
           this.step_1 = true;
           this.step_2 = false;
@@ -416,6 +507,7 @@ export default {
           this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
         }
       },
 
@@ -459,6 +551,7 @@ export default {
         this.step_3 = false;
         this.step_3_skip =false;
         this.step_4 = false;
+        this.step_5 = false;
         this.importDetails = {};
       }
       this.$store.dispatch('importV2Module/showImportFirstPage', false)

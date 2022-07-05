@@ -200,6 +200,18 @@
                     </b-row>
                     </b-col>
                 </b-row>
+                <b-row class="pb-2">
+                      <b-col cols="12">
+                        <b-form-textarea
+                          :readonly="isReadOnly"
+                          id="textarea"
+                          v-model="editData.notes"
+                          placeholder="Enter notes here..."
+                          rows="3"
+                          max-rows="6"
+                        ></b-form-textarea>
+                      </b-col>
+                    </b-row>
               <b-row >
                 <b-col cols="12">
 
