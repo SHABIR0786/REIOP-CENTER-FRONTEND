@@ -111,7 +111,8 @@
           <skip-variant v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipOption" @goBack="goBack"></skip-variant>
           <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
           <select-skip-data-source v-if="step_3_skip" :importDetails="importDetails" :lists="lists" @skipTraceData="setSkipSource" @goBack="goBack"></select-skip-data-source>
-          <map-fields v-if="step_4" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails"  @goBack="goBack"></map-fields>
+          <notes v-if="step_4" :upload_type="importDetails.upload_type" :lists="lists" :importDetails="importDetails" @setNotesResponse="notesResponse" @goBack="goBack"></notes>
+          <map-fields v-if="step_5" :upload_type="importDetails.upload_type" :list_settings="importDetails.pull_settings" :importDetails="importDetails"  @goBack="goBack"></map-fields>
           <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
           <confirm-modal :showModal="showNoErrorsModal"  @modalResponse="showNoErrorsModal=false">
             <template v-slot:noError> <h4>No errors in this file</h4></template>
@@ -125,6 +126,7 @@ import ImportDownloads from "../components/import/ImportDownloads";
 import ImportType from "../components/import/ImportType";
 import UploadType from "../components/import/UploadType";
 import PullSettings from "../components/import/PullSettings";
+import Notes from "../components/import/Notes";
 import MapFields from "../components/import/MapFields";
 import DeleteModal from "../components/deleteModal/DeleteModal";
 import SkipVariant from "@/components/import/SkipVariant";
@@ -140,6 +142,7 @@ export default {
       ImportDownloads,
       UploadType,
       PullSettings,
+      Notes,
       MapFields,
       DeleteModal,
       EditImportModal,
@@ -160,6 +163,7 @@ export default {
         step_3: false,
         step_3_skip:false,
         step_4: false,
+        step_5: false,
         currentPage: 2,
         download_type: '',
         showImportTable: true,
@@ -175,7 +179,8 @@ export default {
         statusBackSkip:false,
         statusBackValidity:false,
         intervalId:null,
-        filteredItems: []
+        filteredItems: [],
+        previousStepArr: [],
 
 
       }
@@ -210,6 +215,9 @@ export default {
           showImportFirstPage: 'importV2Module/showImportFirstPage'
       }),
       rows() { return this.total ? this.total : 1 },
+      getPreviousStep() {
+        return this.previousStepArr[this.previousStepArr.length - 1];
+      },
     },
     methods: {
       getLivePercentage(item) {
@@ -264,6 +272,7 @@ export default {
 
       importTypeResponse(response) {
        if(response) {
+        this.previousStepArr.push('step_1');
          this.importDetails.import_type = response;
           this.importDetails.skip_variant = ''
          if (response === 'existing') {
@@ -273,6 +282,7 @@ export default {
              this.step_3 = false;
              this.step_3_skip = false;
              this.step_4 = false;
+             this.step_5 = false;
          } else {
              this.step_1 = false;
              this.step_2 = true;
@@ -280,29 +290,34 @@ export default {
              this.step_3 = false;
              this.step_3_skip = false;
              this.step_4 = false;
+             this.step_5 = false;
          }
        }
       },
 
       uploadTypeResponse (response) {
         this.statusBackSkip = false
+        this.previousStepArr.push('step_2');
         if(response === 'combined') {
           this.importDetails.upload_type = response;
           this.step_1 = false;
           this.step_2 = false;
           this.step_3 = false;
           this.step_4 = true;
+          this.step_5 = false;
         }else {
           this.importDetails.upload_type = response;
           this.step_1 = false;
           this.step_2 = false;
           this.step_3 = true;
           this.step_4 = false;
+          this.step_5 = false;
         }
       },
 
       pullSettingsResponse (response) {
         if(response) {
+          this.previousStepArr.push('step_3');
           this.importDetails.pull_settings = response;
           this.step_1 = false;
           this.step_2 = false;
@@ -310,12 +325,25 @@ export default {
           this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = true;
+          this.step_5 = false;
           this.statusBackSkip = false;
           this.statusBackValidity = false;
         }
       },
 
+    notesResponse (response) {
+          this.previousStepArr.push('step_4');
+          this.importDetails.notes = response;
+          this.step_1 = false;
+          this.step_2 = false;
+          this.step_2_skip = false
+          this.step_3_skip = false;
+          this.step_3 = false;
+          this.step_4 = false;
+          this.step_5 = true;
+      },
       setSkipOption (response) {
+        this.previousStepArr.push('step_2_skip');
         this.importDetails.skip_variant = response;
         this.importDetails.pull_settings = {};
         if (response === 'skip_trace') {
@@ -327,6 +355,7 @@ export default {
           this.step_3_skip = true;
           this.step_3 = false;
           this.step_4 = false;
+          this.step_5 = false;
         } else {
           this.statusBackValidity =true;
           this.importDetails.upload_type = 'skip_validity'
@@ -337,11 +366,13 @@ export default {
           this.step_3_skip = false;
           this.step_3 = false;
           this.step_4 = true;
+          this.step_5 = false;
         }
       },
 
       setSkipSource (response) {
           if(response) {
+              this.previousStepArr.push('step_3_skip');
               this.importDetails.skip_options = response;
               this.statusBackSkip = true;
               this.step_1 = false;
@@ -350,72 +381,194 @@ export default {
               this.step_3 = false;
               this.step_3_skip = false;
               this.step_4 = true;
+              this.step_5 = false;
           }
       },
       goBack(response) {
-        if (response === 'UploadType') {
-          this.step_1 = true;
-          this.step_2 = false;
-          this.step_2_skip = false
-          this.step_3 = false;
-          this.step_4 = false;
-        } else if (response === 'PullSettings') {
-          this.step_1 = false;
-          this.step_2 = true;
-          this.step_2_skip = false
-          this.step_3 = false;
-          this.step_4 = false;
+        let checkOtherConditions = true;
+        if(this.getPreviousStep){
+          checkOtherConditions = false;
+          const previousStep = this.getPreviousStep;
+          if(previousStep == 'step_1') {
+            this.step_1 = true;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+            // this.statusBackSkip =false
+          } else if(previousStep == 'step_2') {
+            this.step_1 = false;
+            this.step_2 = true;
+            this.step_2_skip = false
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+          }  else if(previousStep == 'step_2_skip') {
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = true
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+            // this.statusBackSkip =false
+          } else if(previousStep == 'step_3') {
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = false;
+            this.step_3 = true;
+            this.step_4 = false;
+            this.step_5 = false;
+          } else if(previousStep == 'step_3_skip') {
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = true;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+            // this.statusBackSkip =false
+          } else if(previousStep == 'step_4'){
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = true;
+            this.step_5 = false;
+          } else {
+            checkOtherConditions = true;
+          }
+          this.previousStepArr.pop();
         }
-        else if(response === 'Combined'){
-          this.step_1 = false;
-          this.step_2 = true;
-          this.step_2_skip = false
-          this.step_3_skip = false;
-          this.step_3 = false;
-          this.step_4 = false;
-        }
-        else if (response === 'MapFields' &&
-            !this.statusBackSkip &&
-            !this.statusBackValidity) {
-          this.step_1 = false;
-          this.step_2 = false;
-          this.step_2_skip = false
-          this.step_3_skip = false;
-          this.step_3 = true;
-          this.step_4 = false;
-        } else if(response === 'MapFields' &&
-            this.statusBackSkip){
-          this.step_1 = false;
-          this.step_2 = false;
-          this.step_2_skip = false
-          this.step_3_skip = true;
-          this.step_3 = false;
-          this.step_4 = false;
-          this.statusBackSkip =false
-        }else if(response === 'MapFields' &&
-            this.statusBackValidity){
-          this.step_1 = false;
-          this.step_2 = false;
-          this.step_2_skip = true
-          this.step_3_skip = false;
-          this.step_3 = false;
-          this.step_4 = false;
-          this.statusBackSkip =false
-        }
-        else if (response === 'SkipSource') {
-          this.step_1 = false;
-          this.step_2 = false;
-          this.step_2_skip = true
-          this.step_3_skip = false;
-          this.step_3 = false;
-          this.step_4 = false;
-        }else if (response === 'SkipOption') {
-          this.step_1 = true;
-          this.step_2 = false;
-          this.step_2_skip = false
-          this.step_3_skip = false;
-          this.step_3 = false;
-          this.step_4 = false;
+        
+        
+        if(checkOtherConditions){
+          if (response === 'UploadType') {
+            this.step_1 = true;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+          } else if (response === 'PullSettings') {
+            this.step_1 = false;
+            this.step_2 = true;
+            this.step_2_skip = false
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+          }
+          else if(response === 'Combined'){
+            this.step_1 = false;
+            this.step_2 = true;
+            this.step_2_skip = false
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+          } 
+          else if (response === 'Notes' &&
+            !this.importDetails.upload_type &&
+            !this.importDetails.upload_type == 'combined') {
+            this.step_1 = false;
+            this.step_2 = true;
+            this.step_2_skip = false
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+          }
+          else if (response === 'Notes' &&
+              !this.statusBackSkip &&
+              !this.statusBackValidity) {
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = false;
+            this.step_3 = true;
+            this.step_4 = false;
+            this.step_5 = false;
+          } else if(response === 'Notes' &&
+              this.statusBackSkip){
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = true;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+            this.statusBackSkip =false
+          }else if(response === 'Notes' &&
+              this.statusBackValidity){
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = true
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+            this.statusBackSkip =false
+          }
+          else if (response === 'MapFields') {
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = true;
+            this.step_5 = false;
+          }
+          else if (response === 'MapFields' &&
+              !this.statusBackSkip &&
+              !this.statusBackValidity) {
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = false;
+            this.step_3 = true;
+            this.step_4 = false;
+            this.step_5 = false;
+          } else if(response === 'MapFields' &&
+              this.statusBackSkip){
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = true;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+            this.statusBackSkip =false
+          }else if(response === 'MapFields' &&
+              this.statusBackValidity){
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = true
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+            this.statusBackSkip =false
+          }
+          else if (response === 'SkipSource') {
+            this.step_1 = false;
+            this.step_2 = false;
+            this.step_2_skip = true
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+          }else if (response === 'SkipOption') {
+            this.step_1 = true;
+            this.step_2 = false;
+            this.step_2_skip = false
+            this.step_3_skip = false;
+            this.step_3 = false;
+            this.step_4 = false;
+            this.step_5 = false;
+          }
         }
       },
 
@@ -459,6 +612,7 @@ export default {
         this.step_3 = false;
         this.step_3_skip =false;
         this.step_4 = false;
+        this.step_5 = false;
         this.importDetails = {};
       }
       this.$store.dispatch('importV2Module/showImportFirstPage', false)

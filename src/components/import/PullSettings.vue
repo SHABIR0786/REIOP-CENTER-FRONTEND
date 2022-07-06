@@ -277,7 +277,7 @@
           }
         },
         goBack() {
-          this.$emit('pullSettingsResponse', this.list);
+          // this.$emit('pullSettingsResponse', this.list);
           this.$emit('goBack', 'PullSettings');
         },
         addNewField(event) {
