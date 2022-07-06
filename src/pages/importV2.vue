@@ -341,9 +341,6 @@ export default {
           this.step_3 = false;
           this.step_4 = false;
           this.step_5 = true;
-          this.statusBackSkip = false;
-          this.statusBackValidity = false;
-        
       },
       setSkipOption (response) {
         this.previousStepArr.push('step_2_skip');
