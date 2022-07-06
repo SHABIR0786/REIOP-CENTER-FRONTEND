@@ -1,11 +1,11 @@
 <template>
 <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-    <h3>Users</h3>
+    <h3>Companies</h3>
     <div>
         <b-row>
             <b-col cols="12" class="d-flex justify-content-end">
                 <b-button variant="primary" class="add-seller" @click="addItem()">
-                    <b-icon icon="plus" aria-hidden="true"></b-icon> Add User
+                    <b-icon icon="plus" aria-hidden="true"></b-icon> Add Company
                 </b-button>
             </b-col>
         </b-row>
@@ -18,7 +18,7 @@
                             <b-icon icon="x" aria-hidden="true"></b-icon> Clear Search
                         </b-button>
                     </b-input-group-append>
-                    <b-form-input v-model="searchUser" @keyup.enter="search" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchCompany" @keyup.enter="search" placeholder="Search"></b-form-input>
                     <b-input-group-append>
                         <b-button @click="search" variant="primary">Search</b-button>
                     </b-input-group-append>
@@ -44,8 +44,8 @@
             <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         </b-col>
     </b-row>
-    <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-user-modal>
-    <add-user-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-user-modal>
+    <edit-company-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-company-modal>
+    <add-company-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-company-modal>
 </div>
 </template>
 
@@ -56,17 +56,16 @@ import {
 import {
     BIcon
 } from "bootstrap-vue"
-import EditUserModal from "../components/user/EditUserModal";
-import AddUserModal from "../components/user/AddUserModal";
-import { setLocalStorage } from '../utils/localStorage'
+import EditCompanyModal from "../components/company/EditCompanyModal";
+import AddCompanyModal from "../components/company/AddCompanyModal";
 
 
 export default {
-    name: "Users",
+    name: "Companies",
     components: {
         BIcon,
-        EditUserModal,
-        AddUserModal
+        EditCompanyModal,
+        AddCompanyModal
     },
     data() {
         return {
@@ -78,7 +77,7 @@ export default {
             showDeleteModal: false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
-            searchUser: '',
+            searchCompany: '',
             showAddModal: false,
             bulkDeleteItems: [],
             allSelected: false,
@@ -93,9 +92,9 @@ export default {
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            fields: 'userModule/fields',
-            items: 'userModule/users',
-            total: 'userModule/total',
+            fields: 'companyModule/fields',
+            items: 'companyModule/companies',
+            total: 'companyModule/total',
             authUser: 'loginModule/getAuthUser',
         }),
         rows() {
@@ -103,19 +102,17 @@ export default {
         },
     },
     async created() {
-        // this.$store.dispatch('userModule/getTotal')
         try {
             this.$store.dispatch('uxModule/setLoading')
-            await this.$store.dispatch("userModule/getAllUsers", {
+            await this.$store.dispatch("companyModule/getAllCompanies", {
                 page: 1,
                 perPage: this.perPage,
-                search: this.searchUser,
+                search: this.searchCompany,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             })
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
-            console.log(error);
             this.$store.dispatch('uxModule/hideLoader')
         }
         this.filteredOrAllData = this.items;
@@ -129,21 +126,21 @@ export default {
             }
         },
         async clearsearch() {
-            this.searchUser = '';
+            this.searchCompany = '';
             await this.search();
             this.isSearched = false;
         },
         async search() {
-            await this.$store.dispatch('userModule/searchUsers', {
+            await this.$store.dispatch('companyModule/searchCompanies', {
                 page: this.currentPage,
                 perPage: this.perPage,
-                search: this.searchUser,
+                search: this.searchCompany,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             })
             this.itemsCount = this.total;
             this.filteredOrAllData = this.items;
-            if (this.searchUser.length == 0) {
+            if (this.searchCompany.length == 0) {
                 this.isSearched = false;
             } else {
                 this.isSearched = true;
@@ -152,16 +149,16 @@ export default {
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
             this.sortDesc = ctx.sortDesc;
-            await this.$store.dispatch("userModule/getAllUsers", {
+            await this.$store.dispatch("companyModule/getAllCompanies", {
                 page: 1,
                 perPage: this.perPage,
-                search: this.searchUser,
+                search: this.searchCompany,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             });
             this.filteredOrAllData = this.items;
         },
-        editUser(item) {
+        editCompany(item) {
             this.showModal = true
             this.editedItem = {
                 ...item
@@ -170,12 +167,9 @@ export default {
        async save(item) {
            await this.$store.dispatch('uxModule/setLoading')
             try {
-            this.$store.dispatch('userModule/editUser', {
+            this.$store.dispatch('companyModule/editCompany', {
                 ...item
             })
-            if(this.authUser.id == item.id) {
-                setLocalStorage('authUser', JSON.stringify(item));
-            }
             this.$store.dispatch('uxModule/hideLoader')
             } catch(error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -184,40 +178,31 @@ export default {
         },
         async add(item) {
             this.$store.dispatch('uxModule/setLoading')
-           let result = await this.$store.dispatch('userModule/addUser', {
+           await this.$store.dispatch('companyModule/addCompany', {
                 ...item
             });
-            if(result == "user_exist") {
-                this.$bvToast.toast(`User with the following Email Already exist`, {
-                title: 'Already Exist',
-                autoHideDelay: 5000,
-                variant: "danger",
-                appendToast: false
-                });
-            } else {
-                this.showAddModal = false;
-            }
+            this.showAddModal = false;
             this.$store.dispatch('uxModule/hideLoader')
         },
-        deleteUser(item) {
+        deleteCompany(item) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
         },
         modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
-                this.$store.dispatch('userModule/deleteUser', this.itemToDelete.id)
+                this.$store.dispatch('companyModule/deleteCompany', this.itemToDelete.id)
             }
         },
         addItem() {
             this.showAddModal = true;
         },
         bulkDelete() {
-            this.$store.dispatch('userModule/deleteMultipleUsers', this.bulkDeleteItems).then(() => {
-                this.$store.dispatch('userModule/getAllUsers', {
+            this.$store.dispatch('companyModule/deleteMultipleCompanies', this.bulkDeleteItems).then(() => {
+                this.$store.dispatch('companyModule/getAllCompanies', {
                     page: this.currentPage,
                     perPage: this.perPage,
-                    search: this.searchUser,
+                    search: this.searchCompany,
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc
                 })
@@ -233,10 +218,10 @@ export default {
         },
         async doCreatedOperation() {
             try {
-                await this.$store.dispatch("userModule/getAllUsers", {
+                await this.$store.dispatch("companyModule/getAllCompanies", {
                     page: 1,
                     perPage: this.perPage,
-                    search: this.searchUser,
+                    search: this.searchCompany,
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc
                 })
@@ -244,9 +229,9 @@ export default {
             } catch (error) {
                 this.$store.dispatch('uxModule/hideLoader')
             }
-            if (this.$route.query.user_id) {
-                this.$store.dispatch('userModule/getUser', this.$route.query.user_id).then(() => {
-                    this.editedItem = this.selectedUser
+            if (this.$route.query.company_id) {
+                this.$store.dispatch('companyModule/getCompany', this.$route.query.company_id).then(() => {
+                    this.editedItem = this.selectedCompany
                     this.showModal = true
                 });
             }
@@ -257,10 +242,10 @@ export default {
     watch: {
         currentPage: {
             handler: async function () {
-                await this.$store.dispatch('userModule/getAllUsers', {
+                await this.$store.dispatch('companyModule/getAllCompanies', {
                     page: this.currentPage,
                     perPage: this.perPage,
-                    search: this.searchUser,
+                    search: this.searchCompany,
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc
                 })
@@ -270,10 +255,10 @@ export default {
         perPage: {
             handler: async function () {
                 this.$store.dispatch('uxModule/setLoading')
-                await this.$store.dispatch('userModule/getAllUsers', {
+                await this.$store.dispatch('companyModule/getAllCompanies', {
                     page: 1,
                     perPage: this.perPage,
-                    search: this.searchUser,
+                    search: this.searchCompany,
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc
                 })

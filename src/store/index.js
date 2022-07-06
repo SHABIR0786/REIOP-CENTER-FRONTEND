@@ -28,6 +28,7 @@ import subjectTypesModule from "./Modules/subjectTypesModule";
 import companyTypesModule from "./Modules/companyTypesModule";
 import marketingChannelModule from "./Modules/marketingChannelModule";
 import filtersModule from "./Modules/filtersModule";
+import companyModule from "./Modules/companyModule";
 
 
 
@@ -62,7 +63,8 @@ export default new Vuex.Store({
         companyTypesModule: companyTypesModule,
         marketingChannelModule: marketingChannelModule,
         filtersModule: filtersModule,
-        userModule: userModule
+        userModule: userModule,
+        companyModule: companyModule
 
     },
     state,

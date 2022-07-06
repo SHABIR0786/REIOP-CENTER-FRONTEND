@@ -1,127 +1,175 @@
 <template>
-    <b-modal v-model="showModal" size="xl" centered no-close-on-backdrop>
-        <template #modal-header>
-            <div class="w-100">
-                Edit Team
-            </div>
-            <div>
-                <b-icon @click="$emit('cancel')" class="close-icon" icon="x"></b-icon>
-            </div>
-        </template>
+<b-modal v-model="showModal" no-close-on-backdrop>
+    <template #modal-header>
+        <div class="w-100">
+            Update User
+        </div>
+    </template>
         <b-container fluid>
-            <b-row class="d-flex flex-column">
-                <b-row class="mb-1 text-center d-flex align-items-center p-3">
-                    <div>Team Details</div>
-                    <b-button
-                            v-if="isReadOnly"
-                            variant="primary"
-                            size="md"
-                            class="ml-3"
-                            @click="isReadOnly = false"
-                    >
-                        Edit
-                    </b-button>
-                    <b-button
-                            v-if="isReadOnly === false"
-                            variant="primary"
-                            size="md"
-                            class="ml-3"
-                            @click="edit()"
-                    >
-                        Save
-                    </b-button>
-                </b-row>
-                <b-row>
-                    <b-col>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="Team Name" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="team.name"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
-<!--                        <b-row>-->
-<!--                            <b-col cols="12">-->
-<!--                                <b-input-group prepend="Team Owner" class="mb-2">-->
-<!--                                    <b-form-input readonly v-model="team.owner"></b-form-input>-->
-<!--                                </b-input-group>-->
-<!--                            </b-col>-->
-<!--                        </b-row>-->
-                        <h3>Team Members</h3>
-                        <b-row v-for="user in team.users" :key="user.name">
-                            <b-col cols="12" class="d-flex justify-content-center align-items-center mb-2">
-                                <b-form-input readonly  v-model="user.email"></b-form-input>
-                                <b-button variant="outline-danger" @click="deleteMember(user.id)" class="ml-2">
-                                    <b-icon icon="trash" aria-hidden="true"></b-icon>
-                                </b-button>
-                            </b-col>
-                        </b-row>
-                        <b-button variant="primary" class="add-member" @click="showAddMemberModal = true">
-                            <b-icon icon="plus" aria-hidden="true"></b-icon>Add New Team Member</b-button>
+                <b-row class="mb-1 text-center">
+                    <b-col cols="12">
+                        <b-input-group prepend="Name" class="mb-2" id="name" label="Name" label-for="name">
+                            <b-form-input id="name" name="name" :state="validateState('name')" aria-describedby="name" type="text" v-model="$v.user.name.$model" required></b-form-input>
+                            <b-form-invalid-feedback id="name">User Name Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
                     </b-col>
                 </b-row>
-            </b-row>
+                <b-row class="mb-1 text-center">
+                    <b-col cols="12">
+                        <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email">
+                            <b-form-input :state="validateState('email')" type="email" v-model="$v.user.email.$model" aria-describedby="email" disabled></b-form-input>
+                            <b-form-invalid-feedback id="email" v-if="$v.user.email.email">User Email Field is required.</b-form-invalid-feedback>
+                            <b-form-invalid-feedback id="email" v-if="$v.user.email.required">Enter valid Email.</b-form-invalid-feedback>
+                        </b-input-group>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col cols="12">
+                        <b-input-group prepend="Select Team" id="team_id" label="Team" label-for="team_id" class="mb-2">
+                            <b-form-select v-model="$v.user.team_id.$model" aria-describedby="team_id" :state="validateState('team_id')" :options="teamitems" required>
+                            </b-form-select>
+                            <b-form-invalid-feedback class="text-center" id="team_id">User Team Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col cols="12">
+                        <b-input-group prepend="Select Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                            <b-form-select v-model="$v.user.role.$model" aria-describedby="role-id" :state="validateState('role')" :options="roles" required>
+                            </b-form-select>
+                            <b-form-invalid-feedback class="text-center" id="role-id">User Role Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
+                    </b-col>
+                </b-row>
         </b-container>
         <template #modal-footer>
             <div class="w-100">
                 <b-button variant="primary" size="sm" class="float-right" @click="$emit('cancel')">
                     Cancel
                 </b-button>
+                <b-button variant="primary" size="sm" type="button" @click="onSubmit" class="float-right mr-2">
+                    Update
+                </b-button>
             </div>
         </template>
-    </b-modal>
+</b-modal>
 </template>
-<script>
 
-    export default {
-        name: 'EditTeamModal',
-        props: {
-            showModal: {
-                type: Boolean
-            },
-            propsData: {
-                type: Object
-            }
+<script>
+import { validationMixin } from "vuelidate";
+import {
+    required,
+    email
+} from "vuelidate/lib/validators";
+import {
+    mapGetters
+} from "vuex";
+export default {
+    mixins: [validationMixin],
+    name: 'AddTeamMemberModal',
+    props: {
+        showModal: {
+            type: Boolean
         },
-        methods: {
-            edit() {
-                this.isReadOnly = true;
-                this.$emit('save', this.team);
-            },
-            addMember(response) {
-                this.showAddMemberModal = false;
-                if(response) {
-                    response.team_id = this.team.id;
-                    this.$store.dispatch('teamModule/addTeamMember', response);
-                }
-            },
-            deleteMember(userId) {
-                this.$store.dispatch('teamModule/deleteTeamMember', userId);
-            },
+        propsData: {
+            type: Object
         },
-        data() {
-            return {
-                team: {
-                    name: ''
+    },
+    computed: {
+        ...mapGetters({
+            isCollapsed: 'uxModule/isCollapsed',
+            teams: 'teamModule/teams',
+        }),
+        rows() {
+            return this.total ? this.total : 1
+        }
+    },
+    data() {
+        return {
+            perPage: 20,
+            user: {
+                name: '',
+                email: '',
+                team_id: '',
+                role: ''
+            },
+            teamitems: [],
+            roles: [{
+                    value: "user",
+                    text: "User"
                 },
-                isReadOnly: true,
-                showAddMemberModal: false,
+                {
+                    value: "admin",
+                    text: "Admin"
+                },
+                {
+                    value: "superadmin",
+                    text: "Superadmin"
+                }
+            ],
+        }
+    },
+    validations: {
+        user: {
+            name: {
+                required
+            },
+            email: {
+                required,
+                email
+            },
+            team_id: {
+                required
+            },
+            role: {
+                required
             }
+        }
+    },
+    methods: {
+        validateState(name) {
+            const { $dirty, $error } = this.$v.user[name];
+            return $dirty ? !$error : null;
         },
-        watch: {
+        onSubmit() {
+            this.$v.user.$touch();
+            if (this.$v.user.$anyError) {
+                return;
+            }
+           this. $emit('save', this.user);
+        },
+    },
+    async created() {
+        this.$store.dispatch('uxModule/setLoading')
+        this.$store.dispatch('teamModule/getTotal')
+        try {
+            await this.$store.dispatch("teamModule/getAllTeams", {
+                page: 1,
+                perPage: this.perPage
+            })
+            this.teams.map((team) => {
+                this.teamitems.push({
+                    value: team.id,
+                    text: team.name
+                });
+            });
+            this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+        }
+    },
+            watch: {
             showModal() {
-                this.team= {...this.propsData}
+                this.user= {...this.propsData}
             }
         }
 
-    }
+    
+}
 </script>
+
 <style scoped>
-    .close-icon {
-        font-size: 30px;
-        cursor: pointer;
-    }
-    .add-member {
-        width: 250px;
-    }
+.input-helper {
+    text-align: start;
+}
 </style>

@@ -2,7 +2,6 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"delete", label: ""},
         {key:"id", label: "Id", sortable: true},
         {key: "team_id", label: "Team Id"},
         {key: "name", label: "Name", sortable: true},
@@ -10,6 +9,7 @@ const state = {
         {key: "role", label: "Role", sortable: true},
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
+        {key:"actions", label: "Actions"},
     ],
     users: [],
     total_users: 0,
@@ -83,7 +83,6 @@ const actions = {
     async addUser({ commit }, data) {
         return await api.post(`/users`, {...data}).then((response) => {
             commit('ADD_USER', response.user)
-            console.log(response);
             return response.user;
         })
     },

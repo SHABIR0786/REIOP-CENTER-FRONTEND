@@ -4,9 +4,8 @@
       <b-row class="nav-bar">
         <nav-bar></nav-bar>
       </b-row>
-      <side-bar v-if="!adminMode"></side-bar>
-      <admin-side-bar v-if="adminMode"></admin-side-bar>
-<!--      <Footer></Footer>-->
+      <side-bar></side-bar>
+     <!-- <Footer></Footer> -->
       <router-view></router-view>
       <loader></loader>
     </div>
@@ -16,7 +15,6 @@
 
 <script>
 import SideBar from "@/components/shared/SideBar"
-import AdminSideBar from "@/components/shared/AdminSideBar"
 import NavBar from "@/components/shared/NavBar"
 // import Footer from "@/components/shared/Footer"
 import Loader from "@/components/shared/Loader"
@@ -26,7 +24,6 @@ export default {
   name: 'App',
   components: {
     "side-bar": SideBar,
-    "admin-side-bar": AdminSideBar,
     "nav-bar": NavBar,
     // Footer,
     "loader": Loader    
@@ -35,8 +32,6 @@ export default {
     ...mapGetters({
       isLogged: 'loginModule/isLogged',
       authUser: 'loginModule/getAuthUser',
-      adminMode: 'loginModule/getAdminMode',
-
     })
   },
   data (){

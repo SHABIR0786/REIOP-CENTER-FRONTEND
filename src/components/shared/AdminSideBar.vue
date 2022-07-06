@@ -56,7 +56,6 @@ export default {
             isCollapsed: 'uxModule/isCollapsed'
         }),
         routeItems () {
-            console.log('abc');
             let buf = []
             routes.map((item) => {
                 if(item.meta && item.meta.admin){
