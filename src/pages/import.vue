@@ -131,7 +131,7 @@ const utf8 = require('utf8');
 
 export default {
   name: "Import",
-  props: ['upload_type', 'list_settings', 'skip_variant', 'skip_data'],
+  props: ['upload_type', 'list_settings', 'skip_variant', 'skip_data', 'importDetails'],
   components: {
     FieldsCard,
     MappedFields,
@@ -630,6 +630,7 @@ export default {
         createUpdateMapping: this.createUpdateMapping,
         mapping: this.mapping,
         selectedMappingTemplate: this.updateMappingTemplate,
+        notes: this.importDetails.notes,
       })
       if(response.status == 200){
         location.reload()
