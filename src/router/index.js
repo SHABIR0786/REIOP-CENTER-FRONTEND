@@ -14,15 +14,9 @@ let router = new VueRouter({
 router.beforeEach((to, from, next) => {
     if (to.matched.some((rec) => rec.meta.requireAuth)) {
         if (store.getters['loginModule/isLogged']) {
-            let authUser = store.getters['loginModule/getAuthUser'];
-            let adminMode = store.getters['loginModule/getAdminMode'];
-           if(to.meta.roles.findIndex(x=>x == authUser.role) != -1 && to.meta.adminMode == adminMode){
             next()
-           } else {
-            router.push({ name: 'Home' })
-           }
         } else {
-            router.push({ name: 'Login' })
+            next({name: "Login"})
         }
     } else {
         next()
