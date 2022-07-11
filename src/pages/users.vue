@@ -26,10 +26,14 @@
             </b-col>
         </b-row>
     </div>
-    <b-table id="user-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-table id="user-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">       
+        <template v-slot:cell(company_role)="data">
+            <b-icon class="mr-2 cursor-pointer" icon="info-circle" variant="primary" @click="companyRoleItem(data.item)"></b-icon>
+        </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
         </template>
+
     </b-table>
     <b-row>
         <b-col class="d-flex align-items-center">
@@ -46,6 +50,8 @@
     </b-row>
     <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-user-modal>
     <add-user-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-user-modal>
+    <company-role-user-modal :showModal="showCompanyRoleModal" :propsData="CompanyRole_Item" @cancel="showCompanyRoleModal=false"></company-role-user-modal>
+
 </div>
 </template>
 
@@ -57,6 +63,7 @@ import {
     BIcon
 } from "bootstrap-vue"
 import EditUserModal from "../components/user/EditUserModal";
+import CompanyRoleUserModal from "../components/user/CompanyRoleUserModal";
 import AddUserModal from "../components/user/AddUserModal";
 import { setLocalStorage } from '../utils/localStorage'
 
@@ -66,7 +73,8 @@ export default {
     components: {
         BIcon,
         EditUserModal,
-        AddUserModal
+        AddUserModal,
+        CompanyRoleUserModal
     },
     data() {
         return {
@@ -80,6 +88,9 @@ export default {
             pageOptions: [10, 20, 50],
             searchUser: '',
             showAddModal: false,
+            showCompanyRoleModal: false,
+            CompanyRole_Item: {},
+
             bulkDeleteItems: [],
             allSelected: false,
             showFilterPropertiesModal: false,
@@ -125,6 +136,12 @@ export default {
         editItem(item) {
             this.showModal = true
             this.editedItem = {
+                ...item
+            }
+        },
+        companyRoleItem(item) {
+            this.showCompanyRoleModal = true
+            this.CompanyRole_Item = {
                 ...item
             }
         },

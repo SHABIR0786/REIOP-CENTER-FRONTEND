@@ -23,7 +23,7 @@
                         </b-input-group>
                     </b-col>
                 </b-row>
-                <b-row>
+                <!-- <b-row>
                     <b-col cols="12">
                         <b-input-group prepend="Select Team" id="team_id" label="Team" label-for="team_id" class="mb-2">
                             <b-form-select v-model="$v.user.team_id.$model" aria-describedby="team_id" :state="validateState('team_id')" :options="teamitems" required>
@@ -31,14 +31,51 @@
                             <b-form-invalid-feedback class="text-center" id="team_id">User Team Field is Required.</b-form-invalid-feedback>
                         </b-input-group>
                     </b-col>
+                </b-row> -->
+                <b-row v-show="user.role!='superadmin'">
+                    <b-col cols="12">
+                        <b-input-group prepend="Company" id="company_id" class="mb-2">
+                          <b-form-select @change="addcompanyitems" :options="companyitems_new"></b-form-select>
+                        </b-input-group>
+                    </b-col>
+                </b-row>
+                <b-row class="list-group-row" v-show="user.role!='superadmin' && selectedCompany.length>0">
+                    <b-col cols="12">
+                        <h5>Companies Permission</h5>
+                        <b-list-group class="w-100">
+                            <b-list-group-item v-for="company in selectedCompany" :key="company.id">
+                            Company : {{company.name}}
+                            <b-input-group>
+                                <b-input-group-prepend class="pr-2">
+                                    Role : 
+                                </b-input-group-prepend>
+                                <b-form-radio-group v-model="company.role" :options="company_permission"  :name="'company_role'+company.id" />
+                                <b-input-group-append>
+                                    <b-icon icon="trash" class="trash-icon btn" variant="danger" @click="removecompanyitems(company)"></b-icon>
+                                </b-input-group-append>
+
+                            </b-input-group>
+
+                            </b-list-group-item>
+                        </b-list-group>
+                    </b-col>
                 </b-row>
                 <b-row>
-                    <b-col cols="12">
-                        <b-input-group prepend="Select Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                    <b-col cols="12 pt-2">
+                        <!-- <b-input-group prepend="Select Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
                             <b-form-select v-model="$v.user.role.$model" aria-describedby="role-id" :state="validateState('role')" :options="roles" required>
                             </b-form-select>
                             <b-form-invalid-feedback class="text-center" id="role-id">User Role Field is Required.</b-form-invalid-feedback>
-                        </b-input-group>
+                        </b-input-group> -->
+                        <b-form-checkbox
+                            id="checkbox_role"
+                            v-model="user.role"
+                            name="checkbox_role"
+                            value="superadmin"
+                            unchecked-value=""
+                            >
+                            Make this user a superadmin
+                        </b-form-checkbox>
                     </b-col>
                 </b-row>
         </b-container>
@@ -78,7 +115,9 @@ export default {
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            teams: 'teamModule/teams',
+            // teams: 'teamModule/teams',
+            items: 'companyModule/companies',
+
         }),
         rows() {
             return this.total ? this.total : 1
@@ -91,9 +130,14 @@ export default {
                 name: '',
                 email: '',
                 team_id: '',
-                role: ''
+                role: '',
+                permissions: [],
             },
-            teamitems: [],
+            // teamitems: [],
+            companyitems: [],
+            companyitems_new: [],
+
+            selectedCompany:[],
             roles: [{
                     value: "user",
                     text: "User"
@@ -107,6 +151,15 @@ export default {
                     text: "Superadmin"
                 }
             ],
+            company_permission: [{
+                    value: "user",
+                    text: "User"
+                },
+                {
+                    value: "admin",
+                    text: "Admin"
+                }
+            ],
         }
     },
     validations: {
@@ -118,12 +171,12 @@ export default {
                 required,
                 email
             },
-            team_id: {
-                required
-            },
-            role: {
-                required
-            }
+            // team_id: {
+            //     required
+            // },
+            // role: {
+            //     required
+            // }
         }
     },
     methods: {
@@ -131,28 +184,66 @@ export default {
             const { $dirty, $error } = this.$v.user[name];
             return $dirty ? !$error : null;
         },
+        addcompanyitems(company) {            
+            let index = this.companyitems_new.findIndex(x=>x.value.id == company.id);
+            this.companyitems_new.splice(index,1);
+            this.selectedCompany.push(company);
+        },
+        removecompanyitems(company) {
+            let index = this.selectedCompany.findIndex(x=>x.id == company.id);
+            this.selectedCompany.splice(index,1);
+            this.companyitems_new.push({value:company,text:company.name});
+        },
         onSubmit() {
             this.$v.user.$touch();
             if (this.$v.user.$anyError) {
                 return;
             }
+            this.user.permissions = [];
+            if(this.user.role != 'superadmin'){
+                this.selectedCompany.map((company)=> {
+                this.user.permissions.push({
+                    company_id: company.id,
+                    role: company.role
+                });
+            });
+            }
+            // console.log('this.user', this.user);
+            
            this. $emit('save', this.user);
         },
     },
     async created() {
         this.$store.dispatch('uxModule/setLoading')
-        this.$store.dispatch('teamModule/getTotal')
+        // this.$store.dispatch('teamModule/getTotal')
+        this.$store.dispatch('companyModule/getTotal')
+
         try {
-            await this.$store.dispatch("teamModule/getAllTeams", {
+        //     await this.$store.dispatch("teamModule/getAllTeams", {
+        //         page: 1,
+        //         perPage: this.perPage
+        //     })
+        //     this.teams.map((team) => {
+        //         this.teamitems.push({
+        //             value: team.id,
+        //             text: team.name
+        //         });
+        //     });
+
+            await this.$store.dispatch("companyModule/getAllCompanies", {
                 page: 1,
                 perPage: this.perPage
             })
-            this.teams.map((team) => {
-                this.teamitems.push({
-                    value: team.id,
-                    text: team.name
+            this.items.map((company) => {
+                    company.role = 'user';
+                
+                this.companyitems.push({
+                    value: company,
+                    text: company.name
                 });
             });
+
+            
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -160,7 +251,26 @@ export default {
     },
             watch: {
             showModal() {
-                this.user= {...this.propsData}
+                this.user= {...this.propsData};
+                this.selectedCompany = [];
+                this.companyitems_new = [];
+
+                if(this.showModal){
+                    this.companyitems_new = this.companyitems;
+                    this.user.permissions.map((permission)=> {
+                    this.selectedCompany.push({
+                        company_id: permission.company_id,
+                        role: permission.role,
+                        name:permission.company.name,
+                        id: permission.company_id,
+
+                        });
+                    });
+                    // console.log('this.user',this.user);
+                    // console.log('this.selectedCompany',this.selectedCompany);
+
+                }
+                // console.log('this.showModal',this.showModal);
             }
         }
 

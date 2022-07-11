@@ -26,7 +26,7 @@
             </b-col>
         </b-row>
     </div>
-    <b-table id="user-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-table id="user-table" lg sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
         </template>
@@ -177,6 +177,8 @@ export default {
             this.showModal = false
         },
         async add(item) {
+            console.log('this.company item',item);
+
             this.$store.dispatch('uxModule/setLoading')
            await this.$store.dispatch('companyModule/addCompany', {
                 ...item
