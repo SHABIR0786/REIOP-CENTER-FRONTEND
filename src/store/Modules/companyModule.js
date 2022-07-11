@@ -5,6 +5,10 @@ const state = {
         {key:"id", label: "Id", sortable: true},
         {key:"actions", label: "Actions"},
         {key: "name", label: "Name", sortable: true},
+        {key: "plan", label: "Plan", sortable: true},
+        {key: "number_of_users", label: "No. of Users", sortable: true},
+        {key: "number_of_teams", label: "No. of Teams", sortable: true},
+
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],

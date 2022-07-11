@@ -9,6 +9,7 @@ const state = {
         {key: "role", label: "Role", sortable: true},
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
+        {key: "company_role", label: "Company"},
         {key:"actions", label: "Actions"},
     ],
     users: [],

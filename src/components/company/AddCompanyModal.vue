@@ -16,11 +16,51 @@
                 </b-row>
                 <b-row>
                     <b-col cols="12">
+                        <b-input-group prepend="Plan" id="plan" class="mb-2">
+                          <b-form-select v-model="company.plan" :state="validateState('plan')" required :options="planitems"></b-form-select>
+                          <b-form-invalid-feedback id="plan" class="text-center">Plan Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
+                    </b-col>
+                </b-row>
+                <b-row class="mb-1 text-center">
+                    <b-col cols="12">
+                        <b-input-group prepend="No. of Users" title="Number Of Users" class="mb-2" id="number_of_users" label="Number Of Users" label-for="number_of_users">
+                            <b-form-input id="number_of_users" name="number_of_users" :state="validateState('number_of_users')"  type="text" v-model="company.number_of_users" required></b-form-input>
+                            
+                            <template #append>
+                            <b-button  variant="light" title="Unlimited" size="sm" @click="company.number_of_users='Unlimited'">
+                                Unlimited
+                            </b-button>
+                            </template>
+                            
+                            <b-form-invalid-feedback id="number_of_users">Number Of Users Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
+                        
+                    </b-col>
+                </b-row>
+                <b-row class="mb-1 text-center">
+                    <b-col cols="12">
+                        <b-input-group prepend="No. of Teams" title="Number Of Teams" class="mb-2" id="number_of_teams" label="Number Of Teams" label-for="number_of_users">
+                            <b-form-input id="number_of_teams" name="number_of_teams" :state="validateState('number_of_teams')"  type="text" v-model="company.number_of_teams" required></b-form-input>
+                            <template #append>
+                            <b-button variant="light" title="Unlimited" size="sm" @click="company.number_of_teams='Unlimited'">
+                                Unlimited
+                            </b-button>
+                            </template>
+
+                            <b-form-invalid-feedback id="number_of_users">Number Of Teams Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
+                        
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col cols="12">
                         <b-input-group prepend="Add Team" id="team_id" class="mb-2">
                           <b-form-select @change="addTeam" :options="teamitems"></b-form-select>
                         </b-input-group>
                     </b-col>
                 </b-row>
+                
                 <b-row class="list-group-row">
                     <b-col cols="12">
                 <h4>Teams</h4>
@@ -75,9 +115,31 @@ export default {
         return {
             perPage: 20,
             company: {
-                name: ''
+                name: '',
+                plan:null,
+                number_of_users: null,
+                number_of_teams: null,
             },
             teamitems: [],
+            planitems: [
+                {
+                    value: 'Basic',
+                    text: 'Basic'
+                },
+                {
+                    value: 'Pro',
+                    text: 'Pro'
+                },
+                {
+                    value: 'Premium',
+                    text: 'Premium'
+                },
+                {
+                    value: 'Alpha Team',
+                    text: 'Alpha Team'
+                },
+            ],
+            
             selectedTeams:[]
         }
     },
@@ -85,7 +147,16 @@ export default {
         company: {
             name: {
                 required
-            }
+            },
+            plan: {
+                required
+            },
+            number_of_users: {
+                required
+            },
+            number_of_teams: {
+                required
+            },
         }
     },
     methods: {
@@ -94,6 +165,8 @@ export default {
             return $dirty ? !$error : null;
         },
         addTeam(team) {
+            console.log('team', team);
+            
             let index = this.teamitems.findIndex(x=>x.value.id == team.id);
             this.teamitems.splice(index,1);
             this.selectedTeams.push(team);
@@ -111,7 +184,7 @@ export default {
             this.company.teamId = [];
             this.selectedTeams.map((team)=> {
                 this.company.teamId.push(team.id);
-            });
+            });            
            this. $emit('add', this.company);
         },
     },
