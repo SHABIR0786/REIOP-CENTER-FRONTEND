@@ -99,6 +99,26 @@ const mutations = {
     SET_SOURCE_LIST(state, payload) {
         state.sourceList = payload
     },
+    ADD_SOURCE_LIST(state, payload) {
+        console.log('payload', payload);
+        
+        const allSourceList = JSON.parse(state.allSourceList)
+        console.log('allSourceList', allSourceList);
+        payload.created_at = payload.created_at.split('T')[0];
+        payload.updated_at = payload.updated_at.split('T')[0];
+        allSourceList.push(payload)
+        state.allSourceList = JSON.stringify(allSourceList)
+    },
+    ADD_SKIP_SOURCE_LIST(state, payload) {
+        console.log('payload', payload);
+        
+        const allSkipSourceList = JSON.parse(state.allSkipSourceList)
+        console.log('allSkipSourceList', allSkipSourceList);
+        payload.created_at = payload.created_at.split('T')[0];
+        payload.updated_at = payload.updated_at.split('T')[0];
+        allSkipSourceList.push(payload)
+        state.allSkipSourceList = JSON.stringify(allSkipSourceList)
+    },
    EDIT_SOURCE_LIST(state, payload) {
        const allSourceList = JSON.parse(state.allSourceList)
        allSourceList.find(el => el.id === payload.id).list_source = payload.list_source
@@ -196,6 +216,22 @@ const actions = {
             if (response ) {
                 commit('GET_SOURCE_LIST', response.sourceList)
             }
+            return response
+        })
+    },
+    async addListSource({ commit }, data) {
+        let source_list_type = data.source_list_type;
+        console.log('data.source_list_type', data.source_list_type);
+
+        delete data.source_list_type;
+        return await api.post(`/lists/addListSource`,{...data}).then((response) => {
+            if(source_list_type === 'list_source'){
+                commit('ADD_SOURCE_LIST', response.list);
+            }else if(source_list_type === 'list_skip_source'){
+                commit('ADD_SKIP_SOURCE_LIST', response.list);
+            }
+            console.log('response.list', response.list);
+            
             return response
         })
     },

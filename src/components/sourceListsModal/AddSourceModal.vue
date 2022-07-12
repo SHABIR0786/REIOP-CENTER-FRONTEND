@@ -2,23 +2,18 @@
     <b-modal v-model="showModal" no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
-                Add Type
+                Add Source
             </div>
         </template>
         <b-container fluid>
             <b-row  class="text-center">
                 <b-row class="mb-1 text-center col-12">
                     <b-col cols="12">
-                        <b-input-group prepend="Type In File" class="mb-2">
-                          <b-form-input v-model="subjectTypes.type_in_file"></b-form-input>
+                        <b-input-group prepend="Source Name" class="mb-2" id="list_source" label="Name" label-for="name">
+                          <b-form-input v-model="source.list_source" :state="validateState('list_source')" required></b-form-input>
+                            <b-form-invalid-feedback id="list_source">Source Name Field is Required.</b-form-invalid-feedback>
+
                         </b-input-group>
-                    </b-col>
-                </b-row>
-                <b-row  class="mb-1 text-center col-12">
-                    <b-col cols="12">
-                      <b-input-group  prepend="Type In Web">
-                        <b-form-input v-model="subjectTypes.type_in_web"></b-form-input>
-                      </b-input-group>
                     </b-col>
                 </b-row>
             </b-row>
@@ -37,7 +32,7 @@
                         variant="primary"
                         size="sm"
                         class="float-right mr-2"
-                        @click="$emit('add', subjectTypes)"
+                        @click="onSubmit"
                 >
                     Add
                 </b-button>
@@ -46,8 +41,14 @@
     </b-modal>
 </template>
 <script>
+import { validationMixin } from "vuelidate";
+import {
+    required
+} from "vuelidate/lib/validators";
     export default {
-        name: 'AddTypeModal',
+    mixins: [validationMixin],
+
+        name: 'AddSourceModal',
         props: {
             showModal: {
                 type: Boolean
@@ -58,16 +59,42 @@
         },
         data() {
             return {
-              subjectTypes: {
-                    type_in_file: '',
-                    type_in_web: '',
+              source: {
+                    list_source: '',
+                    source_list_type: 'list_source',
+
                 },
+                
+                
             }
         },
+            validations: {
+        source: {
+            list_source: {
+                required
+            },
+        }
+    },
+    methods: {
+        validateState(name) {
+            const { $dirty, $error } = this.$v.source[name];
+            return $dirty ? !$error : null;
+        },
+        onSubmit() {
+            this.$v.source.$touch();
+            if (this.$v.source.$anyError) {
+                return;
+            }
+           this. $emit('add', this.source);
+        },
+    },
         watch: {
             showModal() {
-                this.subjectTypes.type_in_file = '';
-                this.subjectTypes.type_in_web = '';
+                if(this.showModal){
+                    this.source.list_source = '';
+                    this.source.source_list_type = 'list_source';
+                }
+
             }
         }
     }

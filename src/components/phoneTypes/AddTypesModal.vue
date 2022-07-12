@@ -64,6 +64,12 @@
                 },
             }
         },
+        watch: {
+            showModal() {
+                this.types.type_in_file = '';
+                this.types.type_in_web = '';
+            }
+        }
     }
 </script>
 

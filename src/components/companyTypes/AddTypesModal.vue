@@ -56,6 +56,11 @@
                 },
             }
         },
+        watch: {
+            showModal() {
+                this.companyTypes.company_type = '';
+            }
+        }
     }
 </script>
 

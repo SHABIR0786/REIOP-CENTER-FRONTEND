@@ -20,7 +20,7 @@
                         </b-input-group>
                     </b-col>
                 </b-row>
-                <b-row class="list-group-row" v-show="user.role!='superadmin'">
+                <b-row class="list-group-row" v-show="user.role!='superadmin' && user.permissions.length > 0">
                     <b-col cols="12">
                         <h5>Companies Permission</h5>
                         <b-list-group class="w-100">

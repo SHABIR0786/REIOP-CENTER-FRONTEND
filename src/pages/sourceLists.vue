@@ -3,12 +3,12 @@
     <div>
       <h3>Source Lists</h3>
       <div>
-<!--        <b-row>-->
-<!--          <b-col class="d-flex justify-content-end">-->
-<!--            <b-button variant="primary" class="add-seller" @click="showAddModal=true">-->
-<!--              <b-icon icon="plus" aria-hidden="true"></b-icon>Create a New Type</b-button>-->
-<!--          </b-col>-->
-<!--        </b-row>-->
+       <b-row>
+         <b-col class="d-flex justify-content-end">
+           <b-button variant="primary" class="add-seller" @click="showAddModal=true">
+             <b-icon icon="plus" aria-hidden="true"></b-icon>Create a New List Source</b-button>
+         </b-col>
+       </b-row>
         <hr>
         <b-row class="mb-3">
           <b-col cols="8" class="d-flex align-items-center">
@@ -61,7 +61,9 @@
           </div>
         </template>
         <template v-slot:cell(action)="data">
-          <b-icon class="cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+          <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+          <b-icon class="cursor-pointer" variant="danger" icon="trash" disabled @click="deleteItem(data.item)"></b-icon>
+
         </template>
       </b-table>
       <b-row>
@@ -86,7 +88,11 @@
         </b-col>
       </b-row>
     </div>
+    <add-source-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="addListSource"></add-source-modal>
+
     <edit-source-modal :showModal="showEditModal" :propsData="editedItem" :modalTitle="sourceTitle" :sourceType="sourceType" @cancel="showEditModal=false" @save="save"></edit-source-modal>
+    <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+
   </div>
 </template>
 
@@ -94,12 +100,18 @@
 import {BIcon} from "bootstrap-vue";
 import {mapGetters} from "vuex";
 import EditSourceModal from "../components/sourceListsModal/EditSourceModal";
+import AddSourceModal from "../components/sourceListsModal/AddSourceModal";
+import DeleteModal from "../components/deleteModal/DeleteModal";
+
 
 export default {
   name: "sourceLists",
   components: {
     BIcon,
     EditSourceModal,
+    AddSourceModal,
+    DeleteModal
+
   },
   data () {
     return {
@@ -110,6 +122,9 @@ export default {
       search: '',
       editedItem: {},
       showEditModal: false,
+      showAddModal: false,
+      showDeleteModal: false,
+      itemToDelete: {},
       sourceTitle : 'Source',
       sourceType : 'list_source',
 
@@ -150,6 +165,20 @@ export default {
       this.showModal = false
       this.$store.dispatch('listModule/editSource', {...source})
     },
+    addListSource(source) {
+      this.showAddModal = false
+      this.$store.dispatch('listModule/addListSource', {...source})
+    },
+    deleteItem(item){
+      this.showDeleteModal = true;
+      this.itemToDelete = item;
+    },
+    modalResponse(response) {
+      this.showDeleteModal = false;
+      if (response) {
+        // this.$store.dispatch('listModule/deleteType', this.itemToDelete.id)
+      }
+    },
 
   },
   watch: {
@@ -174,7 +203,7 @@ export default {
 
 <style scoped>
   .add-seller {
-    width: 200px;
+    width: 250px;
   }
 
   .filter-icon {
