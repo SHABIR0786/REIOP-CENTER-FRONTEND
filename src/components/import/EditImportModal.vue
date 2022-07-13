@@ -1,11 +1,11 @@
 <template>
-    <b-modal body-class="edit-modal" @close="$emit('cancel')" v-model="showModalCopy" size="xl" centered no-close-on-backdrop>
+    <b-modal body-class="edit-modal" @close="close()" v-model="showModalCopy" size="xl" centered no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
                 Edit Import
             </div>
             <div>
-                <b-icon @click="$emit('cancel')" class="close-icon" icon="x"></b-icon>
+                <b-icon @click="close()" class="close-icon" icon="x"></b-icon>
             </div>
         </template>
         <b-container fluid>
@@ -244,7 +244,7 @@
         </b-table>
         <template #modal-footer>
             <div class="w-100">
-                <b-button variant="primary" size="sm" class="float-right" @click="$emit('cancel')">
+                <b-button variant="primary" size="sm" class="float-right" @click="close()">
                     Cancel
                 </b-button>
               <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
@@ -276,6 +276,11 @@ export default {
     },
 
   methods: {
+        close(){
+          this.isReadOnly = true;
+          console.log("I AM CLOSE");
+          this.$emit('cancel');
+        },
         edit() {
             this.isReadOnly = true;
             this.$emit('save', this.editData);
