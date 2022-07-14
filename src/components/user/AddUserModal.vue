@@ -9,7 +9,7 @@
                 <b-row class="mb-1 text-center">
                     <b-col cols="12">
                         <b-input-group prepend="Name" class="mb-2" id="name" label="Name" label-for="name">
-                            <b-form-input id="name" name="name" :state="validateState('name')" aria-describedby="name" type="text" v-model="$v.user.name.$model" required></b-form-input>
+                            <b-form-input :state="validateState('name')" aria-describedby="name" type="text" v-model="$v.user.name.$model" required></b-form-input>
                             <b-form-invalid-feedback id="name">User Name Field is Required.</b-form-invalid-feedback>
                         </b-input-group>
                     </b-col>
