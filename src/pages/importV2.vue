@@ -235,7 +235,7 @@ export default {
             let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
             let index = this.filteredItems.findIndex(x=>x.id == item.id);
             this.filteredItems[index].percentage = progresspercentage;
-            this.$refs.table.refresh();
+            // this.$refs.table.refresh();
             if(progresspercentage == 100) {
              clearInterval(this.intervalId);
             }

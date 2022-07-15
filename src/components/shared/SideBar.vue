@@ -2,7 +2,7 @@
     <nav :class="`navbar side-menu ${toggleClass}`">
         <div class="container-fluid">
             <ul class="nav navbar-nav" v-if="isCollapsed">
-                <li v-for="(item, index) in routeItems" :key="index" :class="$route.name===item.name ? 'active-tab' : ''">
+                <li v-for="(item, index) in routeItems" :key="index" @click="navigation(item)" :class="$route.name===item.name ? 'active-tab' : ''">
                     <router-link :to="item.path">
                         <span :title="item.title"><b-icon :icon="item.icon"></b-icon></span>
                         <p v-if="!isCollapsed">{{item.title}}</p>
@@ -10,7 +10,7 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav" v-else>
-             <li v-for="(item, index) in routeItems.filter(route => route.meta.collapse == false)" :key="index" :class="$route.name===item.name ? 'active-tab' : ''">
+             <li v-for="(item, index) in routeItems.filter(route => route.meta.collapse == false)" @click="navigation(item)" :key="index" :class="$route.name===item.name ? 'active-tab' : ''">
                     <router-link :to="item.path">
                         <span :title="item.title"><b-icon :icon="item.icon"></b-icon></span>
                         <p v-if="!isCollapsed">{{item.title}}</p>
@@ -91,6 +91,11 @@ export default {
         }
     },
     methods: {
+        navigation(route) {
+            if(route.path == "/import") {
+                this.$router.push('/import-v2')
+            }
+        },
         toggleSidebar () {
             this.isSidebarCollapsed = !this.isSidebarCollapsed;
             this.$store.dispatch('uxModule/toggleSidebar')

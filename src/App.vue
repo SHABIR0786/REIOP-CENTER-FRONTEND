@@ -6,7 +6,7 @@
       </b-row>
       <side-bar></side-bar>
      <!-- <Footer></Footer> -->
-      <router-view></router-view>
+      <router-view :key="$route.path"></router-view>
       <loader></loader>
     </div>
     <router-view v-else></router-view>

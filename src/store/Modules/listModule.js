@@ -262,8 +262,8 @@ const actions = {
         })
     },
 
-    async currentModal({ commit }, {data, page, perPage}) {
-        return await api.get(`/lists/modal?listHash=${data}&page=${page}&perPage=${perPage}`, {...data}).then((response) => {
+    async currentModal({ commit }, {data, page, perPage,list_id}) {
+        return await api.get(`/lists/modal?listHash=${data}&page=${page}&perPage=${perPage}&list_id=${list_id}`, {...data}).then((response) => {
             commit('SHOW_TABS', response.tabData)
             return response
         })
