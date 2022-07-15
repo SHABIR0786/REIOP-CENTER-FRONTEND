@@ -1,0 +1,167 @@
+<template>
+<b-modal size="md" v-model="showModal" scrollable no-close-on-backdrop>
+    <template #modal-header>
+        <div class="w-100">
+            Save Filter
+        </div>
+        <div>
+            <b-icon @click="closeFilterModal" class="close-icon" icon="x"></b-icon>
+        </div>
+    </template>
+    <b-container fluid class="container-row">
+        <div v-if="saveFilterStep == 1">
+            <b-row class="mb-1 text-center">
+                <b-col cols="12">
+                    <b-button variant="primary" size="sm" @click="saveFilterStep = 2">
+                        Overwrite Existing Filter
+                    </b-button>
+                </b-col>
+            </b-row>
+            <b-row class="mb-1 text-center">
+                <b-col cols="12">
+                    <b>Or</b>
+                </b-col>
+            </b-row>
+            <b-row>
+                <b-col cols="12 text-center">
+                    <b-button variant="primary" size="sm" @click="saveFilterStep = 3">
+                        Create new Filter
+                    </b-button>
+                </b-col>
+            </b-row>
+        </div>
+        <div v-if="saveFilterStep == 2">
+            <b-col cols="12">
+                <b-input-group class="mb-2">
+                    <b-form-select class="select-template w-100 mt-3 mb-3" v-model="selectedFilter" :options="savedFilters"></b-form-select>
+                </b-input-group>
+            </b-col>
+        </div>
+        <div v-if="saveFilterStep == 3">
+            <b-row class="mb-1 text-center">
+                <b-col cols="12">
+                    <b-input-group class="mb-2">
+                        <b-form-input placeholder="Enter Filter Name" v-model="filterName"></b-form-input>
+                    </b-input-group>
+                </b-col>
+            </b-row>
+            <b-row class="mb-1 text-center">
+                <b-col cols="12">
+                    <b-input-group class="mb-2">
+                        <b-form-select class="select-template w-100 mt-3 mb-3" v-model="permission" :options="permissions"></b-form-select>
+                    </b-input-group>
+                </b-col>
+            </b-row>
+        </div>
+    </b-container>
+    <template #modal-footer>
+        <div class="w-100">
+            <b-icon class="backstep-arrow" v-if="saveFilterStep > 1" icon="arrow-left" @click="saveFilterStep = 1"></b-icon>
+            <b-button variant="primary" size="sm" class="float-right" @click="saveFilter()">
+                Save Filter
+            </b-button>
+        </div>
+    </template>
+</b-modal>
+</template>
+
+<script>
+import {
+    mapGetters
+} from "vuex";
+export default {
+    name: "SaveFilterModal",
+    props: {
+        showModal: {
+            type: Boolean,
+        },
+        allFilters: {
+            type: Object
+        }
+    },
+    computed: {
+        ...mapGetters({
+            filters: 'filtersModule/filters',
+        }),
+    },
+    data() {
+        return {
+            saveFilterStep: 1,
+            selectedFilter: null,
+            filterName: null,
+            permission: null,
+            permissions: [{
+                    value: null,
+                    text: "Choose who can see filter"
+                },
+                {
+                    value: 1,
+                    text: "Everyone"
+                },
+                {
+
+                    value: 2,
+                    text: "Only Me"
+                },
+                {
+                    value: 3,
+                    text: "Show on Table"
+                },
+            ],
+            savedFilters: [{
+                value: null,
+                text: "Choose Existing Filter"
+            }]
+        };
+    },
+    methods: {
+        closeFilterModal() {
+            this.$emit("cancel");
+        },
+        saveFilter() {
+            if (this.saveFilterStep == 3) {
+                const data = {
+                    name: this.filterName || 'Filter',
+                    permission: this.permission,
+                    type: 'subjects',
+                    configuration: JSON.stringify(this.allFilters)
+                }
+                this.$store.dispatch('filtersModule/createFilter', data);
+                this.$emit("cancel");
+                this.saveFilterStep = 1;
+                this.filterName = "";
+
+            }
+            if (this.saveFilterStep == 2) {
+                const data = {
+                    id: this.selectedFilter,
+                    configuration: JSON.stringify(this.allFilters)
+                }
+                this.$store.dispatch('filtersModule/editFilter', data);
+                this.$emit("cancel");
+                this.saveFilterStep = 1;
+            }
+        }
+    },
+    async mounted() {
+        await this.$store.dispatch("filtersModule/getAllFilters", 'subjects')
+        this.filters.forEach(e => {
+            const filter = {
+                value: '',
+                text: '',
+            }
+            filter.value = e.id;
+            filter.text = e.name;
+            this.savedFilters.push(filter);
+        });
+    },
+};
+</script>
+
+<style>
+.backstep-arrow {
+    float: left;
+    cursor: pointer;
+    margin-top: 11px;
+}
+</style>

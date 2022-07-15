@@ -215,19 +215,30 @@
       <div class="w-100">
         <b-row>
           <b-col cols="12" class="d-flex justify-content-end">
+          <b-button :disabled="totalFilters == 0" variant="primary" @click="saveFilter()" class="filter d-flex align-items-center mr-3">
+            Save Filter</b-button>
             <b-button variant="primary" @click="applyFilters(allFilters)" class="filter d-flex align-items-center">
               <b-icon icon="filter" aria-hidden="true"></b-icon>Apply Filter</b-button>
           </b-col>
         </b-row>
       </div>
     </template>
+    <save-filter-modal
+      :showModal="showSaveFilterModal"
+      @cancel="showSaveFilterModal = false"
+      :allFilters="allFilters"
+    ></save-filter-modal>
   </b-modal>
 </template>
 <script>
 import {mapGetters} from "vuex";
+import SaveFilterModal from "./../filters/saveFilterModal";
 
 export default {
   name: 'FilterSubjects',
+    components: {
+      SaveFilterModal
+    },
   props: {
     showModal: {
       type: Boolean
@@ -243,6 +254,7 @@ export default {
   },
   data() {
     return {
+      showSaveFilterModal:false,
       lists: [],
       allData: {
         Market:[],
@@ -317,6 +329,9 @@ export default {
     },
   },
   methods: {
+    saveFilter() {
+      this.showSaveFilterModal = true;
+    },
     tab(currentTub){
       this.activeTab = currentTub;
     },

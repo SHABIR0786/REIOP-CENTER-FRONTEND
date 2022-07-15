@@ -31,6 +31,9 @@
                     <b-icon icon="x" aria-hidden="true"></b-icon> Clear All
                 </b-button>
                 <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
+                <b-input-group class="mb-2 save-filter-dropdown">
+                    <b-form-select class="select-template w-100" @change="applyFilter" v-model="selectedFilter" :options="savedFilters"></b-form-select>
+                </b-input-group>
             </b-col>
             <b-col cols="6">
                 <b-input-group class="mt-3">
@@ -45,6 +48,11 @@
                     </b-input-group-append>
                 </b-input-group>
             </b-col>
+        </b-row>
+        <b-row>
+            <div class="filters-count" v-for="filter in filtersCountTable" :key="filter.name">
+                {{filter.count}} items {{filter.filter}}
+            </div>
         </b-row>
     </div>
     <div class="d-flex align-items-center mb-4">
@@ -211,7 +219,9 @@ export default {
     data() {
         return {
             isBusy: false,
+            selectedFilter: null,
             showModal: false,
+            showFiltersOnTable: [],
             perPage: 20,
             isFinishedFilterSubjects: false,
             currentPage: 1,
@@ -238,7 +248,11 @@ export default {
             searchInFiltered: {},
             sortBy: 'id',
             sortDesc: false,
-            isSearched: false
+            isSearched: false,
+            savedFilters: [{
+                value: null,
+                text: "Save Filters"
+            }]
         }
     },
     computed: {
@@ -246,8 +260,10 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'subjectModule/fields',
             items: 'subjectModule/subjects',
+            filters: 'filtersModule/filters',
             filteredItems: 'subjectModule/filteredSubject',
             filteredSubjectsCount: 'subjectModule/filteredSubjectsCount',
+            filtersCountTable: 'subjectModule/filtersCountTable',
             total: 'subjectModule/total',
             selectedSubject: 'subjectModule/subject'
         }),
@@ -279,9 +295,35 @@ export default {
         }
         this.filteredOrAllData = this.items;
         this.itemsCount = this.total;
+
+        await this.$store.dispatch("filtersModule/getAllFilters", 'subjects');
+        this.filters.forEach(e => {
+            const filter = {
+                value: '',
+                text: '',
+            }
+            filter.value = e.id;
+            filter.text = e.name;
+            this.savedFilters.push(filter);
+        });
+
+        await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
     },
     methods: {
+        applyFilter() {
+            let filter = this.filters.find(x => x.id == this.selectedFilter);
+            if (filter.configuration) {
+                let allFilters = JSON.parse(filter.configuration);
+                let total = 0
+                for (let item in allFilters) {
+                    total += allFilters[item].length
+                }
+                this.totalFilters = total;
+                this.filter(allFilters, total);
+            }
+        },
         async clearAllFilters() {
+            this.selectedFilter = null;
             this.$refs.filtersubjects.clearAllFilters();
             this.filtersName = {
                     Market: [],
@@ -569,6 +611,19 @@ export default {
     height: 20px;
 }
 
+.filters-count {
+    color: white;
+    padding: 6px;
+    margin-left: 13px;
+    margin-bottom: 10px;
+    border: 1px solid #024847;
+    background-color: #45818E !important;
+    height: 38px;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+}
+
 .filter-top {
     margin-left: -5px;
     margin-top: -30px;
@@ -609,5 +664,10 @@ export default {
 table th {
     vertical-align: inherit !important;
     height: 64px;
+}
+
+.save-filter-dropdown {
+    width: 30% !important;
+    margin-top: 10px;
 }
 </style>

@@ -496,7 +496,7 @@ computed: {
     }
   },
  async created() {
-      await this.$store.dispatch("filtersModule/getAllFilters")
+      await this.$store.dispatch("filtersModule/getAllFilters","properties")
       this.filters.forEach(e => {
         const filter = {
               value: '',
@@ -627,6 +627,7 @@ computed: {
       this.showSaveFilterModal = false;
         const data = {
             name: filterName || 'Filter',
+            type: 'properties',
             configuration: JSON.stringify(this.allFilters)
         }
       this.$store.dispatch('filtersModule/createFilter', data);
