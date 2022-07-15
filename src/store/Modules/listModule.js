@@ -99,6 +99,38 @@ const mutations = {
     SET_SOURCE_LIST(state, payload) {
         state.sourceList = payload
     },
+    ADD_SOURCE_LIST(state, payload) {
+        
+        const allSourceList = JSON.parse(state.allSourceList)
+        payload.created_at = payload.created_at.split('T')[0];
+        payload.updated_at = payload.updated_at.split('T')[0];
+        allSourceList.push(payload)
+        state.allSourceList = JSON.stringify(allSourceList)
+    },
+    DELETE_LIST_SOURCE(state, payload) {
+        const allSourceList = JSON.parse(state.allSourceList)
+
+        const findIndex = allSourceList.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && allSourceList.splice(findIndex, 1)
+        state.allSourceList = JSON.stringify(allSourceList)
+
+    },
+    DELETE_LIST_SKIP_SOURCE(state, payload) {
+        const allSkipSourceList = JSON.parse(state.allSkipSourceList)
+
+        const findIndex = allSkipSourceList.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && allSkipSourceList.splice(findIndex, 1)
+        state.allSkipSourceList = JSON.stringify(allSkipSourceList)
+
+    },
+    ADD_SKIP_SOURCE_LIST(state, payload) {
+        
+        const allSkipSourceList = JSON.parse(state.allSkipSourceList)
+        payload.created_at = payload.created_at.split('T')[0];
+        payload.updated_at = payload.updated_at.split('T')[0];
+        allSkipSourceList.push(payload)
+        state.allSkipSourceList = JSON.stringify(allSkipSourceList)
+    },
    EDIT_SOURCE_LIST(state, payload) {
        const allSourceList = JSON.parse(state.allSourceList)
        allSourceList.find(el => el.id === payload.id).list_source = payload.list_source
@@ -140,6 +172,8 @@ const mutations = {
             delete e.subjects;
         })
         state.subjectRelatedList = JSON.stringify(payload.data);
+    },
+    just_test() {
     },
     VUEX_STORE(state) {
         state.lists = [];
@@ -196,6 +230,20 @@ const actions = {
             if (response ) {
                 commit('GET_SOURCE_LIST', response.sourceList)
             }
+            return response
+        })
+    },
+    async addListSource({ commit }, data) {
+        let source_list_type = data.source_list_type;
+
+        delete data.source_list_type;
+        return await api.post(`/lists/addListSource`,{...data}).then((response) => {
+            if(source_list_type === 'list_source'){
+                commit('ADD_SOURCE_LIST', response.list);
+            }else if(source_list_type === 'list_skip_source'){
+                commit('ADD_SKIP_SOURCE_LIST', response.list);
+            }
+            
             return response
         })
     },
@@ -274,7 +322,7 @@ const actions = {
             return response
         })
     },
-    async getSelectedList({commit}, data) {
+    async getSelectedList({commit}, data) {        
         return await api.get(`/lists/selected/${data}`).then((response) => {
             if (response ) {
                 commit('SET_LIST', response)
@@ -286,6 +334,46 @@ const actions = {
     async deleteList({ commit }, data) {
         return await api.deleteAPI(`/lists/${data}`).then((response) => {
             commit('DELETE_LIST', data)
+            return response
+        })
+    },
+    async checkListForDeleteItem({ commit }, data) {
+        return await api.get(`/lists/checkForDeleteList/${data}`).then((response) => {
+            commit('just_test', data)
+            return response
+        })
+    },
+    async UpdateBeforeDeleteList({ commit }, data) {
+        let delete_list_type = data.delete_list_type;
+        
+        return await api.post(`/lists/UpdateBeforeDeleteList`, {...data}).then((response) => {
+            if(delete_list_type == 'list_source'){
+                commit('DELETE_LIST_SOURCE', data.previous_id)
+            }else if(delete_list_type == 'list_skip_source'){
+                commit('DELETE_LIST_SKIP_SOURCE', data.previous_id)
+
+            }
+
+            return response
+        })
+    },
+    async MergeListSource({ commit }, data) {
+        // let merge_list_type = data.merge_list_type;
+        
+        return await api.post(`/lists/MergeListSource`, {...data}).then((response) => {
+            // if(merge_list_type == 'list_source'){
+            //     commit('DELETE_LIST_SOURCE', data.previous_id)
+            // }else if(merge_list_type == 'list_skip_source'){
+            //     commit('DELETE_LIST_SKIP_SOURCE', data.previous_id)
+
+            // }
+            commit('just_test', data)
+            return response
+        })
+    },
+    async deleteListSource({ commit }, data) {
+        return await api.deleteAPI(`/lists/${data}`).then((response) => {
+            commit('DELETE_LIST_SOURCE', data)
             return response
         })
     },

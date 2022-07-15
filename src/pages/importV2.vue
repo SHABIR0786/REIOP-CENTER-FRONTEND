@@ -105,7 +105,7 @@
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
 
-          <edit-import-modal v-if="!isReload" :data="editData" :showModal="showModal"  @cancel="showModal=false" @save="save"></edit-import-modal>
+          <edit-import-modal v-if="!isReload" :data="editData" :showModal="showModal"  @cancel="cancelEdit" @save="save"></edit-import-modal>
           <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
           <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
           <skip-variant v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipOption" @goBack="goBack"></skip-variant>
@@ -220,6 +220,13 @@ export default {
       },
     },
     methods: {
+      cancelEdit(){
+        this.showModal = false;
+        // this.isReload = true;
+        // this.$nextTick(() => {
+        //   this.isReload = true;
+        // })
+      },
       getLivePercentage(item) {
       let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);
       let index = this.filteredItems.findIndex(x=>x.id == item.id);
@@ -243,13 +250,17 @@ export default {
         }, 10000);
       }
       },
-      editItem(item) {
-        this.$store.dispatch('importV2Module/showEditModal', {...item})
-        this.isReload = true
+     async editItem(item) {
+        this.$store.dispatch('uxModule/setLoading')
+        let response = await this.$store.dispatch('importV2Module/showEditModal', {...item})
+        this.isReload = false;
         this.showModal = true
         this.$nextTick(() => {
-          this.isReload = false
+          this.isReload = false;
         })
+        if(response.status){
+          this.$store.dispatch('uxModule/hideLoader');
+        }
       },
       save(item) {
         this.$store.dispatch('importV2Module/editImport', {...item})

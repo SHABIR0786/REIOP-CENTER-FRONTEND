@@ -3,12 +3,12 @@
     <div>
       <h3>Source Lists</h3>
       <div>
-<!--        <b-row>-->
-<!--          <b-col class="d-flex justify-content-end">-->
-<!--            <b-button variant="primary" class="add-seller" @click="showAddModal=true">-->
-<!--              <b-icon icon="plus" aria-hidden="true"></b-icon>Create a New Type</b-button>-->
-<!--          </b-col>-->
-<!--        </b-row>-->
+       <b-row>
+         <b-col class="d-flex justify-content-end">
+           <b-button variant="primary" class="add-seller" @click="showAddModal=true">
+             <b-icon icon="plus" aria-hidden="true"></b-icon>Create a New List Source</b-button>
+         </b-col>
+       </b-row>
         <hr>
         <b-row class="mb-3">
           <b-col cols="8" class="d-flex align-items-center">
@@ -61,7 +61,10 @@
           </div>
         </template>
         <template v-slot:cell(action)="data">
-          <b-icon class="cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+          <b-icon title="Edit" class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+          <b-icon title="Merge with other source" class="mr-2 cursor-pointer" icon="arrow-left-right" variant="info" @click="mergeSourceFunction(data.item)"></b-icon>
+          <b-icon title="Delete" class="cursor-pointer" variant="danger" icon="trash" disabled @click="checkListForDeleteItem(data.item)"></b-icon>
+
         </template>
       </b-table>
       <b-row>
@@ -86,7 +89,14 @@
         </b-col>
       </b-row>
     </div>
+    <add-source-modal :showModal="showAddModal" :modalTitle="sourceTitle" :sourceType="sourceType" @cancel="showAddModal=false" @add="addListSource"></add-source-modal>
+
     <edit-source-modal :showModal="showEditModal" :propsData="editedItem" :modalTitle="sourceTitle" :sourceType="sourceType" @cancel="showEditModal=false" @save="save"></edit-source-modal>
+    <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+    <update-delete-source-list-modal :showModal="showUpdateDeleteModal" :propsData="items" :modalTitle="sourceDeleteTitle" :itemToDelete="itemToDelete" @cancel="showUpdateDeleteModal=false" @update_source_delete="update_before_delete_list"></update-delete-source-list-modal>
+    <merge-with-other-source-modal :showModal="mergeSourceModal" :propsData="items" :modalTitle="mergeSourceTitle" :itemToMerge="itemToMerge" @cancel="mergeSourceModal=false" @merge_source_other="merge_source_with_other"></merge-with-other-source-modal>
+
+
   </div>
 </template>
 
@@ -94,12 +104,24 @@
 import {BIcon} from "bootstrap-vue";
 import {mapGetters} from "vuex";
 import EditSourceModal from "../components/sourceListsModal/EditSourceModal";
+import AddSourceModal from "../components/sourceListsModal/AddSourceModal";
+import DeleteModal from "../components/deleteModal/DeleteModal";
+import UpdateDeleteSourceListModal from "../components/sourceListsModal/UpdateDeleteSourceListModal";
+import MergeWithOtherSourceModal from "../components/sourceListsModal/MergeWithOtherSourceModal";
+
+
 
 export default {
   name: "sourceLists",
   components: {
     BIcon,
     EditSourceModal,
+    AddSourceModal,
+    DeleteModal,
+    UpdateDeleteSourceListModal,
+    MergeWithOtherSourceModal
+
+
   },
   data () {
     return {
@@ -110,8 +132,19 @@ export default {
       search: '',
       editedItem: {},
       showEditModal: false,
+      showAddModal: false,
+      showDeleteModal: false,
+      showUpdateDeleteModal: false,
+      mergeSourceModal: false,
+      itemToDelete: {},
+      itemToMerge: {},
       sourceTitle : 'Source',
       sourceType : 'list_source',
+      sourceDeleteTitle: 'Source',
+      mergeSourceTitle : 'List Source',
+
+
+
 
 
       fields: [
@@ -150,6 +183,72 @@ export default {
       this.showModal = false
       this.$store.dispatch('listModule/editSource', {...source})
     },
+    addListSource(source) {
+      this.showAddModal = false
+      this.$store.dispatch('listModule/addListSource', {...source})
+    },
+    deleteItem(item){
+      this.showDeleteModal = true;
+      this.itemToDelete = item;
+    },
+    update_before_deleteItem(item){
+      this.itemToDelete = item;
+      this.showUpdateDeleteModal = true;
+    },
+    update_before_delete_list(data){
+      this.showUpdateDeleteModal = false;
+      this.$store.dispatch('listModule/UpdateBeforeDeleteList', data)
+
+    },
+    async checkListForDeleteItem(item){
+
+      this.$store.dispatch('uxModule/setLoading');
+
+      let response = await this.$store.dispatch('listModule/checkListForDeleteItem', item.id)
+
+      this.$store.dispatch('uxModule/hideLoader');
+
+      if(response.exist == false){
+
+        this.deleteItem(item);
+
+      }else if(response.exist == true){
+
+        item.table_name = response.table;
+        item.delete_list_type = "list_source";
+
+        this.update_before_deleteItem(item);
+
+      }
+
+    },
+    modalResponse(response) {
+      this.showDeleteModal = false;
+      if (response) {
+        this.$store.dispatch('listModule/deleteListSource', this.itemToDelete.id)
+      }
+    },
+    mergeSourceFunction(item){
+      item.merge_list_type = "list_source";
+      this.itemToMerge = item;
+      this.mergeSourceModal = true;
+              
+    },
+    async merge_source_with_other(data){
+      this.mergeSourceModal = false;
+      let response = await this.$store.dispatch('listModule/MergeListSource', data)
+
+      if(response.success == true){
+
+          this.$bvToast.toast('Source Merge Successfully.', {
+            title: 'Success!',
+            solid: true,
+            variant: 'success',
+            autoHideDelay: 3000,
+        })
+
+      }
+    },
 
   },
   watch: {
@@ -174,7 +273,7 @@ export default {
 
 <style scoped>
   .add-seller {
-    width: 200px;
+    width: 250px;
   }
 
   .filter-icon {

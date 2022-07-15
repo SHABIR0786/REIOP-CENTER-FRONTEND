@@ -185,14 +185,22 @@ export default {
             return $dirty ? !$error : null;
         },
         addcompanyitems(company) {            
-            let index = this.companyitems_new.findIndex(x=>x.value.id == company.id);
-            this.companyitems_new.splice(index,1);
-            this.selectedCompany.push(company);
+            // let index = this.companyitems_new.findIndex(x=>x.value.id == company.id);
+            // this.companyitems_new.splice(index,1);
+            //     this.selectedCompany.push(company);
+
+
+            var index_ = this.selectedCompany.findIndex(x => x.id ==company.id); 
+
+            if(index_ === -1 ){
+                this.selectedCompany.push(company);
+
+            }
         },
         removecompanyitems(company) {
             let index = this.selectedCompany.findIndex(x=>x.id == company.id);
             this.selectedCompany.splice(index,1);
-            this.companyitems_new.push({value:company,text:company.name});
+            // this.companyitems_new.push({value:company,text:company.name});
         },
         onSubmit() {
             this.$v.user.$touch();
@@ -235,8 +243,7 @@ export default {
                 perPage: this.perPage
             })
             this.items.map((company) => {
-                    company.role = 'user';
-                
+                company.role = 'user';
                 this.companyitems.push({
                     value: company,
                     text: company.name
@@ -251,11 +258,11 @@ export default {
     },
             watch: {
             showModal() {
-                this.user= {...this.propsData};
                 this.selectedCompany = [];
                 this.companyitems_new = [];
 
                 if(this.showModal){
+                    this.user= {...this.propsData};
                     this.companyitems_new = this.companyitems;
                     this.user.permissions.map((permission)=> {
                     this.selectedCompany.push({
@@ -266,11 +273,9 @@ export default {
 
                         });
                     });
-                    // console.log('this.user',this.user);
-                    // console.log('this.selectedCompany',this.selectedCompany);
+                    
 
                 }
-                // console.log('this.showModal',this.showModal);
             }
         }
 

@@ -84,6 +84,12 @@ export default {
             }
             this.$emit('add', this.subjectTypes);
         },
+        watch: {
+            showModal() {
+                this.subjectTypes.type_in_file = '';
+                this.subjectTypes.type_in_web = '';
+            }
+        }
     }
 }
 </script>

@@ -122,6 +122,8 @@
                         :items="seller.lists"
                         :per-page="0"
                         :sticky-header="true"
+                        class="seller_table"
+
                     >
                       <template #table-busy>
                         <div class="text-center" my-2>
@@ -197,6 +199,8 @@
                         responsive
                         :per-page="0"
                         :sticky-header="true"
+                        class="seller_table"
+
                     >
                       <template #table-busy>
                         <div class="text-center" my-2>
@@ -259,6 +263,8 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
+                                class="seller_table"
+
                         >
                             <template #table-busy>
                                 <div class="text-center" my-2>
@@ -299,6 +305,8 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
+                                class="seller_table"
+
                         >
                             <template #table-busy>
                                 <div class="text-center" my-2>
@@ -339,6 +347,8 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
+                                class="seller_table"
+
                         >
                             <template #table-busy>
                                 <div class="text-center" my-2>
@@ -379,6 +389,8 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
+                                class="seller_table"
+
                         >
                             <template #table-busy>
                                 <div class="text-center" my-2>
@@ -627,5 +639,13 @@ export default {
     }
     .assign-btn {
         text-align: end;
+    }
+    .seller_table{
+        min-height: 235px;
+        max-height: 386px !important;
+        overflow-y: auto;
+        overflow-x: scroll;
+
+
     }
 </style>

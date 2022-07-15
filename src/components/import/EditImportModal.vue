@@ -1,11 +1,11 @@
 <template>
-    <b-modal body-class="edit-modal" @close="$emit('cancel')" v-model="showModalCopy" size="xl" centered no-close-on-backdrop>
+    <b-modal body-class="edit-modal" @close="close()" v-model="showModalCopy" size="xl" centered no-close-on-backdrop>
         <template #modal-header>
             <div class="w-100">
                 Edit Import
             </div>
             <div>
-                <b-icon @click="$emit('cancel')" class="close-icon" icon="x"></b-icon>
+                <b-icon @click="close()" class="close-icon" icon="x"></b-icon>
             </div>
         </template>
         <b-container fluid>
@@ -122,19 +122,24 @@
                   </b-col>
                   <b-col>
                   <b-row>
-                      <b-col cols="12">
+                      <!-- <b-col cols="12">
                         <b-input-group prepend="Is Processing" class="mb-2">
                           <b-form-input readonly v-model="editData.pending_jobs"></b-form-input>
                         </b-input-group>
+                      </b-col> -->
+                      <b-col cols="12">
+                        <b-input-group  class="mb-2">
+                        <b-input-group-text v-b-tooltip.hover :title="'Is Processing : '+editData.pending_jobs+' ,  Is Processed : '+editData.is_processed" class="w-100">Percentage |  {{progresspercentage+'%'}}</b-input-group-text>
+                        </b-input-group>
                       </b-col>
                     </b-row>
-                    <b-row>
+                    <!-- <b-row>
                       <b-col cols="12">
                         <b-input-group prepend="Is Processed" class="mb-2">
                           <b-form-input readonly v-model="editData.is_processed"></b-form-input>
                         </b-input-group>
                       </b-col>
-                    </b-row>
+                    </b-row> -->
                     <b-row>
                         <b-col cols="12">
                             <b-input-group prepend="File Name" class="mb-2">
@@ -244,7 +249,7 @@
         </b-table>
         <template #modal-footer>
             <div class="w-100">
-                <b-button variant="primary" size="sm" class="float-right" @click="$emit('cancel')">
+                <b-button variant="primary" size="sm" class="float-right" @click="close()">
                     Cancel
                 </b-button>
               <delete-modal :showModal="showDeleteModal" @modalResponse="rollbackImport"></delete-modal>
@@ -276,6 +281,11 @@ export default {
     },
 
   methods: {
+        close(){
+          this.isReadOnly = true;
+          console.log("I AM CLOSE");
+          this.$emit('cancel');
+        },
         edit() {
             this.isReadOnly = true;
             this.$emit('save', this.editData);
@@ -314,6 +324,7 @@ export default {
                 error_goldens: '',
                 error_phones: '',
             },
+            progresspercentage: '',
           fields: [
             {key:"mapped_from",  label: "From", sortable: true},
             {key:"mapped_to",   label: "To", sortable: true},
@@ -343,6 +354,10 @@ export default {
               this.mappedFields.push({ mapped_from: key, mapped_to: obj[key] })
             }
           });
+            let is_processed =  this.editData.total_jobs - this.editData.pending_jobs;
+            let is_processing = this.editData.pending_jobs;
+            this.progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
+          
         }
       }
     },
@@ -364,4 +379,5 @@ export default {
       max-height: 62vh;
       overflow-y: auto;
     }
+
 </style>

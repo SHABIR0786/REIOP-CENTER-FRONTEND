@@ -57,6 +57,12 @@ import { required } from "vuelidate/lib/validators";
                 },
             }
         },
+        watch: {
+            showModal() {
+                this.types.type_in_file = '';
+                this.types.type_in_web = '';
+            }
+        },
         validations: {
         types: {
             type_in_file: {

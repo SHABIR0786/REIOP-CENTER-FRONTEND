@@ -75,6 +75,11 @@ export default {
             }
             this.$emit('add', this.companyTypes);
         },
+        watch: {
+            showModal() {
+                this.companyTypes.company_type = '';
+            }
+        }
     }
 }
 </script>
