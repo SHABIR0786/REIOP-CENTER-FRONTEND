@@ -289,6 +289,7 @@ export default {
                     Type: [],
                     Source: [],
                     Errors: [],
+                    Error:[],
                     RunDate: [],
                 },
                 await this.search();
