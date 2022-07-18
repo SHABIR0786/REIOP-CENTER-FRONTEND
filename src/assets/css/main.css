@@ -1148,4 +1148,11 @@ span.back-to-profile {
     width: 100%;
         overflow-x: scroll;
 }
+.table_height_all_modal{
+  min-height: 235px;
+  max-height: 386px !important;
+  overflow-y: auto;
+  overflow-x: scroll;
 
+
+}

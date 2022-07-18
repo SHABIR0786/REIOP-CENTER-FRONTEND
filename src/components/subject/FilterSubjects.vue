@@ -202,7 +202,7 @@
                   </b-row>
                   <b-card no-body >
                   <template #header>
-                  <span v-if="activeTab =='Errors'">Error Type</span>
+                    <span v-if="activeTab =='Errors'">Error Type</span>
                   </template>
                     <b-list-group flush>
                       <b-list-group-item
@@ -321,7 +321,6 @@ export default {
       searchSubject: '',
       activeTab: 'allFilters',
       filtered:[],
-      Error_:["Yes","No"],
       perPage: 20,
       appliedFilters: false,
       filtersAlreadyApplied: null,
@@ -393,6 +392,14 @@ export default {
         }
         });
       }
+      if(response?.subject_error?.length > 0) {
+        response.subject_error.forEach(el=>{
+          // console.log(el);
+          if (el && !this.allData.Error.includes(el)  && !this.allFilters.Error.includes(el)) {
+          this.allData.Error.push(el);
+        }
+        });
+      }
       if(response?.lists?.length > 0) {
       response.lists.forEach(el => {
             if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
@@ -418,11 +425,7 @@ export default {
               }
             }
           });
-          this.Error_.forEach(el=>{
-            if (!this.allFilters.Error.includes(el)) {
-              this.allData.Error.push(el);
-            }
-          });
+
         for(let category in this.allData){
           this.allData[category].sort((a, b) => a.localeCompare(b))
         }

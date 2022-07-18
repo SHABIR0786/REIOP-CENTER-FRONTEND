@@ -243,6 +243,7 @@ export default {
                 Type: [],
                 Source: [],
                 Errors: [],
+                Error: [],
                 RunDate: [],
             },
             searchInFiltered: {},

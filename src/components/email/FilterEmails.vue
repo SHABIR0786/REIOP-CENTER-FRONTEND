@@ -29,7 +29,9 @@
                   v-for="(result,title) in allFilters"
                   :key="result.userId">
                 <div class="card-body pb-0 pt-2" v-if="result.length > 0">
-                  <h5 class="card-title">{{title}}</h5>
+                  <h5 class="card-title" v-if="title == 'Errors'">Error Type</h5>
+                  <h5 class="card-title" v-else-if="title=='Error'">Errors</h5>
+                  <h5 class="card-title" v-else>{{title}}</h5>
                   <b-button
                       class="btn btn-light filter align-items-center m-2"
                       v-for="filterName in result"
@@ -151,10 +153,39 @@
                 </div>
               </b-card-text>
             </b-tab>
+            <b-tab @click="tab('Error')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Errors </span>
+                  <span v-if="allFilters.Error.length > 0" class="filter-count">{{ allFilters.Error.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.Error"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-card no-body>
+                  <template #header>
+                    <span v-if="activeTab == 'Error'">Errors</span>
+                  </template>
+                  
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
             <b-tab @click="tab('Errors')" >
               <template  v-slot:title>
                 <div class="d-flex justify-content-between align-items-center">
-                  <span class="">Errors</span>
+                  <span class="">Error Type</span>
                   <span v-if="allFilters.Errors.length > 0" class="filter-count">{{ allFilters.Errors.length }}</span>
                 </div>
               </template>
@@ -168,7 +199,10 @@
                   <b-row class="m-2 mb-3">
                     <b-form-input v-model="searchEmail" placeholder="Search"></b-form-input>
                   </b-row>
-                  <b-card no-body :header=this.activeTab>
+                  <b-card no-body >
+                    <template #header>
+                      <span v-if="activeTab =='Errors'">Error Type</span>
+                    </template>
                     <b-list-group flush>
                       <b-list-group-item
                           class="flex-column align-items-start list-group-item-light"
@@ -277,6 +311,7 @@ export default {
         Type:[],
         Source:[],
         Errors:[],
+        Error:[],
         RunDate:[],
         SkipSource:[],
       },
@@ -286,6 +321,7 @@ export default {
         Type:[],
         Source:[],
         Errors:[],
+        Error:[],
         RunDate:[],
         SkipSource:[],
       },
@@ -295,6 +331,7 @@ export default {
         Type:[],
         Source:[],
         Errors:[],
+        Error:[],
         RunDate:[],
         SkipSource:[],
       },
@@ -309,6 +346,8 @@ export default {
   computed: {
     ...mapGetters({
       lists: 'listModule/lists',
+      filterList: 'emailModule/filterList'
+
     }),
     totalFilters(){
       let total = 0
@@ -393,6 +432,7 @@ export default {
         Type:[],
         Source:[],
         Errors:[],
+        Error:[],
         RunDate:[],
         SkipSource:[]
           };
@@ -400,6 +440,14 @@ export default {
         response.email_error_type.forEach(el=>{
           if (el && !this.allData.Errors.includes(el)  && !this.allFilters.Errors.includes(el)) {
           this.allData.Errors.push(el);
+        }
+        });
+      }
+      if(response?.email_error?.length > 0) {
+        response.email_error.forEach(el=>{
+          // console.log(el);
+          if (el && !this.allData.Error.includes(el)  && !this.allFilters.Error.includes(el)) {
+          this.allData.Error.push(el);
         }
         });
       }
@@ -451,6 +499,7 @@ export default {
           }
           });
       }
+        this.allData.Error.shift();
     },
   async  addFilter (item, index) {
       if (this.searchEmail){
@@ -493,6 +542,7 @@ export default {
         allFilters.Source.forEach(e => {this.allData.Source.push(e)});
         allFilters.SkipSource.forEach(e => {this.allData.SkipSource.push(e)});
         allFilters.Errors.forEach(e => {this.allData.Errors.push(e)});
+        allFilters.Error.forEach(e => {this.allData.Error.push(e)});
         allFilters.RunDate.forEach(e => {this.allData.RunDate.push(e)});
         this.allFilters= {
           Market:[],
@@ -500,6 +550,7 @@ export default {
           Type:[],
           Source:[],
           Errors:[],
+          Error:[],
           RunDate:[],
           SkipSource:[],
         }
@@ -530,6 +581,7 @@ export default {
           Type:[],
           Source:[],
           Errors:[],
+          Error:[],
           RunDate:[],
           SkipSource:[],
         }
@@ -539,6 +591,7 @@ export default {
           Type:[],
           Source:[],
           Errors:[],
+          Error:[],
           RunDate:[],
           SkipSource:[],
         }
