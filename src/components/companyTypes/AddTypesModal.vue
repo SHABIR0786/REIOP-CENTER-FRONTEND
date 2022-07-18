@@ -74,11 +74,8 @@ export default {
                 return;
             }
             this.$emit('add', this.companyTypes);
-        },
-        watch: {
-            showModal() {
-                this.companyTypes.company_type = '';
-            }
+            this.companyTypes.company_type = '';
+            this.$v.companyTypes.$reset();
         }
     }
 }

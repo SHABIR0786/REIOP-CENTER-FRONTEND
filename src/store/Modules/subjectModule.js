@@ -35,6 +35,7 @@ const state = {
     ],
     subjects: [],
     filterList: [],
+    filtersCountTable: [],
     total: 0,
     subject: {},
     filteredSubject: {},
@@ -57,6 +58,9 @@ const mutations = {
         })
         state.subjects = JSON.stringify(data);
         state.total = payload.total;
+    },
+    SET_FILTERS_COUNT_TABLE(state, payload) {
+        state.filtersCountTable = payload;
     },
     EDIT_SUBJECT(state, payload) {
         const SUBJECTS = JSON.parse(state.subjects)
@@ -181,6 +185,19 @@ const actions = {
             return response
         })
     },
+    async filtersOnTable({commit, dispatch}, type) {
+        return await api.get(`/subjects/filtersOnTable?type=${type}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.filtersCount) {
+                commit('SET_FILTERS_COUNT_TABLE', response.filtersCount)
+            }
+
+            return response
+        })
+    },
 
     async SubjectfilterList({ commit }, param) {
         let data = Object.assign({}, JSON.parse(JSON.stringify(param)));
@@ -236,6 +253,7 @@ const getters = {
     filteredSubjectsCount: ({filteredSubjectsCount}) => filteredSubjectsCount,
     subject: ({subject}) => subject,
     filterList: ({filterList}) => filterList,
+    filtersCountTable: ({filtersCountTable}) => filtersCountTable,
     filteredSubject: ({ filteredSubject }) => {
         if (typeof filteredSubject === 'string') {
             return JSON.parse(filteredSubject);

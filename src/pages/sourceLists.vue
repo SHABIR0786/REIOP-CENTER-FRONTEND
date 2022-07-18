@@ -1,7 +1,7 @@
 <template>
   <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
     <div>
-      <h3>Source Lists</h3>
+      <h3>List Sources</h3>
       <div>
        <b-row>
          <b-col class="d-flex justify-content-end">
@@ -142,15 +142,10 @@ export default {
       sourceType : 'list_source',
       sourceDeleteTitle: 'Source',
       mergeSourceTitle : 'List Source',
-
-
-
-
-
       fields: [
         {key:"id", label: "Id", sortable: true},
         {key: "action", label: "Action"},
-        {key: "list_source", label: "Source Lists", sortable: true},
+        {key: "list_source", label: "List Sources ", sortable: true},
         {key: "user_name", label: "Uploaded By"},
 
         {key:"created_at", label: "Created Date", sortable: true},

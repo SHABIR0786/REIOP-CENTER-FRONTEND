@@ -19,8 +19,8 @@ const mutations = {
 };
 
 const actions = {
-    async getAllFilters({ commit, dispatch }) {
-        return await api.get(`/filters`).then((response) => {
+    async getAllFilters({ commit, dispatch }, type) {
+        return await api.get(`/filters?type=${type}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
