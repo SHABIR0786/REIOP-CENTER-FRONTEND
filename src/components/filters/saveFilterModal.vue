@@ -118,7 +118,8 @@ export default {
         closeFilterModal() {
             this.$emit("cancel");
         },
-        saveFilter() {
+       async saveFilter() {
+        this.$store.dispatch('uxModule/setLoading');
             if (this.saveFilterStep == 3) {
                 const data = {
                     name: this.filterName || 'Filter',
@@ -130,7 +131,7 @@ export default {
                 this.$emit("cancel");
                 this.saveFilterStep = 1;
                 this.filterName = "";
-
+                await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
             }
             if (this.saveFilterStep == 2) {
                 const data = {
@@ -141,6 +142,8 @@ export default {
                 this.$emit("cancel");
                 this.saveFilterStep = 1;
             }
+            await this.$store.dispatch("filtersModule/getAllFilters", 'subjects');
+            this.$store.dispatch('uxModule/hideLoader');
         }
     },
     async mounted() {

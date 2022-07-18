@@ -467,6 +467,12 @@ export default {
         }
     },
     methods: {
+        editListItem(item) {
+          const route = '/list?id=' + item.id;
+          this.editedItem = { ...item }
+          let routeData = this.$router.resolve({path: route});
+          window.open(routeData.href, '_blank');
+        },
         edit() {
             this.seller.seller_full_mailing_address = ((this.seller.seller_mailing_address??"") +" "+ (this.seller.seller_mailing_address_line2?this.seller.seller_mailing_address_line2+", ":" ") + (this.seller.seller_mailing_city ? this.seller.seller_mailing_city+", ":" ") + (this.seller.seller_mailing_state??"") +" "+ (this.seller.seller_mailing_zip??"")).trim();
             this.isReadOnly = true;

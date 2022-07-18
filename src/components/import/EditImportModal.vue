@@ -128,8 +128,8 @@
                         </b-input-group>
                       </b-col> -->
                       <b-col cols="12">
-                        <b-input-group  class="mb-2">
-                        <b-input-group-text v-b-tooltip.hover :title="'Is Processing : '+editData.pending_jobs+' ,  Is Processed : '+editData.is_processed" class="w-100">Percentage |  {{progresspercentage+'%'}}</b-input-group-text>
+                        <b-input-group  class="mb-2 toolip-rs">
+                        <b-input-group-text v-b-tooltip.hover.html :title="'Still Processing '+editData.pending_jobs+' Segments <br> Processed '+editData.is_processed+ ' Segments'" class="w-100">Percentage |  {{progresspercentage+'%'}}</b-input-group-text>
                         </b-input-group>
                       </b-col>
                     </b-row>

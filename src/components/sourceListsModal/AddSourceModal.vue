@@ -104,6 +104,7 @@ import {
                 if(this.showModal){
                     this.source.list_source = '';
                     this.source.source_list_type = this.sourceType;
+                    this.$v.source.$reset();
                 }
 
             }

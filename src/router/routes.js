@@ -43,7 +43,7 @@ export const routes = [
     {name: "PhoneTypes", path: "/phoneTypes", component: phoneTypes, title: "Phone Types", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
     {name: "SubjectTypes", path: "/subjectTypes", component: subjectTypes, title: "Subject Types", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
     {name: "CompanyTypes", path: "/companyTypes", component: companyTypes, title: "Company Types", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
-    {name: "SourceLists", path: "/sourceLists", component: sourceLists, title: "Source Lists", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
+    {name: "ListSources", path: "/Listsources", component: sourceLists, title: "List Sources", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
     {name: "SkipSourceLists", path: "/skipSourceLists", component: skipSourceLists, title: "Skip Source Lists", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
     {name: "marketingChannels", path: "/marketingChannels", component: marketingChannels, title: "Marketing Channels", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
 ]

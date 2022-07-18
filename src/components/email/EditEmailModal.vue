@@ -325,6 +325,12 @@ export default {
         }
     },
     methods: {
+        editListItem(item) {
+          const route = '/list?id=' + item.id;
+          this.editedItem = { ...item }
+          let routeData = this.$router.resolve({path: route});
+          window.open(routeData.href, '_blank');
+        },
         edit() {
             this.isReadOnly = true;
             this.$emit('save', this.email);

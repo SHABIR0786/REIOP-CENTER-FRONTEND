@@ -297,16 +297,6 @@ export default {
         this.itemsCount = this.total;
 
         await this.$store.dispatch("filtersModule/getAllFilters", 'subjects');
-        this.filters.forEach(e => {
-            const filter = {
-                value: '',
-                text: '',
-            }
-            filter.value = e.id;
-            filter.text = e.name;
-            this.savedFilters.push(filter);
-        });
-
         await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
     },
     methods: {
@@ -531,6 +521,19 @@ export default {
         }
     },
     watch: {
+        filters: {
+            handler: function() {
+                this.filters.forEach(e => {
+                    const filter = {
+                        value: '',
+                        text: '',
+                    }
+                    filter.value = e.id;
+                    filter.text = e.name;
+                    this.savedFilters.push(filter);
+                });
+            }
+        },
         currentPage: {
             handler: async function () {
                 this.$store.dispatch('uxModule/setLoading')

@@ -83,13 +83,10 @@ export default {
                 return;
             }
             this.$emit('add', this.subjectTypes);
+            this.subjectTypes.type_in_file = '';
+            this.subjectTypes.type_in_web = '';
+            this.$v.subjectTypes.$reset();
         },
-        watch: {
-            showModal() {
-                this.subjectTypes.type_in_file = '';
-                this.subjectTypes.type_in_web = '';
-            }
-        }
     }
 }
 </script>
