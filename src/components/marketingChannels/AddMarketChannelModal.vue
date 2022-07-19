@@ -9,8 +9,10 @@
             <b-row  class="text-center">
                 <b-row class="mb-1 text-center col-12">
                     <b-col cols="12">
-                        <b-input-group prepend="New Channel Name" class="mb-2">
-                            <b-form-input v-model="marketingChannels.marketing_channel_name"></b-form-input>
+                        <b-input-group prepend="Channel Name" class="mb-2" id="marketing_channel_name" label="New Channel Name" label-for="marketing_channel_name">
+                            <b-form-input :state="validateState('marketing_channel_name')" v-model="$v.marketingChannels.marketing_channel_name.$model" required aria-describedby="marketing_channel_name"></b-form-input>
+                            <b-form-invalid-feedback id="marketing_channel_name">Channel Name Field is Required.</b-form-invalid-feedback>
+
                         </b-input-group>
                     </b-col>
                 </b-row>
@@ -30,7 +32,7 @@
                         variant="primary"
                         size="sm"
                         class="float-right mr-2"
-                        @click="$emit('add', marketingChannels)">
+                        @click="onSubmit">
                     Add
                 </b-button>
             </div>
@@ -38,7 +40,12 @@
     </b-modal>
 </template>
 <script>
+import { validationMixin } from "vuelidate";
+import {
+    required
+    } from "vuelidate/lib/validators";
     export default {
+        mixins: [validationMixin],
         name: 'AddChannelModal',
         props: {
             showModal: {
@@ -53,13 +60,29 @@
               marketingChannels: {
                 marketing_channel_name: '',
                 },
+                
             }
         },
-        watch: {
-            showModal:function(){
-               this.marketingChannels.marketing_channel_name = "";
-             }
-        }
+        validations: {
+            marketingChannels: {
+                marketing_channel_name: { required }
+            },
+        },
+        methods:{
+        validateState(name) {
+            const { $dirty, $error } = this.$v.marketingChannels[name];
+            return $dirty ? !$error : null;
+        },
+        onSubmit() {
+            this.$v.marketingChannels.$touch();
+            if (this.$v.marketingChannels.$anyError) {
+                return;
+            }
+           this. $emit('add', this.marketingChannels);
+           this.marketingChannels.marketing_channel_name = '';
+           this.$v.marketingChannels.$reset();
+        },
+    },
     }
 </script>
 
