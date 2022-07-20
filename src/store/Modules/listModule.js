@@ -358,15 +358,15 @@ const actions = {
         })
     },
     async MergeListSource({ commit }, data) {
-        // let merge_list_type = data.merge_list_type;
+        let merge_list_type = data.merge_list_type;
         
         return await api.post(`/lists/MergeListSource`, {...data}).then((response) => {
-            // if(merge_list_type == 'list_source'){
-            //     commit('DELETE_LIST_SOURCE', data.previous_id)
-            // }else if(merge_list_type == 'list_skip_source'){
-            //     commit('DELETE_LIST_SKIP_SOURCE', data.previous_id)
+            if(merge_list_type == 'list_source'){
+                commit('DELETE_LIST_SOURCE', data.previous_id)
+            }else if(merge_list_type == 'list_skip_source'){
+                commit('DELETE_LIST_SKIP_SOURCE', data.previous_id)
 
-            // }
+            }
             commit('just_test', data)
             return response
         })
