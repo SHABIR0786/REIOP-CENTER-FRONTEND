@@ -243,6 +243,7 @@ export default {
                 Type: [],
                 Source: [],
                 Errors: [],
+                Error: [],
                 RunDate: [],
             },
             searchInFiltered: {},
@@ -321,6 +322,7 @@ export default {
                     Type: [],
                     Source: [],
                     Errors: [],
+                    Error:[],
                     RunDate: [],
                 },
                 await this.search();

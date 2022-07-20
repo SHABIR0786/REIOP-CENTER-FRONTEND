@@ -108,6 +108,7 @@
                         :items="relatedList"
                         :per-page="0"
                         :sticky-header="true"
+                        class="table_height_all_modal"
                     >
                       <template #table-busy>
                         <div class="text-center" my-2>
@@ -183,6 +184,7 @@
                         responsive
                         :per-page="0"
                         :sticky-header="true"
+                        class="table_height_all_modal"
                     >
                       <template #table-busy>
                         <div class="text-center" my-2>
@@ -245,6 +247,7 @@
                                 responsive
                                 :per-page="10"
                                 :sticky-header="true"
+                                class="table_height_all_modal"
                         >
                             <template #table-busy>
                                 <div class="text-center" my-2>
@@ -288,6 +291,7 @@
                                 responsive
                                 :per-page="10"
                                 :sticky-header="true"
+                                class="table_height_all_modal"
                         >
                             <template #table-busy>
                                 <div class="text-center" my-2>

@@ -122,7 +122,7 @@
                         :items="seller.lists"
                         :per-page="0"
                         :sticky-header="true"
-                        class="seller_table"
+                        class="table_height_all_modal"
 
                     >
                       <template #table-busy>
@@ -199,7 +199,7 @@
                         responsive
                         :per-page="0"
                         :sticky-header="true"
-                        class="seller_table"
+                        class="table_height_all_modal"
 
                     >
                       <template #table-busy>
@@ -263,7 +263,7 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
-                                class="seller_table"
+                                class="table_height_all_modal"
 
                         >
                             <template #table-busy>
@@ -305,7 +305,7 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
-                                class="seller_table"
+                                class="table_height_all_modal"
 
                         >
                             <template #table-busy>
@@ -347,7 +347,7 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
-                                class="seller_table"
+                                class="table_height_all_modal"
 
                         >
                             <template #table-busy>
@@ -389,7 +389,7 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
-                                class="seller_table"
+                                class="table_height_all_modal"
 
                         >
                             <template #table-busy>
@@ -645,13 +645,5 @@ export default {
     }
     .assign-btn {
         text-align: end;
-    }
-    .seller_table{
-        min-height: 235px;
-        max-height: 386px !important;
-        overflow-y: auto;
-        overflow-x: scroll;
-
-
     }
 </style>

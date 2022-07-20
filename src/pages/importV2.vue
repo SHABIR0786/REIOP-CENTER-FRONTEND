@@ -242,7 +242,7 @@ export default {
             let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
             let index = this.filteredItems.findIndex(x=>x.id == item.id);
             this.filteredItems[index].percentage = progresspercentage;
-            // this.$refs.table.refresh();
+            this.$refs.table.refresh();
             if(progresspercentage == 100) {
              clearInterval(this.intervalId);
             }
@@ -592,10 +592,12 @@ export default {
         this.showDeleteModal = true;
         this.itemToRollback = {...item}
       },
-      rollbackImport (response) {
+      async rollbackImport (response) {
         this.showDeleteModal = false;
         if(response) {
-            this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+           this.$store.dispatch('uxModule/setLoading')
+           await this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+           this.$store.dispatch('uxModule/hideLoader');
         }
       },
     },

@@ -30,6 +30,7 @@
                     :per-page="0"
                     :current-page="currentPage"
                     :sticky-header="true"
+                    class="table_height_all_modal"
             >
                 <template #table-busy>
                     <div class="text-center" my-2>
