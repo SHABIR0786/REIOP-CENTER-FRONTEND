@@ -10,7 +10,7 @@
             <div>{{totals.goldenAddressesCount}} Golden Addresses</div>
         </div>
         </div>
-        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties"  :sortBy="sortBy" :sortDesc="sortDesc"></slide-pop-up-filter>
+        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties"  :sortBy="sortBy" :sortDesc="sortDesc" :totals="totals"></slide-pop-up-filter>
         <hr>
         <div>
             <b-row class="text-end mb-3">

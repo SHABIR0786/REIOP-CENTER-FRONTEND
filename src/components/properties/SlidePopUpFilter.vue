@@ -369,6 +369,9 @@ export default {
     },
     sortDesc: {
       type: Boolean
+    },
+    totals: {
+      type: Object
     }
   },
   components: {
@@ -446,26 +449,10 @@ export default {
       selectedFilter: null,
       isShowSlidePopUp: false,
       showSaveFilterModal: false,
-      SelectExportAmount: [
-        { value: null, text: "Select Export Amount" },
-        { value: 1, text: "Export all in the value" },
-        { value: 2, text: "Export Selected" },
-        { value: 3, text: "Export {(Total in view / 5)}" },
-        {
-          value: 4,
-          text: "Export {(Total in view / 5) + ((Total in view / 5) * 2)}",
-        },
-        {
-          value: 5,
-          text: "Export {(Total in view / 5) + ((Total in view / 5) * 3)}",
-        },
-        {
-          value: 6,
-          text: "Export {(Total in view / 5) + ((Total in view / 5) * 4)}",
-        },
-      ],
+      SelectExportAmount: [],
       isListLoading: true,
       isExporting: false,
+      totalSubjects: 0,
     };
   },
 computed: {
@@ -534,6 +521,21 @@ computed: {
       this.isListLoading = false;
   },   
   watch:{
+    totals:function(){
+      this.totalSubjects = this.totals.subjectsCount;
+      // console.log('this.totals.subjectsCount',this.totals.subjectsCount);
+      console.log('this.totalSubjects',this.totalSubjects);
+      this.SelectExportAmount = [];
+      this.SelectExportAmount.push(
+        { value: null, text: "Select Export Amount" },
+        { value: 1, text: "Export all in the value" },
+        { value: 2, text: "Export Selected" },
+        { value: 3, text: 'Export '+(this.totalSubjects/5)},//{(Total in view / 5)}
+        { value: 4, text: 'Export '+((this.totalSubjects/5)+((this.totalSubjects/5)*2))}, //{(Total in view / 5) + ((Total in view / 5) * 2)}
+        { value: 5, text: 'Export '+((this.totalSubjects/5)+((this.totalSubjects/5)*3))}, //{(Total in view / 5) + ((Total in view / 5) * 3)}
+        { value: 6, text: 'Export '+((this.totalSubjects/5)+((this.totalSubjects/5)*4))}, //{(Total in view / 5) + ((Total in view / 5) * 4)}
+      );
+    },
     marketing_start_date: function() {
       this.checkNextStep();
     },
