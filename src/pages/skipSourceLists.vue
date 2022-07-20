@@ -191,15 +191,15 @@ export default {
       this.showAddModal = false
       this.$store.dispatch('listModule/addListSource', {...source})
     },
-    deleteItem(item){
+    deleteItem(item) {
       this.showDeleteModal = true;
       this.itemToDelete = item;
     },
-    update_before_deleteItem(item){
+    update_before_deleteItem(item) {
       this.itemToDelete = item;
       this.showUpdateDeleteModal = true;
     },
-    async checkListForDeleteItem(item){
+    async checkListForDeleteItem(item) {
 
       this.$store.dispatch('uxModule/setLoading');
 
@@ -207,24 +207,20 @@ export default {
 
       this.$store.dispatch('uxModule/hideLoader');
 
-      if(response.exist == false){
+      if(response.exist == false) {
 
         this.deleteItem(item);
 
-      }else if(response.exist == true){
-
+      } else if(response.exist == true) {
         item.table_name = response.table;
         item.delete_list_type = "list_skip_source";
-
         this.update_before_deleteItem(item);
-
       }
-
     },
     modalResponse(response) {
       this.showDeleteModal = false;
       if (response) {
-        this.$store.dispatch('listModule/deleteListSource', this.itemToDelete.id)
+        this.$store.dispatch('listModule/deleteListSkipSource', this.itemToDelete.id)
       }
     },
     update_before_delete_list(data){

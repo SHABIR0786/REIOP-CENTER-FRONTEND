@@ -29,9 +29,6 @@
                         <b-form-checkbox id="subject_country" v-model="template.subject_country" name="subject_country" value="accepted">
                             Subject County
                         </b-form-checkbox>
-<!--                        <b-form-checkbox id="subject_market" v-model="template.subject_market" name="subject_market" value="accepted">-->
-<!--                            Market-->
-<!--                        </b-form-checkbox>-->
                         <b-form-checkbox id="subject_age" v-model="template.subject_age" name="subject_age" value="accepted">
                             Subject Age
                         </b-form-checkbox>
@@ -45,22 +42,6 @@
                             Total Seller
                         </b-form-checkbox>
                     </div>
-<!--                    <div class="mt-3">-->
-<!--                        <h6>Golden Address</h6>-->
-<!--                        <hr>-->
-<!--                        <b-form-checkbox id="golden_address_address" v-model="status" name="golden_address_address" value="accepted">-->
-<!--                            Golden Address-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="golden_address_city" v-model="status" name="golden_address_city" value="accepted">-->
-<!--                            Golden City-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="golden_address_state" v-model="status" name="golden_address_state" value="accepted">-->
-<!--                            Golden State-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="golden_address_zip" v-model="status" name="golden_address_zip" value="accepted">-->
-<!--                            Golden Zip-->
-<!--                        </b-form-checkbox>-->
-<!--                    </div>-->
                 </b-col>
                 <b-col cols="6">
                     <div>
@@ -90,52 +71,14 @@
                         <b-form-checkbox id="seller_mailing_zip" v-model="template.seller_mailing_zip" name="seller_mailing_zip" value="accepted">
                             Seller Mailing Zip
                         </b-form-checkbox>
-<!--                        <b-form-checkbox id="seller_company_owned" v-model="template.seller_company_owned" name="seller_company_owned" value="accepted">-->
-<!--                            Seller Company Owned-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="seller_total_subjects" v-model="template.seller_total_subjects" name="seller_total_subjects" value="accepted">-->
-<!--                            Total Subject-->
-<!--                        </b-form-checkbox>-->
                     </div>
                 </b-col>
             </b-row>
             <b-row>
                 <b-col cols="6">
-<!--                    <div class="mt-3">-->
-<!--                        <h6>Email</h6>-->
-<!--                        <hr>-->
-<!--                        <b-form-checkbox id="email_address" v-model="status" name="email_address" value="accepted">-->
-<!--                            Email Address-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="email_validity" v-model="status" name="email_validity" value="accepted">-->
-<!--                            Email Validity-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="email_skip_source" v-model="status" name="email_skip_source" value="accepted">-->
-<!--                            Skip Source-->
-<!--                        </b-form-checkbox>-->
-<!--                    </div>-->
-<!--                    <div class="mt-3">-->
-<!--                        <h6>Phone Number</h6>-->
-<!--                        <hr>-->
-<!--                        <b-form-checkbox id="phone_number" v-model="status" name="phone_number" value="accepted">-->
-<!--                            Phone Number-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="phone_type" v-model="status" name="phone_type" value="accepted">-->
-<!--                            Phone Type-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="phone_validity" v-model="status" name="phone_validity" value="accepted">-->
-<!--                            Phone Validity-->
-<!--                        </b-form-checkbox>-->
-<!--                        <b-form-checkbox id="phone_skip_source" v-model="status" name="phone_skip_source" value="accepted">-->
-<!--                            Skip Source-->
-<!--                        </b-form-checkbox>-->
-<!--                    </div>-->
                     <div class="mt-3">
                         <h6>List</h6>
                         <hr>
-<!--                        <b-form-checkbox id="list_dept" v-model="template.list_dept" name="list_dept" value="accepted">-->
-<!--                            List Dept-->
-<!--                        </b-form-checkbox>-->
                         <b-form-checkbox id="list_type" v-model="template.list_type" name="list_type" value="accepted">
                             List Type
                         </b-form-checkbox>

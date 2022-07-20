@@ -109,7 +109,6 @@ const mutations = {
     },
     DELETE_LIST_SOURCE(state, payload) {
         const allSourceList = JSON.parse(state.allSourceList)
-
         const findIndex = allSourceList.findIndex(({ id }) => id === payload)
         findIndex !== -1 && allSourceList.splice(findIndex, 1)
         state.allSourceList = JSON.stringify(allSourceList)
@@ -374,6 +373,12 @@ const actions = {
     async deleteListSource({ commit }, data) {
         return await api.deleteAPI(`/lists/${data}`).then((response) => {
             commit('DELETE_LIST_SOURCE', data)
+            return response
+        })
+    },
+    async deleteListSkipSource({ commit }, data) {
+        return await api.deleteAPI(`/lists/${data}`).then((response) => {
+            commit('DELETE_LIST_SKIP_SOURCE', data)
             return response
         })
     },

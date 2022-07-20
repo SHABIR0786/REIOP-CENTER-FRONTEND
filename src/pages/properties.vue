@@ -412,12 +412,87 @@ export default {
             this.showModal = true
             this.editedItem = { ...item }
         },
-        addSellerFields(SellerFields, PhoneFields, EmailFields, GoldenAddressesFields) {
+        addPhoneFields(key) {
             let fields = [];
-            
+            if(this.maxPhones > 0) {
+            for(let ms = 0; ms < this.maxSellers; ms++) {
+               let sellerCount = ms + 1;
+            // Adding Phones Fields
+            for(let z = 0; z < this.maxPhones; z++) {
+                let phoneCount = z + 1;
+                    if(key == 'phone_number') {
+                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_number', label: "Seller "+sellerCount +" Phone "+ phoneCount +" Phone Number" , sortable: false});
+                    }
+
+                    if(key == 'phone_type') {
+                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_type', label: "Seller "+sellerCount +" Phone "+ phoneCount + " Phone Type", sortable: false});
+                    }
+
+                    if(key == 'phone_validity') {
+                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_validity', label: "Seller "+sellerCount +" Phone " + phoneCount + " Phone Validity", sortable: false});
+                    }
+
+                    if(key == 'phone_skip_source') {
+                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_skip_source', label: "Seller "+sellerCount +" Phone" + phoneCount + "phone Skip Source", sortable: false});
+                    }
+              }
+            }
+            }
+            return fields;
+        },
+        addEmailFields(key) {
+            let fields = [];
+            // Adding Email Fields
+            if(this.maxEmails > 0) {
+            for(let ms = 0; ms < this.maxSellers; ms++) {
+               let sellerCount = ms + 1;
+            for(let z = 0; z < this.maxEmails; z++) {
+                let emailCount = z + 1;
+                    if(key == 'email_address') {
+                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_address', label: "Seller "+sellerCount +" Email "+ emailCount +" Email Address" , sortable: false});
+                    }
+
+                    if(key == 'email_validity') {
+                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_validity', label: "Seller "+sellerCount +" Email "+ emailCount + " Email Validity", sortable: false});
+                    }
+
+                    if(key == 'email_skip_source') {
+                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_skip_source', label: "Seller "+sellerCount +" Email " + emailCount + " Email Skip Source", sortable: false});
+                    }
+              }
+            }
+            }
+            return fields;
+        },
+        addGoldenAddressesFields(key) {
+            let fields = [];
+            // Adding Golden Addresses Fields
+            if(this.maxGoldenAddresses > 0) {
+            for(let ms = 0; ms < this.maxSellers; ms++) {
+               let sellerCount = ms + 1;
+            for(let z = 0; z < this.maxGoldenAddresses; z++) {
+                let goldenCount = z + 1;
+                    if(key == 'golden_address_address') {
+                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_address', label: "Seller "+sellerCount +" Golden Address  "+ goldenCount +" Golden Address" , sortable: false});
+                    }
+                    if(key == 'golden_address_city') {
+                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_city', label: "Seller "+sellerCount +" Golden Address  "+ goldenCount + " Golden City", sortable: false});
+                    }
+                    if(key == 'golden_address_state') {
+                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_state', label: "Seller "+sellerCount +" Golden Address  " + goldenCount + " Golden State", sortable: false});
+                    }
+                    if(key == 'golden_address_zip') {
+                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_zip', label: "Seller "+sellerCount +" Golden Address  " + goldenCount + " Golden Zip", sortable: false});
+                    }
+              }
+            }
+            }
+            return fields;
+        },
+        addSellerFields(key) {
+            let fields = [];
             // Adding Seller Fields.
             for(let z = 0; z < this.maxSellers; z++) {
-            for(let key of SellerFields) {
                 let sellerCount = z + 1;
                     if(key == 'seller_full_name') {
                         fields.push({key: sellerCount+'_seller_full_name', label: "Seller "+sellerCount +" Full Name", sortable: false});
@@ -443,81 +518,6 @@ export default {
                     if(key == 'seller_mailing_zip') {
                         fields.push({key: sellerCount+'_seller_mailing_zip', label: "Seller "+sellerCount +" Mailing Zip", sortable: false});
                     }
-                }
-            }
-            if(this.maxPhones > 0) {
-            for(let ms = 0; ms < this.maxSellers; ms++) {
-               let sellerCount = ms + 1;
-            // Adding Phones Fields
-            for(let z = 0; z < this.maxPhones; z++) {
-            for(let key of PhoneFields) {
-                let phoneCount = z + 1;
-                    if(key == 'phone_number') {
-                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_number', label: "Seller "+sellerCount +" Phone "+ phoneCount +" Phone Number" , sortable: false});
-                    }
-
-                    if(key == 'phone_type') {
-                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_type', label: "Seller "+sellerCount +" Phone "+ phoneCount + " Phone Type", sortable: false});
-                    }
-
-                    if(key == 'phone_validity') {
-                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_validity', label: "Seller "+sellerCount +" Phone " + phoneCount + " Phone Validity", sortable: false});
-                    }
-
-                    if(key == 'phone_skip_source') {
-                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_skip_source', label: "Seller "+sellerCount +" Phone" + phoneCount + "phone Skip Source", sortable: false});
-                    }
-                }
-              }
-            }
-            }
-
-
-            // Adding Email Fields
-            if(this.maxEmails > 0) {
-            for(let ms = 0; ms < this.maxSellers; ms++) {
-               let sellerCount = ms + 1;
-            for(let z = 0; z < this.maxEmails; z++) {
-            for(let key of EmailFields) {
-                let emailCount = z + 1;
-                    if(key == 'email_address') {
-                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_address', label: "Seller "+sellerCount +" Email "+ emailCount +" Email Address" , sortable: false});
-                    }
-
-                    if(key == 'email_validity') {
-                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_validity', label: "Seller "+sellerCount +" Email "+ emailCount + " Email Validity", sortable: false});
-                    }
-
-                    if(key == 'email_skip_source') {
-                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_skip_source', label: "Seller "+sellerCount +" Email " + emailCount + " Email Skip Source", sortable: false});
-                    }
-                }
-              }
-            }
-            }
-
-            // Adding Golden Addresses Fields
-            if(this.maxGoldenAddresses > 0) {
-            for(let ms = 0; ms < this.maxSellers; ms++) {
-               let sellerCount = ms + 1;
-            for(let z = 0; z < this.maxGoldenAddresses; z++) {
-            for(let key of GoldenAddressesFields) {
-                let goldenCount = z + 1;
-                    if(key == 'golden_address_address') {
-                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_address', label: "Seller "+sellerCount +" Golden Address  "+ goldenCount +" Golden Address" , sortable: false});
-                    }
-                    if(key == 'golden_address_city') {
-                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_city', label: "Seller "+sellerCount +" Golden Address  "+ goldenCount + " Golden City", sortable: false});
-                    }
-                    if(key == 'golden_address_state') {
-                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_state', label: "Seller "+sellerCount +" Golden Address  " + goldenCount + " Golden State", sortable: false});
-                    }
-                    if(key == 'golden_address_zip') {
-                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_zip', label: "Seller "+sellerCount +" Golden Address  " + goldenCount + " Golden Zip", sortable: false});
-                    }
-                }
-              }
-            }
             }
                 return fields;
         },
@@ -527,40 +527,28 @@ export default {
             }
             this.showCustomModalView = false;
             let fields = [];
-            let isId = false;
-            let SellerFields = [];
-            let PhoneFields = [];
-            let EmailFields = [];
-            let GoldenAddressesFields = [];
             for(let key in this.customViewTemplate) {
                 if(key !== 'name' && this.customViewTemplate[key] !== false) {
                     if(key.includes("seller_")){
-                        SellerFields.push(key);
+                      let sellerFields = this.addSellerFields(key);
+                      fields.push(...sellerFields);
                     } else if(key.includes("phone_")) {
-                        PhoneFields.push(key);
+                        let phoneFields = this.addPhoneFields(key);
+                        console.log(phoneFields);
+                        fields.push(...phoneFields);
                     } else if(key.includes("email_")) {
-                        EmailFields.push(key);
+                        let emailFields = this.addEmailFields(key);
+                        fields.push(...emailFields);
                     } else if(key.includes("golden_address_")) {
-                        GoldenAddressesFields.push(key);
-                    } else {
-                    if(key == "id") {
-                       isId = true; 
+                        let goldenAddressesFields = this.addGoldenAddressesFields(key);
+                        fields.push(...goldenAddressesFields);
                     } else {
                     let obj = this.allFields.find(o => o['key'] === key);
                     fields.push(obj);
                     }
-                    }
                 }
             }
-            if(SellerFields.length > 0 || PhoneFields.length > 0 || EmailFields.length > 0 || GoldenAddressesFields.length > 0) {
-                let sellerFields = this.addSellerFields(SellerFields,PhoneFields,EmailFields,GoldenAddressesFields);
-                fields.unshift(...sellerFields);
-            }
-            if(isId) {
-                fields.unshift({key:"delete", label: ""},{key:"id", label: "Id", sortable: true},{key: "actions", label: "Actions"});
-            } else {
-                fields.unshift({key:"delete", label: ""},{key: "actions", label: "Actions"});
-            }
+            fields.unshift({key:"delete", label: ""},{key: "actions", label: "Actions"});
             this.propertyFields = [...fields];
         },
         save(item) {

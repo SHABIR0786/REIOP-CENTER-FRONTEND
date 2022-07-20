@@ -523,6 +523,7 @@ export default {
     watch: {
         filters: {
             handler: function() {
+                this.savedFilters = [];
                 this.filters.forEach(e => {
                     const filter = {
                         value: '',
