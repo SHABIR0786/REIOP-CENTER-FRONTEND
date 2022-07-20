@@ -17,7 +17,7 @@
                             variant="primary"
                             size="md"
                             class="ml-3"
-                            @click="isReadOnly = false"
+                            @click="editImport()"
                     >
                         Edit
                     </b-button>
@@ -283,11 +283,25 @@ export default {
   methods: {
         close(){
           this.isReadOnly = true;
-          console.log("I AM CLOSE");
           this.$emit('cancel');
+        },
+        editImport() {
+            this.isReadOnly = false;
+            if(this.editData.list_skip_source == 'N/A'){
+              this.editData.list_skip_source = '';
+            }
+            if(this.editData.list_source == 'N/A'){
+              this.editData.list_source = '';
+            }
         },
         edit() {
             this.isReadOnly = true;
+            if(!this.editData.list_skip_source == 'N/A'){
+              this.editData.list_skip_source = '';
+            }
+            if(!this.editData.list_source == 'N/A'){
+              this.editData.list_source = '';
+            }
             this.$emit('save', this.editData);
         },
         rollback(item) {
@@ -323,6 +337,7 @@ export default {
                 error_emails: '',
                 error_goldens: '',
                 error_phones: '',
+                notes:''
             },
             progresspercentage: '',
           fields: [
@@ -345,6 +360,17 @@ export default {
         deep: true,
         handler() {
           this.editData = {...this.data}
+
+          if(!this.editData.list_skip_source){
+            this.editData.list_skip_source = 'N/A';
+          }
+          if(!this.editData.list_source){
+            this.editData.list_source = 'N/A';
+          }
+          if(this.editData.notes == "undefined"){
+            this.editData.notes = '';
+          }
+
           let obj = JSON.parse(this.editData.mapped_fields);
           Object.keys(obj).forEach((key) => {
             if (obj[key] === '') {

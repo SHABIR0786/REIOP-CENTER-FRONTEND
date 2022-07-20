@@ -592,10 +592,12 @@ export default {
         this.showDeleteModal = true;
         this.itemToRollback = {...item}
       },
-      rollbackImport (response) {
+      async rollbackImport (response) {
         this.showDeleteModal = false;
         if(response) {
-            this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+           this.$store.dispatch('uxModule/setLoading')
+           await this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+           this.$store.dispatch('uxModule/hideLoader');
         }
       },
     },
