@@ -526,14 +526,26 @@ computed: {
       // console.log('this.totals.subjectsCount',this.totals.subjectsCount);
       console.log('this.totalSubjects',this.totalSubjects);
       this.SelectExportAmount = [];
+      let exportV_3 = Math.round(this.totalSubjects/5);//Round the number {(Total in view / 5)}
+          exportV_3 = exportV_3 > 0 ? exportV_3 : 1;
+
+      let exportV_4 = Math.round((this.totalSubjects/5)+((this.totalSubjects/5)*2)); //Round the number  {(Total in view / 5) + ((Total in view / 5) * 2)}
+          exportV_4 = exportV_4 > 0 ? exportV_4 : 1;
+
+      let exportV_5 = Math.round((this.totalSubjects/5)+((this.totalSubjects/5)*3)); //Round the number {(Total in view / 5) + ((Total in view / 5) * 3)}
+          exportV_5 = exportV_5 > 0 ? exportV_5 : 1;
+
+      let exportV_6 = Math.round((this.totalSubjects/5)+((this.totalSubjects/5)*4)); // Round the number{(Total in view / 5) + ((Total in view / 5) * 4)}
+          exportV_6 = exportV_6 > 0 ? exportV_6 : 1;
+
       this.SelectExportAmount.push(
         { value: null, text: "Select Export Amount" },
         { value: 1, text: "Export all in the value" },
         { value: 2, text: "Export Selected" },
-        { value: 3, text: 'Export '+(this.totalSubjects/5)},//{(Total in view / 5)}
-        { value: 4, text: 'Export '+((this.totalSubjects/5)+((this.totalSubjects/5)*2))}, //{(Total in view / 5) + ((Total in view / 5) * 2)}
-        { value: 5, text: 'Export '+((this.totalSubjects/5)+((this.totalSubjects/5)*3))}, //{(Total in view / 5) + ((Total in view / 5) * 3)}
-        { value: 6, text: 'Export '+((this.totalSubjects/5)+((this.totalSubjects/5)*4))}, //{(Total in view / 5) + ((Total in view / 5) * 4)}
+        { value: 3, text: 'Export '+exportV_3},
+        { value: 4, text: 'Export '+exportV_4},
+        { value: 5, text: 'Export '+exportV_5},
+        { value: 6, text: 'Export '+exportV_6},
       );
     },
     marketing_start_date: function() {
