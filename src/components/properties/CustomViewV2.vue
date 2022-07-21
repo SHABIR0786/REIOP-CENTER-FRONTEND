@@ -166,14 +166,15 @@
                             <b v-b-toggle.new-template-collapse>Create New View Template</b>
                         </b-col>
                         <b-col>
-                            <b-button variant="primary" size="sm" class="mr-2 float-right" @click="$emit('show',customTemplate);">
+                            <b-button variant="primary" size="sm" class="mr-2 float-right" @click="$emit('show', customTemplate);">
                                 show View
                             </b-button>
                         </b-col>
                     </b-row>
                     <b-collapse id="new-template-collapse" class="mt-2">
                         <div class="mr-2">
-                            <b-form-input v-model="template.name" placeholder="Enter View Name"></b-form-input>
+                            <div class="invalid-feedback-template" v-if="invalidForm && (template.name == '' || selectedView == null)">Template Name Field or Select Template Field is Required.</div>
+                            <b-form-input v-model="template.name"  placeholder="Enter View Name"></b-form-input>
                             <p class="mt-2 text-center">Or Replace Existing View</p>
                             <b-form-select class="select-template w-100 float-right" v-model="selectedView" :options="customViews"></b-form-select>
                             <b-button variant="primary" size="sm" class="mt-2 float-right" @click="saveOrUpdateTemplate()">
@@ -187,7 +188,6 @@
     </template>
 </b-modal>
 </template>
-
 <script>
 import draggable from 'vuedraggable'
 export default {
@@ -212,10 +212,12 @@ export default {
                 });
                 return template;
             }
+
         }
     },
     data() {
         return {
+            invalidForm: false,
             selectedView: null,
             TemplateMap: [],
             template: {
@@ -290,25 +292,34 @@ export default {
             for (let key in this.template) {
                 if (key !== 'name') {
                     this.template[key] = false;
-                } else {
-                    this.template.name = 'Template ' + Math.floor(1000 + Math.random() * 9000);
                 }
             }
+            this.TemplateMap = [];
+            this.template.name = '';
+            this.selectedView = null;
+
         },
         saveOrUpdateTemplate() {
-            if (this.selectedView) {
-                this.template.id = this.selectedView;
-                this.template.name = this.customViews.find(x => x.value == this.selectedView).text;
-                this.$emit('save', Object.assign({}, this.customTemplate), 'update');
+            if(this.selectedView == null && this.template.name == '') {
+                this.invalidForm = true;
+                return;
             } else {
-                this.$emit('save', Object.assign({}, this.customTemplate), 'save');
+                this.invalidForm = false;
+            }
+            let template = this.customTemplate;
+            if (this.selectedView) {
+                template.templateId = this.selectedView;
+                template.name = this.customViews.find(x => x.value == this.selectedView).text;
+                this.$emit('save', Object.assign({}, template), 'update');
+            } else {
+                template.name = this.template.name;
+                this.$emit('save', Object.assign({}, template), 'save');
             }
             this.resetData();
         }
     }
 }
 </script>
-
 <style scoped>
 @media (min-width: 1200px) {
     .modal-xl {
@@ -351,5 +362,11 @@ export default {
     font-size: 25px;
     float: right;
     cursor:pointer;
+}
+.invalid-feedback-template {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: #dc3545;
 }
 </style>

@@ -258,6 +258,7 @@ export default {
         },
         async clearAllFilters() {
             this.$refs.filterGolden.clearAllFilters();
+            this.$refs.filterGolden.filtersAlreadyApplied = null;
             this.filtersName = {
                     Market: [],
                     Group: [],

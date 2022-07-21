@@ -239,6 +239,7 @@ export default {
         },
         async clearAllFilters() {
             this.$refs.filterPhone.clearAllFilters();
+            this.$refs.filterPhone.filtersAlreadyApplied = null;
             this.filtersName = {
                     Market: [],
                     Group: [],

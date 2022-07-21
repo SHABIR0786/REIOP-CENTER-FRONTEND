@@ -15,7 +15,13 @@ const mutations = {
     EDIT_FILTERS(state, payload) {
         const findIndex = state.filters.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.filters.splice(findIndex, 1, { ...payload })
-    }  
+    },
+    DELETE_FILTER(state, payload) {
+        const FILTERS = JSON.parse(state.filters)
+        const findIndex = FILTERS.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && FILTERS.splice(findIndex, 1)
+        state.filters = JSON.stringify(FILTERS);
+    },
 };
 
 const actions = {

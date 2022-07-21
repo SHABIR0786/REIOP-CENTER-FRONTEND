@@ -56,8 +56,8 @@ const actions = {
         })
     },
     async editTemplate({ commit }, template) {
-        let id = template.id;
-        delete template.id;
+        let id = template.templateId;
+        delete template.templateId;
         const data = {
             name: template.name || 'Template',
             configuration: JSON.stringify(template)

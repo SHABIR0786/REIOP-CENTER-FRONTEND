@@ -6,7 +6,6 @@ import store from "./store/index"
 import { BootstrapVue, IconsPlugin, ToastPlugin } from 'bootstrap-vue'
 import Vuelidate from 'vuelidate'
 import vSelect from 'vue-select'
-
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 

@@ -523,8 +523,6 @@ computed: {
   watch:{
     totals:function(){
       this.totalSubjects = this.totals.subjectsCount;
-      // console.log('this.totals.subjectsCount',this.totals.subjectsCount);
-      console.log('this.totalSubjects',this.totalSubjects);
       this.SelectExportAmount = [];
       let exportV_3 = Math.round(this.totalSubjects/5);//Round the number {(Total in view / 5)}
           exportV_3 = exportV_3 > 0 ? exportV_3 : 1;

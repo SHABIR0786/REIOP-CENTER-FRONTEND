@@ -478,6 +478,7 @@ export default {
     },
     async clearAllFilters(allFilters = this.allFilters) {
       if (typeof allFilters === 'object'){
+        console.log(allFilters);
         allFilters.Market.forEach(e => {this.allData.Market.push(e)});
         allFilters.Group.forEach(e => {this.allData.Group.push(e)});
         allFilters.Type.forEach(e => {this.allData.Type.push(e)});

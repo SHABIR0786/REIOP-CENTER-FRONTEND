@@ -250,6 +250,7 @@ export default {
         },
         async clearAllFilters() {
             this.$refs.filterEmail.clearAllFilters();
+            this.$refs.filterEmail.filtersAlreadyApplied = null;
             this.filtersName = {
             Market:[],
             Group:[],
