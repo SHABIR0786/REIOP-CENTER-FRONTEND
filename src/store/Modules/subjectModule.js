@@ -65,7 +65,6 @@ const mutations = {
     DELETE_FILTER(state, payload) {
         const FILTERS = state.filtersCountTable;
         const findIndex = FILTERS.findIndex(({ id }) => id === payload)
-        console.log(findIndex);
         findIndex !== -1 && FILTERS.splice(findIndex, 1)
         state.filtersCountTable = FILTERS;
     },

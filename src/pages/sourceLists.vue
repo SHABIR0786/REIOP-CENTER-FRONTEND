@@ -223,7 +223,11 @@ export default {
         this.$store.dispatch('listModule/deleteListSource', this.itemToDelete.id)
       }
     },
-    mergeSourceFunction(item){
+    async mergeSourceFunction(item){
+      this.$store.dispatch('uxModule/setLoading');
+      let response = await this.$store.dispatch('listModule/checkListForDeleteItem', item.id)
+      this.$store.dispatch('uxModule/hideLoader');
+      item.table_name = response.table;
       item.merge_list_type = "list_source";
       this.itemToMerge = item;
       this.mergeSourceModal = true;

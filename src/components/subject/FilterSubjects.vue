@@ -247,9 +247,13 @@
       </div>
     </b-container>
     <template #modal-footer>
-      <div class="w-100">
-        <b-row>
-          <b-col cols="12" class="d-flex justify-content-end">
+      <div class="w-100 d-flex justify-content-start">
+        <b-row class="w-100">
+          <b-col cols="6">
+          <b-button variant="primary" @click="showManageFiltersModas()" class="filter d-flex align-items-center mr-3">
+            Manage Saved Filters</b-button>
+          </b-col>
+          <b-col cols="6" class="d-flex justify-content-end">
           <b-button :disabled="totalFilters == 0" variant="primary" @click="saveFilter()" class="filter d-flex align-items-center mr-3">
             Save Filter</b-button>
             <b-button variant="primary" @click="applyFilters(allFilters)" class="filter d-flex align-items-center">
@@ -263,16 +267,23 @@
       @cancel="showSaveFilterModal = false"
       :allFilters="allFilters"
     ></save-filter-modal>
+      <manage-filter-modal
+      :showModal="showManageFilterModal"
+      @cancel="showManageFilterModal = false"
+      :allFilters="allFilters"
+    ></manage-filter-modal>
   </b-modal>
 </template>
 <script>
 import {mapGetters} from "vuex";
 import SaveFilterModal from "./../filters/saveFilterModal";
+import ManageFilterModal from "./ManageFilterModal";
 
 export default {
   name: 'FilterSubjects',
     components: {
-      SaveFilterModal
+      SaveFilterModal,
+      ManageFilterModal
     },
   props: {
     showModal: {
@@ -289,7 +300,8 @@ export default {
   },
   data() {
     return {
-      showSaveFilterModal:false,
+      showSaveFilterModal: false,
+      showManageFilterModal: false,
       lists: [],
       allData: {
         Market:[],
@@ -367,6 +379,9 @@ export default {
     },
   },
   methods: {
+    showManageFiltersModas() {
+      this.showManageFilterModal = true;
+    },
     saveFilter() {
       this.showSaveFilterModal = true;
     },

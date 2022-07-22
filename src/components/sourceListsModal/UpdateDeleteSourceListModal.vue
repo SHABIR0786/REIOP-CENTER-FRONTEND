@@ -3,7 +3,8 @@
     <template #modal-header>
         <div class="w-100">
             Update {{ modalTitle }} List Before Delete <br>
-            <small>Because, this list {{ modalTitle }} is used in multiple modules like <span class="text-danger">{{itemTo_Delete.table_name}}</span> , etc.</small>
+            <small v-if="itemTo_Delete.table_name!=''">Because, this list {{ modalTitle }} is used in multiple modules like <span class="text-danger">{{itemTo_Delete.table_name}}</span> .</small>
+            <small v-else>The source that you have to delete is not using in any module.</small>
         </div>
     </template>
         <b-container fluid>
@@ -103,6 +104,10 @@ export default {
     watch: {
         showModal() {
             if(this.showModal){
+                this.table_name='';
+                this.teamitems= [];
+                this.allteamitems= [];
+                this.itemTo_Delete={};
                 this.allteamitems = this.propsData;
             
                 this.itemTo_Delete = this.itemToDelete;

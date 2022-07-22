@@ -3,7 +3,10 @@
     <template #modal-header>
         <div class="w-100">
                 Merge {{ modalTitle }} with other Source<br>
-            <small>To merge this {{ modalTitle }} into another {{ modalTitle }} select the new {{ modalTitle }} and it will show on all items this {{ modalTitle }} currently relates to. </small>
+            <!-- <small>To merge this {{ modalTitle }} into another {{ modalTitle }} select the new {{ modalTitle }} and it will show on all items this {{ modalTitle }} currently relates to. </small> -->
+            <small v-if="itemTo_Merge.table_name!=''">The source that you have to merge is using in multiple modules like <span class="text-danger">{{itemTo_Merge.table_name}}</span> .</small>
+            <small v-else>The source that you have to merge is not using in any module.</small>
+
         </div>
     </template>
         <b-container fluid>

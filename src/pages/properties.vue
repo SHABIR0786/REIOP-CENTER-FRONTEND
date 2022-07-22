@@ -14,9 +14,6 @@
         <hr>
         <div>
             <b-row class="text-end mb-3">
-                <!-- <b-col cols="8" class="d-flex align-items-center">
-                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
-                </b-col> -->
                 <b-col cols="12"  class="d-flex justify-content-end">
                     <b-input-group class="col-6 d-flex align-items-center">
                         <b-input-group-append v-if="isPropertySearched">
@@ -32,12 +29,6 @@
                 </b-col>
             </b-row>
             <b-row class="text-end">
-                <!-- <b-col cols="12" class="d-flex justify-content-end">
-                    <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterPropertiesModal = true">
-                        <b-icon icon="filter" aria-hidden="true"></b-icon> Filter</b-button>
-                    <b-button variant="outline-primary" class="filter d-flex align-items-center">
-                        <b-icon icon="x" aria-hidden="true"></b-icon> Reset</b-button>
-                </b-col> -->
                 <div class="d-flex justify-content-end col-12">
                 <b-col cols="2">
                     <b-button variant="primary" class="filter float-right" @click="showCustomModalView = true">Custom View</b-button>
@@ -48,29 +39,7 @@
                 </b-col>
                 </div>
             </b-row>
-            <!-- <b-row class="mt-2">
-                <b-col cols="8">
-                        <div class="info latest d-flex justify-content-center ml-0" @click="showFileType = !showFileType">
-                            <div>Export</div>
-                        </div>
-                    <div v-if="showFileType" class="mt-2">
-                        <b-button variant="primary" class="mr-2" @click="exportProperties('xlsx')">Excel</b-button>
-                        <b-button variant="primary" @click="exportProperties('csv')">CSV</b-button>
-                    </div>
-                </b-col>
-                <b-col cols="4" class="d-flex justify-content-end">
-                    <b-form-select class="select-template mr-2" v-model="selectedTemplate" @change="getTemplate($event)" :options="templatesToExport"></b-form-select>
-                </b-col>
-            </b-row>
-            <hr> -->
         </div>
-        <!-- <hr> -->
-        <!-- <div class="d-flex align-items-center mb-4">
-            <b-form-checkbox  @change="selectAll" v-model='allSelected'></b-form-checkbox>
-            <b-button variant="primary" :disabled='!bulkDeleteItems.length' class="filter d-flex align-items-center" @click="bulkDelete">
-                <b-icon icon="trash" aria-hidden="true"></b-icon>Delete Selected</b-button>
-        </div> -->
-        
         <b-table
             style="margin-left:20px;"
             id="subject-table"
@@ -99,8 +68,6 @@
             </template>
             <template v-slot:cell(delete)="data">
                 <b-form-checkbox :value='data.item.id' v-model='bulkDeleteItems'></b-form-checkbox>
-                               <!-- <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-               <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
             </template>
             <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
@@ -201,7 +168,6 @@
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
         <custom-view-v2 :customViews="templatesToExport" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view-v2>
-        <!-- <filter-properties :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" @save="triggerFilter"></filter-properties> -->
     </div>
 </template>
 <script>
@@ -241,13 +207,6 @@ export default {
                 // {key: "subject_market", label: "Market", sortable: true},
                 {key: "subject_type", label: "Subject Type", sortable: true},
                 {key: "subject_age", label: "Subject Age", sortable: true},
-
-
-                // Custom Fields
-                // {key: "subject_last_marked_date", label: "Last Marketed Date", sortable: true},
-                // {key: "subject_last_exported_date", label: "Last Exported Date", sortable: true},
-                // {key: "subject_pull_date", label: "Pull Date", sortable: true},
-                // {key: "subject_skip_trace_date", label: "Skip Trace Date", sortable: true},
 
                 {key:"created_at", label: "Created Date", sortable: true},
                 {key:"updated_at", label: "Updated Date", sortable: true},
@@ -607,8 +566,9 @@ export default {
             });
             let response = await this.$store.dispatch('templatesModule/createTemplate', templateDuplication);
             if(response.template) {
-                response = response.template;
+            response = response.template;
             this.templatesToExport.push({ value: response.id, text: response.name });
+            this.selectedTemplate = response.id;
             }
           }else if(type == 'update') {
             const templateDuplication = Object.assign({}, template);
@@ -618,9 +578,12 @@ export default {
                 delete templateDuplication[key];
               }
             });
+            this.selectedTemplate = template.templateId;
              await this.$store.dispatch('templatesModule/editTemplate', templateDuplication);
              await this.$store.dispatch("templatesModule/getAllTemplates")
           }
+          this.showCustomView(template);
+
         },
         triggerFilter(filter) {
           this.filter = {};

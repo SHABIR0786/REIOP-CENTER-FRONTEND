@@ -228,18 +228,20 @@ export default {
       this.$store.dispatch('listModule/UpdateBeforeDeleteList', data)
 
     },
-    mergeSourceFunction(item){
+    async mergeSourceFunction(item){
+      this.$store.dispatch('uxModule/setLoading');
+      let response = await this.$store.dispatch('listModule/checkListForDeleteItem', item.id)
+      this.$store.dispatch('uxModule/hideLoader');
+      item.table_name = response.table;
       item.merge_list_type = "list_skip_source";
       this.itemToMerge = item;
       this.mergeSourceModal = true;
     },
     async merge_source_with_other(data){
       this.mergeSourceModal = false;
-      let response = this.$store.dispatch('listModule/MergeListSource', data)
-      console.log('response', response.success);
+      let response = await this.$store.dispatch('listModule/MergeListSource', data)
       
       if(response.success == true){
-
           this.$bvToast.toast('Source Merge Successfully.', {
             title: 'Success!',
             solid: true,

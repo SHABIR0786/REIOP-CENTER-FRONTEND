@@ -459,7 +459,7 @@ computed: {
     ...mapGetters({
       MarketingChannels: 'marketingChannelModule/marketingChannels',
       lists: 'listModule/lists',
-      filters: 'filtersModule/filters',
+      filters: 'filterModule/filters',
       sourceList: 'listModule/skipSourceList',
       skipSourceListFromDB: 'listModule/skipSourceListFromDB',
     }),
@@ -483,7 +483,7 @@ computed: {
     }
   },
  async created() {
-      await this.$store.dispatch("filtersModule/getAllFilters","properties")
+      await this.$store.dispatch("filterModule/getAllFilters","properties")
       this.filters.forEach(e => {
         const filter = {
               value: '',
@@ -642,7 +642,7 @@ computed: {
             type: 'properties',
             configuration: JSON.stringify(this.allFilters)
         }
-      this.$store.dispatch('filtersModule/createFilter', data);
+      this.$store.dispatch('filterModule/createFilter', data);
     },
     triggerUpdateFilter(id) {
       this.showSaveFilterModal = false;
@@ -650,7 +650,7 @@ computed: {
             id: id,
             configuration: JSON.stringify(this.allFilters)
         }
-      this.$store.dispatch('filtersModule/editFilter', data);
+      this.$store.dispatch('filterModule/editFilter', data);
     },
      showGroupDropDown() {
       this.isGroupDropDown = !this.isGroupDropDown;

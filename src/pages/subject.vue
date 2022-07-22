@@ -263,7 +263,7 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'subjectModule/fields',
             items: 'subjectModule/subjects',
-            filters: 'filtersModule/filters',
+            filters: 'filterModule/filters',
             filteredItems: 'subjectModule/filteredSubject',
             filteredSubjectsCount: 'subjectModule/filteredSubjectsCount',
             filtersCountTable: 'subjectModule/filtersCountTable',
@@ -299,7 +299,7 @@ export default {
         this.filteredOrAllData = this.items;
         this.itemsCount = this.total;
 
-        await this.$store.dispatch("filtersModule/getAllFilters", 'subjects');
+        await this.$store.dispatch("filterModule/getAllFilters", 'subjects');
         await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
     },
     methods: {
@@ -531,7 +531,10 @@ export default {
     watch: {
         filters: {
             handler: function() {
-                this.savedFilters = [];
+                this.savedFilters = [{
+                value: null,
+                text: "Save Filters"
+            }];
                 this.filters.forEach(e => {
                     const filter = {
                         value: '',

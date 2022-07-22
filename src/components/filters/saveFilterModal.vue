@@ -41,15 +41,22 @@
             <b-row class="mb-1 text-center">
                 <b-col cols="12">
                     <b-input-group class="mb-2">
-                        <b-form-input placeholder="Enter Filter Name" v-model="filterName"></b-form-input>
+                        <b-form-input placeholder="Enter Filter Name" v-model="filter.name"></b-form-input>
+                    </b-input-group>
+                </b-col>
+            </b-row>
+            <b-row class="text-center">
+                <b-col cols="12">
+                    <b-input-group class="mb-2">
+                        <b-form-select class="select-template w-100 mt-3 mb-3" v-model="filter.permission" :options="permissions"></b-form-select>
                     </b-input-group>
                 </b-col>
             </b-row>
             <b-row class="mb-1 text-center">
                 <b-col cols="12">
-                    <b-input-group class="mb-2">
-                        <b-form-select class="select-template w-100 mt-3 mb-3" v-model="permission" :options="permissions"></b-form-select>
-                    </b-input-group>
+                    <b-form-checkbox class="text-left" v-model="filterType" @change="filterTypeChange()" name="filter_type" value="accepted">
+                        Show on table
+                    </b-form-checkbox>
                 </b-col>
             </b-row>
         </div>
@@ -81,15 +88,19 @@ export default {
     },
     computed: {
         ...mapGetters({
-            filters: 'filtersModule/filters',
+            filters: 'filterModule/filters',
         }),
     },
     data() {
         return {
             saveFilterStep: 1,
             selectedFilter: null,
-            filterName: null,
+            filter: {
+            name: null,
             permission: null,
+            filter_type: 1,
+            },
+            filterType: false,
             permissions: [{
                     value: null,
                     text: "Choose who can see filter"
@@ -99,14 +110,9 @@ export default {
                     text: "Everyone"
                 },
                 {
-
                     value: 2,
                     text: "Only Me"
-                },
-                {
-                    value: 3,
-                    text: "Show on Table"
-                },
+                }
             ],
             savedFilters: [{
                 value: null,
@@ -118,19 +124,27 @@ export default {
         closeFilterModal() {
             this.$emit("cancel");
         },
+        filterTypeChange() {
+            if(this.filterType == "accepted") {
+                this.filter.filter_type = 2;
+            } else {
+                this.filter.filter_type = 1;
+            }
+        },
        async saveFilter() {
         this.$store.dispatch('uxModule/setLoading');
             if (this.saveFilterStep == 3) {
                 const data = {
-                    name: this.filterName || 'Filter',
-                    permission: this.permission,
+                    name: this.filter.name || 'Filter',
+                    permission: this.filter.permission,
+                    filter_type: this.filter.filter_type,
                     type: 'subjects',
                     configuration: JSON.stringify(this.allFilters)
                 }
-                this.$store.dispatch('filtersModule/createFilter', data);
+                this.$store.dispatch('filterModule/createFilter', data);
                 this.$emit("cancel");
                 this.saveFilterStep = 1;
-                this.filterName = "";
+                this.filter.name = "";
                 await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
             }
             if (this.saveFilterStep == 2) {
@@ -138,16 +152,16 @@ export default {
                     id: this.selectedFilter,
                     configuration: JSON.stringify(this.allFilters)
                 }
-                this.$store.dispatch('filtersModule/editFilter', data);
+                this.$store.dispatch('filterModule/editFilter', data);
                 this.$emit("cancel");
                 this.saveFilterStep = 1;
             }
-            await this.$store.dispatch("filtersModule/getAllFilters", 'subjects');
+            await this.$store.dispatch("filterModule/getAllFilters", 'subjects');
             this.$store.dispatch('uxModule/hideLoader');
         }
     },
     async mounted() {
-        await this.$store.dispatch("filtersModule/getAllFilters", 'subjects')
+        await this.$store.dispatch("filterModule/getAllFilters", 'subjects')
         this.filters.forEach(e => {
             const filter = {
                 value: '',
