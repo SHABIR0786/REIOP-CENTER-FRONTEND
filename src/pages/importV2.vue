@@ -105,7 +105,7 @@
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
 
-          <edit-import-modal v-if="!isReload" :data="editData" :showModal="showModal"  @cancel="cancelEdit" @save="save"></edit-import-modal>
+          <edit-import-modal v-if="!isReload" :data="editData" :lists="lists" :showModal="showModal"  @cancel="cancelEdit" @save="save"></edit-import-modal>
           <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
           <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
           <skip-variant v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipOption" @goBack="goBack"></skip-variant>
