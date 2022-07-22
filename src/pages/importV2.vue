@@ -247,7 +247,7 @@ export default {
              clearInterval(this.intervalId);
             }
             }
-        }, 10000);
+        }, 25000);
       }
       },
      async editItem(item) {
