@@ -244,11 +244,13 @@ export default {
             this.showDeleteModal = true;
             this.itemToDelete = item;
         },
-        modalResponse(response) {
+        async modalResponse(response) {
             this.showDeleteModal = false;
+            this.$store.dispatch('uxModule/setLoading')
             if (response) {
-                this.$store.dispatch('listModule/deleteList', this.itemToDelete.id)
+               await this.$store.dispatch('listModule/deleteList', this.itemToDelete.id)
             }
+            this.$store.dispatch('uxModule/hideLoader')
         },
         addItem() {
             this.showAddModal = true;
