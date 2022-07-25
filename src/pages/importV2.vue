@@ -30,7 +30,7 @@
                     :busy="isBusy"
                     :fields="fields"
                     :items="filteredItems"
-                    :per-page="0"
+                    :per-page="perPage"
                     :sticky-header="true"
             >
                 <template #table-busy>
@@ -95,8 +95,8 @@
                         <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
                     </b-form-group>
                 </b-col>
-                <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+                <b-col v-show="total" class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing {{pageFrom}} to {{pageTo}} of {{total}} entries</p>
                 </b-col>
                 <b-col class="d-flex justify-content-end">
                     <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
@@ -164,7 +164,7 @@ export default {
         step_3_skip:false,
         step_4: false,
         step_5: false,
-        currentPage: 2,
+        currentPage: 1,
         download_type: '',
         showImportTable: true,
         download_data: {},
@@ -188,8 +188,9 @@ export default {
     async created () {
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('importV2Module/getTotal')
-        this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: 50})
-       await this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: 50})
+        this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage})
+        await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
+       
        this.filteredItems = this.items;
        const Instance = this;
        this.filteredItems.forEach((item)=>{
@@ -209,12 +210,14 @@ export default {
           isCollapsed: 'uxModule/isCollapsed',
           fields: 'importV2Module/fields',
           items: 'importV2Module/imports',
+          pageTo: 'importV2Module/pageTo',
+          pageFrom: 'importV2Module/pageFrom',
           lists: 'listModule/lists',
           total: 'importV2Module/total',
           editData: 'importV2Module/editData',
           showImportFirstPage: 'importV2Module/showImportFirstPage'
       }),
-      rows() { return this.total ? this.total : 1 },
+      rows() { return this.total ? this.total : 0 },
       getPreviousStep() {
         return this.previousStepArr[this.previousStepArr.length - 1];
       },
@@ -597,6 +600,7 @@ export default {
         if(response) {
            this.$store.dispatch('uxModule/setLoading')
            await this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+           await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
            this.$store.dispatch('uxModule/hideLoader');
         }
       },
