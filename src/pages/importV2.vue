@@ -95,8 +95,11 @@
                         <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
                     </b-form-group>
                 </b-col>
-                <b-col v-show="total" class="d-flex align-items-center justify-content-center">
+                <b-col v-if="total > 0" class="d-flex align-items-center justify-content-center">
                     <p class="mb-0">Showing {{pageFrom}} to {{pageTo}} of {{total}} entries</p>
+                </b-col>
+                <b-col v-else class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing 0 entries of 0</p>
                 </b-col>
                 <b-col class="d-flex justify-content-end">
                     <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
