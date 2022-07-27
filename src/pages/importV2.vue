@@ -102,7 +102,7 @@
                     <p class="mb-0">Showing 0 entries of 0</p>
                 </b-col>
                 <b-col class="d-flex justify-content-end">
-                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
+                    <b-pagination class="mb-0" @input="handlePageClick" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
                 </b-col>
             </b-row>
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
@@ -226,6 +226,12 @@ export default {
       },
     },
     methods: {
+      async handlePageClick(pageNumber){
+        this.$store.dispatch('uxModule/setLoading')
+        await this.$store.dispatch("importV2Module/getAllProcesses", {page: pageNumber, perPage: this.perPage});
+        this.$store.dispatch('uxModule/hideLoader');
+      },
+         
       cancelEdit(){
         this.showModal = false;
         // this.isReload = true;
