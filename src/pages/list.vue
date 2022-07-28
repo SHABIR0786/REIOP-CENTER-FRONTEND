@@ -148,11 +148,14 @@
                     <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
                 </b-form-group>
             </b-col>
-            <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+            <b-col v-if="total > 0" class="d-flex align-items-center justify-content-center">
+              <p class="mb-0">Showing {{pageFrom}} to {{pageTo}} of {{total}} entries</p>
+            </b-col>
+            <b-col v-else class="d-flex align-items-center justify-content-center">
+                <p class="mb-0">Showing 0 entries of 0</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+                <b-pagination class="mb-0" @input="handlePageClick" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
         </b-row>
         <add-list-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-list-modal>
@@ -199,6 +202,8 @@ export default {
             fields: 'listModule/fields',
             items: 'listModule/lists',
             total: 'listModule/total',
+            pageTo: 'listModule/pageTo',
+            pageFrom: 'listModule/pageFrom',
             tabData: 'listModule/list',
             totalCurrentMonth: 'listModule/totalCurrentMonth'
         }),
@@ -209,7 +214,7 @@ export default {
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('listModule/getTotal')
         try {
-            await this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage})
+            await this.$store.dispatch("listModule/getAllLists", {page: this.currentPage, perPage: this.perPage})
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -226,6 +231,14 @@ export default {
       })
     },
     methods: {
+        async getList(){
+            this.$store.dispatch('uxModule/setLoading');
+            await this.$store.dispatch('listModule/searchLists', {page: this.currentPage, perPage: this.perPage, search: this.searchList});
+            this.$store.dispatch('uxModule/hideLoader');
+        },
+        async handlePageClick(){
+            this.getList()
+        },
         editItem(item) {
             this.showModal = true
             this.editedItem = { ...item }
@@ -273,17 +286,19 @@ export default {
     watch: {
         currentPage: {
             handler: function() {
-                this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage})
+                this.getList();
             }
         },
         perPage: {
             handler: function () {
-                this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: this.perPage})
+                this.getList();
             }
         },
         searchList: {
             handler: function () {
-                this.$store.dispatch('listModule/searchLists', {page: this.currentPage, perPage: this.perPage, search: this.searchList});
+                this.currentPage = 1;
+                this.getList();
+                // this.$store.dispatch('listModule/searchLists', {page: this.currentPage, perPage: this.perPage, search: this.searchList});
             }
         }
     }
