@@ -221,6 +221,40 @@
                       </template>
                     </b-table>
                   </b-tab>
+                   <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'"  @click="currentModal()">
+                    <b-table
+                        id="related-table"
+                        small
+                        striped
+                        sort-icon-left
+                        hover
+                        :busy="isBusy"
+                        :fields="exportFields"
+                        :items="exportItems"
+                        responsive
+                        :per-page="0"
+                        :sticky-header="true"
+                        class="table_height_all_modal"
+                    >
+                      <template #table-busy>
+                        <div class="text-center" my-2>
+                          <b-spinner class="align-middle"></b-spinner>
+                          <strong>Loading...</strong>
+                        </div>
+                      </template>
+                      <template #head(actions)="scope">
+                        <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                      </template>
+                      <template #head()="scope">
+                        <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                      </template>
+                        <template v-slot:cell(actions)="data">
+                            <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editExportItem(data.item)"></b-icon>
+                          </template>
+                    </b-table>
+
+
+                   </b-tab>
                   <b-tab :title="(subject.sellers?subject.sellers.length:'') +' Related Sellers'">
                         <b-col>
                             <b-col class="assign-btn">
@@ -258,7 +292,6 @@
                             </template>
                             <template v-slot:cell(actions)="data">
                                 <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editSellerItem(data.item)"></b-icon>
-                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
                             </template>
                             <template v-slot:cell(user_name)="">
                                 <p class="" >{{subject.user_name}}</p>
@@ -328,16 +361,14 @@ export default {
         {key:"emails_count",    label: "Total Emails", sortable: true},
         {key:"golden_addresses_count", label: "Total Golden Address", sortable: true},
         {key:"error_number",    label: "Total Errors", sortable: true},
-      ],
+      ]
     }
   },
-
     components: {
         EditSellerDetails,
         AssignExistingSeller
     },
     methods: {
-
         edit() {
             this.subject.subject_full_address = ((this.subject.subject_address??"") +" "+ (this.subject.subject_address_line2?this.subject.subject_address_line2+", ":" ") + (this.subject.subject_city ? this.subject.subject_city+", ":" ") + (this.subject.subject_state??"") +" "+ (this.subject.subject_zip??"")).trim();
             this.isReadOnly = true;
@@ -358,14 +389,21 @@ export default {
           let routeData = this.$router.resolve({path: route});
           window.open(routeData.href, '_blank');
         },
+        editExportItem(item) {
+          const route = '/activity?export_id=' + item.id;
+          this.editedItem = { ...item }
+          let routeData = this.$router.resolve({path: route});
+          window.open(routeData.href, '_blank');
+        },
         save(item) {
             this.$store.dispatch('sellerModule/editSeller', {...item})
         },
     },
-
     computed: {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
+            exportFields: 'exportModule/fields',
+            exportItems: 'exportModule/items',
             listFields: 'listModule/fields',
             tabData: 'listModule/subjectRelatedList',
         }),
@@ -380,7 +418,6 @@ export default {
           this.subject = {...this.propsData}
         }
     }
-
 }
 </script>
 <style scoped>

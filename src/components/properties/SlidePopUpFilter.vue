@@ -220,14 +220,6 @@
             </b-collapse>
           </div>
         </div>
-        <!-- <div class="card-footer p-2">
-          <b-button
-            v-bind:class="{ 'save-filter-btn' : allFilters.Market.length > 0}"
-            class="float-right"
-            :disabled="allFilters.Market.length == 0"
-            @click="showSaveFilterModal = !showSaveFilterModal"
-            >Save Filter</b-button>
-        </div> -->
       </div>
       <!-- Export  -->
       <div class="card mt-2 export-card">
@@ -533,17 +525,13 @@ computed: {
       let exportV_5 = Math.round((this.totalSubjects/5)+((this.totalSubjects/5)*3)); //Round the number {(Total in view / 5) + ((Total in view / 5) * 3)}
           exportV_5 = exportV_5 > 0 ? exportV_5 : 1;
 
-      let exportV_6 = Math.round((this.totalSubjects/5)+((this.totalSubjects/5)*4)); // Round the number{(Total in view / 5) + ((Total in view / 5) * 4)}
-          exportV_6 = exportV_6 > 0 ? exportV_6 : 1;
-
       this.SelectExportAmount.push(
         { value: null, text: "Select Export Amount" },
-        { value: 1, text: "Export all in the value" },
-        { value: 2, text: "Export Selected" },
-        { value: 3, text: 'Export '+exportV_3},
-        { value: 4, text: 'Export '+exportV_4},
-        { value: 5, text: 'Export '+exportV_5},
-        { value: 6, text: 'Export '+exportV_6},
+        { value: 1, text: "Export Selected" },
+        { value: 2, text: 'Export '+exportV_3},
+        { value: 3, text: 'Export '+exportV_4},
+        { value: 4, text: 'Export '+exportV_5},
+        { value: 5, text: "Export all "+this.totalSubjects },
       );
     },
     marketing_start_date: function() {
@@ -558,6 +546,7 @@ computed: {
     skip_date: function() {
       this.checkNextStep();
     },
+    
     isShowSlidePopUp: function() {
       if(this.isShowSlidePopUp){
         setTimeout(() => {

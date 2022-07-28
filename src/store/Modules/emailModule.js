@@ -24,6 +24,7 @@ const state = {
     total: 0,
     email: {},
     filteredEmail: {},
+    filtersCountTable: [],
     filteredEmailsCount: 0,
     filterList: [],
 }
@@ -65,6 +66,9 @@ const mutations = {
         state.filteredEmailsCount = payload.total;
         state.total = payload.total;
     },
+    SET_FILTERS_COUNT_TABLE(state, payload) {
+        state.filtersCountTable = payload;
+    },
     EMAIL_FILTER_LIST(state, payload) {
         if(payload.data) {
             state.filterList = JSON.stringify(payload.data);            
@@ -94,6 +98,19 @@ const mutations = {
 }
 
 const actions = {
+    async filtersOnTable({commit, dispatch}, type) {
+        return await api.get(`/emails/filtersOnTable?type=${type}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.filtersCount) {
+                commit('SET_FILTERS_COUNT_TABLE', response.filtersCount)
+            }
+
+            return response
+        })
+    },
     async getAllEmails({ commit, dispatch }, {page, perPage, search, sortBy, sortDesc}) {
         return await api.get(`/emails?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
@@ -210,6 +227,7 @@ const getters = {
     filteredEmailsCount: ({filteredEmailsCount}) => filteredEmailsCount,
     email: ({email}) => email,
     filterList: ({filterList}) => filterList,
+    filtersCountTable: ({filtersCountTable}) => filtersCountTable,
     filteredEmail: ({ filteredEmail }) => {
         if (typeof filteredEmail === 'string') {
             return JSON.parse(filteredEmail);

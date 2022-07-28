@@ -1,5 +1,5 @@
 <template>
-    <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
+    <div :class="`list-page wide-content`">
         <div v-if="showImportTable">
             <h3>Previous Imports</h3>
             <div>
@@ -222,10 +222,6 @@ export default {
     methods: {
       cancelEdit(){
         this.showModal = false;
-        // this.isReload = true;
-        // this.$nextTick(() => {
-        //   this.isReload = true;
-        // })
       },
       getLivePercentage(item) {
       let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);

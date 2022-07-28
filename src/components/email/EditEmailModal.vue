@@ -76,11 +76,6 @@
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
                     <b-tab :title="(relatedList?relatedList.length:'')+' Related Lists'" active>
-<!--                    <b-row>-->
-<!--                      <b-col class="assign-btn">-->
-<!--                        <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing List</b-button>-->
-<!--                      </b-col>-->
-<!--                    </b-row>-->
                     <b-table
                         id="list-table"
                         small
@@ -136,7 +131,6 @@
                       </template>
                         <template v-slot:cell(actions)="data">
                             <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editListItem(data.item)"></b-icon>
-                            <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
                           </template>
                       <template #head(created_at)="scope">
                         <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
@@ -192,28 +186,41 @@
                         </div>
                       </template>
                     </b-table>
-<!--                    <b-row>-->
-<!--                      <b-col class="d-flex align-items-center">-->
-<!--                        <b-form-group-->
-<!--                            label="Show"-->
-<!--                            label-for="show-select"-->
-<!--                            label-cols-sm="6"-->
-<!--                            label-cols-md="4"-->
-<!--                            label-cols-lg="3"-->
-<!--                            label-size="xs"-->
-<!--                            class="mb-0"-->
-<!--                        >-->
-<!--                          <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>-->
-<!--                        </b-form-group>-->
-<!--                      </b-col>-->
-<!--                      <b-col class="d-flex align-items-center justify-content-center">-->
-<!--                        <p class="mb-0">Showing 1 to {{perPage}} of {{tabData.total}} entries</p>-->
-<!--                      </b-col>-->
-<!--                      <b-col class="d-flex justify-content-end">-->
-<!--                        <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>-->
-<!--                      </b-col>-->
-<!--                    </b-row>-->
                   </b-tab>
+
+                <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'"  @click="currentModal()">
+                    <b-table
+                        id="related-table"
+                        small
+                        striped
+                        sort-icon-left
+                        hover
+                        :busy="isBusy"
+                        :fields="exportFields"
+                        :items="exportItems"
+                        responsive
+                        :per-page="0"
+                        :sticky-header="true"
+                        class="table_height_all_modal"
+                    >
+                      <template #table-busy>
+                        <div class="text-center" my-2>
+                          <b-spinner class="align-middle"></b-spinner>
+                          <strong>Loading...</strong>
+                        </div>
+                      </template>
+                      <template #head(actions)="scope">
+                        <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+                      </template>
+                      <template #head()="scope">
+                        <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                      </template>
+                        <template v-slot:cell(actions)="data">
+                            <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editExportItem(data.item)"></b-icon>
+                          </template>
+                    </b-table>
+                   </b-tab>
+
                     <b-tab :title="(email.sellers?email.sellers.length:'') + ' Related Sellers'">
                         <b-col>
                             <b-col class="assign-btn">
@@ -251,7 +258,6 @@
                             </template>
                             <template v-slot:cell(actions)="data">
                                 <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editSellerItem(data.item)"></b-icon>
-                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
                             </template>
                             <template v-slot:cell(user_name)="">
                                 <p class="" >{{email.user_name}}</p>
@@ -295,7 +301,6 @@
                             </template>
                             <template v-slot:cell(actions)="data">
                                 <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editSubject(data.item)"></b-icon>
-                                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon> -->
                             </template>
                         </b-table>
                     </b-tab>
@@ -352,12 +357,20 @@ export default {
             const route = '/subjects?subject_id=' + item.id;
             let routeData = this.$router.resolve({path: route});
             window.open(routeData.href, '_blank');
-        }
+        },
+        editExportItem(item) {
+          const route = '/activity?export_id=' + item.id;
+          this.editedItem = { ...item }
+          let routeData = this.$router.resolve({path: route});
+          window.open(routeData.href, '_blank');
+        },
     },
     computed: {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
             tabData: 'listModule/subjectRelatedList',
+            exportFields: 'exportModule/fields',
+            exportItems: 'exportModule/items',
             listFields: 'listModule/fields',
         }),
     },

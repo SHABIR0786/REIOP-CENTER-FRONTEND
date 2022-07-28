@@ -31,6 +31,9 @@
                     <b-icon icon="x" aria-hidden="true"></b-icon> Clear All
                 </b-button>
                 <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
+                <b-input-group class="mb-2 save-filter-dropdown">
+                    <b-form-select class="select-template w-100" @change="applyFilter" v-model="selectedFilter" :options="savedFilters"></b-form-select>
+                </b-input-group>
             </b-col>
             <b-col cols="6">
                 <b-input-group class="mt-3">
@@ -45,6 +48,11 @@
                     </b-input-group-append>
                 </b-input-group>
             </b-col>
+        </b-row>
+        <b-row>
+            <div class="filters-count" v-for="filter in filtersCountTable" :key="filter.name">
+                {{filter.count}} items {{filter.filter}} 
+            </div>
         </b-row>
     </div>
     <div class="d-flex align-items-center mb-4">
@@ -204,11 +212,12 @@ export default {
     data() {
         return {
             isBusy: false,
+            selectedFilter: null,
             totalFilters: 0,
             isFinishedFilterSellers: false,
             showFilterPropertiesModal: false,
             showModal: false,
-            perPage: 20, // server-side connection!
+            perPage: 20,
             currentPage: 1,
             itemsCount: 0,
             editedItem: {},
@@ -230,6 +239,10 @@ export default {
                 RunDate: [],
                 CompanyOwned: [],
             },
+            savedFilters: [{
+                value: null,
+                text: "Save Filters"
+            }],
             sortBy: 'id',
             sortDesc: true,
             isClearSearch: false
@@ -241,8 +254,10 @@ export default {
             fields: 'sellerModule/fields',
             items: 'sellerModule/sellers',
             total: 'sellerModule/total',
+            filters: 'filterModule/filters',
             selectedSeller: 'sellerModule/seller',
             filteredItems: 'sellerModule/filteredSeller',
+            filtersCountTable: 'sellerModule/filtersCountTable',
             filteredSellersCount: 'sellerModule/filteredSellersCount',
         }),
         rows() {
@@ -272,15 +287,30 @@ export default {
 
         this.filteredOrAllData = this.items;
         this.itemsCount = this.total;
+        await this.$store.dispatch("filterModule/getAllFilters", 'sellers');
+        await this.$store.dispatch("sellerModule/filtersOnTable", 'sellers');
 
     },
     methods: {
+        applyFilter() {
+            let filter = this.filters.find(x => x.id == this.selectedFilter);
+            if (filter.configuration) {
+                let allFilters = JSON.parse(filter.configuration);
+                let total = 0
+                for (let item in allFilters) {
+                    total += allFilters[item].length
+                }
+                this.totalFilters = total;
+                this.filter(allFilters, total);
+            }
+        },
         async clearsearch() {
             this.searchSeller = '';
             await this.search();
             this.isClearSearch = false;
         },
         async clearAllFilters() {
+            this.selectedFilter = null;
             this.$refs.filterSellers.clearAllFilters();
             this.$refs.filterSellers.filtersAlreadyApplied = null;
             this.filtersName = {
@@ -491,6 +521,23 @@ export default {
         }
     },
     watch: {
+        filters: {
+            handler: function() {
+                this.savedFilters = [{
+                value: null,
+                text: "Save Filters"
+            }];
+                this.filters.forEach(e => {
+                    const filter = {
+                        value: '',
+                        text: '',
+                    }
+                    filter.value = e.id;
+                    filter.text = e.name;
+                    this.savedFilters.push(filter);
+                });
+            }
+        },
         currentPage: {
             handler: async function () {
                 this.$store.dispatch('uxModule/setLoading');

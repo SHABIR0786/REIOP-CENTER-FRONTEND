@@ -13,6 +13,9 @@ export function setHeader(token) {
 export async function get(subURL) {
   return axios.get(urlPrefix + subURL)
       .then((response) => {
+        if(response.status == 401) {
+          this.$store.dispatch('loginModule/logout', null, {root: true})
+        }
         return response.data;
       }).catch((error) => {
         console.warn("Error GET" + error);
@@ -23,6 +26,9 @@ export async function get(subURL) {
 export async function post(subURL, data) {
   return axios.post(urlPrefix + subURL, data)
     .then((response) => {
+      if(response.status == 401) {
+        this.$store.dispatch('loginModule/logout', null, {root: true})
+      }
       return response.data
     }).catch((error) => {
       console.warn("Error POST" + error);
@@ -33,6 +39,9 @@ export async function post(subURL, data) {
 export async function put(subURL, data) {
   return axios.put(urlPrefix + subURL, data)
     .then((response) => {
+      if(response.status == 401) {
+        this.$store.dispatch('loginModule/logout', null, {root: true})
+      }
       return response.data
     }).catch((error) => {
       console.warn("Error PUT" + error);
@@ -43,6 +52,9 @@ export async function put(subURL, data) {
 export async function deleteAPI(subURL) {
   return axios.delete(urlPrefix + subURL)
     .then((response) => {
+      if(response.status == 401) {
+        this.$store.dispatch('loginModule/logout', null, {root: true})
+      }
       return response.data
     }).catch((error) => {
       console.warn("Error DELETE" + error);

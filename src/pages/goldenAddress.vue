@@ -15,10 +15,6 @@
                     <div>Added This Month</div>
                 </div>
             </b-col>
-            <!--                <b-col cols="4" class="d-flex justify-content-end">-->
-            <!--                    <b-button variant="primary" class="add-seller" @click="addItem()">-->
-            <!--                        <b-icon icon="plus" aria-hidden="true"></b-icon> Add Golden Address</b-button>-->
-            <!--                </b-col>-->
         </b-row>
         <hr>
         <b-row class="mb-3">
@@ -30,6 +26,9 @@
                     <b-icon icon="x" aria-hidden="true"></b-icon> Clear All
                 </b-button>
                 <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
+                <b-input-group class="mb-2 save-filter-dropdown">
+                    <b-form-select class="select-template w-100" @change="applyFilter" v-model="selectedFilter" :options="savedFilters"></b-form-select>
+                </b-input-group>
             </b-col>
             <b-col cols="6">
                 <b-input-group class="mt-3">
@@ -44,6 +43,11 @@
                     </b-input-group-append>
                 </b-input-group>
             </b-col>
+        </b-row>
+        <b-row>
+            <div class="filters-count" v-for="filter in filtersCountTable" :key="filter.name">
+                {{filter.count}} items {{filter.filter}} 
+            </div>
         </b-row>
     </div>
     <div class="d-flex align-items-center mb-4">
@@ -154,7 +158,6 @@
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-golden-address-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-golden-address-modal>
     <filter-golden-addresses ref="filterGolden" :search="searchGoldenAddress" @filter="filter" @finish-process="isFinishedFilterGoldenAddresses = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-golden-addresses>
-
 </div>
 </template>
 
@@ -182,6 +185,7 @@ export default {
         return {
             isBusy: false,
             showModal: false,
+            selectedFilter: null,
             showFilterPropertiesModal: false,
             isFinishedFilterGoldenAddresses: false,
             filteredOrAllData: [],
@@ -206,6 +210,10 @@ export default {
                 RunDate: [],
                 SkipSource: [],
             },
+            savedFilters: [{
+                value: null,
+                text: "Save Filters"
+            }],
             sortBy: 'id',
             sortDesc: false,
             isGoldenAddressSearched: false,
@@ -217,7 +225,9 @@ export default {
             fields: 'goldenAddressModule/fields',
             items: 'goldenAddressModule/goldenAddresses',
             total: 'goldenAddressModule/total',
+            filters: 'filterModule/filters',
             filteredItems: 'goldenAddressModule/filteredGoldenAddress',
+            filtersCountTable: 'goldenAddressModule/filtersCountTable',
             filteredGoldenAddressesCount: 'goldenAddressModule/filteredGoldenAddressesCount',
             selectedGoldenAddress: 'goldenAddressModule/goldenAddress'
 
@@ -248,15 +258,30 @@ export default {
         }
         this.filteredOrAllData = this.items;
         this.itemsCount = this.total;
+        await this.$store.dispatch("filterModule/getAllFilters", 'goldens');
+        await this.$store.dispatch("goldenAddressModule/filtersOnTable", 'goldens');
 
     },
     methods: {
+        applyFilter() {
+            let filter = this.filters.find(x => x.id == this.selectedFilter);
+            if (filter.configuration) {
+                let allFilters = JSON.parse(filter.configuration);
+                let total = 0
+                for (let item in allFilters) {
+                    total += allFilters[item].length
+                }
+                this.totalFilters = total;
+                this.filter(allFilters, total);
+            }
+        },
         async clearsearch() {
             this.searchGoldenAddress = '';
             await this.search();
             this.isGoldenAddressSearched = false;
         },
         async clearAllFilters() {
+            this.selectedFilter = null;
             this.$refs.filterGolden.clearAllFilters();
             this.$refs.filterGolden.filtersAlreadyApplied = null;
             this.filtersName = {
@@ -468,6 +493,23 @@ export default {
         }
     },
     watch: {
+        filters: {
+            handler: function() {
+                this.savedFilters = [{
+                value: null,
+                text: "Save Filters"
+            }];
+                this.filters.forEach(e => {
+                    const filter = {
+                        value: '',
+                        text: '',
+                    }
+                    filter.value = e.id;
+                    filter.text = e.name;
+                    this.savedFilters.push(filter);
+                });
+            }
+        },
         currentPage: {
             handler: async function () {
                 this.$store.dispatch('uxModule/setLoading')

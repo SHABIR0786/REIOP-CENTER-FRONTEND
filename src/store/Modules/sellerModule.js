@@ -34,6 +34,7 @@ const state = {
     sellers: [],
     total: 0,
     seller: {},
+    filtersCountTable: [],
     filteredSeller: {},
     filteredSellersCount: 0,
     filterList: [],
@@ -74,6 +75,9 @@ const mutations = {
         findIndex !== -1 && SELLER.splice(findIndex, 1, { ...payload })
         state.sellers = JSON.stringify(SELLER)
     },
+    SET_FILTERS_COUNT_TABLE(state, payload) {
+        state.filtersCountTable = payload;
+    },
     FILTER_SELLER(state, payload) {
         if(payload){
             const filteredData = [...payload.data]
@@ -113,6 +117,19 @@ const mutations = {
 }
 
 const actions = {
+    async filtersOnTable({commit, dispatch}, type) {
+        return await api.get(`/sellers/filtersOnTable?type=${type}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.filtersCount) {
+                commit('SET_FILTERS_COUNT_TABLE', response.filtersCount)
+            }
+
+            return response
+        })
+    },
     async getAllSellers({ commit }, {page, perPage, search, sortBy, sortDesc}) {
         return await api.get(`/sellers?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.sellers && response.sellers.data) {
@@ -245,6 +262,7 @@ const getters = {
 
     filteredSellersCount: ({filteredSellersCount}) => filteredSellersCount,
     filterList : ({filterList}) => filterList,
+    filtersCountTable: ({filtersCountTable}) => filtersCountTable,
     filteredSeller: ({ filteredSeller }) => {
         if (typeof filteredSeller === 'string') {
             return JSON.parse(filteredSeller);

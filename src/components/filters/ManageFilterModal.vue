@@ -1,5 +1,5 @@
 <template>
-<b-modal size="xl" v-model="showModal" no-close-on-backdrop>
+<b-modal size="xl" id="manage-save-filter" v-model="showModal" no-close-on-backdrop>
     <template #modal-header>
         <div class="w-100">
             Manage Save Filters
@@ -8,7 +8,22 @@
             <b-icon @click="closeFilterModal" class="close-icon" icon="x"></b-icon>
         </div>
     </template>
-    <b-table style="margin-left:20px;" id="subject-table" small striped sort-icon-left no-local-sorting @sort-changed="sortingChanged" hover :busy="isBusy" :fields="fields" :items="items" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-row>
+        <b-col offset="6" cols="6">
+            <b-input-group class="mt-3 mb-3">
+                <b-input-group-append v-if="isSearched">
+                    <b-button @click="clearsearch" variant="outline-primary">
+                        <b-icon icon="x" aria-hidden="true"></b-icon> Clear Search
+                    </b-button>
+                </b-input-group-append>
+                <b-form-input v-model="searchFilter" @keyup.enter="search" placeholder="Search"></b-form-input>
+                <b-input-group-append>
+                    <b-button @click="search" variant="primary">Search</b-button>
+                </b-input-group-append>
+            </b-input-group>
+        </b-col>
+    </b-row>
+    <b-table small striped sort-icon-left no-local-sorting @sort-changed="sortingChanged" hover :busy="isBusy" :fields="fields" :items="items" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template #table-busy>
             <div class="text-center" my-2>
                 <b-spinner class="align-middle"></b-spinner>
@@ -44,6 +59,7 @@
     </b-row>
 </b-modal>
 </template>
+
 <script>
 import {
     mapGetters
@@ -53,6 +69,9 @@ export default {
     props: {
         showModal: {
             type: Boolean
+        },
+        type: {
+            type: String
         }
     },
     computed: {
@@ -75,6 +94,7 @@ export default {
             searchFilter: '',
             sortBy: 'id',
             sortDesc: false,
+            isSearched: false,
             permissions: [{
                     value: null,
                     text: "Choose who can see filter"
@@ -101,31 +121,17 @@ export default {
         }
     },
     methods: {
-       async changeFilterPermission(item) {
-            this.$store.dispatch('uxModule/setLoading');
-            await this.$store.dispatch("filterModule/changePermission", {id:item.id,permission:item.permission});
-            await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
-            this.$store.dispatch('uxModule/hideLoader');
+        async clearsearch() {
+            this.searchFilter = '';
+            await this.search();
+            this.isSearched = false;
         },
-       async changeFilterType(item) {
-            this.$store.dispatch('uxModule/setLoading');
-            await this.$store.dispatch("filterModule/changeFilterType", {id:item.id,filter_type:item.filter_type});
-            await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
-            this.$store.dispatch('uxModule/hideLoader');
-        },
-        closeFilterModal() {
-            this.$emit("cancel");
-        },
-        async RemoveFilter(id) {
-            await this.$store.dispatch("filterModule/deleteFilter", id);
-            await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
-        },
-        async sortingChanged(ctx) {
+        async search() {
+            this.isSearched = true;
             this.$store.dispatch('uxModule/setLoading');
             try {
-                this.sortBy = ctx.sortBy;
-                this.sortDesc = ctx.sortDesc;
-                await this.$store.dispatch("subjectModule/getFilters", {
+            await this.$store.dispatch("filterModule/getFilters", {
+                    type: this.type,
                     page: 1,
                     perPage: this.perPage,
                     search: this.searchFilter,
@@ -138,10 +144,53 @@ export default {
                 this.$store.dispatch('uxModule/hideLoader');
             }
         },
+        async changeFilterPermission(item) {
+            this.$store.dispatch('uxModule/setLoading');
+            await this.$store.dispatch("filterModule/changePermission", {
+                id: item.id,
+                permission: item.permission
+            });
+            await this.$store.dispatch("subjectModule/filtersOnTable", this.type);
+            this.$store.dispatch('uxModule/hideLoader');
+        },
+        async changeFilterType(item) {
+            this.$store.dispatch('uxModule/setLoading');
+            await this.$store.dispatch("filterModule/changeFilterType", {
+                id: item.id,
+                filter_type: item.filter_type
+            });
+            await this.$store.dispatch("subjectModule/filtersOnTable",  this.type);
+            this.$store.dispatch('uxModule/hideLoader');
+        },
+        closeFilterModal() {
+            this.$emit("cancel");
+        },
+        async RemoveFilter(id) {
+            await this.$store.dispatch("filterModule/deleteFilter", id);
+            await this.$store.dispatch("subjectModule/filtersOnTable", this.type);
+        },
+        async sortingChanged(ctx) {
+            this.$store.dispatch('uxModule/setLoading');
+            try {
+                this.sortBy = ctx.sortBy;
+                this.sortDesc = ctx.sortDesc;
+                await this.$store.dispatch("filterModule/getFilters", {
+                    type: this.type,
+                    page: 1,
+                    perPage: this.perPage,
+                    search: this.searchFilter,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc
+                });
+                this.$store.dispatch('uxModule/hideLoader');
+            } catch (error) {
+                this.$store.dispatch('uxModule/hideLoader');
+            }
+        },
     },
     async created() {
         await this.$store.dispatch('filterModule/getFilters', {
-            type: 'subjects',
+            type: this.type,
             page: this.currentPage,
             perPage: this.perPage,
             search: this.searchFilter,
@@ -155,7 +204,7 @@ export default {
                 this.$store.dispatch('uxModule/setLoading')
                 try {
                     await this.$store.dispatch('filterModule/getFilters', {
-                        type: 'subjects',
+                        type: this.type,
                         page: this.currentPage,
                         perPage: this.perPage,
                         search: this.searchFilter,
@@ -173,6 +222,7 @@ export default {
                 this.$store.dispatch('uxModule/setLoading')
                 try {
                     await this.$store.dispatch('filterModule/getFilters', {
+                        type: this.type,
                         page: 1,
                         perPage: this.perPage,
                         search: this.searchFilter,
@@ -186,7 +236,6 @@ export default {
             }
         }
     }
-
 }
 </script>
 
@@ -195,5 +244,32 @@ export default {
     display: inline-block;
     cursor: pointer;
     text-align: center;
+}
+#manage-save-filter td {
+    text-align: center;
+    vertical-align: inherit;
+}
+#manage-save-filter .select-template {
+    font-size:14px;
+}
+
+/* width */
+.b-table-sticky-header::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+.b-table-sticky-header::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+.b-table-sticky-header::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+.b-table-sticky-header::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 </style>

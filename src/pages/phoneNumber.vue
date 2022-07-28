@@ -26,6 +26,9 @@
                     <b-icon icon="x" aria-hidden="true"></b-icon> Clear All
                 </b-button>
                 <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
+                <b-input-group class="mb-2 save-filter-dropdown">
+                    <b-form-select class="select-template w-100" @change="applyFilter" v-model="selectedFilter" :options="savedFilters"></b-form-select>
+                </b-input-group>
             </b-col>
             <b-col cols="6">
                 <b-input-group class="mt-3">
@@ -40,6 +43,11 @@
                     </b-input-group-append>
                 </b-input-group>
             </b-col>
+        </b-row>
+        <b-row>
+            <div class="filters-count" v-for="filter in filtersCountTable" :key="filter.name">
+                {{filter.count}} items {{filter.filter}} 
+            </div>
         </b-row>
     </div>
     <div class="d-flex align-items-center mb-4">
@@ -163,6 +171,7 @@ export default {
         return {
             isBusy: false,
             showModal: false,
+            selectedFilter: null,
             isFinishedFilterPhoneNumbers: false,
             perPage: 20,
             currentPage: 1,
@@ -188,6 +197,10 @@ export default {
                 RunDate: [],
                 SkipSource: [],
             },
+            savedFilters: [{
+                value: null,
+                text: "Save Filters"
+            }],
             sortBy: 'id',
             sortDesc: false,
             isPhoneSearched: false
@@ -198,9 +211,11 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'phoneNumberModule/fields',
             items: 'phoneNumberModule/phoneNumbers',
+            filters: 'filterModule/filters',
             total: 'phoneNumberModule/total',
             filteredPhoneNumber: 'phoneNumberModule/filteredPhoneNumber',
             filteredPhoneNumbersCount: 'phoneNumberModule/filteredPhoneNumbersCount',
+            filtersCountTable: 'phoneNumberModule/filtersCountTable',
             selectedPhoneNumber: 'phoneNumberModule/phoneNumber'
         }),
         rows() {
@@ -218,10 +233,6 @@ export default {
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             })
-            this.$store.dispatch('uxModule/hideLoader')
-        } catch (error) {
-            this.$store.dispatch('uxModule/hideLoader')
-        }
         if (this.$route.query.phone_id) {
             this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then(() => {
                 this.editedItem = this.selectedPhoneNumber
@@ -230,14 +241,33 @@ export default {
         }
         this.filteredOrAllData = this.items;
         this.itemsCount = this.total;
+        await this.$store.dispatch("filterModule/getAllFilters", 'phonenumbers');
+        await this.$store.dispatch("phoneNumberModule/filtersOnTable", 'phonenumbers');
+                    this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+        }
     },
     methods: {
+        applyFilter() {
+            let filter = this.filters.find(x => x.id == this.selectedFilter);
+            if (filter.configuration) {
+                let allFilters = JSON.parse(filter.configuration);
+                let total = 0
+                for (let item in allFilters) {
+                    total += allFilters[item].length
+                }
+                this.totalFilters = total;
+                this.filter(allFilters, total);
+            }
+        },
         async clearsearch() {
             this.searchPhone = '';
             await this.search();
             this.isPhoneSearched = false;
         },
         async clearAllFilters() {
+            this.selectedFilter = null;
             this.$refs.filterPhone.clearAllFilters();
             this.$refs.filterPhone.filtersAlreadyApplied = null;
             this.filtersName = {
@@ -465,6 +495,23 @@ export default {
         }
     },
     watch: {
+        filters: {
+            handler: function() {
+                this.savedFilters = [{
+                value: null,
+                text: "Save Filters"
+            }];
+                this.filters.forEach(e => {
+                    const filter = {
+                        value: '',
+                        text: '',
+                    }
+                    filter.value = e.id;
+                    filter.text = e.name;
+                    this.savedFilters.push(filter);
+                });
+            }
+        },
         currentPage: {
             handler: async function () {
                 this.$store.dispatch('uxModule/setLoading');

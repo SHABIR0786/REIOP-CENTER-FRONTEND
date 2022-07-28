@@ -411,27 +411,45 @@
       </div>
     </b-container>
     <template #modal-footer>
-      <div class="w-100">
-        <b-row>
-          <b-col cols="12" class="d-flex justify-content-end">
-            <b-button
-              variant="primary"
-              @click="applyFilters(allFilters)"
-              class="filter d-flex align-items-center"
-            >
-              <b-icon icon="filter" aria-hidden="true"></b-icon>Apply
-              Filter</b-button
-            >
+      <div class="w-100 d-flex justify-content-start">
+        <b-row class="w-100">
+          <b-col cols="6">
+          <b-button variant="primary" @click="showManageFiltersModas()" class="filter d-flex align-items-center mr-3">
+            Manage Saved Filters</b-button>
+          </b-col>
+          <b-col cols="6" class="d-flex justify-content-end">
+          <b-button :disabled="totalFilters == 0" variant="primary" @click="saveFilter()" class="filter d-flex align-items-center mr-3">
+            Save Filter</b-button>
+          <b-button variant="primary" @click="applyFilters(allFilters)" class="filter d-flex align-items-center">
+              <b-icon icon="filter" aria-hidden="true"></b-icon>Apply Filter</b-button>
           </b-col>
         </b-row>
       </div>
     </template>
+    <save-filter-modal
+      :showModal="showSaveFilterModal"
+      @cancel="showSaveFilterModal = false"
+      :allFilters="allFilters"
+      type="sellers"
+    ></save-filter-modal>
+      <manage-filter-modal
+      :showModal="showManageFilterModal"
+      @cancel="showManageFilterModal = false"
+      :allFilters="allFilters"
+      type="sellers"
+    ></manage-filter-modal>
   </b-modal>
 </template>
 <script>
 import { mapGetters } from "vuex";
+import SaveFilterModal from "./../filters/saveFilterModal";
+import ManageFilterModal from "./../filters/ManageFilterModal";
 export default {
   name: "FilterSellerModal",
+      components: {
+      SaveFilterModal,
+      ManageFilterModal
+    },
   props: {
     showModal: {
       type: Boolean,
@@ -453,6 +471,8 @@ export default {
   },
   data() {
     return {
+      showSaveFilterModal: false,
+      showManageFilterModal: false,
       allData: {
         Market: [],
         Group: [],
@@ -514,71 +534,11 @@ export default {
   watch: {
    async showModal() {
       if (
-        this.showModal /* && !this.appliedFilters && +localStorage.getItem('seller-filters-count') === 0*/
+        this.showModal
       ) {
         this.seller = this.propsData;
          let response = await this.$store.dispatch("sellerModule/SellerfilterList", {filter: this.allFilters, search: this.search});
          this.MapFilters(response);
-        // this.seller.forEach((el) => {
-        //   if (
-        //     el.seller_error_type &&
-        //     !this.allData.Errors.includes(el.seller_error_type) &&
-        //     !this.allFilters.Errors.includes(el.seller_error_type)) {
-        //     this.allData.Errors.push(el.seller_error_type);
-        //   }
-        //   if (
-        //     el.seller_company_owned &&
-        //     !this.allData.CompanyOwned.includes(el.seller_company_owned) &&
-        //     !this.allFilters.CompanyOwned.includes(el.seller_company_owned)) {
-        //     this.allData.CompanyOwned.push(el.seller_company_owned);
-        //   }
-        // });
-        // this.lists.forEach((el) => {
-        //   if (
-        //     el.list_market &&
-        //     !this.allData.Market.includes(el.list_market) &&
-        //     !this.allFilters.Market.includes(el.list_market)
-        //   ) {
-        //     this.allData.Market.push(el.list_market);
-        //   }
-        //   if (
-        //     el.list_group &&
-        //     !this.allData.Group.includes(el.list_group) &&
-        //     !this.allFilters.Group.includes(el.list_group)
-        //   ) {
-        //     this.allData.Group.push(el.list_group);
-        //   }
-        //   if (
-        //     el.list_type &&
-        //     !this.allData.Type.includes(el.list_type) &&
-        //     !this.allFilters.Type.includes(el.list_type)
-        //   ) {
-        //     this.allData.Type.push(el.list_type);
-        //   }
-        //   if (
-        //     el.list_source &&
-        //     !this.allData.Source.includes(el.list_source) &&
-        //     !this.allFilters.Source.includes(el.list_source)
-        //   ) {
-        //     this.allData.Source.push(el.list_source);
-        //   }
-        //   if (el.run_year && el.run_month) {
-        //     let runYear = el.run_year.split(",");
-        //     let runMonth = el.run_month.split(",");
-        //     for (let i = 0; i < runYear.length; i++) {
-        //       let run_date = runMonth[i] + "/" + runYear[i];
-        //       if (
-        //         !this.allData.RunDate.includes(run_date) &&
-        //         !this.allFilters.RunDate.includes(run_date)
-        //       ) {
-        //         this.allData.RunDate.push(run_date);
-        //       }
-        //     }
-        //   }
-        // });
-        // for (let category in this.allData) {
-        //   this.allData[category].sort((a, b) => a.localeCompare(b));
-        // }
       }
     },
     searchSeller: {
@@ -596,6 +556,12 @@ export default {
     },
   },
   methods: {
+    showManageFiltersModas() {
+      this.showManageFilterModal = true;
+    },
+    saveFilter() {
+      this.showSaveFilterModal = true;
+    },
     tab(currentTub) {
       this.activeTab = currentTub;
     },
@@ -798,21 +764,6 @@ export default {
       this.$emit("cancel");
     },
     async updateDataChanges() {
-      // await this.$store.dispatch("listModule/getAllLists", {
-      //   page: 1,
-      //   perPage: this.perPage,
-      // });
-      // this.lists.forEach((e) => {
-      //   this.incomingList.Market.push(e.list_market);
-      //   this.incomingList.Group.push(e.list_group);
-      //   this.incomingList.Type.push(e.list_type);
-      //   this.incomingList.Source.push(e.list_source);
-      //   let runYear = e.run_year?.split(",");
-      //   let runMonth = e.run_month?.split(",");
-      //   for (let i = 0; i < runYear?.length; i++) {
-      //     this.incomingList.RunDate.push(runMonth[i] + "/" + runYear[i]);
-      //   }
-      // });
       this.sellerData = this.propsData;
       this.sellerData.forEach((el) => {
         this.incomingList.Errors.push(el.seller_error_type);

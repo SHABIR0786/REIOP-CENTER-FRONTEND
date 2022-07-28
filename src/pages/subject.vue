@@ -52,8 +52,6 @@
         <b-row>
             <div class="filters-count" v-for="filter in filtersCountTable" :key="filter.name">
                 {{filter.count}} items {{filter.filter}} 
-                <b-icon @click="RemoveFilter(filter)" class="square-close-icon" icon="x-square"></b-icon>
-
             </div>
         </b-row>
     </div>
@@ -303,9 +301,6 @@ export default {
         await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
     },
     methods: {
-      async  RemoveFilter(filter) {
-        await this.$store.dispatch("subjectModule/deleteFilter", filter.id);
-        },
         applyFilter() {
             let filter = this.filters.find(x => x.id == this.selectedFilter);
             if (filter.configuration) {

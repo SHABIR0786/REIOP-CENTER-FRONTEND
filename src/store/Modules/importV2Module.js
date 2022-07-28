@@ -92,7 +92,7 @@ const actions = {
                 dispatch('loginModule/logout', null, {root: true})
             }
             if (response && response.batch) {
-                commit('SET_ALL_PROCESSES', response.batch)
+                commit('SET_ALL_PROCESSES', response.batch.data)
             }
             return response
         })

@@ -28,6 +28,9 @@
                     <b-button  v-if="totalFilters > 0" variant="outline-primary" @click="clearAllFilters()" class="filter d-flex float-right r-0 align-items-right mr-2">
                     <b-icon icon="x" aria-hidden="true"></b-icon> Clear All </b-button>
                   <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
+                  <b-input-group class="mb-2 save-filter-dropdown">
+                    <b-form-select class="select-template w-100" @change="applyFilter" v-model="selectedFilter" :options="savedFilters"></b-form-select>
+                </b-input-group>
                 </b-col>
                 <b-col cols="6">
                     <b-input-group class="mt-3">
@@ -41,6 +44,11 @@
                     </b-input-group>
                 </b-col>
             </b-row>
+            <b-row>
+            <div class="filters-count" v-for="filter in filtersCountTable" :key="filter.name">
+                {{filter.count}} items {{filter.filter}} 
+            </div>
+        </b-row>
         </div>
         <div class="d-flex align-items-center mb-4">
             <b-form-checkbox  @change="selectAll" v-model='allSelected'></b-form-checkbox>
@@ -157,8 +165,6 @@
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-email-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-email-modal>
         <filter-emails ref="filterEmail" :search="searchEmail" @filter="filter" @finish-process="isFinishedFilterEmails = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-emails>
-
-
     </div>
 </template>
 <script>
@@ -181,6 +187,7 @@ export default {
     data () {
         return {
             isBusy: false,
+            selectedFilter: null,
             showModal: false,
             isFinishedFilterEmails: false,
             totalFilters:0,
@@ -207,6 +214,10 @@ export default {
               RunDate:[],
               SkipSource:[],
             },
+            savedFilters: [{
+              value: null,
+              text: "Save Filters"
+            }],
             sortBy: 'id',
             sortDesc: false,
             isEmailSearched: false,
@@ -217,9 +228,11 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'emailModule/fields',
             items: 'emailModule/emails',
+            filters: 'filterModule/filters',
             total: 'emailModule/total',
             selectedEmail: 'emailModule/email',
             filteredItems: 'emailModule/filteredEmail',
+            filtersCountTable: 'emailModule/filtersCountTable',
             filteredEmailsCount:'emailModule/filteredEmailsCount',
         }),
         rows() { return this.total ? this.total : 1 }
@@ -240,15 +253,29 @@ export default {
         }
       this.filteredOrAllData = this.items;
       this.itemsCount = this.total;
-
+      await this.$store.dispatch("filterModule/getAllFilters", 'emails');
+      await this.$store.dispatch("emailModule/filtersOnTable", 'emails');
     },
     methods: {
+        applyFilter() {
+            let filter = this.filters.find(x => x.id == this.selectedFilter);
+            if (filter.configuration) {
+                let allFilters = JSON.parse(filter.configuration);
+                let total = 0
+                for (let item in allFilters) {
+                    total += allFilters[item].length
+                }
+                this.totalFilters = total;
+                this.filter(allFilters, total);
+            }
+        },
         async clearsearch() {
             this.searchEmail = '';
             await this.search();
             this.isEmailSearched = false;
         },
         async clearAllFilters() {
+            this.selectedFilter = null;
             this.$refs.filterEmail.clearAllFilters();
             this.$refs.filterEmail.filtersAlreadyApplied = null;
             this.filtersName = {
@@ -414,6 +441,23 @@ export default {
       }
     },
     watch: {
+        filters: {
+            handler: function() {
+                this.savedFilters = [{
+                value: null,
+                text: "Save Filters"
+            }];
+                this.filters.forEach(e => {
+                    const filter = {
+                        value: '',
+                        text: '',
+                    }
+                    filter.value = e.id;
+                    filter.text = e.name;
+                    this.savedFilters.push(filter);
+                });
+            }
+        },
         currentPage: {
             handler: async function() {
             this.$store.dispatch('uxModule/setLoading')

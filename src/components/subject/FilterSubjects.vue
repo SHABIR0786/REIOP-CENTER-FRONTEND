@@ -266,18 +266,20 @@
       :showModal="showSaveFilterModal"
       @cancel="showSaveFilterModal = false"
       :allFilters="allFilters"
+      type="subjects"
     ></save-filter-modal>
       <manage-filter-modal
       :showModal="showManageFilterModal"
       @cancel="showManageFilterModal = false"
       :allFilters="allFilters"
+      type="subjects"
     ></manage-filter-modal>
   </b-modal>
 </template>
 <script>
 import {mapGetters} from "vuex";
 import SaveFilterModal from "./../filters/saveFilterModal";
-import ManageFilterModal from "./ManageFilterModal";
+import ManageFilterModal from "./../filters/ManageFilterModal";
 
 export default {
   name: 'FilterSubjects',
@@ -360,7 +362,7 @@ export default {
   },
   watch: {
     async showModal() {
-      if (this.showModal /* && !this.appliedFilters && +localStorage.getItem('subject-filters-count') === 0*/) {
+      if (this.showModal) {
           this.subject = this.propsData;
          let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
          this.MapFilters(response);
@@ -559,21 +561,6 @@ export default {
       this.$emit('cancel')
     },
     async updateDataChanges() {
-      // await this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
-      // await this.$store.dispatch("subjectModule/SubjectfilterList", {page: 1, perPage: this.perPage});
-          // let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
-        //  this.MapFilters(response.lists);
-      // this.lists.forEach(e => {
-      //   this.incomingList.Market.push(e.list_market)
-      //   this.incomingList.Group.push(e.list_group)
-      //   this.incomingList.Type.push(e.list_type)
-      //   this.incomingList.Source.push(e.list_source)
-      //   let runYear = e.run_year?.split(",")
-      //   let runMonth = e.run_month?.split(",")
-      //   for(let i = 0; i < runYear?.length; i++) {
-      //     this.incomingList.RunDate.push(runMonth[i]+'/'+runYear[i])
-      //   }
-      // });
       this.subjectData = this.propsData
       this.subjectData.forEach(el => {
           this.incomingList.Errors.push(el.subject_error_type)

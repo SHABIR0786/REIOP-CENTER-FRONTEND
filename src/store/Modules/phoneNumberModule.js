@@ -23,6 +23,7 @@ const state = {
     ],
     phoneNumbers: [],
     total: 0,
+    filtersCountTable: [],
     phoneNumber: {},
     filteredPhoneNumber: {},
     filteredPhoneNumbersCount: 0,
@@ -38,6 +39,9 @@ const mutations = {
         })
         state.phoneNumbers = JSON.stringify(data);
         state.total = payload.total;
+    },
+    SET_FILTERS_COUNT_TABLE(state, payload) {
+        state.filtersCountTable = payload;
     },
     EDIT_ITEM(state, payload) {
         const PHONE = JSON.parse(state.phoneNumbers)
@@ -94,6 +98,19 @@ const mutations = {
 }
 
 const actions = {
+    async filtersOnTable({commit, dispatch}, type) {
+        return await api.get(`/phones/filtersOnTable?type=${type}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.filtersCount) {
+                commit('SET_FILTERS_COUNT_TABLE', response.filtersCount)
+            }
+
+            return response
+        })
+    },
     async getAllPhoneNumbers({ commit, dispatch }, {page, perPage, search, sortBy, sortDesc}) {
         return await api.get(`/phones?page=${page}&perPage=${perPage}&sortBy=${sortBy}&search=${search}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
@@ -212,6 +229,7 @@ const getters = {
     total: ({total}) => total,
     filteredPhoneNumbersCount: ({filteredPhoneNumbersCount}) => filteredPhoneNumbersCount,
     filterList : ({filterList}) => filterList,
+    filtersCountTable: ({filtersCountTable}) => filtersCountTable,
     phoneNumber: ({phoneNumber}) => phoneNumber,
     filteredPhoneNumber: ({ filteredPhoneNumber }) => {
         if (typeof filteredPhoneNumber === 'string') {

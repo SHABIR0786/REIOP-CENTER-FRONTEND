@@ -26,6 +26,7 @@ const state = {
     goldenAddresses: [],
     total: 0,
     goldenAddress: {},
+    filtersCountTable: [],
     filteredGoldenAddress: {},
     filteredGoldenAddressesCount: 0,
     filterList: [],
@@ -40,6 +41,9 @@ const mutations = {
         })
         state.goldenAddresses = JSON.stringify(data);
         state.total = payload.total;
+    },
+    SET_FILTERS_COUNT_TABLE(state, payload) {
+        state.filtersCountTable = payload;
     },
     EDIT_GOLDEN_ADDRESS(state, payload) {
         const ADDRESS = JSON.parse(state.goldenAddresses)
@@ -97,6 +101,19 @@ const mutations = {
 }
 
 const actions = {
+    async filtersOnTable({commit, dispatch}, type) {
+        return await api.get(`/golden-addresses/filtersOnTable?type=${type}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.filtersCount) {
+                commit('SET_FILTERS_COUNT_TABLE', response.filtersCount)
+            }
+
+            return response
+        })
+    },
     async getAllGoldenAddresses({ commit, dispatch }, {page, perPage, search, sortBy, sortDesc}) {
         return await api.get(`/golden-addresses?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
@@ -211,6 +228,7 @@ const getters = {
     total: ({total}) => total,
     filteredGoldenAddressesCount: ({filteredGoldenAddressesCount}) => filteredGoldenAddressesCount,
     filterList: ({filterList}) => filterList,
+    filtersCountTable: ({filtersCountTable}) => filtersCountTable,
     filteredGoldenAddress: ({ filteredGoldenAddress }) => {
         if (typeof filteredGoldenAddress === 'string') {
             return JSON.parse(filteredGoldenAddress);

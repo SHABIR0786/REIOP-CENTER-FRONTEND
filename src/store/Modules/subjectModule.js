@@ -62,12 +62,6 @@ const mutations = {
     SET_FILTERS_COUNT_TABLE(state, payload) {
         state.filtersCountTable = payload;
     },
-    DELETE_FILTER(state, payload) {
-        const FILTERS = state.filtersCountTable;
-        const findIndex = FILTERS.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && FILTERS.splice(findIndex, 1)
-        state.filtersCountTable = FILTERS;
-    },
     EDIT_SUBJECT(state, payload) {
         const SUBJECTS = JSON.parse(state.subjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
@@ -201,12 +195,6 @@ const actions = {
                 commit('SET_FILTERS_COUNT_TABLE', response.filtersCount)
             }
 
-            return response
-        })
-    },
-    async deleteFilter({ commit }, data) {
-        return await api.deleteAPI(`/filters/${data}`).then((response) => {
-            commit('DELETE_FILTER', data)
             return response
         })
     },

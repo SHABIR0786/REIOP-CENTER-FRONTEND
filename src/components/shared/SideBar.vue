@@ -4,7 +4,10 @@
             <ul class="nav navbar-nav" v-if="isCollapsed">
                 <li v-for="(item, index) in routeItems" :key="index" @click="navigation(item)" :class="$route.name===item.name ? 'active-tab' : ''">
                     <router-link :to="item.path">
-                        <span :title="item.title"><b-icon :icon="item.icon"></b-icon></span>
+                        <span :title="item.title">
+                        <b-icon v-if="!item.meta.isURL" :icon="item.icon"></b-icon>
+                        <div class="pluseimage" v-else><img  :src="require('@/assets/images/'+item.src)" /></div>
+                        </span>
                         <p v-if="!isCollapsed">{{item.title}}</p>
                     </router-link>
                 </li>
@@ -12,7 +15,10 @@
             <ul class="nav navbar-nav" v-else>
              <li v-for="(item, index) in routeItems.filter(route => route.meta.collapse == false)" @click="navigation(item)" :key="index" :class="$route.name===item.name ? 'active-tab' : ''">
                     <router-link :to="item.path">
-                        <span :title="item.title"><b-icon :icon="item.icon"></b-icon></span>
+                        <span :title="item.title">
+                        <b-icon v-if="!item.meta.isURL" :icon="item.icon"></b-icon>
+                        <div class="pluseimage" v-else><img  :src="require('@/assets/images/'+item.src)" /></div>
+                        </span>
                         <p v-if="!isCollapsed">{{item.title}}</p>
                     </router-link>
                 </li>
@@ -91,9 +97,10 @@ export default {
         }
     },
     methods: {
+
         navigation(route) {
-            if(route.path == "/import") {
-                this.$router.push('/import-v2')
+            if(route.path == "/activity") {
+                this.$router.push('/activity-v2')
             }
         },
         toggleSidebar () {
@@ -128,5 +135,16 @@ export default {
     }
     .arrow-collapsed {
         display: none;
+    }
+    .pluseimage img{
+        width: 18px;
+        height: 18px;
+    }
+    .pluseimage {
+        display: inline-block;
+        margin-left: -4px;
+        padding: 2px !important;
+        border-radius: 100%;
+        border: 2px solid #018583;
     }
 </style>
