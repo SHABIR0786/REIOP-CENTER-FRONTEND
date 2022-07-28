@@ -20,6 +20,8 @@ const state = {
     ],
     lists: [],
     total: 0,
+    pageTo:0,
+    pageFrom:0,
     sellers: [],
     tabData: [],
     marketList: [],
@@ -37,13 +39,16 @@ const state = {
 
 const mutations = {
     SET_ALL_LISTS(state, payload) {
-        const data = [...payload]
+        const data = [...payload.data]
         data.forEach(e => {
             e.list_total_subject = e.subjects_unique_count;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })
         state.lists = JSON.stringify(data);
+        state.pageTo = payload.to;
+        state.pageFrom = payload.from;
+        state.total = payload.total;
     },
     EDIT_LIST(state, payload) {
         const LIST = JSON.parse(state.lists)
@@ -218,7 +223,7 @@ const actions = {
             }
 
             if (response && response.lists && response.lists.data) {
-                commit('SET_ALL_LISTS', response.lists.data)
+                commit('SET_ALL_LISTS', response.lists)
             }
 
             return response
@@ -271,7 +276,7 @@ const actions = {
             }
 
             if (response && response.lists && response.lists.data) {
-                commit('SET_ALL_LISTS', response.lists.data)
+                commit('SET_ALL_LISTS', response.lists)
             }
 
             return response
@@ -418,6 +423,8 @@ const getters = {
         return [];
     },
     total: ({total}) => total,
+    pageTo: ({pageTo}) => pageTo,
+    pageFrom: ({pageFrom}) => pageFrom,
     totalCurrentMonth: ({totalCurrentMonth}) => totalCurrentMonth,
     tabData: state => state.tabData,
     marketList: state => state.marketList,

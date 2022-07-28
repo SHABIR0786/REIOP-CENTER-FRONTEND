@@ -189,24 +189,9 @@ export default {
       }
     },
     async created () {
-        this.$store.dispatch('uxModule/setLoading')
-        this.$store.dispatch('importV2Module/getTotal')
-        this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage})
-        await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
-       
-       this.filteredItems = this.items;
-       const Instance = this;
-       this.filteredItems.forEach((item)=>{
-         Instance.getLivePercentage(item);
-       });
-        try {
-            this.$store.dispatch('uxModule/hideLoader')
-        } catch (error) {
-            this.$store.dispatch('uxModule/hideLoader')
-        }
-        if(this.$route.query.batch_id) {
-          this.editItem(this.filteredItems.find(el => el.process_id === this.$route.query.batch_id))
-        }
+      this.$store.dispatch('uxModule/setLoading')
+      await this.getList();
+      await this.showImports();
     },
     computed: {
       ...mapGetters({
@@ -226,9 +211,35 @@ export default {
       },
     },
     methods: {
-      async handlePageClick(pageNumber){
+      async getList(){
+        await this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage});
+      },
+      async showImports(){
         this.$store.dispatch('uxModule/setLoading')
-        await this.$store.dispatch("importV2Module/getAllProcesses", {page: pageNumber, perPage: this.perPage});
+        this.$store.dispatch('importV2Module/getTotal')
+        await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
+       
+       this.filteredItems = this.items;
+       const Instance = this;
+       this.filteredItems.forEach((item)=>{
+         Instance.getLivePercentage(item);
+       });
+        try {
+            this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+        }
+        if(this.$route.query.batch_id) {
+          this.editItem(this.filteredItems.find(el => el.process_id === this.$route.query.batch_id))
+        }
+      },
+      async handlePageClick(){
+        this.$store.dispatch('uxModule/setLoading')
+        
+        this.$refs.table.refresh();
+        await this.showImports()
+        // await this.$store.dispatch("importV2Module/getAllProcesses", {page: pageNumber, perPage: this.perPage});
+        this.$refs.table.refresh();
         this.$store.dispatch('uxModule/hideLoader');
       },
          
@@ -609,7 +620,7 @@ export default {
         if(response) {
            this.$store.dispatch('uxModule/setLoading')
            await this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
-           await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
+           await this.showImports();
            this.$store.dispatch('uxModule/hideLoader');
         }
       },
@@ -642,7 +653,12 @@ export default {
         this.importDetails = {};
       }
       this.$store.dispatch('importV2Module/showImportFirstPage', false)
-    }
+    },
+    perPage: {
+        handler: function () {
+            this.handlePageClick(1)
+        }
+    },
   }
 }
 </script>
