@@ -656,7 +656,8 @@ export default {
     },
     perPage: {
         handler: function () {
-            this.handlePageClick(1)
+            this.currentPage = 1;
+            this.handlePageClick()
         }
     },
   }
