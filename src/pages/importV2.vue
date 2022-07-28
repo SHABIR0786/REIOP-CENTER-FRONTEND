@@ -30,7 +30,7 @@
                     :busy="isBusy"
                     :fields="fields"
                     :items="filteredItems"
-                    :per-page="0"
+                    :per-page="perPage"
                     :sticky-header="true"
             >
                 <template #table-busy>
@@ -95,11 +95,14 @@
                         <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
                     </b-form-group>
                 </b-col>
-                <b-col class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+                <b-col v-if="total > 0" class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing {{pageFrom}} to {{pageTo}} of {{total}} entries</p>
+                </b-col>
+                <b-col v-else class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing 0 entries of 0</p>
                 </b-col>
                 <b-col class="d-flex justify-content-end">
-                    <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
+                    <b-pagination class="mb-0" @input="handlePageClick" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
                 </b-col>
             </b-row>
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
@@ -164,7 +167,7 @@ export default {
         step_3_skip:false,
         step_4: false,
         step_5: false,
-        currentPage: 2,
+        currentPage: 1,
         download_type: '',
         showImportTable: true,
         download_data: {},
@@ -186,10 +189,36 @@ export default {
       }
     },
     async created () {
+      this.$store.dispatch('uxModule/setLoading')
+      await this.getList();
+      await this.showImports();
+    },
+    computed: {
+      ...mapGetters({
+          isCollapsed: 'uxModule/isCollapsed',
+          fields: 'importV2Module/fields',
+          items: 'importV2Module/imports',
+          pageTo: 'importV2Module/pageTo',
+          pageFrom: 'importV2Module/pageFrom',
+          lists: 'listModule/lists',
+          total: 'importV2Module/total',
+          editData: 'importV2Module/editData',
+          showImportFirstPage: 'importV2Module/showImportFirstPage'
+      }),
+      rows() { return this.total ? this.total : 0 },
+      getPreviousStep() {
+        return this.previousStepArr[this.previousStepArr.length - 1];
+      },
+    },
+    methods: {
+      async getList(){
+        await this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage});
+      },
+      async showImports(){
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('importV2Module/getTotal')
-        this.$store.dispatch('listModule/getAllLists', {page: 1, perPage: 50})
-       await this.$store.dispatch("importV2Module/getAllProcesses", {page: 1, perPage: 50})
+        await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
+       
        this.filteredItems = this.items;
        const Instance = this;
        this.filteredItems.forEach((item)=>{
@@ -203,23 +232,17 @@ export default {
         if(this.$route.query.batch_id) {
           this.editItem(this.filteredItems.find(el => el.process_id === this.$route.query.batch_id))
         }
-    },
-    computed: {
-      ...mapGetters({
-          isCollapsed: 'uxModule/isCollapsed',
-          fields: 'importV2Module/fields',
-          items: 'importV2Module/imports',
-          lists: 'listModule/lists',
-          total: 'importV2Module/total',
-          editData: 'importV2Module/editData',
-          showImportFirstPage: 'importV2Module/showImportFirstPage'
-      }),
-      rows() { return this.total ? this.total : 1 },
-      getPreviousStep() {
-        return this.previousStepArr[this.previousStepArr.length - 1];
       },
-    },
-    methods: {
+      async handlePageClick(){
+        this.$store.dispatch('uxModule/setLoading')
+        
+        this.$refs.table.refresh();
+        await this.showImports()
+        // await this.$store.dispatch("importV2Module/getAllProcesses", {page: pageNumber, perPage: this.perPage});
+        this.$refs.table.refresh();
+        this.$store.dispatch('uxModule/hideLoader');
+      },
+         
       cancelEdit(){
         this.showModal = false;
       },
@@ -593,6 +616,7 @@ export default {
         if(response) {
            this.$store.dispatch('uxModule/setLoading')
            await this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+           await this.showImports();
            this.$store.dispatch('uxModule/hideLoader');
         }
       },
@@ -625,7 +649,13 @@ export default {
         this.importDetails = {};
       }
       this.$store.dispatch('importV2Module/showImportFirstPage', false)
-    }
+    },
+    perPage: {
+        handler: function () {
+            this.currentPage = 1;
+            this.handlePageClick()
+        }
+    },
   }
 }
 </script>

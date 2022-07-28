@@ -18,12 +18,14 @@ const state = {
     isSkipValidation: false,
     uploadProgress: {},
     showImportFirstPage: false,
+    pageTo:0,
+    pageFrom:0,
 }
 
 const mutations = {
     SET_ALL_PROCESSES(state, payload) {
         const readyData = [];
-        payload.forEach(e => {
+        payload.data.forEach(e => {
             const process = {}
 
             const date = e.created_at;
@@ -41,6 +43,9 @@ const mutations = {
             process.created_at = new Date(date * 1000).toLocaleString();
             readyData.push(process);
         })
+        state.pageTo = payload.to;
+        state.pageFrom = payload.from;
+        state.total = payload.total;
         state.imports = [...readyData]
     },
     GET_TOTAL(state, payload) {
@@ -176,6 +181,8 @@ const actions = {
 
 const getters = {
     total: ({total}) => total,
+    pageTo: ({pageTo}) => pageTo,
+    pageFrom: ({pageFrom}) => pageFrom,
     fields: ({ fields }) => fields,
     imports: ({ imports }) => imports,
     editData: ({ editData }) => editData,
