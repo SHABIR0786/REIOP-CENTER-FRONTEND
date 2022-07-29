@@ -177,8 +177,6 @@ export default {
             this.showModal = false
         },
         async add(item) {
-            console.log('this.company item',item);
-
             this.$store.dispatch('uxModule/setLoading')
            await this.$store.dispatch('companyModule/addCompany', {
                 ...item

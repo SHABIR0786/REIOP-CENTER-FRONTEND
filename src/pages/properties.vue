@@ -493,7 +493,6 @@ export default {
                       fields.push(...sellerFields);
                     } else if(key.includes("phone_")) {
                         let phoneFields = this.addPhoneFields(key);
-                        console.log(phoneFields);
                         fields.push(...phoneFields);
                     } else if(key.includes("email_")) {
                         let emailFields = this.addEmailFields(key);

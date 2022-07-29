@@ -169,11 +169,6 @@ export default {
         
         }
     },
-    watch: {
-        exportItem() {
-            console.log(this.exportItem);
-        }
-    },
     mounted(){
 
     }

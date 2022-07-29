@@ -69,7 +69,6 @@ export default {
     },
     created() {
         if (this.$route.query.export_id) {
-            console.log(this.$route.query.export_id);
           this.$store.dispatch('exportModule/getSelectedExport', this.$route.query.export_id).then(() => {
             this.exportItem = this.selectedItem
             this.showModal = true

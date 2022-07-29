@@ -92,12 +92,7 @@ export default {
                 return;
             }
                 this.list.previous_id = this.itemTo_Delete.id;
-                this.list.delete_list_type = this.itemTo_Delete.delete_list_type;
-
-
-            console.log('this.list',this.list);
-            
-       
+                this.list.delete_list_type = this.itemTo_Delete.delete_list_type;       
            this. $emit('update_source_delete', this.list);
         },
     },
