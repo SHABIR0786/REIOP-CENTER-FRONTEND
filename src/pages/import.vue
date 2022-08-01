@@ -75,7 +75,7 @@
     </confirm-modal>
       <seller-modal :showModal="showSellerFillModal" @modalResponse="sellerFill">
         <template v-slot:sellerFill>
-          <div v-if="!isSkippedData && sellerMapped ">
+          <div v-if="!isSkippedData && sellerMapped && missingSellersData.length">
             <b-row>With two sellers mapped you must map two mailing addresses. You can use the same mailing address fields
               if your import has one address for both sellers.
             </b-row>
@@ -264,7 +264,6 @@ export default {
       this.missingValidateData = [];
     },
     confirm(item) {
-
       if (this.upload_type === 'combined') {
         this.isCombinedImport = true
       }
@@ -345,7 +344,7 @@ export default {
         if (sellerMapped) {
           this.sellerMapped               = true;
           const sellersNamesAdrCountEqual = mappedSellerAddresses.filter(element => element.length !== sellersCount)
-          if (requiredSellersExist && (sellersCount === 0 || !sellersNamesAdrCountEqual.length)) {
+          if (requiredSellersExist && (sellersCount === 0 || !sellersNamesAdrCountEqual.length) && !this.isCombinedImport) {
             this.showConfirmModal = true;
             return;
           } else if (!missingSellersData.length) {
@@ -359,8 +358,10 @@ export default {
             }
           }
 
-          this.missingSellersData  = missingSellersData;
-          this.showSellerFillModal = true;
+          if(missingSellersData.length){
+            this.missingSellersData  = missingSellersData;
+            this.showSellerFillModal = true;
+          }
           if (this.missingSubjectsData && !this.isCombinedImport) {
             return;
           }
@@ -630,7 +631,7 @@ export default {
         createUpdateMapping: this.createUpdateMapping,
         mapping: this.mapping,
         selectedMappingTemplate: this.updateMappingTemplate,
-        notes: this.importDetails.notes,
+        notes: this.importDetails.notes ? this.importDetails.notes : '',
       })
       if(response.status == 200){
         location.reload()
