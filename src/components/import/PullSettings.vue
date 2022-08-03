@@ -52,6 +52,46 @@
                             </b-input-group>
                         </b-col>
                     </b-row>
+                    <b-row class="mb-2" v-if="list.list_pull_date">
+                      <b-col cols="9" class="mx-auto">
+                      <div class="text-center text-info m-4">
+                          <p>Based off the pull date you have selected the run month and year will be {{dateFormat(list.list_pull_date)}}. Is this the correct run month and year for this data?</p>
+                          <b-col cols="12" class=" mt-1">
+                            <b-button class="choose-btn" :class="{'choose-btn--active': isSameDataDateAsPullDate === true}" variant="primary mr-4" @click="isSameDataDateAsPullDate = true"> Yes </b-button>
+                            or
+                            <b-button class="choose-btn" :class="{'choose-btn--active': isSameDataDateAsPullDate === false}" variant="primary ml-4" @click="isSameDataDateAsPullDate = false"> No  </b-button>
+                          </b-col>
+                         
+                        </div>
+                      
+                       <div fluid v-if="isSameDataDateAsPullDate === false">
+                        <b-input-group prepend="Data Date">
+                        <b-form-input
+                          id="list-pull-data-date"
+                          v-model="list.list_data_date"
+                          type="text"
+                          placeholder="YYYY-MM-DD"
+                          autocomplete="off"
+                        ></b-form-input>
+                        
+                          <b-form-datepicker
+                            v-model="list.list_data_date"
+                            button-only
+                            right
+                            locale="en-US"
+                            aria-controls="list-pull-data-date"
+                            @context="onContext"
+                            :date-disabled-fn="dateDisabled"
+                          ></b-form-datepicker>
+                        </b-input-group>
+                            
+                            <!-- <b-input-group prepend="Data Date">
+                              <b-form-input v-model="list.list_data_date" type="date" :disabled-date="(date) => date >= new Date()"></b-form-input>
+                              <b-form-datepicker   @context="onContext" locale="en"></b-form-datepicker>
+                            </b-input-group> -->
+                       </div>
+                        </b-col>
+                    </b-row>
                 </b-col>
             </b-row>
           <div v-if="importDetails.upload_type === 'appended'">
@@ -137,6 +177,7 @@
     import {mapGetters} from "vuex";
     import AddListSettingsModal from "../list/AddListSettingsModal";
     import ConfirmModal from "@/components/slotModal/SlotModal";
+    import moment from 'moment';
     export default {
       name: "PullSettings",
       components: {
@@ -154,6 +195,7 @@
                 list_skip_source: '',
                 list_skip_date: '',
                 list_pull_date: '',
+                list_data_date: '',
                 list_hash: '',
                 user_id: '',
                 team_id: '',
@@ -167,6 +209,7 @@
             showSettingsModal: false,
             settingSection: '',
             allFieldsMapped: false,
+            isSameDataDateAsPullDate: null,
         }
       },
       mounted() {
@@ -244,12 +287,29 @@
         })
       },
       methods: {
+        dateFormat(date) {
+          return moment(date).format("MM/Y");
+        },
+        dateDisabled(ymd) {
+          // Return `true` if the date should be disabled
+          let ymdm = moment(ymd);
+          return ymdm.isAfter();
+        },
+        onContext(ctx) {
+          // The date formatted in the locale, or the `label-no-date-selected` string
+          this.formatted = ctx.selectedFormatted;
+          // The following will be an empty string until a valid date is entered
+          this.selected = ctx.selectedYMD;
+        },
+     
         checkUpdateList() {
           if (this.list.list_market.length === 0 ||
               this.list.list_group.length === 0 ||
               this.list.list_type.length === 0 ||
               this.list.list_source.length === 0 ||
               this.list.list_pull_date.length === 0 ||
+              this.isSameDataDateAsPullDate === null ||
+              (this.isSameDataDateAsPullDate === false && this.list.list_data_date.length  === 0) ||
               (this.importDetails.upload_type === 'appended' && (this.list.list_skip_date.length === 0 || this.list.list_skip_source.length === 0))
               ){
            this.allFieldsMapped = true;
