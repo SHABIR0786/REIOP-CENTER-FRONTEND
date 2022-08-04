@@ -320,8 +320,9 @@
           }
           if(this.list.list_data_date.length  != 0 && this.isSameDataDateAsPullDate === false && this.list.list_pull_date){
             let list_pull_date = moment(this.list.list_pull_date);
-            let list_data_date = moment(this.list.list_data_date);
-            if(list_pull_date.isSame(list_data_date)){
+            let list_data_date = moment(this.list.list_data_date, 'DD-MM-YYYY');
+            
+            if(list_pull_date.isSame(list_data_date.format('DD/MM/Y'))){
               this.allFieldsMapped = true;
               return;
             }
