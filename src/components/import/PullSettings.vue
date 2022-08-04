@@ -65,21 +65,24 @@
                         </div>
                       
                        <div fluid v-if="isSameDataDateAsPullDate === false">
+                        <p class="text-warning">Please select a different date to generate the run month and year</p>
                         <b-input-group prepend="Data Date">
                         <b-form-input
                           id="list-pull-data-date"
                           v-model="list.list_data_date"
                           type="text"
-                          placeholder="YYYY-MM-DD"
+                          placeholder="dd-mm-yyyy"
                           autocomplete="off"
                         ></b-form-input>
                         
                           <b-form-datepicker
-                            v-model="list.list_data_date"
+                            :date-format-options="{ day: '2-digit' , month: '2-digit', year: 'numeric' }"
+                            v-model="list_data_date"
                             button-only
                             right
                             locale="en-US"
                             aria-controls="list-pull-data-date"
+                            format="DD-MM-YYYY"
                             @context="onContext"
                             :date-disabled-fn="dateDisabled"
                           ></b-form-datepicker>
@@ -200,6 +203,7 @@
                 user_id: '',
                 team_id: '',
             },
+            list_data_date:'',
             market:[],
             group: [],
             type: [],
@@ -296,10 +300,9 @@
           return ymdm.isAfter();
         },
         onContext(ctx) {
-          // The date formatted in the locale, or the `label-no-date-selected` string
-          this.formatted = ctx.selectedFormatted;
-          // The following will be an empty string until a valid date is entered
-          this.selected = ctx.selectedYMD;
+          if(ctx.selectedFormatted && ctx.selectedFormatted != 'No date selected' ){
+            this.list.list_data_date = moment(ctx.selectedFormatted).format('DD-MM-Y');
+          }
         },
      
         checkUpdateList() {
@@ -314,6 +317,18 @@
               ){
            this.allFieldsMapped = true;
            return
+          }
+          if(this.list.list_data_date.length  != 0 && this.isSameDataDateAsPullDate === false && this.list.list_pull_date){
+            let list_pull_date = moment(this.list.list_pull_date);
+            let list_data_date = moment(this.list.list_data_date);
+            if(list_pull_date.isSame(list_data_date)){
+              this.allFieldsMapped = true;
+              return;
+            }
+            if(list_pull_date.format('MM/Y') == list_data_date.format('MM/Y')){
+              this.allFieldsMapped = true;
+              return;
+            }
           }
 
           this.list.user_id = this.user.id;
