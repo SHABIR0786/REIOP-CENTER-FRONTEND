@@ -5,8 +5,8 @@ const state = {
         {key:"delete", label: ""},
         {key:"id", label: "Id", sortable: true},
         {key: "actions", label: "Actions"},
-        {key: "total_sellers", label: "Total Sellers"},
-        {key: "list_stack", label: "List Stack"},
+        {key: "total_sellers", label: "Total Sellers", sortable: true},
+        {key: "list_stack", label: "List Stack", sortable: true},
         {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true},
         {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
         {key: "subject_city", label: "Subject City", sortable: true},
@@ -49,7 +49,6 @@ const mutations = {
             e.list_stack = e.lists.length;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
-            e.total_sellers = e.sellers.length;
             e.lists.forEach(el =>{
                 el.created_at = el.created_at.split('T')[0];
                 el.updated_at = el.updated_at.split('T')[0];
@@ -87,7 +86,6 @@ const mutations = {
         const filteredData = [...payload.data]
         filteredData.forEach(e => {
             e.list_stack = e.lists.length;
-            e.total_sellers = e.sellers.length;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
         })

@@ -139,13 +139,12 @@ export default {
             }
         },
        async saveFilter() {
-        this.$store.dispatch('uxModule/setLoading');
             if (this.saveFilterStep == 3) {
                 if(this.filter.name == "" || this.filter.permission == null) {
                     this.invalidSaveForm = true;
                     return;
                 }
-
+                this.$store.dispatch('uxModule/setLoading');
                 const data = {
                     name: this.filter.name || 'Filter',
                     permission: this.filter.permission,
@@ -174,6 +173,7 @@ export default {
                     this.invalidUpdateForm = true;
                     return;
                 }
+                this.$store.dispatch('uxModule/setLoading');
                 const data = {
                     id: this.selectedFilter,
                     configuration: JSON.stringify(this.allFilters)

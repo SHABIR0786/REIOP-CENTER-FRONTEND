@@ -189,6 +189,9 @@
                 </div>
             </b-col>
             <b-col class="custom-view-col">
+            <b>Choose how you want multiple sellers on the subject to appear in the export:</b>
+            <b-form-select v-model="fieldsType" :options="ExportTypes"></b-form-select>
+            <hr>
                 <draggable v-model="TemplateMap">
                     <transition-group>
                         <div v-for="element in TemplateMap" :key="element.prop" class="custom-view-item">
@@ -209,7 +212,7 @@
                             <b v-b-toggle.new-template-collapse>Create New View Template</b>
                         </b-col>
                         <b-col>
-                            <b-button variant="primary" size="sm" class="mr-2 float-right" @click="$emit('show', customTemplate);">
+                            <b-button variant="primary" size="sm" class="mr-2 float-right" @click="$emit('show', customTemplate, fieldsType);">
                                 show View
                             </b-button>
                         </b-col>
@@ -273,6 +276,9 @@ export default {
     data() {
         return {
             invalidForm: false,
+            ExportTypes: [{text:"Same row - multiple sellers will all be on the same row as the subject", value:"samerows"},
+            {text:"Separate rows - multiple sellers will be on separate rows with repeated subject information",value:"separatedrows"}],
+            fieldsType: "samerows",
             selectedView: null,
             TemplateMap: [],
             template: {
@@ -371,6 +377,7 @@ export default {
                 this.invalidForm = false;
             }
             let template = this.customTemplate;
+            template.fieldsType = this.fieldsType;
             if (this.selectedView) {
                 template.templateId = this.selectedView;
                 template.name = this.customViews.find(x => x.value == this.selectedView).text;

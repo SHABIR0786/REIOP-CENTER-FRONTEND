@@ -46,8 +46,11 @@ const actions = {
         })
     },
     async createTemplate({ commit }, template) {
+        let fields_type = template.fieldsType;
+        delete template.fieldsType;
         const data = {
             name: template.name || 'Template',
+            fields_type: fields_type,
             configuration: JSON.stringify(template)
         }
         return await api.post(`/templates`, {...data}).then((response) => {
@@ -57,9 +60,11 @@ const actions = {
     },
     async editTemplate({ commit }, template) {
         let id = template.templateId;
+        let fields_type = template.fieldsType;
         delete template.templateId;
         const data = {
             name: template.name || 'Template',
+            fields_type: fields_type,
             configuration: JSON.stringify(template)
         }
         return await api.put(`/templates/${id}`, {...data}).then((response) => {

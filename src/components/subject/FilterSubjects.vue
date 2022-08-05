@@ -242,6 +242,62 @@
                 </div>
               </b-card-text>
             </b-tab>
+            <b-tab @click="tab('TotalSellers')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Total Sellers</span>
+                  <span v-if="allFilters.TotalSellers.length > 0" class="filter-count">{{ allFilters.TotalSellers.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.TotalSellers"
+                      :key="result"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="TotalSellers">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('ListStack')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">List Stack</span>
+                  <span v-if="allFilters.ListStack.length > 0" class="filter-count">{{ allFilters.ListStack.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.ListStack"
+                      :key="result"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="ListStack">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
           </b-tabs>
         </b-card>
       </div>
@@ -313,6 +369,8 @@ export default {
         Errors:[],
         Error:[],
         RunDate:[],
+        TotalSellers:['1','2','3','4','5','6','7','8','9','10'],
+        ListStack:['1','2','3','4','5','6','7','8','9','10']
       },
       allFilters: {
         Market:[],
@@ -322,6 +380,8 @@ export default {
         Errors:[],
         Error:[],
         RunDate:[],
+        TotalSellers:[],
+        ListStack:[]
       },
       incomingList: {
         Market:[],
@@ -331,6 +391,8 @@ export default {
         Errors:[],
         Error:[],
         RunDate:[],
+        TotalSellers:['1','2','3','4','5','6','7','8','9','10'],
+        ListStack:['1','2','3','4','5','6','7','8','9','10']
       },
       searchSubject: '',
       activeTab: 'allFilters',
@@ -399,6 +461,8 @@ export default {
             Errors:[],
             Error:[],
             RunDate:[],
+            ListStack:['1','2','3','4','5','6','7','8','9','10'],
+            TotalSellers:['1','2','3','4','5','6','7','8','9','10']
           };
 
       if(response?.subject_error_type?.length > 0) {
@@ -510,6 +574,8 @@ export default {
           Errors:[],
           Error:[],
           RunDate:[],
+          TotalSellers:[],
+          ListStack:[]
         }
       }
       for(let category in this.allData) {
@@ -541,6 +607,8 @@ export default {
           Errors:[],
           Error:[],
           RunDate:[],
+          TotalSellers:[],
+          ListStack:[]
         }
 
         this.allFilters = {
@@ -551,6 +619,8 @@ export default {
           Errors:[],
           Error:[],
           RunDate:[],
+          TotalSellers:[],
+          ListStack:[]
         }
       } else {
         if(this.filtersAlreadyApplied) {

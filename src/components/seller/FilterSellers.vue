@@ -286,7 +286,7 @@
             </b-tab>
 
             <!-- End of Company Owned  -->
-              <b-tab @click="tab('Error')" >
+            <b-tab @click="tab('Error')" >
               <template  v-slot:title>
                 <div class="d-flex justify-content-between align-items-center">
                   <span class="">Errors </span>
@@ -406,6 +406,96 @@
                 </div>
               </b-card-text>
             </b-tab>
+            <!-- Total Subjects Filter  -->
+            <b-tab @click="tab('TotalSubjects')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Total Subjects</span>
+                  <span v-if="allFilters.TotalSubjects.length > 0" class="filter-count">{{ allFilters.TotalSubjects.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.TotalSubjects"
+                      :key="result"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="TotalSubjects">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+
+            <!-- Total Phones Filter  -->
+            <b-tab @click="tab('TotalPhones')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Total Phones</span>
+                  <span v-if="allFilters.TotalPhones.length > 0" class="filter-count">{{ allFilters.TotalPhones.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.TotalPhones"
+                      :key="result"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="TotalPhones">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+
+            <!-- Total Emails Filter  -->
+            <b-tab @click="tab('TotalEmails')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Total Emails</span>
+                  <span v-if="allFilters.TotalEmails.length > 0" class="filter-count">{{ allFilters.TotalEmails.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.TotalEmails"
+                      :key="result"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="TotalEmails">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+
           </b-tabs>
         </b-card>
       </div>
@@ -482,6 +572,9 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned:[],
+        TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
+        TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
+        TotalEmails:['1','2','3','4','5','6','7','8','9','10']
       },
       allFilters: {
         Market: [],
@@ -492,6 +585,9 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned:[],
+        TotalSubjects:[],
+        TotalPhones:[],
+        TotalEmails:[]
       },
       incomingList: {
         Market: [],
@@ -502,6 +598,9 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned:[],
+        TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
+        TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
+        TotalEmails:['1','2','3','4','5','6','7','8','9','10']
       },
       searchSeller: "",
       activeTab: "allFilters",
@@ -575,6 +674,9 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned:[],
+        TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
+        TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
+        TotalEmails:['1','2','3','4','5','6','7','8','9','10']
           };
       if(response?.seller_errors_types?.length > 0) {
         response.seller_errors_types.forEach(el=>{
@@ -713,6 +815,9 @@ export default {
           Error:[],
           RunDate: [],
           CompanyOwned: [],
+          TotalSubjects:[],
+          TotalPhones:[],
+          TotalEmails:[]
         };
       }
       for (let category in this.allData) {
@@ -744,6 +849,9 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned: [],
+        TotalSubjects:[],
+        TotalPhones:[],
+        TotalEmails:[]
 
       };
       this.allFilters = {
@@ -755,6 +863,9 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned: [],
+        TotalSubjects:[],
+        TotalPhones:[],
+        TotalEmails:[]
       };
       } else {
         if(this.filtersAlreadyApplied) {

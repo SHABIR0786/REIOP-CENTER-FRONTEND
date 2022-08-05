@@ -6,9 +6,9 @@ const state = {
         {key:"id", label: "ID", sortable: true},
         {key: "actions", label: "Actions"},
 
-        {key: "seller_total_subjects", label: "Total Subjects"},
-        {key: "seller_total_phones", label: "Total Phones"},
-        {key: "seller_total_emails", label: "Total Emails"},
+        {key: "seller_total_subjects", label: "Total Subjects", sortable: true},
+        {key: "seller_total_phones", label: "Total Phones", sortable: true},
+        {key: "seller_total_emails", label: "Total Emails", sortable: true},
 
         {key: "seller_first_name", label: "First Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
@@ -46,9 +46,6 @@ const mutations = {
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
-            e.seller_total_phones = e.phones.length;
-            e.seller_total_emails = e.emails.length;
-            e.seller_total_subjects = e.subjects.length;
         })
         state.sellers = JSON.stringify(data);
         state.total = payload.total;

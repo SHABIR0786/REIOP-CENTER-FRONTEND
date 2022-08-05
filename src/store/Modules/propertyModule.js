@@ -23,7 +23,8 @@ const state = {
     fields: [
         ...defaultFields
     ],
-    subjects: [],
+    sameRowSubjects: [],
+    seperatedRowSubjects: [],
     total: 0,
     maxSellers: 0,
     maxPhones: 0,
@@ -74,7 +75,7 @@ const mutations = {
         state.maxPhones = 0;
         state.maxEmails = 0;
         state.maxGoldenAddresses = 0;
-        data.forEach(e => {
+        data.forEach(e => { 
             if(e.lists) {
                 let list_market = [];
                 let list_group = [];
@@ -156,22 +157,121 @@ const mutations = {
             }
             
         })
+        state.sameRowSubjects = JSON.stringify(data);
+        
+        // Mapping date for seperate row subjects.
+        const seperatedRowSubjects = [...payload.data];
+        seperatedRowSubjects.forEach(e=> {
+        if(e.sellers) {
+            e.sellers.forEach((seller) => {
+                let seperatedRowSubject = {...e};
+                if(e.lists) {
+                    let list_market = [];
+                    let list_group = [];
+                    let list_type = [];
+                    let list_source = [];
+    
+                    e.lists.forEach(list => {
+                        if(list.list_market) list_market.push(list.list_market);
+                        if(list.list_group) list_group.push(list.list_group);
+                        if(list.list_type) list_type.push(list.list_type);
+                        if(list.list_source) list_source.push(list.list_source);
+                    });
+    
+                    seperatedRowSubject.list_market = list_market.join(', ');
+                    seperatedRowSubject.list_group = list_group.join(', ');
+                    seperatedRowSubject.list_type = list_type.join(', ');
+                    seperatedRowSubject.list_source = list_source.join(', ');
+                }
+                seperatedRowSubject['seller_full_name'] = seller.seller_full_name;
+                seperatedRowSubject['seller_first_name'] = seller.seller_first_name;
+                seperatedRowSubject['seller_last_name'] = seller.seller_last_name;
+                seperatedRowSubject['seller_middle_name'] = seller.seller_middle_name;
+                seperatedRowSubject['seller_mailing_address'] = seller.seller_mailing_address;
+                seperatedRowSubject['seller_mailing_state'] = seller.seller_mailing_state;
+                seperatedRowSubject['seller_mailing_city'] = seller.seller_mailing_city;
+                seperatedRowSubject['seller_mailing_zip'] = seller.seller_mailing_zip;
 
-        state.subjects = JSON.stringify(data);
+                // Seller Phones
+                seller.phones.forEach((phone) => {
+                    seperatedRowSubject['seller_phone_number'] = phone.phone_number;
+                    seperatedRowSubject['seller_phone_type'] = phone.phone_type;
+                    seperatedRowSubject['seller_phone_validity'] = phone.phone_validity;
+                    seperatedRowSubject['seller_phone_skip_source'] = phone.phone_skip_source;                    
+                    });
+                // Seller Emails
+                seller.emails.forEach((email) => {
+                    seperatedRowSubject['seller_email_address'] = email.email_address;
+                    seperatedRowSubject['seller_email_validity'] = email.email_validity;
+                    seperatedRowSubject['seller_email_skip_source'] = email.email_skip_source;
+                });
+                // Seller Golden Addresses
+                seller.golden_addresses.forEach((golden) => {
+                    seperatedRowSubject['seller_golden_address_address'] = golden.golden_address_address;
+                    seperatedRowSubject['seller_golden_address_city'] = golden.golden_address_city;
+                    seperatedRowSubject['seller_golden_address_state'] = golden.golden_address_state;
+                    seperatedRowSubject['seller_golden_address_zip'] = golden.golden_address_zip;
+                });
+                state.seperatedRowSubjects.push(seperatedRowSubject);
+            })
+        } else {
+            let seperatedRowSubject = {...e};
+            if(e.lists) {
+                let list_market = [];
+                let list_group = [];
+                let list_type = [];
+                let list_source = [];
+
+                e.lists.forEach(list => {
+                    if(list.list_market) list_market.push(list.list_market);
+                    if(list.list_group) list_group.push(list.list_group);
+                    if(list.list_type) list_type.push(list.list_type);
+                    if(list.list_source) list_source.push(list.list_source);
+                });
+
+                seperatedRowSubject.list_market = list_market.join(', ');
+                seperatedRowSubject.list_group = list_group.join(', ');
+                seperatedRowSubject.list_type = list_type.join(', ');
+                seperatedRowSubject.list_source = list_source.join(', ');
+            }
+            state.seperatedRowSubjects.push(seperatedRowSubject);
+        }
+        });
         state.total = payload.total;
     },
     ADD_EXPORT(state, payload) {
         console.log(state, payload);
     },
     EDIT_SUBJECT(state, payload) {
-        const SUBJECTS = JSON.parse(state.subjects)
+        const SUBJECTS = JSON.parse(state.sameRowSubjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1, { ...payload })
+        // Remove and add subjects to seperatedRowSubjects
+        const SEPERATED_ROW_SUBJECTS = state.seperatedRowSubjects;
+        let sepIndex = true;
+        while(sepIndex) {
+            const seperatedRowSubjectfindIndex = SEPERATED_ROW_SUBJECTS.findIndex(({ id }) => id === payload.id);
+            seperatedRowSubjectfindIndex !== -1 && SEPERATED_ROW_SUBJECTS.splice(seperatedRowSubjectfindIndex, 1, { ...payload })
+            if(seperatedRowSubjectfindIndex == -1) {
+                sepIndex = false; 
+            }
+        }
     },
     DELETE_SUBJECT(state, payload) {
-        const SUBJECTS = JSON.parse(state.subjects)
+        const SUBJECTS = JSON.parse(state.sameRowSubjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1)
+
+        // Remove and add subjects to seperatedRowSubjects
+        const SEPERATED_ROW_SUBJECTS = state.seperatedRowSubjects;
+        let sepIndex = true;
+        while(sepIndex) {
+            const seperatedRowSubjectfindIndex = SEPERATED_ROW_SUBJECTS.findIndex(({ id }) => id === payload.id);
+            seperatedRowSubjectfindIndex !== -1 && SEPERATED_ROW_SUBJECTS.splice(seperatedRowSubjectfindIndex, 1)
+            if(seperatedRowSubjectfindIndex == -1) {
+                sepIndex = false; 
+            }
+        }
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -180,17 +280,17 @@ const mutations = {
         state.totals = payload;
     },
     ADD_SUBJECT(state, payload) {
-        const SUBJECTS = JSON.parse(state.subjects)
+        const SUBJECTS = JSON.parse(state.sameRowSubjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1, { ...payload })
     },
     DELETE_MULTIPLE_SUBJECTS(state, payload) {
-        const SUBJECTS = JSON.parse(state.subjects)
+        const SUBJECTS = JSON.parse(state.sameRowSubjects)
         const findIndex = SUBJECTS.findIndex(({ id }) => id === payload)
         findIndex !== -1 && SUBJECTS.splice(findIndex, 1)
     },
     VUEX_STORE(state) {
-        state.subjects = [];
+        state.sameRowSubjects = [];
         state.total = 0;
         state.totals = {};
         state.maxSellers = 0;
@@ -322,13 +422,14 @@ const actions = {
 
 const getters = {
     fields: ({ fields }) => fields,
-    subjects: ({ subjects }) => {
-        if (typeof subjects === 'string') {
-            return JSON.parse(subjects);
+    sameRowSubjects: ({ sameRowSubjects }) => {
+        if (typeof sameRowSubjects === 'string') {
+            return JSON.parse(sameRowSubjects);
         }
         
         return [];
     },
+    seperatedRowSubjects: ({ seperatedRowSubjects}) => seperatedRowSubjects,
     total: ({total}) => total,
     totals: ({totals}) => totals,
     maxSellers: ({maxSellers}) => maxSellers,

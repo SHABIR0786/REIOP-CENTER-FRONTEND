@@ -122,24 +122,12 @@
                   </b-col>
                   <b-col>
                   <b-row>
-                      <!-- <b-col cols="12">
-                        <b-input-group prepend="Is Processing" class="mb-2">
-                          <b-form-input readonly v-model="editData.pending_jobs"></b-form-input>
-                        </b-input-group>
-                      </b-col> -->
                       <b-col cols="12">
                         <b-input-group  class="mb-2 toolip-rs">
                         <b-input-group-text v-b-tooltip.hover.html :title="'Still Processing '+editData.pending_jobs+' Segments <br> Processed '+editData.is_processed+ ' Segments'" class="w-100">Percentage |  {{progresspercentage+'%'}}</b-input-group-text>
                         </b-input-group>
                       </b-col>
                     </b-row>
-                    <!-- <b-row>
-                      <b-col cols="12">
-                        <b-input-group prepend="Is Processed" class="mb-2">
-                          <b-form-input readonly v-model="editData.is_processed"></b-form-input>
-                        </b-input-group>
-                      </b-col>
-                    </b-row> -->
                     <b-row>
                         <b-col cols="12">
                             <b-input-group prepend="File Name" class="mb-2">
@@ -172,7 +160,6 @@
                       <b-col cols="12">
                         <b-input-group  prepend="Market" class="mb-2">
                           <b-form-select v-model="editData.list_market" :disabled="isReadOnly" :options="list_market_array" required></b-form-select>
-
                         </b-input-group>
                       </b-col>
                     </b-row>
@@ -184,16 +171,6 @@
                         </b-input-group>
                       </b-col>
                     </b-row>
-                    <!-- <b-row>
-                    <b-col cols="12">
-                        <b-input-group prepend="Select" id="id" name="id"  class="mb-2">
-                          <b-form-select v-model="list.id" :options="list_items" :state="validateState('id')" required></b-form-select>
-                            <b-form-invalid-feedback id="id" class="text-center">{{ modalTitle }} Field is Required.</b-form-invalid-feedback>
-
-                        </b-input-group>
-                    </b-col>
-                    
-                </b-row> -->
                     <b-row>
                       <b-col cols="12">
                         <b-input-group  prepend="Type" class="mb-2">
@@ -376,7 +353,7 @@ export default {
           allListItems:[],
         }
     },
-
+    
     watch: {
         showModal() {
             this.showModalCopy = this.showModal;
@@ -387,8 +364,8 @@ export default {
                 this.list_type_array = [];
                 this.allListItems = [];
                 this.allListItems = this.lists;
-          
                 this.allListItems.map((list) => {
+                  console.log(list.list_source);
                   this.list_market_array.push(list.list_market);
                   this.list_source_array.push(list.list_source);
                   this.list_skip_source_array.push(list.list_skip_source);
@@ -415,7 +392,6 @@ export default {
         deep: true,
         handler() {
           this.editData = {...this.data}
-
           if(!this.editData.list_skip_source){
             this.editData.list_skip_source = 'N/A';
           }
@@ -425,7 +401,6 @@ export default {
           if(this.editData.notes == "undefined"){
             this.editData.notes = '';
           }
-
           let obj = JSON.parse(this.editData.mapped_fields);
           Object.keys(obj).forEach((key) => {
             if (obj[key] === '') {
@@ -460,5 +435,4 @@ export default {
       max-height: 62vh;
       overflow-y: auto;
     }
-
 </style>

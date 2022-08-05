@@ -16,6 +16,10 @@ const state = {
     items: [],
     totalItems: 0,
     selectedItem: {},
+    exportTypes: [
+    "To Market",
+    "To SkipTrace",
+    "Miscellaneous Reason" ]
 }
 
 const mutations = {
@@ -24,6 +28,7 @@ const mutations = {
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
+            e.export_type = state.exportTypes[e.export_type];
         })
         state.items = data;
 

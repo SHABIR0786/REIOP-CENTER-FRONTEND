@@ -347,6 +347,9 @@ export default {
     custom_view: {
       type: [Array, Object]
     },
+    fields_type: {
+      type: String
+    },
     template_id: {
       type: Number
     },
@@ -486,6 +489,7 @@ computed: {
         this.savedFilters.push(filter);
       });
       await this.$store.dispatch("marketingChannelModule/getAllMarketChannels", {page: 1, perPage: 20});
+      console.log(this.MarketingChannels);
         this.MarketingChannels.forEach(e => {
         const marketingChannel = {
               value: '',
@@ -516,7 +520,7 @@ computed: {
     totals:function(){
       this.totalSubjects = this.totals.subjectsCount;
       this.SelectExportAmount = [];
-      let exportV_3 = Math.round(this.totalSubjects/5);//Round the number {(Total in view / 5)}
+      let exportV_3 = Math.round(this.totalSubjects/5);  //Round the number {(Total in view / 5)}
           exportV_3 = exportV_3 > 0 ? exportV_3 : 1;
 
       let exportV_4 = Math.round((this.totalSubjects/5)+((this.totalSubjects/5)*2)); //Round the number  {(Total in view / 5) + ((Total in view / 5) * 2)}

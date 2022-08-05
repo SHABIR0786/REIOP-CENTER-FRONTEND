@@ -10,7 +10,7 @@
             <div>{{totals.goldenAddressesCount}} Golden Addresses</div>
         </div>
         </div>
-        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties"  :sortBy="sortBy" :sortDesc="sortDesc" :totals="totals"></slide-pop-up-filter>
+        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties"  :sortBy="sortBy" :sortDesc="sortDesc" :totals="totals" :fields_type="fieldsType"></slide-pop-up-filter>
         <hr>
         <div>
             <b-row class="text-end mb-3">
@@ -50,8 +50,8 @@
             @sort-changed="sortingChanged"
             hover
             :busy="isBusy"
-            :fields="propertyFields"
-            :items="items"
+            :fields="propertyColumns"
+            :items="properties"
             responsive
             :per-page="0"
             :current-page="currentPage"
@@ -219,7 +219,9 @@ export default {
                 {key:"list_source", label: "Source", sortable: true},
 
                 //Seller
+                {key: "seller_full_name", label: "Full Name", sortable: true},
                 {key: "seller_first_name", label: "First Name", sortable: true},
+                {key: "seller_middle_name", label: "Middle Name", sortable: true},
                 {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
                 {key: "seller_mailing_address", label: "Mailing Address"},
                 {key: "seller_mailing_state", label: "Mailing State"},
@@ -227,6 +229,7 @@ export default {
                 {key: "seller_mailing_zip", label: "Mailing Zip"},
             ],
             isBusy: false,
+            fieldsType : null,
             showModal: false,
             perPage: 20,
             currentPage: 1,
@@ -263,7 +266,8 @@ export default {
         ...mapGetters({
           isCollapsed: 'uxModule/isCollapsed',
           fields: 'propertyModule/fields',
-          items: 'propertyModule/subjects',
+          items: 'propertyModule/sameRowSubjects',
+          seperatedRowSubjects: 'propertyModule/seperatedRowSubjects',
           total: 'propertyModule/total',
           maxSellers: 'propertyModule/maxSellers',
           maxPhones: 'propertyModule/maxPhones',
@@ -273,6 +277,22 @@ export default {
           templates: 'templatesModule/templates',
           template: 'templatesModule/template'
         }),
+         properties () {
+            if(this.fieldsType == "samerows" || this.fieldsType == null) {
+                return this.items;
+            } else {
+                return this.seperatedRowSubjects;
+            }
+         },
+         propertyColumns() {
+            if(this.fieldsType == null) {
+                return this.fields;
+            } else if(this.fieldsType == "samerows" || this.fieldsType == "separatedrows") {
+                return this.propertyFields;
+            } else {
+                return this.fields;
+            }
+         },
          filtersCount(){
             let total = 0
             for (let item in this.filtersName) {
@@ -286,7 +306,7 @@ export default {
                 customViewTemplate.customView = true;
                 return customViewTemplate;
             } else {
-                return this.propertyFields;
+                return this.propertyColumns;
             }
         },
         rows() { return this.total ? this.total : 1 }
@@ -480,12 +500,16 @@ export default {
             }
                 return fields;
         },
-        showCustomView(template) {
+        showCustomView(template, fieldsType = null) {
             if(template) {
                 this.customViewTemplate = template;
             }
+            if(fieldsType) {
+                this.fieldsType = fieldsType;
+            }
             this.showCustomModalView = false;
             let fields = [];
+            if(this.fieldsType == null || this.fieldsType == "samerows") {
             for(let key in this.customViewTemplate) {
                 if(key !== 'name' && this.customViewTemplate[key] !== false) {
                     if(key.includes("seller_")){
@@ -506,8 +530,18 @@ export default {
                     }
                 }
             }
-            fields.unshift({key:"delete", label: ""},{key: "actions", label: "Actions"});
-            this.propertyFields = [...fields];
+                fields.unshift({key:"delete", label: ""},{key: "actions", label: "Actions"});
+                this.propertyFields = [...fields];
+            } else {
+                fields.unshift({key:"delete", label: ""},{key: "actions", label: "Actions"});
+                for(let key in this.customViewTemplate) {
+                    if(key !== 'name' && this.customViewTemplate[key] !== false) {
+                        let field = this.allFields.find(o => o['key'] === key);
+                        fields.push(field);
+                    }
+                }
+                this.propertyFields = [...fields];
+            }
         },
         save(item) {
             this.$store.dispatch('uxModule/setLoading');
@@ -581,7 +615,7 @@ export default {
              await this.$store.dispatch('templatesModule/editTemplate', templateDuplication);
              await this.$store.dispatch("templatesModule/getAllTemplates")
           }
-          this.showCustomView(template);
+          this.showCustomView(template, template.fields_type);
 
         },
         triggerFilter(filter) {
