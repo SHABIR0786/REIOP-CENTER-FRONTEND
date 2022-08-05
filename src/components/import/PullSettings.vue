@@ -170,7 +170,15 @@
         </b-row>
         <AddListSettingsModal :showModal="showSettingsModal" :propsData="settingSection" @cancel="showSettingsModal=false" @save="add"></AddListSettingsModal>
         <confirm-modal :showModal="allFieldsMapped" @modalResponse="allFieldsMapped=false">
-          <template v-slot:requiredMappingFields> <h4 class="text-center">All these fields are required</h4></template>
+          <template v-slot:requiredMappingFields> 
+            <h4 class="text-center">All these fields are required</h4>
+            <div v-if="errors.length > 0">
+              <ul >
+                <li class="text-danger" v-for="(error, index) in errors" :key="index">{{error}}</li>
+              </ul>
+
+            </div>
+          </template>
         </confirm-modal>
     </div>
 </template>
@@ -214,6 +222,7 @@
             settingSection: '',
             allFieldsMapped: false,
             isSameDataDateAsPullDate: null,
+            errors: [],
         }
       },
       mounted() {
@@ -306,6 +315,7 @@
         },
      
         checkUpdateList() {
+          this.errors = [];
           if (this.list.list_market.length === 0 ||
               this.list.list_group.length === 0 ||
               this.list.list_type.length === 0 ||
@@ -324,10 +334,12 @@
             
             if(list_pull_date.isSame(list_data_date.format('DD/MM/Y'))){
               this.allFieldsMapped = true;
+              this.errors.push('The pull date and run date should not be same');
               return;
             }
             if(list_pull_date.format('MM/Y') == list_data_date.format('MM/Y')){
               this.allFieldsMapped = true;
+              this.errors.push('The pull date month year and run date month year should not be same');
               return;
             }
           }
