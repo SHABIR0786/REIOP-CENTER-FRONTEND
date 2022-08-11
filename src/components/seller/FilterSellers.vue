@@ -406,6 +406,99 @@
                 </div>
               </b-card-text>
             </b-tab>
+
+            <!-- Attempted Skip Trace Sources  -->
+            <b-tab @click="tab('AttemptedSkipTraceSources')">
+              <template v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Attempted Skip Trace Sources</span>
+                  <span
+                    v-if="allFilters.AttemptedSkipTraceSources.length > 0"
+                    class="filter-count"
+                    >{{ allFilters.AttemptedSkipTraceSources.length }}</span
+                  >
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                    class="btn btn-light filter align-items-center m-2"
+                    v-for="(result, index) in allFilters.AttemptedSkipTraceSources"
+                    :key="result.userId"
+                    @click="resetFilter(result, index)"
+                    >{{ result }} <b-icon icon="x" aria-hidden="true"></b-icon
+                  ></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input
+                      v-model="searchSeller"
+                      placeholder="Search"
+                    ></b-form-input>
+                  </b-row>
+                  <b-card no-body header="Attempted Skip Trace Sources">
+                    <b-list-group flush>
+                      <b-list-group-item
+                        class="
+                          flex-column
+                          align-items-start
+                          list-group-item-light
+                        "
+                        v-for="(result, index) in filteredOrAllData"
+                        :key="result.userId"
+                        @click="addFilter(result, index)"
+                        >{{ result }}</b-list-group-item
+                      >
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+
+
+            <!-- Has Skip Trace Data  -->
+            <b-tab @click="tab('HasSkipTraceData')">
+              <template v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Has Skip Trace Data</span>
+                  <span
+                    v-if="allFilters.HasSkipTraceData.length > 0"
+                    class="filter-count"
+                    >{{ allFilters.HasSkipTraceData.length }}</span
+                  >
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                    class="btn btn-light filter align-items-center m-2"
+                    v-for="(result, index) in allFilters.HasSkipTraceData"
+                    :key="result.userId"
+                    @click="resetFilter(result, index)"
+                    >{{ result }} <b-icon icon="x" aria-hidden="true"></b-icon
+                  ></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input
+                      v-model="searchSeller"
+                      placeholder="Search"
+                    ></b-form-input>
+                  </b-row>
+                  <b-card no-body header="Has Skip Trace Data">
+                    <b-list-group flush>
+                      <b-list-group-item
+                        class="
+                          flex-column
+                          align-items-start
+                          list-group-item-light
+                        "
+                        v-for="(result, index) in filteredOrAllData"
+                        :key="result.userId"
+                        @click="addFilter(result, index)"
+                        >{{ result }}</b-list-group-item
+                      >
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
             <!-- Total Subjects Filter  -->
             <b-tab @click="tab('TotalSubjects')" >
               <template  v-slot:title>
@@ -574,7 +667,9 @@ export default {
         CompanyOwned:[],
         TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
         TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
-        TotalEmails:['1','2','3','4','5','6','7','8','9','10']
+        TotalEmails:['1','2','3','4','5','6','7','8','9','10'],
+        AttemptedSkipTraceSources:[],
+        HasSkipTraceData:["Yes","No"]
       },
       allFilters: {
         Market: [],
@@ -587,7 +682,9 @@ export default {
         CompanyOwned:[],
         TotalSubjects:[],
         TotalPhones:[],
-        TotalEmails:[]
+        TotalEmails:[],
+        AttemptedSkipTraceSources:[],
+        HasSkipTraceData:[]
       },
       incomingList: {
         Market: [],
@@ -600,7 +697,10 @@ export default {
         CompanyOwned:[],
         TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
         TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
-        TotalEmails:['1','2','3','4','5','6','7','8','9','10']
+        TotalEmails:['1','2','3','4','5','6','7','8','9','10'],
+        AttemptedSkipTraceSources:[],
+        HasSkipTraceData:["Yes","No"]
+     
       },
       searchSeller: "",
       activeTab: "allFilters",
@@ -676,8 +776,11 @@ export default {
         CompanyOwned:[],
         TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
         TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
-        TotalEmails:['1','2','3','4','5','6','7','8','9','10']
-          };
+        TotalEmails:['1','2','3','4','5','6','7','8','9','10'],
+        AttemptedSkipTraceSources:[],
+        HasSkipTraceData:["Yes","No"]
+      };
+
       if(response?.seller_errors_types?.length > 0) {
         response.seller_errors_types.forEach(el=>{
           if (el && !this.allData.Errors.includes(el)  && !this.allFilters.Errors.includes(el)) {
@@ -693,6 +796,17 @@ export default {
         }
         });
       }
+
+        if (response?.attempted_skip_trace_sources) {
+              response.attempted_skip_trace_sources.forEach(skipTraceSources => {
+              skipTraceSources = JSON.parse(skipTraceSources);
+              skipTraceSources.forEach(skipTraceSource => {
+                if(!this.allData.AttemptedSkipTraceSources.includes(skipTraceSource) && !this.allFilters.AttemptedSkipTraceSources.includes(skipTraceSource)) {
+                    this.allData.AttemptedSkipTraceSources.push(skipTraceSource);
+                }
+              });
+            });
+        }
 
       if(response?.seller_company_owned?.length > 0) {
        response.seller_company_owned.forEach(el=>{
@@ -718,7 +832,7 @@ export default {
             if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
               this.allData.Source.push(el.list_source)
             }
-            if (el.list_run_year &&  el.list_run_month){
+            if (el.list_run_year &&  el.list_run_month) {
               let runYear = el.list_run_year.split(",")
               let runMonth = el.list_run_month.split(",")
               for(let i = 0; i < runYear.length; i++){
@@ -743,6 +857,11 @@ export default {
           });
       }
         this.allData.Error.shift();
+        this.allData.TotalSubjects.shift();
+        this.allData.TotalPhones.shift();
+        this.allData.TotalEmails.shift();
+        this.allData.HasSkipTraceData.shift();
+        this.allData.AttemptedSkipTraceSources.shift();
     },
 
   async  addFilter(item, index) {
@@ -817,7 +936,9 @@ export default {
           CompanyOwned: [],
           TotalSubjects:[],
           TotalPhones:[],
-          TotalEmails:[]
+          TotalEmails:[],
+          AttemptedSkipTraceSources:[],
+          HasSkipTraceData:[]
         };
       }
       for (let category in this.allData) {
@@ -851,8 +972,9 @@ export default {
         CompanyOwned: [],
         TotalSubjects:[],
         TotalPhones:[],
-        TotalEmails:[]
-
+        TotalEmails:[],
+        AttemptedSkipTraceSources:[],
+        HasSkipTraceData:[]
       };
       this.allFilters = {
         Market: [],
@@ -865,7 +987,9 @@ export default {
         CompanyOwned: [],
         TotalSubjects:[],
         TotalPhones:[],
-        TotalEmails:[]
+        TotalEmails:[],
+        AttemptedSkipTraceSources:[],
+        HasSkipTraceData:[]
       };
       } else {
         if(this.filtersAlreadyApplied) {

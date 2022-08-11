@@ -10,7 +10,6 @@ const state = {
         {key:"list_group", label: "Group", sortable: true},
         {key:"list_type", label: "Type", sortable: true},
         {key:"list_source", label: "Source", sortable: true},
-
         // Custom fields
         {key:"list_pull_date", label: "Last Pull Date", sortable: true},
         {key:"created_at", label: "Upload Date", sortable: true},
@@ -35,6 +34,7 @@ const state = {
     sameSource:null,
     allSkipSourceList:[],
     allSourceList:[],
+    importPullList:[],
 }
 
 const mutations = {
@@ -50,6 +50,11 @@ const mutations = {
         state.pageFrom = payload.from;
         state.total = payload.total;
     },
+    SET_IMPORT_PULL_LIST(state, payload) {
+        const data = [...payload.data];
+        state.importPullList = JSON.stringify(data);
+    },
+
     EDIT_LIST(state, payload) {
         const LIST = JSON.parse(state.lists)
         const findIndex = LIST.findIndex(({ id }) => id === payload.id)
@@ -191,6 +196,7 @@ const mutations = {
         state.total = 0;
         state.sameDate = null;
         state.sameSource = null;
+        state.importPullList = [];
     },
 }
 
@@ -216,6 +222,19 @@ const actions = {
     saveSkipDateChoose({ commit }, payload) {
         commit('SET_SKIP_DATE_CHOOSE', payload)
     },
+    async getImportPullLists({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/getImportPullLists?page=${page}&perPage=${perPage}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.lists && response.lists.data) {
+                commit('SET_IMPORT_PULL_LIST', response.lists)
+            }
+            return response;
+        })
+    },
+    
     async getAllLists({ commit, dispatch }, {page, perPage}) {
         return await api.get(`/lists?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
@@ -365,7 +384,7 @@ const actions = {
         return await api.post(`/lists/MergeListSource`, {...data}).then((response) => {
             // if(merge_list_type == 'list_source'){
             //     commit('DELETE_LIST_SOURCE', data.previous_id)
-            // }else if(merge_list_type == 'list_skip_source'){
+            // }else if(merge_list_type == 'list_skip_source') {
             //     commit('DELETE_LIST_SKIP_SOURCE', data.previous_id)
             // }
             commit('just_test', data)
@@ -416,6 +435,12 @@ const getters = {
     lists: ({ lists }) => {
         if (typeof lists === 'string') {
             return JSON.parse(lists);
+        }
+        return [];
+    },
+    importPullList: ({ importPullList }) => {
+        if (typeof importPullList === 'string') {
+            return JSON.parse(importPullList);
         }
         return [];
     },

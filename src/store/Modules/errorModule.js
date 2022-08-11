@@ -183,6 +183,33 @@ const actions = {
             return response
         })
     },
+    async filterErrors({ commit, dispatch }, data) {
+        return await api.post('/errors/filter',{...data}).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if(response && response.subjects) {
+                commit('SET_ALL_SUBJECTS', response.subjects)
+            }
+
+            if(response && response.emails) {
+                commit('SET_ALL_EMAILS', response.emails)
+            }
+
+            if(response && response.phones) {
+                commit('SET_ALL_PHONES', response.phones)
+            }
+
+            if(response && response.sellers) {
+                commit('SET_ALL_SELLERS', response.sellers)
+            }
+            if(response && response.goldens) {
+                commit('SET_ALL_GOLDENS', response.goldens)
+            }
+            return response
+        })
+    },
 }
 
 const getters = {

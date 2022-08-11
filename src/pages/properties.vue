@@ -146,8 +146,7 @@
                         label-cols-md="4"
                         label-cols-lg="3"
                         label-size="xs"
-                        class="mb-0"
-                >
+                        class="mb-0">
                     <b-form-select
                             id="show-select"
                             v-model="perPage"
@@ -158,7 +157,7 @@
                 </b-form-group>
             </b-col>
             <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{total}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}}  to {{perPage * currentPage}} of {{total}} entries</p>
             </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
@@ -203,7 +202,7 @@ export default {
                 {key: "subject_city", label: "Subject City", sortable: true, visible: false},
                 {key: "subject_state", label: "Subject State", sortable: true, visible: false},
                 {key: "subject_zip", label: "Subject Zip", sortable: true},
-                {key: "subject_country", label: "Subject County", sortable: true},
+                {key: "subject_county", label: "Subject County", sortable: true},
                 // {key: "subject_market", label: "Market", sortable: true},
                 {key: "subject_type", label: "Subject Type", sortable: true},
                 {key: "subject_age", label: "Subject Age", sortable: true},
@@ -227,6 +226,20 @@ export default {
                 {key: "seller_mailing_state", label: "Mailing State"},
                 {key: "seller_mailing_city", label: "Mailing City"},
                 {key: "seller_mailing_zip", label: "Mailing Zip"},
+                // Phone Fields 
+                {key: "phone_number", label: "Phone Number", sortable: true},
+                {key: "phone_type", label: "Phone Type", sortable: true},
+                {key: "phone_validity", label: "Phone Validity", sortable: true},
+                {key: "phone_skip_source", label: "Phone Skip Source", sortable: true},
+                // Email Fields
+                {key: "email_address", label: "Email Address", sortable: true},
+                {key: "email_validity", label: "Email Validity", sortable: true},
+                {key: "email_skip_source", label: "Skip Source", sortable: true},
+                // Golden Addresses
+                {key: "golden_address_address", label: "Golden Address", sortable: true},
+                {key: "golden_address_city", label: "Golden City", sortable: true},
+                {key: "golden_address_state", label: "Golden State", sortable: true},
+                {key: "golden_address_zip", label: "Golden Zip", sortable: true}
             ],
             isBusy: false,
             fieldsType : null,

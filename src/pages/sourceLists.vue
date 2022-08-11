@@ -94,7 +94,7 @@
     <edit-source-modal :showModal="showEditModal" :propsData="editedItem" :modalTitle="sourceTitle" :sourceType="sourceType" @cancel="showEditModal=false" @save="save"></edit-source-modal>
     <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <update-delete-source-list-modal :showModal="showUpdateDeleteModal" :propsData="items" :modalTitle="sourceDeleteTitle" :itemToDelete="itemToDelete" @cancel="showUpdateDeleteModal=false" @update_source_delete="update_before_delete_list"></update-delete-source-list-modal>
-    <merge-with-other-source-modal :showModal="mergeSourceModal" :propsData="items" :modalTitle="mergeSourceTitle" :itemToMerge="itemToMerge" @cancel="mergeSourceModal=false" @merge_source_other="merge_source_with_other"></merge-with-other-source-modal>
+    <merge-with-other-source-modal :showModal="mergeSourceModal" :propsData="mergeLists" :modalTitle="mergeSourceTitle" :itemToMerge="itemToMerge" @cancel="mergeSourceModal=false" @merge_source_other="merge_source_with_other"></merge-with-other-source-modal>
 
 
   </div>
@@ -127,6 +127,7 @@ export default {
     return {
       isBusy: false,
       perPage: 20,
+      mergeLists: [],
       currentPage: 1,
       pageOptions: [10, 20, 50],
       search: '',
@@ -223,10 +224,11 @@ export default {
         this.$store.dispatch('listModule/deleteListSource', this.itemToDelete.id)
       }
     },
-    async mergeSourceFunction(item){
+    async mergeSourceFunction(item) {
       this.$store.dispatch('uxModule/setLoading');
       let response = await this.$store.dispatch('listModule/checkListForDeleteItem', item.id)
       this.$store.dispatch('uxModule/hideLoader');
+      this.mergeLists = response.lists;
       item.table_name = response.table;
       item.merge_list_type = "list_source";
       this.itemToMerge = item;

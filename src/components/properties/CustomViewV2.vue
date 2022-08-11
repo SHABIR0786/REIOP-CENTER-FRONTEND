@@ -56,7 +56,7 @@
                         <b-form-checkbox id="subject_zip" @change="mapCustomView('subject_zip','Subject Zip')" v-model="template.subject_zip" name="subject_zip" value="accepted">
                             Subject Zip
                         </b-form-checkbox>
-                        <b-form-checkbox id="subject_country" @change="mapCustomView('subject_country','Subject County')" v-model="template.subject_country" name="subject_country" value="accepted">
+                        <b-form-checkbox id="subject_county" @change="mapCustomView('subject_county','Subject County')" v-model="template.subject_county" name="subject_county" value="accepted">
                             Subject County
                         </b-form-checkbox>
                         <b-form-checkbox id="subject_age" @change="mapCustomView('subject_age','Subject Age')" v-model="template.subject_age" name="subject_age" value="accepted">
@@ -309,7 +309,7 @@ export default {
                 subject_city: false,
                 subject_state: false,
                 subject_zip: false,
-                subject_country: false,
+                subject_county: false,
                 subject_market: false,
                 subject_age: false,
                 subject_type: false,

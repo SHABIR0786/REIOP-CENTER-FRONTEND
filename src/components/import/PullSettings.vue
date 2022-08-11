@@ -195,9 +195,12 @@
         AddListSettingsModal,
         ConfirmModal,
       },
-      props: ['lists', 'importDetails'],
+      props: ['importDetails'],
       data () {
         return {
+          currentPage: 1,
+          lists: [],
+          perPage: 20,
             list: {
                 list_market: '',
                 list_group: '',
@@ -225,8 +228,10 @@
             errors: [],
         }
       },
-      mounted() {
-        if (this.marketList.length > 0) {
+      async mounted() {
+       let response = await this.$store.dispatch('listModule/getImportPullLists', {page: this.currentPage, perPage: this.perPage});
+       this.lists = response?.lists?.data;
+      if (this.marketList.length > 0) {
           this.market = this.marketList
         }
         if (this.groupList.length > 0) {
@@ -252,6 +257,7 @@
               this.type.push(e.list_type);
             }
             if((this.source.indexOf(e.list_source)) === -1 && e.list_source){
+              console.log(e.list_source);
               this.source.push(e.list_source);
             }
             if((this.skipSource.indexOf(e.list_skip_source)) === -1 && e.list_skip_source){

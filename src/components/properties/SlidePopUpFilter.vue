@@ -436,10 +436,11 @@ export default {
         { value: 6, text: "6 weeks" },
       ],
       filter:{
-            Market: null,
-            List: null,
-            Type: null,
-            Source: null
+      
+            Market: [],
+            List: [],
+            Type: [],
+            Source: []
       },
       selectedFilter: null,
       isShowSlidePopUp: false,
@@ -489,7 +490,6 @@ computed: {
         this.savedFilters.push(filter);
       });
       await this.$store.dispatch("marketingChannelModule/getAllMarketChannels", {page: 1, perPage: 20});
-      console.log(this.MarketingChannels);
         this.MarketingChannels.forEach(e => {
         const marketingChannel = {
               value: '',
@@ -574,7 +574,7 @@ computed: {
       if(this.marketing_period) {
             this.marketing_end_date = moment(this.marketing_start_date).add(this.marketing_period * 7 ,'days').format('YYYY-MM-DD');
       }
-
+      let custom_view = JSON.parse(JSON.stringify(this.custom_view));
       const exportSubject = {
         export_type: this.export_type,
         marketing_channel: this.marketing_channel,
@@ -585,14 +585,15 @@ computed: {
         notes: this.notes,  
         selectedItems: this.selectedItems,
         export_amount: this.export_amount,
-        custom_view: this.custom_view,
+        custom_view: custom_view,
         template_id: this.template_id,
         filter: this.selectedFilter,
         fileType: 'csv',
         filters: this.allFilters,
         search: this.search,
         sortBy: this.sortBy,
-        sortDesc: this.sortDesc
+        sortDesc: this.sortDesc,
+        fields_type: this.fields_type
       }
       this.isExporting = true;
       await this.$store.dispatch('propertyModule/storeExport', exportSubject);

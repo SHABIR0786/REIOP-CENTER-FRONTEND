@@ -17,6 +17,7 @@ const state = {
     totalItems: 0,
     selectedItem: {},
     exportTypes: [
+    "",
     "To Market",
     "To SkipTrace",
     "Miscellaneous Reason" ]
@@ -31,7 +32,6 @@ const mutations = {
             e.export_type = state.exportTypes[e.export_type];
         })
         state.items = data;
-
         state.totalItems = payload.total;
     },
     SET_EXPORT(state, payload) {

@@ -189,8 +189,6 @@ const getters = {
     isSkipValidation: (state) => state.isSkipValidation,
     uploadProgress: ({uploadProgress}) => uploadProgress,
     showImportFirstPage: ({ showImportFirstPage }) => showImportFirstPage
-
-
 }
 
 export default {

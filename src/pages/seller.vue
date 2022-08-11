@@ -89,6 +89,12 @@
         <template #head(seller_total_emails)="scope">
             <div style="width: 50px;">{{scope.label}}</div>
         </template>
+        <template #head(attempted_skip_traces)="scope">
+            <div style="width: 70px;">{{scope.label}}</div>
+        </template>
+        <template #head(attempted_skip_trace_sources)="scope">
+            <div style="width: 70px;">{{scope.label}}</div>
+        </template>
         <template #head(seller_first_name)="scope">
             <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
         </template>
@@ -238,12 +244,17 @@ export default {
                 Error:[],
                 RunDate: [],
                 CompanyOwned: [],
+                TotalSubjects:[],
+                TotalPhones:[],
+                TotalEmails:[],
+                AttemptedSkipTraceSources:[],
+                HasSkipTraceData:[]
             },
             savedFilters: [{
                 value: null,
                 text: "Save Filters"
             }],
-            sortBy: 'id',
+            sortBy: 'attempted_skip_trace_sources',
             sortDesc: true,
             isClearSearch: false
         }
@@ -322,6 +333,11 @@ export default {
                     Error: [],
                     RunDate: [],
                     CompanyOwned: [],
+                    TotalSubjects:[],
+                    TotalPhones:[],
+                    TotalEmails:[],
+                    AttemptedSkipTraceSources:[],
+                    HasSkipTraceData:[]
                 },
                 await this.search();
         },

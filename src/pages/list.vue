@@ -159,7 +159,7 @@
             </b-col>
         </b-row>
         <add-list-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-list-modal>
-        <delete-modal :showModal ="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <edit-list-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-list-modal>
     </div>
 </template>

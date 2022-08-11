@@ -10,13 +10,11 @@
         </div>
     </template>
         <b-container fluid>
-
                 <b-row>
                     <b-col cols="12">
                         <b-input-group prepend="Select" id="id" name="id"  class="mb-2">
                           <b-form-select v-model="list.id" :options="list_items" :state="validateState('id')" required></b-form-select>
                             <b-form-invalid-feedback id="id" class="text-center">{{ modalTitle }} Field is Required.</b-form-invalid-feedback>
-
                         </b-input-group>
                     </b-col>
                     
@@ -93,13 +91,8 @@ export default {
                 return;
             }
                 this.list.previous_id = this.itemTo_Merge.id;
-                this.list.merge_list_type = this.itemTo_Merge.merge_list_type;
-
-
-            console.log('this.list',this.list);
-            
-       
-           this. $emit('merge_source_other', this.list);
+                this.list.merge_list_type = this.itemTo_Merge.merge_list_type;            
+           this.$emit('merge_source_other', this.list);
         },
     },
     watch: {
@@ -111,10 +104,10 @@ export default {
                 this.allListItems = this.propsData;
             
                 this.itemTo_Merge = this.itemToMerge;                
-
+                console.log(this.itemTo_Merge);
                 if(this.itemTo_Merge.merge_list_type == "list_source"){
                     this.allListItems.map((list) => {
-                        if(this.itemTo_Merge.id !=  list.id){
+                        if(list.list_source){
                             this.list_items.push({
                             value: list.id,
                             text: list.list_source

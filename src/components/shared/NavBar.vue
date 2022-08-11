@@ -8,11 +8,11 @@
         <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right>
                 <template #button-content> {{ (user && user.name) ? user.name : "User"}}</template>
-                <b-dropdown-item v-if="user && user.role == 'superadmin' && adminMode == false">
-                    <div @click="switchToAdminView()"><b-icon icon="person-bounding-box"></b-icon> Switch to Admin View</div>
+                <b-dropdown-item v-if="user && user.role == 'superadmin' && adminMode == false" @click="switchToAdminView()">
+                    <div><b-icon icon="person-bounding-box"></b-icon> Switch to Admin View</div>
                 </b-dropdown-item>
-                <b-dropdown-item v-if="user && user.role == 'superadmin' && adminMode == true">
-                    <div @click="switchToTeamView()"><b-icon icon="person-bounding-box"></b-icon> Switch to Team View</div>
+                <b-dropdown-item v-if="user && user.role == 'superadmin' && adminMode == true" @click="switchToTeamView()">
+                    <div><b-icon icon="person-bounding-box"></b-icon> Switch to Team View</div>
                 </b-dropdown-item>
                 <b-dropdown-item v-if="adminMode == false">
                     <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Labels</router-link>

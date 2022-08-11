@@ -2,8 +2,22 @@
   <div class="error-sections">
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
       <b-row class="mt-5">
+          <b-row class="mb-3">
+            <b-col cols="12" class="d-flex align-items-center">
+                <b-button variant="primary" class="filter d-flex align-items-center mr-2" @click="showFilterErrorsModal = true">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                </b-button>
+                <b-button v-if="totalFilters > 0" variant="outline-primary" @click="clearAllFilters()" class="filter d-flex float-right r-0 align-items-right mr-2">
+                    <b-icon icon="x" aria-hidden="true"></b-icon> Clear All
+                </b-button>
+                <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
+            </b-col>
+          </b-row>
+
+
+
         <b-tabs class="w-100" content-class="mt-3" fill>
-          <b-tab title="Subject Errors" @click="currentPage = 1; perPage = 20" active>
+          <b-tab :title="'Subject Errors '+ subjectTotal" @click="currentPage = 1; perPage = 20" active>
             <b-table
                 id="subject-table"
                 small
@@ -143,14 +157,14 @@
                 </b-form-group>
               </b-col>
               <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{subjectTotal}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{perPage * currentPage}} of {{subjectTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="subjectRows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
               </b-col>
             </b-row>
           </b-tab>
-          <b-tab title="Phone Errors" @click="currentPage = 1; perPage = 20">
+          <b-tab :title="'Phone Errors '+ phoneTotal" @click="currentPage = 1; perPage = 20">
             <b-table
                 id="phone-table"
                 small
@@ -249,14 +263,14 @@
                 </b-form-group>
               </b-col>
               <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{phoneTotal}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{perPage * currentPage}} of {{phoneTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="phoneRows" :per-page="perPage" aria-controls="phone-table"></b-pagination>
               </b-col>
             </b-row>
           </b-tab>
-          <b-tab title="Email Errors" @click="currentPage = 1; perPage = 20">
+          <b-tab :title="'Email Errors '+emailTotal" @click="currentPage = 1; perPage = 20">
             <b-table
                 id="email-table"
                 small
@@ -344,14 +358,14 @@
                 </b-form-group>
               </b-col>
               <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{emailTotal}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{perPage * currentPage}} of {{emailTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="emailRows" :per-page="perPage" aria-controls="email-table"></b-pagination>
               </b-col>
             </b-row>
           </b-tab>
-          <b-tab title="Seller Errors" @click="currentPage = 1; perPage = 20">
+          <b-tab :title="'Seller Errors '+sellerTotal" @click="currentPage = 1; perPage = 20">
             <b-table
                 id="seller-table"
                 small
@@ -475,14 +489,14 @@
                 </b-form-group>
               </b-col>
               <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{sellerTotal}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{perPage * currentPage}} of {{sellerTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="sellerRows" :per-page="perPage" aria-controls="seller-table"></b-pagination>
               </b-col>
             </b-row>
           </b-tab>
-          <b-tab title="Golden Addresses Errors" @click="currentPage = 1; perPage = 20">
+          <b-tab :title="'Golden Addresses Errors '+goldenTotal" @click="currentPage = 1; perPage = 20">
             <b-table
                 id="golden-table"
                 small
@@ -589,7 +603,7 @@
                 </b-form-group>
               </b-col>
               <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing 1 to {{perPage}} of {{goldenTotal}} entries</p>
+                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{perPage * currentPage}} of {{goldenTotal}} entries</p>
               </b-col>
               <b-col class="d-flex justify-content-end">
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="goldenRows" :per-page="perPage" aria-controls="golden-table"></b-pagination>
@@ -599,29 +613,38 @@
         </b-tabs>
       </b-row>
     </div>
+    <error-filter ref="filterErrors" :queryFilter="queryFilter" :showModal="showFilterErrorsModal" @filter="filter" @cancel="showFilterErrorsModal=false"></error-filter>
   </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
 import { BIcon } from "bootstrap-vue"
+import ErrorFilter from '@/components/error/FilterError'
 
 export default {
   name: "Errors",
   components: {
-    BIcon
+    BIcon,
+    ErrorFilter
   },
   data () {
     return {
       isBusy: false,
       showModal: false,
+      queryFilter: null,
+      totalFilters: 0,
       perPage: 20,
       currentPage: 1,
       editedItem: {},
+      filtersName: {
+        Import: []
+      },
       showDeleteModal: false,
       itemToDelete: {},
       pageOptions: [10, 20, 50],
       searchSeller: '',
-      showAddModal: false
+      showAddModal: false,
+      showFilterErrorsModal: false
     }
   },
   computed: {
@@ -652,22 +675,88 @@ export default {
   async created () {
     try {
       await this.$store.dispatch('uxModule/setLoading')
-      await this.$store.dispatch("errorModule/getAllErrors", {page: 1, perPage: this.perPage, search: this.$route.query.id})
+      await this.$store.dispatch("errorModule/getAllErrors", {page: 1, perPage: this.perPage, search: this.$route.query.id});
+      if(this.$route.query.id) {
+        this.totalFilters = 1;
+        this.queryFilter = this.$route.query.id;
+        this.filtersName.Import.push(this.$route.query.id);
+      }
       await this.$store.dispatch('uxModule/hideLoader')
     } catch (error) {
       await this.$store.dispatch('uxModule/hideLoader')
     }
   },
-  methods: { },
+  methods: { 
+     async clearAllFilters() {
+            this.$refs.filterErrors.clearAllFilters();
+            this.$refs.filterErrors.filtersAlreadyApplied = null;
+            this.filtersName = {
+                    Import: []
+            },
+        this.$store.dispatch('uxModule/setLoading');
+        await this.$store.dispatch('errorModule/getAllErrors', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller});
+        this.$store.dispatch('uxModule/hideLoader');
+        this.totalFilters = 0;
+      },
+      async filter(data, filterValue) {
+        let errors = [];
+        data?.Import.forEach(element => {
+          errors.push(element.id);
+        });
+            this.$store.dispatch('uxModule/setLoading');
+            try {
+                this.filtersName.Import = errors
+                await this.$store.dispatch("errorModule/filterErrors", {
+                    page: 1,
+                    perPage: this.perPage,
+                    filter: errors
+                })
+                if (!filterValue) {
+                    if (!this.items.length) {
+                        await this.$store.dispatch("errorModule/getAllErrors", {
+                            page: 1,
+                            perPage: this.perPage,
+                            search: this.searchSeller
+                        })
+                    }
+                }
+                this.totalFilters = filterValue;
+                this.showFilterErrorsModal = false;
+                this.$store.dispatch('uxModule/hideLoader');
+            } catch (error) {
+                this.$store.dispatch('uxModule/hideLoader');
+            }
+        },
+  },
   watch: {
     currentPage: {
-      handler: function() {
+      handler: async function() {
+        this.$store.dispatch('uxModule/setLoading');
+        if(this.totalFilters > 0) {
+            await this.$store.dispatch("errorModule/filterErrors", {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    filter: this.filtersName?.Import
+            })
+        } else {
         this.$store.dispatch('errorModule/getAllErrors', {page: this.currentPage, perPage: this.perPage, search: this.searchSeller})
+        }
+        this.$store.dispatch('uxModule/hideLoader');
       }
     },
     perPage: {
-      handler: function () {
-        this.$store.dispatch('errorModule/getAllErrors', {page: 1, perPage: this.perPage, search: this.searchSeller})
+      handler: async function () {
+        this.$store.dispatch('uxModule/setLoading');
+        if(this.totalFilters > 0) {
+            await this.$store.dispatch("errorModule/filterErrors", {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    filter: this.filtersName?.Import
+            })
+        } else {
+        this.$store.dispatch('errorModule/getAllErrors', {page: 1, perPage: this.perPage, search: this.searchSeller});
+        }
+        this.$store.dispatch('uxModule/hideLoader');
       }
     },
   }

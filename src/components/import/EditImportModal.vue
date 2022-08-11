@@ -365,7 +365,6 @@ export default {
                 this.allListItems = [];
                 this.allListItems = this.lists;
                 this.allListItems.map((list) => {
-                  console.log(list.list_source);
                   this.list_market_array.push(list.list_market);
                   this.list_source_array.push(list.list_source);
                   this.list_skip_source_array.push(list.list_skip_source);

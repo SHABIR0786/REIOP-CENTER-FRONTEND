@@ -447,7 +447,6 @@ export default {
         // Combined data
 
         if (this.upload_type === 'combined') {
-
           let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source', 'list_pull_date'];
           let missingListData            = requiredListSettingsFields.filter(ms => !mappedFields.includes(ms));
           if (missingListData.length) {
