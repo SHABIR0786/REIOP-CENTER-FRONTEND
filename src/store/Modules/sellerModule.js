@@ -48,7 +48,7 @@ const mutations = {
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
-            e.attempted_skip_trace_sources = JSON.parse(e.attempted_skip_trace_sources).join(",");
+            e.attempted_skip_trace_sources = (e.attempted_skip_trace_sources != "null" && e.attempted_skip_trace_sources) ?JSON.parse(e.attempted_skip_trace_sources).join(","):"";
         })
         state.sellers = JSON.stringify(data);
         state.total = payload.total;

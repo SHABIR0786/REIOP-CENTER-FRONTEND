@@ -284,7 +284,7 @@ export default {
                 search: this.searchSeller,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
-            })
+            });
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
