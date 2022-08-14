@@ -200,7 +200,7 @@ export default {
 
       this.$store.dispatch('uxModule/setLoading');
 
-      let response = await this.$store.dispatch('listModule/checkListForDeleteItem', item.id)
+      let response = await this.$store.dispatch('listModule/checkListForDeleteItem', {id :item.id, list_type: "list_source"});
 
       this.$store.dispatch('uxModule/hideLoader');
 
@@ -226,7 +226,7 @@ export default {
     },
     async mergeSourceFunction(item) {
       this.$store.dispatch('uxModule/setLoading');
-      let response = await this.$store.dispatch('listModule/checkListForDeleteItem', item.id)
+      let response = await this.$store.dispatch('listModule/checkListForDeleteItem', {id :item.id, list_type: "list_source"})
       this.$store.dispatch('uxModule/hideLoader');
       this.mergeLists = response.lists;
       item.table_name = response.table;

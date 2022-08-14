@@ -360,9 +360,9 @@ const actions = {
             return response
         })
     },
-    async checkListForDeleteItem({ commit }, data) {
-        return await api.get(`/lists/checkForDeleteList/${data}`).then((response) => {
-            commit('just_test', data)
+    async checkListForDeleteItem({ commit }, {id, list_type}) {
+        return await api.get(`/checkListMerge?id=${id}&list_type=${list_type}`).then((response) => {
+            commit('just_test', id)
             return response
         })
     },
