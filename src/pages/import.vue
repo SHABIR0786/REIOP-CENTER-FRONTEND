@@ -447,8 +447,9 @@ export default {
         // Combined data
 
         if (this.upload_type === 'combined') {
-          let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source', 'list_pull_date'];
+          let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source', 'list_pull_date', 'run_month', 'run_year'];
           let missingListData            = requiredListSettingsFields.filter(ms => !mappedFields.includes(ms));
+          console.log(mappedFields,missingListData,requiredListSettingsFields);
           if (missingListData.length) {
             this.missingListData     = missingListData;
             this.showSellerFillModal = true;
