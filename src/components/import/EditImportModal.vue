@@ -415,6 +415,7 @@ export default {
             this.editData.notes = '';
           }
           let obj = JSON.parse(this.editData.mapped_fields);
+          this.mappedFields = [];
           Object.keys(obj).forEach((key) => {
             if (obj[key] === '') {
               delete obj[key];
