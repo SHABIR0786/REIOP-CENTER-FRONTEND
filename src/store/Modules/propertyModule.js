@@ -335,7 +335,7 @@ const actions = {
 
             if (response && response.subjects && response.subjects.data) {
                 commit('SET_ALL_SUBJECTS', response.subjects)
-                commit('GET_TOTAL', response.subjects.total)
+                // commit('GET_TOTAL', response.subjects.total)
             }
 
             return response

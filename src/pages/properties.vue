@@ -327,7 +327,6 @@ export default {
     async created() {
         this.$store.dispatch('uxModule/setLoading')
         this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName})
-        this.$store.dispatch('propertyModule/getTotal')
         try {
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage,filter: this.filtersName})
             await this.$store.dispatch("templatesModule/getAllTemplates")
