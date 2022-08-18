@@ -30,7 +30,10 @@
         <h4 class="text-center">Please map either "email and email validity" pair or "phone and phone validity" pair or all options together</h4>
       </b-container>
       <b-container fluid v-if="!isHaveMappedItems && isCombinedImport">
-        <h4 class="text-center">You must map a <br> list_type, list_group, list_market, list_source, list_pull_date <br> before being able to import combined data.</h4>
+        <h4 class="text-center" id="error-list">You must map a <br> list_type, list_group, list_market, list_source, list_pull_date, list_run_month, list_run_year <br> before being able to import combined data.</h4>
+        <b-tooltip target="error-list" variant="danger" triggers="hover">
+         if field not visible then got to <strong>Labels</strong> and enable the fields
+        </b-tooltip>
       </b-container>
       <b-container fluid v-if="isHaveMappedItems && isSkipValidate">
         <h4 class="text-center">Are you ready to validate data?</h4>
