@@ -90,13 +90,20 @@
             <b>Missing fields to complete seller's mapping.</b><br>
             {{missingSellersData.join(', ')}}
             </div>
+            <div v-if="headerMissingValues.length">
+            <b>Below fields not exist in attached file.</b><br>
+              {{headerMissingValues.join(', ')}}
+            </div>
            <div v-if="missingSubjectsData.length">
              <b>Missing fields to complete subject's mapping.</b><br>
              {{missingSubjectsData.join(', ')}}
            </div>
-           <div v-if="missingListData.length">
+           <div v-if="missingListData.length" id="error-list-data">
             <b>Missing fields to complete list mapping.</b><br>
             {{missingListData.join(', ')}}
+            <b-tooltip target="error-list-data" variant="danger" triggers="hover">
+              if field not visible then got to <strong>Labels</strong> and enable the fields
+            </b-tooltip>
            </div>
             <div v-if="missingValidateData.length">
               <b>Missing fields to complete validate mapping.</b><br>
@@ -159,6 +166,7 @@ export default {
       isHaveMappedItems: false,
       showSellerFillModal: false,
       missingSellersData: [],
+      headerMissingValues: [],
       missingSubjectsData: [],
       missingListData: [],
       sellersNamesAdrCountEqual: [],
@@ -267,6 +275,22 @@ export default {
       if (this.upload_type === 'combined') {
         this.isCombinedImport = true
       }
+      /* Check the file header matched with mapping */
+      this.headerMissingValues = [];
+      
+      let headerMissingValues = [];
+      item.forEach(item => {
+        if(!this.uploadedAllFields.includes(item['fromField'])){
+          headerMissingValues.push(item['fromField']);
+        }
+      })
+
+      if(headerMissingValues.length){
+        this.headerMissingValues = headerMissingValues;
+        this.showSellerFillModal = true;
+        return false;
+      }
+
       // Check if all required Subjects field are mapped
       let requiredSubjectsFields = ['subject_address', 'subject_city', 'subject_state', 'subject_zip'];
       let mappedFields           = []
@@ -447,7 +471,7 @@ export default {
         // Combined data
 
         if (this.upload_type === 'combined') {
-          let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source', 'list_pull_date'];
+          let requiredListSettingsFields = ['list_type', 'list_group', 'list_market', 'list_source', 'list_pull_date', 'list_run_month', 'list_run_year'];
           let missingListData            = requiredListSettingsFields.filter(ms => !mappedFields.includes(ms));
           if (missingListData.length) {
             this.missingListData     = missingListData;
