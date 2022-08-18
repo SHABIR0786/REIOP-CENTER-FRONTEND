@@ -90,6 +90,10 @@
             <b>Missing fields to complete seller's mapping.</b><br>
             {{missingSellersData.join(', ')}}
             </div>
+            <div v-if="headerMissingValues.length">
+            <b>Below fields not exist in attached file.</b><br>
+              {{headerMissingValues.join(', ')}}
+            </div>
            <div v-if="missingSubjectsData.length">
              <b>Missing fields to complete subject's mapping.</b><br>
              {{missingSubjectsData.join(', ')}}
@@ -162,6 +166,7 @@ export default {
       isHaveMappedItems: false,
       showSellerFillModal: false,
       missingSellersData: [],
+      headerMissingValues: [],
       missingSubjectsData: [],
       missingListData: [],
       sellersNamesAdrCountEqual: [],
@@ -270,6 +275,22 @@ export default {
       if (this.upload_type === 'combined') {
         this.isCombinedImport = true
       }
+      /* Check the file header matched with mapping */
+      this.headerMissingValues = [];
+      
+      let headerMissingValues = [];
+      item.forEach(item => {
+        if(!this.uploadedAllFields.includes(item['fromField'])){
+          headerMissingValues.push(item['fromField']);
+        }
+      })
+
+      if(headerMissingValues.length){
+        this.headerMissingValues = headerMissingValues;
+        this.showSellerFillModal = true;
+        return false;
+      }
+
       // Check if all required Subjects field are mapped
       let requiredSubjectsFields = ['subject_address', 'subject_city', 'subject_state', 'subject_zip'];
       let mappedFields           = []
