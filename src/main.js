@@ -6,6 +6,8 @@ import store from "./store/index"
 import { BootstrapVue, IconsPlugin, ToastPlugin } from 'bootstrap-vue'
 import Vuelidate from 'vuelidate'
 import vSelect from 'vue-select'
+import * as Sentry from "@sentry/vue"
+import { BrowserTracing } from "@sentry/tracing";
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
@@ -37,6 +39,21 @@ if (token) {
 Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
 Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Headers'] = '*'
+
+Sentry.init({
+  Vue,
+  dsn: "https://c108ea14a6f04c87beacb74fe381585b@o1364868.ingest.sentry.io/6683259",
+  integrations: [
+    new BrowserTracing({
+      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+      tracingOrigins: ["localhost:8081", "http://reiopcenter.com.s3-website-us-east-1.amazonaws.com", /^\//],
+    }),
+  ],
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
 
 new Vue({
   router,
