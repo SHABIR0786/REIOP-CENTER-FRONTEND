@@ -262,6 +262,7 @@ export default {
             this.$store.dispatch('uxModule/setLoading')
             if (response) {
                await this.$store.dispatch('listModule/deleteList', this.itemToDelete.id)
+               await this.getList();
             }
             this.$store.dispatch('uxModule/hideLoader')
         },
