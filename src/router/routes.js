@@ -19,6 +19,7 @@ import companyTypes from "@/pages/companyTypes";
 import marketingChannels from "@/pages/marketingChannels";
 import sourceLists from "@/pages/sourceLists";
 import skipSourceLists from "@/pages/skipSourceLists";
+import seneryError from "@/pages/seneryError";
 import activity from "@/pages/activity";
 
 export const routes = [
@@ -45,4 +46,5 @@ export const routes = [
     {name: "ListSources", path: "/Listsources", component: sourceLists, title: "List Sources", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
     {name: "SkipSourceLists", path: "/skipSourceLists", component: skipSourceLists, title: "Skip Source Lists", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
     {name: "marketingChannels", path: "/marketingChannels", component: marketingChannels, title: "Marketing Channels", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
+    {name: "senery-error", path: "/senery-error", component: seneryError, title: "senery error", isNavbar: false, meta: {requireAuth: true, roles:["admin","superadmin"]}},
 ]
