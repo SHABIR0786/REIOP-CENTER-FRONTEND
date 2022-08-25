@@ -5,7 +5,7 @@ const state = {
         {key:"id", label: "ID", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
         {key:"subjects_unique_count", label: "Unique Subjects", sortable: true},
-        {key:"total_running_lists", label: "Total Running Lists", sortable: true},
+        {key:"list_total_individual_list", label: "Total Running Lists", sortable: true},
         {key:"list_market", label: "Markets", sortable: true},
         {key:"list_group", label: "Group", sortable: true},
         {key:"list_type", label: "Type", sortable: true},
@@ -431,7 +431,7 @@ const actions = {
 }
 
 const getters = {
-    fields: ({ fields }) => fields,
+    fields: state => state.fields,
     lists: ({ lists }) => {
         if (typeof lists === 'string') {
             return JSON.parse(lists);

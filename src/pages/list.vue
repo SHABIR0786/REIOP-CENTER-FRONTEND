@@ -70,7 +70,7 @@
             <template #head(subjects_unique_count)="scope">
                 <div style="width: 70px;">{{scope.label}}</div>
             </template>
-            <template #head(total_running_lists)="scope">
+            <template #head(list_total_individual_list)="scope">
                 <div style="width: 70px;">{{scope.label}}</div>
             </template>
             <template #head(list_market)="scope">
