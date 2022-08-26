@@ -70,12 +70,11 @@
                         <b-form-input
                           id="list-pull-data-date"
                           v-model="list.list_data_date"
-                          type="text"
+                          type="date"
                           placeholder="dd-mm-yyyy"
-                          autocomplete="off"
                         ></b-form-input>
                         
-                          <b-form-datepicker
+                          <!-- <b-form-datepicker
                             :date-format-options="{ day: '2-digit' , month: '2-digit', year: 'numeric' }"
                             v-model="list_data_date"
                             button-only
@@ -85,7 +84,7 @@
                             format="DD-MM-YYYY"
                             @context="onContext"
                             :date-disabled-fn="dateDisabled"
-                          ></b-form-datepicker>
+                          ></b-form-datepicker> -->
                         </b-input-group>
                             
                             <!-- <b-input-group prepend="Data Date">
@@ -257,7 +256,6 @@
               this.type.push(e.list_type);
             }
             if((this.source.indexOf(e.list_source)) === -1 && e.list_source){
-              console.log(e.list_source);
               this.source.push(e.list_source);
             }
             if((this.skipSource.indexOf(e.list_skip_source)) === -1 && e.list_skip_source){
@@ -336,9 +334,18 @@
           }
           if(this.list.list_data_date.length  != 0 && this.isSameDataDateAsPullDate === false && this.list.list_pull_date){
             let list_pull_date = moment(this.list.list_pull_date);
-            let list_data_date = moment(this.list.list_data_date, 'DD-MM-YYYY');
-            
-            if(list_pull_date.isSame(list_data_date.format('DD/MM/Y'))){
+            let list_data_date = moment(this.list.list_data_date);
+            if(!list_pull_date.isValid()){
+              this.allFieldsMapped = true;
+              this.errors.push('The pull date is not valid');
+              return;
+            }
+            if(!list_pull_date.isValid()){
+              this.allFieldsMapped = true;
+              this.errors.push('The pull data date is not valid');
+              return;
+            }
+            if(list_pull_date.isSame(list_data_date)){
               this.allFieldsMapped = true;
               this.errors.push('The pull date and run date should not be same');
               return;
@@ -348,6 +355,9 @@
               this.errors.push('The pull date month year and run date month year should not be same');
               return;
             }
+          }
+          if(this.isSameDataDateAsPullDate){
+            this.list.list_data_date = null;
           }
 
           this.list.user_id = this.user.id;
