@@ -20,7 +20,6 @@ import '@/assets/scss/index.scss'
 import 'vue-select/dist/vue-select.css';
 
 Vue.config.productionTip = false
-
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(ToastPlugin)

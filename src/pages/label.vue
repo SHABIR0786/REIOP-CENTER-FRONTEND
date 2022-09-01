@@ -1,5 +1,12 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
+    <b-row>
+     <b-col cols="12" class="d-flex justify-content-end mb-3">
+            <b-button variant="primary" class="add-seller" @click="addItem()">
+                <b-icon icon="plus" aria-hidden="true"></b-icon> Add Label
+            </b-button>
+      </b-col>
+    </b-row>
         <b-table
                 id="email-table"
                 small
@@ -24,23 +31,27 @@
             </template>
         </b-table>
         <label-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></label-modal>
+        <add-label-modal :showModal="showAddModal" @cancel="showAddModal=false"></add-label-modal>
     </div>
 </template>
 <script>
     import { mapGetters } from "vuex"
     import { BIcon } from "bootstrap-vue"
     import LabelModal from "../components/label/LabelModal";
+    import AddLabelModal from "../components/label/AddLabelModal";
 
     export default {
         name: "Label",
         components: {
             BIcon,
-            LabelModal
+            LabelModal,
+            AddLabelModal
         },
         data () {
             return {
                 isBusy: false,
                 showModal: false,
+                showAddModal: false,
                 perPage: 20,
                 currentPage: 1,
                 editedItem: {},
@@ -57,7 +68,6 @@
         },
         async created () {
             this.$store.dispatch('uxModule/setLoading')
-
             try {
                 this.$store.dispatch('labelModule/loadLabels')
                 this.$store.dispatch('uxModule/hideLoader')
@@ -74,6 +84,9 @@
             save (item) {
                 this.showModal = false
                 this.$store.dispatch('labelModule/editLabel', item)
+            },
+            addItem() {
+                this.showAddModal = true;
             },
             deleteItem(item){
                 this.showDeleteModal = true;

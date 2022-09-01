@@ -16,8 +16,7 @@
             drop-placeholder="Drop file here"
             accept=".xls, .xlsx, .csv"
             variant="primary"
-            class="mt-2"
-        ></b-form-file>
+            class="mt-2"></b-form-file>
       </b-col>
     </b-row>
     <b-row>
@@ -689,7 +688,7 @@ export default {
         this.$store.dispatch('uxModule/hideLoader');
       }
     },
-    async targetFields(){
+    async targetFields() {
       await this.$store.dispatch('importModule/loadVisibleFields')
       if (this.upload_type && !this.skip_variant) {
         this.$store.dispatch('importV2Module/setSkipValidation', false)

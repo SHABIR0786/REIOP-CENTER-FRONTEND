@@ -18,6 +18,9 @@ const mutations = {
     EDIT_LABEL(state, payload) {
         const findIndex = state.labels.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.labels.splice(findIndex, 1, { ...payload })
+    },
+    ADD_LABEL(state, payload) {
+        state.labels.push(payload);
     }
 }
 
@@ -32,6 +35,12 @@ const actions = {
     async editLabel({ commit }, data) {
         return await api.put(`/labels/${data.id}`, data).then((response) => {
             commit('EDIT_LABEL', data)
+            return response
+        })
+    },
+    async addLabel({ commit }, data) {
+        return await api.post(`/labels/`, data).then((response) => {
+            commit('ADD_LABEL', response.label)
             return response
         })
     },
