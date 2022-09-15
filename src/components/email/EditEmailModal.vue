@@ -186,6 +186,23 @@
                         </div>
                       </template>
                     </b-table>
+                </b-tab>
+
+                <b-tab :title="(relatedSkipSources?relatedSkipSources.length:'') + ' Related Skip Sources'"  @click="currentModal()">
+                    <b-table
+                        id="related-table"
+                        small
+                        sort-icon-left
+                        striped
+                        hover
+                        :busy="isBusy"
+                        :fields="relatedSkipSourcesFields"
+                        :items="relatedSkipSources"
+                        responsive
+                        :per-page="0"
+                        :sticky-header="true"
+                        class="table_height_all_modal">
+                    </b-table>
                   </b-tab>
 
                 <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'"  @click="currentModal()">
@@ -370,8 +387,10 @@ export default {
             sellerFields: 'sellerModule/fields',
             tabData: 'listModule/subjectRelatedList',
             exportFields: 'exportModule/fields',
-            exportItems: 'exportModule/items',
+            exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
+            relatedSkipSources: 'emailModule/relatedSkipSources'
+
         }),
     },
     data() {
@@ -416,6 +435,11 @@ export default {
                 {key:"golden_addresses_count", label: "Total Golden Address", sortable: true},
                 {key:"error_number",    label: "Total Errors", sortable: true}
         ],
+            relatedSkipSourcesFields: [
+                {key:"id", label: "Id", sortable: true},
+                {key:"phone_skip_source", label: "Skip Source", sortable: true},
+                {key:"phone_skip_date", label: "Skip Date", sortable: true}
+            ],
         }
     },
     mounted() {
@@ -424,9 +448,12 @@ export default {
     },
     watch: {
         async showModal() {
+            console.log('this world');
             this.email = {...this.propsData}
             let response = await this.$store.dispatch('listModule/getSelectedList', this.email.list_id);
             this.relatedList = [response.list];
+            this.$store.dispatch(`exportModule/getExports`, {'module': 'emails', id: this.propsData.id});
+            await this.$store.dispatch(`emailModule/relatedSkipSources`, this.propsData.id);
         }
     }
 

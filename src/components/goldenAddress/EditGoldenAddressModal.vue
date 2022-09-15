@@ -202,6 +202,25 @@
                       </template>
                     </b-table>
                   </b-tab>
+
+                  <b-tab :title="(relatedSkipSources?relatedSkipSources.length:'') + ' Related Skip Sources'"  @click="currentModal()">
+                    <b-table
+                        id="related-table"
+                        small
+                        sort-icon-left
+                        striped
+                        hover
+                        :busy="isBusy"
+                        :fields="relatedSkipSourcesFields"
+                        :items="relatedSkipSources"
+                        responsive
+                        :per-page="0"
+                        :sticky-header="true"
+                        class="table_height_all_modal">
+                    </b-table>
+                  </b-tab>
+
+
                   <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'"  @click="currentModal()">
                     <b-table
                         id="related-table"
@@ -350,7 +369,7 @@ export default {
             sellerFields: 'sellerModule/fields',
             tabData: 'listModule/subjectRelatedList',
             exportFields: 'exportModule/fields',
-            exportItems: 'exportModule/items',
+            exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
         }),
     },
@@ -442,6 +461,8 @@ export default {
             this.goldenAddress = { ...this.propsData }
             let response = await this.$store.dispatch('listModule/getSelectedList', this.goldenAddress.list_id);
             this.relatedList = [response.list];
+            this.$store.dispatch(`exportModule/getExports`, {'module': 'golden-addresses', id: this.propsData.id});
+            await this.$store.dispatch(`goldenAddressModule/relatedSkipSources`, this.propsData.id);
         }
     }
 

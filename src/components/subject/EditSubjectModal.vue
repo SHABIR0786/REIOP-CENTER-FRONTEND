@@ -221,7 +221,7 @@
                       </template>
                     </b-table>
                   </b-tab>
-                   <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'"  @click="currentModal()">
+                   <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'" >
                     <b-table
                         id="related-table"
                         small
@@ -234,8 +234,7 @@
                         responsive
                         :per-page="0"
                         :sticky-header="true"
-                        class="table_height_all_modal"
-                    >
+                        class="table_height_all_modal">
                       <template #table-busy>
                         <div class="text-center" my-2>
                           <b-spinner class="align-middle"></b-spinner>
@@ -248,12 +247,10 @@
                       <template #head()="scope">
                         <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                       </template>
-                        <template v-slot:cell(actions)="data">
+                      <template v-slot:cell(actions)="data">
                             <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editExportItem(data.item)"></b-icon>
-                          </template>
+                       </template>
                     </b-table>
-
-
                    </b-tab>
                   <b-tab :title="(subject.sellers?subject.sellers.length:'') +' Related Sellers'">
                         <b-col>
@@ -292,9 +289,6 @@
                             </template>
                             <template v-slot:cell(actions)="data">
                                 <b-icon class="mr-2 cursor-pointer" icon="box-arrow-up-right" variant="primary" @click="editSellerItem(data.item)"></b-icon>
-                            </template>
-                            <template v-slot:cell(user_name)="">
-                                <p class="" >{{subject.user_name}}</p>
                             </template>
                         </b-table>
                     </b-tab>
@@ -374,7 +368,7 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.subject);
         },
-        currentModal(){
+        currentModal() {
           this.$store.dispatch(`listModule/getSubjectRelatedList`, {...this.propsData})
         },
         editSellerItem(item) {
@@ -403,7 +397,7 @@ export default {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
             exportFields: 'exportModule/fields',
-            exportItems: 'exportModule/items',
+            exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
             tabData: 'listModule/subjectRelatedList',
         }),
@@ -416,6 +410,7 @@ export default {
     watch: {
         showModal() {
           this.subject = {...this.propsData}
+          this.$store.dispatch(`exportModule/getExports`, {'module': 'subjects', id: this.propsData.id});
         }
     }
 }

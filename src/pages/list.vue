@@ -15,10 +15,10 @@
                         <div>Added This Month</div>
                     </div>
                 </b-col>
-                <b-col cols="4" class="d-flex justify-content-end">
+                <!-- <b-col cols="4" class="d-flex justify-content-end">
                     <b-button variant="primary" class="add-seller" @click="addItem()">
                         <b-icon icon="plus" aria-hidden="true"></b-icon> Add List</b-button>
-                </b-col>
+                </b-col> -->
             </b-row>
             <hr>
             <b-row class="mb-3">

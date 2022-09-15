@@ -28,6 +28,7 @@ const state = {
     filteredPhoneNumber: {},
     filteredPhoneNumbersCount: 0,
     filterList: [],
+    relatedSkipSources: [],
 }
 
 const mutations = {
@@ -39,6 +40,9 @@ const mutations = {
         })
         state.phoneNumbers = JSON.stringify(data);
         state.total = payload.total;
+    },
+    SET_RELATED_SKIP_SOURCES(state, payload) {
+        state.relatedSkipSources = payload;
     },
     SET_FILTERS_COUNT_TABLE(state, payload) {
         state.filtersCountTable = payload;
@@ -110,6 +114,19 @@ const actions = {
 
             return response
         })
+    },
+    async relatedSkipSources({commit, dispatch}, id) {
+        return await api.get(`/phones/skipsources/${id}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if (response && response.phoneSkipSources && response.phones.phoneSkipSources) {
+                commit('SET_RELATED_SKIP_SOURCES', response.phoneSkipSources)
+            }
+
+            return response;
+        });
     },
     async getAllPhoneNumbers({ commit, dispatch }, {page, perPage, search, sortBy, sortDesc}) {
         return await api.get(`/phones?page=${page}&perPage=${perPage}&sortBy=${sortBy}&search=${search}&sortDesc=${sortDesc}`).then((response) => {
@@ -237,6 +254,7 @@ const getters = {
         }
         return [];
     },
+    relatedSkipSources: ({relatedSkipSources}) => relatedSkipSources
 
 }
 

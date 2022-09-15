@@ -39,7 +39,7 @@ const actions = {
         })
     },
     async addLabel({ commit }, data) {
-        return await api.post(`/labels/`, data).then((response) => {
+        return await api.post(`/labels`, data).then((response) => {
             commit('ADD_LABEL', response.label)
             return response
         })

@@ -14,6 +14,8 @@ const state = {
         {key:"created_at",  label: "Exported Date", sortable: true},
         ],
     items: [],
+    exports: [],
+    totalexports: 0,
     totalItems: 0,
     selectedItem: {},
     exportTypes: [
@@ -33,6 +35,18 @@ const mutations = {
         })
         state.items = data;
         state.totalItems = payload.total;
+    },
+    EXPORTS(state, payload) {
+        const data = payload;
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+            e.user = e?.user?.name;
+            e.export_type = state.exportTypes[e.export_type];
+        })
+        state.exports = data;
+        state.totalexports = payload.total;
+        console.log(data);
     },
     SET_EXPORT(state, payload) {
         state.selectedItem = payload;
@@ -60,13 +74,22 @@ const actions = {
             return response
         })
     },
+    async getExports({commit}, {module, id}) {
+        return await api.get(`/${module}/exports/${id}`).then((response) => {
+            if(response) {
+                commit('EXPORTS', response.exports);
+            }
+        });
+    }
  };
 
 const getters = {
     fields: ({ fields }) => fields,
     items: ({ items }) => items,
     totalItems: ({ totalItems }) => totalItems,
-    selectedItem: ({ selectedItem }) => selectedItem
+    selectedItem: ({ selectedItem }) => selectedItem,
+    totalexports: ({totalexports}) => totalexports,
+    exports: ({exports}) => exports,
 }
 
 export default {

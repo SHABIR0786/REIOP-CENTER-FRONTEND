@@ -655,7 +655,7 @@ export default {
             ...mapGetters({
             tabData: 'listModule/subjectRelatedList',
             exportFields: 'exportModule/fields',
-            exportItems: 'exportModule/items',
+            exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
         }),
     },
@@ -665,6 +665,8 @@ export default {
     watch: {
         showModal() {
             this.seller = {...this.propsSeller}
+            this.$store.dispatch(`exportModule/getExports`, {'module': 'sellers', id: this.propsSeller.id});
+
         }
     }
 
