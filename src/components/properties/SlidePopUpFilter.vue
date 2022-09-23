@@ -339,6 +339,7 @@
 <script>
 import {mapGetters} from "vuex";
 import moment from 'moment'
+import axios from "axios";
 import SaveFilterModal from "./SaveFilterModal";
 import loadingBars from "../loader/loadingBars";
 export default {
@@ -596,9 +597,32 @@ computed: {
         fields_type: this.fields_type
       }
       this.isExporting = true;
-      await this.$store.dispatch('propertyModule/storeExport', exportSubject);
-      this.isExporting = false;
+      let response = await this.$store.dispatch('propertyModule/exportProperties', exportSubject);
+      this.getLivePercentage(response.batch,response.export);
     },
+      getLivePercentage(batch, exports) {
+       this.intervalId = setInterval(async () => {
+            var progress = await this.$store.dispatch("importV2Module/showBatch", batch.id);
+            if(progress.batch) {
+            if(progress.batch.finished_at != null) {
+             clearInterval(this.intervalId);
+             axios({
+                    url: `${process.env.VUE_APP_API_URL}/properties/download/${exports.id}`, // File URL Goes Here
+                    method: 'GET',
+                    responseType: 'blob',
+                }).then((res) => {
+                    const a = document.createElement('a');
+                    document.body.appendChild(a);
+                    const url = window.URL.createObjectURL(new Blob([res.data]));
+                    a.href = url;
+                    a.download = 'export.csv';
+                    a.click();
+                });
+            this.isExporting = false;
+            }
+            }
+        }, 10000);
+      },
     checkNextStep() {
       if(this.export_type != null) {
 

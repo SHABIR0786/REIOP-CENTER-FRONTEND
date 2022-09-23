@@ -1,5 +1,5 @@
 import * as api from "../Services/api"
-import axios from "axios";
+// import axios from "axios";
 
 const defaultFields = [
     //Subject
@@ -395,34 +395,9 @@ const actions = {
         })
     },
     // eslint-disable-next-line no-empty-pattern
-    async exportProperties({ }, data) {
-        let params = '?type=' + data.fileType;
-        if (data.template) { params = params + '&template_id=' + data.template; }
-        if (data && data.filter) {
-            const keys = Object.keys(data.filter);
-            keys.forEach(key => {
-                params = params + '&' + key + '=' + data.filter[key];
-            })
-        }
-        return await api.get(`/properties/export${params}`).then(() => { console.log('success') });
-    },
-    async storeExport({ commit }, data) {
+    async exportProperties({ commit }, data) {
         return await api.post(`/properties/export`, { ...data }).then(async (response) => {
-            commit('ADD_EXPORT', response.count);
-            if (response && response.id) {
-                axios({
-                    url: `${process.env.VUE_APP_API_URL}/properties/download/${response.id}`, // File URL Goes Here
-                    method: 'GET',
-                    responseType: 'blob',
-                }).then((res) => {
-                    const a = document.createElement('a');
-                    document.body.appendChild(a);
-                    const url = window.URL.createObjectURL(new Blob([res.data]));
-                    a.href = url;
-                    a.download = 'export.csv';
-                    a.click();
-                });
-            }
+            commit('ADD_EXPORT', response.export);
             return response
         })
     },

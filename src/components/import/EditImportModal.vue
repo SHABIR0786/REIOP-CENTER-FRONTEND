@@ -87,34 +87,69 @@
                     <b-row>
                       <b-col cols="12">
                         <b-input-group prepend="Imported Subjects" class="mb-2">
-                          <b-form-input readonly v-model="editData.subjects_count"></b-form-input>
+                          <b-form-input readonly v-model="editData.total_subjects"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group prepend="Imported Sellers" class="mb-2">
-                          <b-form-input readonly v-model="editData.sellers_count"></b-form-input>
+                          <b-form-input readonly v-model="editData.total_sellers"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group prepend="Imported Phones" class="mb-2">
-                          <b-form-input readonly v-model="editData.phones_count"></b-form-input>
+                          <b-form-input readonly v-model="editData.total_phones"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group prepend="Imported Emails" class="mb-2">
-                          <b-form-input readonly v-model="editData.emails_count"></b-form-input>
+                          <b-form-input readonly v-model="editData.total_emails"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group prepend="Imported Golden Addresses" class="mb-2">
+                          <b-form-input readonly v-model="editData.total_golden_addresses"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group prepend="Unique Subjects" class="mb-2">
+                          <b-form-input readonly v-model="editData.subjects_count"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group prepend="Unique Sellers" class="mb-2">
+                          <b-form-input readonly v-model="editData.sellers_count"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group prepend="Unique Phones" class="mb-2">
+                          <b-form-input readonly v-model="editData.phones_count"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group prepend="Unique Emails" class="mb-2">
+                          <b-form-input readonly v-model="editData.emails_count"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group prepend="Unique Golden Addresses" class="mb-2">
                           <b-form-input readonly v-model="editData.goldens_count"></b-form-input>
                         </b-input-group>
                       </b-col>
@@ -379,11 +414,11 @@ export default {
                 this.allListItems = [];
                 this.allListItems = this.lists;
                 this.allListItems.map((list) => {
-                  this.list_market_array.push(list.list_market);
-                  this.list_source_array.push(list.list_source);
-                  this.list_skip_source_array.push(list.list_skip_source);
-                  this.list_group_array.push(list.list_group);
-                  this.list_type_array.push(list.list_type);
+                this.list_market_array.push(list.list_market);
+                this.list_source_array.push(list.list_source);
+                this.list_skip_source_array.push(list.list_skip_source);
+                this.list_group_array.push(list.list_group);
+                this.list_type_array.push(list.list_type);
                     
                 });
                 this.list_market_array = [...new Set(this.list_market_array)];

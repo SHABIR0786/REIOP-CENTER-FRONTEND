@@ -607,7 +607,6 @@ export default {
           }
         }
       },
-
       importModal(item) {
         this.currentItemErrorLines = +item.error_number
         this.showImportModal = true;

@@ -595,10 +595,6 @@ export default {
         addItem() {
             this.showAddModal = true;
         },
-        exportProperties (fileType = 'csv') {
-            this.showFileType = false;
-            this.$store.dispatch('propertyModule/exportProperties', {filter: this.filter, template: this.selectedTemplate, fileType: fileType});
-        },
        async saveCustomView(template, type) {
           this.showCustomModalView = false;
           if (type === 'save' && template) {

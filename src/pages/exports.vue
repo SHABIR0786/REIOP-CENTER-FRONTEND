@@ -32,6 +32,7 @@ import EditExportModal from "../components/export/EditExportModal";
 import {
     mapGetters
 } from "vuex";
+import axios from "axios";
 import {
     BIcon
 } from "bootstrap-vue"
@@ -90,6 +91,31 @@ export default {
         }
     },
     methods: {
+    getLivePercentage(item) {
+        let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);
+        let index = this.filteredItems.findIndex(x=>x.id == item.id);
+        this.filteredItems[index].percentage =  percentage;
+        if(percentage != 100) {
+            // const Instance = this;
+        this.intervalId = setInterval(async () => {
+                var progress = await this.$store.dispatch("importV2Module/showBatch", item.id);
+                if(progress.batch) {
+                progress = progress.batch;
+                let is_processed =  progress.total_jobs - progress.pending_jobs;
+                let is_processing = progress.pending_jobs;
+                let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
+                let index = this.filteredItems.findIndex(x=>x.id == item.id);
+                this.filteredItems[index].percentage = progresspercentage;
+                if(this.$refs.table){
+                this.$refs.table.refresh();
+                }
+                if(progresspercentage == 100) {
+                clearInterval(this.intervalId);
+                }
+                }
+            }, 25000);
+        }
+      },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
             this.sortDesc = ctx.sortDesc;
@@ -104,8 +130,22 @@ export default {
             this.exportItem = data;
             this.showModal = true;
         },
-        downloadFile(data) {
-            console.log(data);
+        downloadFile(item) {
+            this.$store.dispatch('uxModule/setLoading')
+                axios({
+                    url: `${process.env.VUE_APP_API_URL}/properties/download/${item.id}`, // File URL Goes Here
+                    method: 'GET',
+                    responseType: 'blob',
+                }).then((res) => {
+                    const a = document.createElement('a');
+                    document.body.appendChild(a);
+                    const url = window.URL.createObjectURL(new Blob([res.data]));
+                    a.href = url;
+                    a.download = 'export.csv';
+                    a.click();
+                    this.$store.dispatch('uxModule/hideLoader');
+                });
+
         }
     },
     watch: {
