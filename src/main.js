@@ -48,7 +48,7 @@ Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Headers'] = '*
 
             window.Echo = new Echo({
               broadcaster: "socket.io",
-              host: "127.0.0.1:6001",
+              host: window.location.hostname+":6001", // This is the laravel echo host server
               client: window.io,
               auth: {
                   headers: headers
