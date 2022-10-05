@@ -107,7 +107,6 @@
             </b-row>
             <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
         </div>
-
           <edit-import-modal v-if="!isReload" :data="editData" :lists="lists" :showModal="showModal"  @cancel="cancelEdit" @save="save"></edit-import-modal>
           <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
           <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
@@ -222,7 +221,7 @@ export default {
        this.filteredItems = this.items;
        const Instance = this;
        this.filteredItems.forEach((item)=>{
-         Instance.getLivePercentage(item);
+         Instance.calculatePercentage(item);
        });
         try {
             this.$store.dispatch('uxModule/hideLoader')
@@ -250,30 +249,30 @@ export default {
       cancelEdit(){
         this.showModal = false;
       },
-      getLivePercentage(item) {
+      calculatePercentage(item) {
       let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);
       let index = this.filteredItems.findIndex(x=>x.id == item.id);
+      console.log(percentage);
       this.filteredItems[index].percentage =  percentage;
-      if(percentage != 100) {
-        // const Instance = this;
-       this.intervalId = setInterval(async () => {
-            var progress = await this.$store.dispatch("importV2Module/showBatch", item.id);
-            if(progress.batch) {
-            progress = progress.batch;
-            let is_processed =  progress.total_jobs - progress.pending_jobs;
-            let is_processing = progress.pending_jobs;
-            let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
-            let index = this.filteredItems.findIndex(x=>x.id == item.id);
-            this.filteredItems[index].percentage = progresspercentage;
-            if(this.$refs.table){
-              this.$refs.table.refresh();
-            }
-            if(progresspercentage == 100) {
-             clearInterval(this.intervalId);
-            }
-            }
-        }, 25000);
-      }
+      // if(percentage != 100) {
+      //  this.intervalId = setInterval(async () => {
+      //       var progress = await this.$store.dispatch("importV2Module/showBatch", item.id);
+      //       if(progress.batch) {
+      //       progress = progress.batch;
+      //       let is_processed =  progress.total_jobs - progress.pending_jobs;
+      //       let is_processing = progress.pending_jobs;
+      //       let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
+      //       let index = this.filteredItems.findIndex(x=>x.id == item.id);
+      //       this.filteredItems[index].percentage = progresspercentage;
+      //       if(this.$refs.table){
+      //         this.$refs.table.refresh();
+      //       }
+      //       if(progresspercentage == 100) {
+      //        clearInterval(this.intervalId);
+      //       }
+      //       }
+      //   }, 25000);
+      // }
       },
      async editItem(item) {
         this.$store.dispatch('uxModule/setLoading')

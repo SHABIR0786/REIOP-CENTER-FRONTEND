@@ -337,7 +337,6 @@ const actions = {
                 commit('SET_ALL_SUBJECTS', response.subjects)
                 // commit('GET_TOTAL', response.subjects.total)
             }
-
             return response
         })
     },
@@ -396,7 +395,11 @@ const actions = {
     },
     // eslint-disable-next-line no-empty-pattern
     async exportProperties({ commit }, data) {
-        return await api.post(`/properties/export`, { ...data }).then(async (response) => {
+        // return await api.post(`/properties/export`, { ...data }).then(async (response) => {
+        //     commit('ADD_EXPORT', response.export);
+        //     return response
+        // })
+        return await api.post(`/properties/exportqueue`, { ...data }).then(async (response) => {
             commit('ADD_EXPORT', response.export);
             return response
         })
