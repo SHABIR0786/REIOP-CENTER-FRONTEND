@@ -67,12 +67,7 @@
                 </template>
                 <template v-slot:cell(status)="data">
                     <div >
-                      <p>
-                       {{data.item.status==1 ? "In Progress" : ''}}
-                       {{data.item.status==2 ? "Completed" : ''}}
-                       {{data.item.status==3 ? "Failed" : ''}}
-                      </p>
-
+                      <p>{{showStatus(data.item)}}</p>
                     </div>
                 </template>
                 <template v-slot:cell(percentage)="data">
@@ -227,6 +222,15 @@ export default {
     methods: {
       async getList(){
         await this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage});
+      },
+      showStatus(item) {
+        if(item.pending_jobs == 0 && item.failed_jobs == 0) {
+          return "Completed";
+        } else if(item.pending_jobs != 0 && item.failed_jobs == 0){
+          return "In Progress";
+        }else if(item.failed_jobs != 0){
+          return "Failed";
+        }
       },
       async showImports(){
         this.$store.dispatch('uxModule/setLoading')
@@ -641,7 +645,6 @@ export default {
       },
     },
     mounted() {
-      console.log(this.authUser)
             window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
                 console.log(e);
       });
