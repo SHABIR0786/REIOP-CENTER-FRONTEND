@@ -51,6 +51,9 @@
                 <template #head(total_row_number)="scope">
                     <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
                 </template>
+                <template #head(status)="scope">
+                    <div class="text-nowrap" style="width: fit-content;">{{scope.label}}</div>
+                </template>
               <template #head(percentage)="scope">
                     <div class="text-nowrap" style="width: 90px;">{{scope.label}}</div>
                 </template>
@@ -62,11 +65,22 @@
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                     <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
                 </template>
+                <template v-slot:cell(status)="data">
+                    <div >
+                      <p>
+                       {{data.item.status==1 ? "In Progress" : ''}}
+                       {{data.item.status==2 ? "Completed" : ''}}
+                       {{data.item.status==3 ? "Failed" : ''}}
+                      </p>
+
+                    </div>
+                </template>
                 <template v-slot:cell(percentage)="data">
-                    <div :title="data.item.id">
+                    <div :title="data.item.id" class="text-center">
                         <p class="user-email">{{data.item.percentage}}%</p>
                     </div>
                 </template>
+                
                 <template v-slot:cell(import_type)="data">
                   <div v-b-tooltip.hover :title="data.item.import_type">{{ data.item.import_type }}</div>
                 </template>

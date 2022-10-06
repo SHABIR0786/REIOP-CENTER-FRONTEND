@@ -52,7 +52,7 @@ export default {
             pageOptions: [10, 20, 50],
             itemsCount: 0,
             sortBy: 'created_at',
-            sortDesc: false,
+            sortDesc: true,
             exportItem: {},
             showModal: false,
         }

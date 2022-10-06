@@ -156,6 +156,18 @@
                     </b-row>
                   </b-col>
                   <b-col>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group  class="mb-2 toolip-rs">
+                        <b-input-group-text class="w-100">Status | 
+                       {{editData.status==1 ? "In Progress" : ''}}
+                       {{editData.status==2 ? "Completed" : ''}}
+                       {{editData.status==3 ? "Failed" : ''}}
+                      
+                      </b-input-group-text>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
                   <b-row>
                       <b-col cols="12">
                         <b-input-group  class="mb-2 toolip-rs">
@@ -383,7 +395,9 @@ export default {
                 error_emails: '',
                 error_goldens: '',
                 error_phones: '',
-                notes:''
+                notes:'',
+                status:'',
+
             },
             progresspercentage: '',
           fields: [

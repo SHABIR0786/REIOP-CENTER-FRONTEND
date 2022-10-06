@@ -5,6 +5,7 @@ const state = {
         {key:"file_name", label: "File Name", sortable: true},
         {key:"import_type", label: "Import Type", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
+        {key:"status", label: "Status", sortable:true},
         {key:"percentage", label: "Completion %", sortable:true},
         {key:"created_records", label: "Created Records", sortable: true},
         {key:"error_number", label: "Error Lines", sortable: true},
@@ -37,6 +38,7 @@ const mutations = {
             process.is_processed = e.total_jobs - e.pending_jobs;
             process.file_name = e.file_name;
             process.user_id = e.user_id;
+            process.status = e.status;
             process.user_name = e.user_name;
             process.import_type = e.import_type;
             process.extension = e.extension;
