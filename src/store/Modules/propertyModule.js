@@ -399,7 +399,7 @@ const actions = {
         //     commit('ADD_EXPORT', response.export);
         //     return response
         // })
-        return await api.post(`/properties/exportqueue`, { ...data }).then(async (response) => {
+        return await api.post(`/properties/export`, { ...data }).then(async (response) => {
             commit('ADD_EXPORT', response.export);
             return response
         })

@@ -53,7 +53,8 @@ export default {
     },
     watch: {
         authUser: function () {
-            window.Echo.private(`exportcompleted.${this.authUser.id}`).listen("ExportCompleted", (e) => {
+            window.Echo.private(`exportcompleted.${this.authUser.id}`).listen("NotifyExportCompleted", (e) => {
+                console.log(e);
                 axios({
                     url: `${process.env.VUE_APP_API_URL}/properties/download/${e.id}`, // File URL Goes Here
                     method: 'GET',

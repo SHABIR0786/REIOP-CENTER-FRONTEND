@@ -202,7 +202,8 @@ export default {
           lists: 'listModule/lists',
           total: 'importV2Module/total',
           editData: 'importV2Module/editData',
-          showImportFirstPage: 'importV2Module/showImportFirstPage'
+          showImportFirstPage: 'importV2Module/showImportFirstPage',
+          authUser: 'loginModule/getAuthUser',
       }),
       rows() { return this.total ? this.total : 0 },
       getPreviousStep() {
@@ -624,6 +625,12 @@ export default {
            this.$store.dispatch('uxModule/hideLoader');
         }
       },
+    },
+    mounted() {
+      console.log(this.authUser)
+            window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
+                console.log(e);
+      });
     },
     beforeDestroy() {
       if(this.intervalId) {
