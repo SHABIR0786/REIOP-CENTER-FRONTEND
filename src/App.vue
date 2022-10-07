@@ -5,7 +5,6 @@
             <nav-bar></nav-bar>
         </b-row>
         <side-bar></side-bar>
-        <!-- <Footer></Footer> -->
         <router-view :key="$route.path"></router-view>
         <loader></loader>
     </div>
@@ -14,11 +13,10 @@
 </template>
 
 <script>
-import SideBar from "@/components/shared/SideBar"
-import NavBar from "@/components/shared/NavBar"
+import SideBar from "@/components/shared/SideBar";
+import NavBar from "@/components/shared/NavBar";
 import axios from "axios";
-// import Footer from "@/components/shared/Footer"
-import Loader from "@/components/shared/Loader"
+import Loader from "@/components/shared/Loader";
 import {
     mapGetters
 } from "vuex";
@@ -28,7 +26,6 @@ export default {
     components: {
         "side-bar": SideBar,
         "nav-bar": NavBar,
-        // Footer,
         "loader": Loader
     },
     computed: {
@@ -54,9 +51,8 @@ export default {
     watch: {
         authUser: function () {
             window.Echo.private(`exportcompleted.${this.authUser.id}`).listen("NotifyExportCompleted", (e) => {
-                console.log(e);
                 axios({
-                    url: `${process.env.VUE_APP_API_URL}/properties/download/${e.id}`, // File URL Goes Here
+                    url: `${process.env.VUE_APP_API_URL}/properties/download/${e.path}`, // File URL Goes Here
                     method: 'GET',
                     responseType: 'blob',
                 }).then((res) => {

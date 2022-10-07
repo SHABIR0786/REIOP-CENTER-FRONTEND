@@ -14,8 +14,7 @@ const state = {
         {key:"list_pull_date", label: "Last Pull Date", sortable: true},
         {key:"created_at", label: "Upload Date", sortable: true},
         {key:"updated_at", label: "Last Edit Date", sortable: true},
-        {key:"user_name", label: "Uploaded By", sortable: true},
-
+        {key:"user_name", label: "Uploaded By", sortable: true}
     ],
     lists: [],
     total: 0,
