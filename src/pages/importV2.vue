@@ -642,19 +642,21 @@ export default {
         }
       },
     },
-    mounted() {
-      const instance = this;
-            window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
-            let index = instance.filteredItems.findIndex(x=>x.id == e.batchId);
-             instance.filteredItems[index].percentage =  e.percentage;
-      });
-    },
     beforeDestroy() {
       if(this.intervalId) {
         clearInterval(this.intervalId);
       }
     },
   watch: {
+    authUser: function () {
+      const instance = this;
+            window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
+              console.log(e);
+            let index = instance.filteredItems.findIndex(x=>x.id == e.batchId);
+             instance.filteredItems[index].percentage =  e.percentage;
+      });
+    }
+      ,
     searchImport: {
       handler: function () {
         this.$store.dispatch('importV2Module/searchImpots', {

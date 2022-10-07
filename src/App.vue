@@ -50,9 +50,15 @@ export default {
     },
     watch: {
         authUser: function () {
+            const instance = this;
             window.Echo.private(`exportcompleted.${this.authUser.id}`).listen("NotifyExportCompleted", (e) => {
+                instance.$bvToast.toast(`Download is Started for the Document.`, {
+                    title: 'Export File Download',
+                    autoHideDelay: 5000,
+                    appendToast: true
+                    });
                 axios({
-                    url: `${process.env.VUE_APP_API_URL}/properties/download/${e.path}`, // File URL Goes Here
+                    url: `${process.env.VUE_APP_API_URL}/properties/download/${e.exportId}`, // File URL Goes Here
                     method: 'GET',
                     responseType: 'blob',
                 }).then((res) => {
@@ -64,10 +70,6 @@ export default {
                     a.click();
                 });
       });
-          // let channel = window.Echo.join(`channel.${this.$route.params.id}`);
-          //   channel.whisper("Message", {
-          //     event: "updatetext",
-          //   });
         },
         '$route'(to, from) {
             switch (from.name) {

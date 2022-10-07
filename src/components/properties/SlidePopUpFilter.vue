@@ -601,7 +601,7 @@ computed: {
           title: 'Export',
           autoHideDelay: 5000,
           appendToast: true
-        })
+        });
     },
     checkNextStep() {
       if(this.export_type != null) {
