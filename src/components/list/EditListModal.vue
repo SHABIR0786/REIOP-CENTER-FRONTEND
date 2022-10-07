@@ -330,6 +330,7 @@ export default {
         async showModal() {
           let result = await this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName, list_id: this.propsData.id});
           this.list = {...this.propsData,...result?.uniqueCounts}
+          console.log(this.list);
         },
       currentPage: {
         handler: function() {

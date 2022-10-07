@@ -341,6 +341,15 @@ export default {
           this.isReadOnly = true;
           this.$emit('cancel');
         },
+      showStatus(item) {
+        if(item.pending_jobs == 0 && item.failed_jobs == 0) {
+          return "Completed";
+        } else if(item.pending_jobs != 0 && item.failed_jobs == 0){
+          return "In Progress";
+        }else if(item.failed_jobs != 0) {
+          return "Failed";
+        }
+      },
         editImport() {
             this.isReadOnly = false;
             if(this.editData.list_skip_source == 'N/A'){
@@ -430,24 +439,19 @@ export default {
                 this.list_source_array.push(list.list_source);
                 this.list_skip_source_array.push(list.list_skip_source);
                 this.list_group_array.push(list.list_group);
-                this.list_type_array.push(list.list_type);
-                    
+                this.list_type_array.push(list.list_type);    
                 });
                 this.list_market_array = [...new Set(this.list_market_array)];
                 this.list_source_array = [...new Set(this.list_source_array)];
                 this.list_group_array = [...new Set(this.list_group_array)];
                 this.list_type_array = [...new Set(this.list_type_array)];
                 this.list_skip_source_array = [...new Set(this.list_skip_source_array)];
-
-
                 this.list_market_array = this.list_market_array.filter((a) => a);
                 this.list_skip_source_array = this.list_skip_source_array.filter((a) => a);
                 this.list_source_array = this.list_source_array.filter((a) => a);
                 this.list_group_array = this.list_group_array.filter((a) => a);
                 this.list_type_array = this.list_type_array.filter((a) => a);
-
         },
-
       data: {
         deep: true,
         handler() {

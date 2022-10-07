@@ -236,7 +236,6 @@ export default {
         this.$store.dispatch('uxModule/setLoading')
         this.$store.dispatch('importV2Module/getTotal')
         await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
-       
        this.filteredItems = this.items;
        const Instance = this;
        this.filteredItems.forEach((item)=>{
@@ -271,7 +270,6 @@ export default {
       calculatePercentage(item) {
       let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);
       let index = this.filteredItems.findIndex(x=>x.id == item.id);
-      console.log(percentage);
       this.filteredItems[index].percentage =  percentage;
       // if(percentage != 100) {
       //  this.intervalId = setInterval(async () => {
