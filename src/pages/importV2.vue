@@ -650,7 +650,7 @@ export default {
   watch: {
     authUser: function () {
       console.log('authUser');
-            const instance = this;
+            // const instance = this;
             window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
               console.log(e);
             // let index = instance.filteredItems.findIndex(x=>x.id == e.batchId);
