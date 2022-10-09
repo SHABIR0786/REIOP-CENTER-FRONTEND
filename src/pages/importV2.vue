@@ -655,7 +655,7 @@ export default {
             let is_processing = e.batch.pending_jobs;
             let is_processed = e.batch.total_jobs - e.batch.pending_jobs;
             let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
-            let index = instance.filteredItems.findIndex(x=>x.id == e.batch.id);
+            let index = instance.filteredItems.findIndex(x=>x.process_id == e.batch.process_id);
             if(index != -1) {
             instance.filteredItems[index].percentage =  progresspercentage;
             instance.filteredItems[index].error_number =  e.batch.error_number;
