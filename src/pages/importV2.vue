@@ -203,6 +203,7 @@ export default {
     },
     computed: {
       ...mapGetters({
+          authUser: 'loginModule/getAuthUser',
           isCollapsed: 'uxModule/isCollapsed',
           fields: 'importV2Module/fields',
           items: 'importV2Module/imports',
@@ -211,8 +212,7 @@ export default {
           lists: 'listModule/lists',
           total: 'importV2Module/total',
           editData: 'importV2Module/editData',
-          showImportFirstPage: 'importV2Module/showImportFirstPage',
-          authUser: 'loginModule/getAuthUser',
+          showImportFirstPage: 'importV2Module/showImportFirstPage'
       }),
       rows() { return this.total ? this.total : 0 },
       getPreviousStep() {
@@ -647,17 +647,16 @@ export default {
         clearInterval(this.intervalId);
       }
     },
-  watch: {
-    authUser: function () {
-      console.log('authUser');
-            // const instance = this;
-            window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
-              console.log(e);
-            // let index = instance.filteredItems.findIndex(x=>x.id == e.batchId);
-            //  instance.filteredItems[index].percentage =  e.percentage;
+    mounted() {
+      console.log(this.authUser);
+          const instance = this;
+          window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
+            console.log(e);
+          let index = instance.filteredItems.findIndex(x=>x.id == e.batchId);
+           instance.filteredItems[index].percentage =  e.percentage;
       });
-    }
-      ,
+    },
+  watch: {
     searchImport: {
       handler: function () {
         this.$store.dispatch('importV2Module/searchImpots', {
