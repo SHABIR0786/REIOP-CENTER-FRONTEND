@@ -661,6 +661,9 @@ export default {
             instance.filteredItems[index].error_number =  e.batch.error_number;
             instance.filteredItems[index].total_row_number =  e.batch.total_row_number;
             }
+             if(instance.$refs.table){
+              instance.$refs.table.refresh();
+              }
       });
     },
   watch: {

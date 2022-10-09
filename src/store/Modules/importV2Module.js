@@ -28,7 +28,6 @@ const mutations = {
         const readyData = [];
         payload.data.forEach(e => {
             const process = {}
-
             const date = e.created_at;
             process.id = e.id;
             process.process_id = e.process_id
