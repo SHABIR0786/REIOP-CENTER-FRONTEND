@@ -70,9 +70,9 @@ export default {
                     a.click();
                 });
       });
-        window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
-              console.log(e);
-        });
+        // window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
+        //       console.log(e);
+        // });
         },
         '$route'(to, from) {
             switch (from.name) {

@@ -649,11 +649,12 @@ export default {
     },
   watch: {
     authUser: function () {
-      const instance = this;
+      console.log('authUser');
+            const instance = this;
             window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
               console.log(e);
-            let index = instance.filteredItems.findIndex(x=>x.id == e.batchId);
-             instance.filteredItems[index].percentage =  e.percentage;
+            // let index = instance.filteredItems.findIndex(x=>x.id == e.batchId);
+            //  instance.filteredItems[index].percentage =  e.percentage;
       });
     }
       ,
