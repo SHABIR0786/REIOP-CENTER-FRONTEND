@@ -652,8 +652,9 @@ export default {
           const instance = this;
           window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
             console.log(e);
-          let index = instance.filteredItems.findIndex(x=>x.id == e.batchId);
-           instance.filteredItems[index].percentage =  e.percentage;
+            let progresspercentage = Math.round((e.batch.is_processed / (e.batch.is_processed + e.batch.is_processing)) * 100);
+            let index = instance.filteredItems.findIndex(x=>x.id == e.batch.id);
+            instance.filteredItems[index].percentage =  progresspercentage;
       });
     },
   watch: {
