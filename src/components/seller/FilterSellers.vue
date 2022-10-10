@@ -800,7 +800,7 @@ export default {
         if (response?.attempted_skip_trace_sources) {
               response.attempted_skip_trace_sources.forEach(skipTraceSources => {
               skipTraceSources = JSON.parse(skipTraceSources);
-              skipTraceSources.forEach(skipTraceSource => {
+              skipTraceSources?.forEach(skipTraceSource => {
                 if(!this.allData.AttemptedSkipTraceSources.includes(skipTraceSource) && !this.allFilters.AttemptedSkipTraceSources.includes(skipTraceSource)) {
                     this.allData.AttemptedSkipTraceSources.push(skipTraceSource);
                 }

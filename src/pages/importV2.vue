@@ -191,9 +191,7 @@ export default {
         statusBackValidity:false,
         intervalId:null,
         filteredItems: [],
-        previousStepArr: [],
-
-
+        previousStepArr: []
       }
     },
     async created () {
@@ -648,10 +646,8 @@ export default {
       }
     },
     mounted() {
-      console.log(this.authUser);
           const instance = this;
           window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
-            console.log(e);
             let is_processing = e.batch.pending_jobs;
             let is_processed = e.batch.total_jobs - e.batch.pending_jobs;
             let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
