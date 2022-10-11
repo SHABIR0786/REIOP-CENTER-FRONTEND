@@ -19,7 +19,7 @@ const state = {
 
 
         // Custom Fields
-        {key: "subject_last_marked_date", label: "Last Marketed Date", sortable: true},
+        {key: "subject_last_marketed_date", label: "Last Marketed Date", sortable: true},
         {key: "subject_last_exported_date", label: "Last Exported Date", sortable: true},
         {key: "subject_pull_date", label: "Pull Date", sortable: true},
         {key: "subject_skip_trace_date", label: "Skip Trace Date", sortable: true},
