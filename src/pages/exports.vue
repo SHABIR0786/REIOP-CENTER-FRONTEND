@@ -68,12 +68,14 @@ export default {
             return this.items ? this.items : 1
         },
     },
-    created() {
+    async created() {
         if (this.$route.query.export_id) {
-          this.$store.dispatch('exportModule/getSelectedExport', this.$route.query.export_id).then(() => {
+            this.$store.dispatch('uxModule/setLoading')
+            await this.$store.dispatch('exportModule/getSelectedExport', this.$route.query.export_id).then(() => {
             this.exportItem = this.selectedItem
             this.showModal = true
           })
+          this.$store.dispatch('uxModule/hideLoader')
         }
     },
     async mounted() {
@@ -151,12 +153,14 @@ export default {
     watch: {
         currentPage: {
             handler: async function () {
+            this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch("exportModule/exports", {
                 page: this.currentPage,
                 perPage: this.perPage,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             })
+            this.$store.dispatch('uxModule/hideLoader');
             }
         },
         perPage: {

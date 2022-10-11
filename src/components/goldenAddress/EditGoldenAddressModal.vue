@@ -386,9 +386,12 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.goldenAddress);
         },
-        currentModal() {
-           let subject = this.goldenAddress?.sellers?.[0]?.subjects?.[0];
-          this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+        async currentModal() {
+            this.$store.dispatch('uxModule/setLoading')
+            let subject = this.goldenAddress?.sellers?.[0]?.subjects?.[0];
+            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+            this.$store.dispatch('uxModule/hideLoader')
+
         },
         editSellerItem(item) {
             const route = '/sellers?seller_id=' + item.id;

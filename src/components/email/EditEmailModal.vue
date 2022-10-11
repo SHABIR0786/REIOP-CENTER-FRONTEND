@@ -361,9 +361,12 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.email);
         },
-        currentModal(){
+        async currentModal(){
+            this.$store.dispatch('uxModule/setLoading')
+
           let subject = this.email?.sellers?.[0]?.subjects?.[0];
-          this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+          await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+          this.$store.dispatch('uxModule/hideLoader')
         },
         editSellerItem(item) {
             const route = '/sellers?seller_id=' + item.id;
@@ -443,11 +446,9 @@ export default {
         }
     },
     mounted() {
-        this.$store.dispatch('uxModule/setLoading')
 
         this.sellerTableFields = this.sellerFields.filter(s=>this.sellerTableSkipFields.indexOf(s.key) == -1);
         this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'total_running_lists' && s.key !== 'list_total_individual_list' )
-        this.$store.dispatch('uxModule/hideLoader')
 
     },
     watch: {

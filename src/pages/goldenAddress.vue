@@ -394,14 +394,17 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
             }
         },
-        editItem(item) {
-            this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
+         editItem(item) {
+            this.$store.dispatch('uxModule/setLoading')
+            this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {                
                 item.sellers = [response.seller];
-                item.subjects = response.seller.subjects;
+                item.subjects = response.seller?.subjects;
                 this.editedItem = {
                     ...item
                 }
+                this.$store.dispatch('uxModule/hideLoader')
                 this.showModal = true
+                
             });
         },
         save(item) {

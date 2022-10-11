@@ -509,9 +509,11 @@ export default {
             this.editedItem = { ...item }
             this.showEditPhoneModal = true;
         },
-        currentModal(){
+        async currentModal(){
+            this.$store.dispatch('uxModule/setLoading')
           let subject = this.propsSeller.subjects?.[0];
-           this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+          await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+          this.$store.dispatch('uxModule/hideLoader')
         },
         editPhoneSave (item) {
             this.$store.dispatch('phoneNumberModule/editPhoneNumber', {...item})
@@ -664,14 +666,14 @@ export default {
     },
     watch: {
         async showModal() {
-
             if(this.showModal){
-                this.seller = {...this.propsSeller}
                 this.$store.dispatch('uxModule/setLoading');
+                this.seller = {...this.propsSeller}
                 await this.$store.dispatch(`exportModule/getExports`, {'module': 'sellers', id: this.propsSeller.id});
                 this.$store.dispatch('uxModule/hideLoader');
 
             }
+
         }
     }
 

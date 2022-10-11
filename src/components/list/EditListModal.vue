@@ -238,8 +238,10 @@ export default {
           this.$emit('save', this.list);
       },
       async showImport(row){
+        this.$store.dispatch('uxModule/setLoading')
         await this.$store.dispatch(`listModule/relatedImports`,{data:row.item.list_hash, runYear:row.item.list_run_year,runMonth:row.item.list_run_month, page: 1, perPage:this.perPage})
         row.toggleDetails();
+        this.$store.dispatch('uxModule/hideLoader')
      },
       currentModal(){
         this.currentPage = 1;
@@ -328,9 +330,13 @@ export default {
     },
     watch: {
         async showModal() {
-          let result = await this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName, list_id: this.propsData.id});
-          this.list = {...this.propsData,...result?.uniqueCounts}
-          console.log(this.list);
+        if(this.showModal){
+            this.$store.dispatch('uxModule/setLoading')
+            let result = await this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName, list_id: this.propsData.id});
+            this.list = {...this.propsData,...result?.uniqueCounts}
+            this.$store.dispatch('uxModule/hideLoader')
+            console.log(this.list);
+        }
         },
       currentPage: {
         handler: function() {

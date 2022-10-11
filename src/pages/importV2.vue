@@ -198,6 +198,7 @@ export default {
       this.$store.dispatch('uxModule/setLoading')
       await this.getList();
       await this.showImports();
+      this.$store.dispatch('uxModule/hideLoader')
     },
     computed: {
       ...mapGetters({
@@ -219,7 +220,9 @@ export default {
     },
     methods: {
       async getList(){
+        this.$store.dispatch('uxModule/setLoading')
         await this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage});
+        this.$store.dispatch('uxModule/hideLoader')
       },
       showStatus(item) {
         if(item.pending_jobs == 0 && item.failed_jobs == 0) {
@@ -232,7 +235,7 @@ export default {
       },
       async showImports(){
         this.$store.dispatch('uxModule/setLoading')
-        this.$store.dispatch('importV2Module/getTotal')
+        await this.$store.dispatch('importV2Module/getTotal')
         await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
        this.filteredItems = this.items;
        const Instance = this;
@@ -664,15 +667,18 @@ export default {
     },
   watch: {
     searchImport: {
-      handler: function () {
-        this.$store.dispatch('importV2Module/searchImpots', {
+      handler: async function () {
+        this.$store.dispatch('uxModule/setLoading')
+        await this.$store.dispatch('importV2Module/searchImpots', {
           page: this.currentPage,
           perPage: this.perPage,
           search: this.searchImport
         })
+        this.$store.dispatch('uxModule/hideLoader');
       }
     },
-    showImportFirstPage(v) {
+    async showImportFirstPage(v) {
+      this.$store.dispatch('uxModule/setLoading')
       if(v) {
         this.showImportTable = true;
         this.step_1 = false;
@@ -684,7 +690,8 @@ export default {
         this.step_5 = false;
         this.importDetails = {};
       }
-      this.$store.dispatch('importV2Module/showImportFirstPage', false)
+      await this.$store.dispatch('importV2Module/showImportFirstPage', false)
+        this.$store.dispatch('uxModule/hideLoader');
     },
     perPage: {
         handler: function () {

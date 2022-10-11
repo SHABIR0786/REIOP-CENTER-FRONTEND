@@ -467,7 +467,7 @@ export default {
             }
         },
         editItem(item) {
-            this.showModal = true
+            this.showModal = true;
             const data = {
                 ...item
             }
