@@ -19,3 +19,9 @@ export default {
     }
 }
 </script>
+<style>
+.loader{
+    z-index: 2000 !important;
+    position: absolute !important;
+}
+</style>

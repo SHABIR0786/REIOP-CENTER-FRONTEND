@@ -1156,3 +1156,7 @@ span.back-to-profile {
 
 
 }
+.loader{
+  z-index: 2000 !important;
+  position: absolute !important;
+}

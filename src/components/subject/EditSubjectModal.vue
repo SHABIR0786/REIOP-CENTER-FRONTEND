@@ -408,9 +408,15 @@ export default {
         this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'total_running_lists' && s.key !== 'list_total_individual_list')
     },
     watch: {
-        showModal() {
-          this.subject = {...this.propsData}
-          this.$store.dispatch(`exportModule/getExports`, {'module': 'subjects', id: this.propsData.id});
+
+         async showModal() {
+            if(this.showModal){
+                this.subject = {...this.propsData}
+                this.$store.dispatch('uxModule/setLoading');
+                await this.$store.dispatch(`exportModule/getExports`, {'module': 'subjects', id: this.propsData.id});
+                this.$store.dispatch('uxModule/hideLoader');
+
+            }
         }
     }
 }

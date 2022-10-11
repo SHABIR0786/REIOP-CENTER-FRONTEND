@@ -366,9 +366,12 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.phoneNumber);
         },
-        currentModal(){
+        async currentModal(){
+            this.$store.dispatch('uxModule/setLoading')
             let subject = this.phoneNumber?.sellers?.[0]?.subjects?.[0];
-          this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+            this.$store.dispatch('uxModule/hideLoader')
+
         },
         editSellerItem(item) {
             const route = '/sellers?seller_id=' + item.id;
@@ -454,11 +457,15 @@ export default {
     },
     watch: {
        async showModal() {
+        if(this.showModal){
+            this.$store.dispatch('uxModule/setLoading')
             this.phoneNumber = {...this.propsData}
             let response = await this.$store.dispatch('listModule/getSelectedList', this.phoneNumber.list_id);
             this.relatedList = [response.list];
             this.$store.dispatch(`exportModule/getExports`, {'module': 'phones', id: this.propsData.id});
             await this.$store.dispatch(`phoneNumberModule/relatedSkipSources`, this.propsData.id);
+            this.$store.dispatch('uxModule/hideLoader')
+        }
         }
     }
 

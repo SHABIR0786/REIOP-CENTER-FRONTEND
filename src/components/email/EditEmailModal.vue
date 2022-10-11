@@ -443,17 +443,26 @@ export default {
         }
     },
     mounted() {
+        this.$store.dispatch('uxModule/setLoading')
+
         this.sellerTableFields = this.sellerFields.filter(s=>this.sellerTableSkipFields.indexOf(s.key) == -1);
         this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'total_running_lists' && s.key !== 'list_total_individual_list' )
+        this.$store.dispatch('uxModule/hideLoader')
+
     },
     watch: {
         async showModal() {
+         if(this.showModal){
+            this.$store.dispatch('uxModule/setLoading')
             console.log('this world');
             this.email = {...this.propsData}
             let response = await this.$store.dispatch('listModule/getSelectedList', this.email.list_id);
             this.relatedList = [response.list];
             this.$store.dispatch(`exportModule/getExports`, {'module': 'emails', id: this.propsData.id});
             await this.$store.dispatch(`emailModule/relatedSkipSources`, this.propsData.id);
+            this.$store.dispatch('uxModule/hideLoader')
+         }
+
         }
     }
 

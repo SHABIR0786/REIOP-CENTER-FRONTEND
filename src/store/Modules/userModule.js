@@ -101,6 +101,13 @@ const actions = {
             return response
         })
     },
+    async deleteUser({ commit }, data) {
+
+        return await api.deleteAPI(`/users/${data}`).then((response) => {
+            commit('DELETE_USER', data)
+            return response
+        })
+    },
 }
 
 const getters = {

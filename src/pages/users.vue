@@ -32,6 +32,8 @@
         </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteUser(data.item)"></b-icon>
+
         </template>
 
     </b-table>
@@ -51,6 +53,7 @@
     <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-user-modal>
     <add-user-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-user-modal>
     <company-role-user-modal :showModal="showCompanyRoleModal" :propsData="CompanyRole_Item" @cancel="showCompanyRoleModal=false"></company-role-user-modal>
+    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
 
 </div>
 </template>
@@ -65,7 +68,9 @@ import {
 import EditUserModal from "../components/user/EditUserModal";
 import CompanyRoleUserModal from "../components/user/CompanyRoleUserModal";
 import AddUserModal from "../components/user/AddUserModal";
-import { setLocalStorage } from '../utils/localStorage'
+import { setLocalStorage } from '../utils/localStorage';
+import  DeleteModal from'@/components/deleteModal/DeleteModal'
+
 
 
 export default {
@@ -74,7 +79,8 @@ export default {
         BIcon,
         EditUserModal,
         AddUserModal,
-        CompanyRoleUserModal
+        CompanyRoleUserModal,
+        DeleteModal
     },
     data() {
         return {
@@ -220,10 +226,22 @@ export default {
             this.showDeleteModal = true;
             this.itemToDelete = item;
         },
-        modalResponse(response) {
+        async modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
-                this.$store.dispatch('userModule/deleteUser', this.itemToDelete.id)
+                this.$store.dispatch('uxModule/setLoading');
+                try {
+                    await this.$store.dispatch('userModule/deleteUser', this.itemToDelete.id)
+                    this.$bvToast.toast("User Deleted Successfully!", {
+                    title: "User Deleted!",
+                    variant: 'success',
+                    autoHideDelay: 5000,
+
+              });
+                this.$store.dispatch('uxModule/hideLoader');
+                }catch(error) {
+                this.$store.dispatch('uxModule/hideLoader');
+                }
             }
         },
         addItem() {

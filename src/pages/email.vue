@@ -355,13 +355,15 @@ export default {
         this.totalFilters = total
         return  total
         },
-        editItem(item) {
-             this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
+        async editItem(item) {
+          this.$store.dispatch('uxModule/setLoading')
+             await this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
             item.sellers = [response.seller];
             item.subjects = response.seller.subjects;
             this.editedItem = { ...item }
             this.showModal = true
             });
+            this.$store.dispatch('uxModule/hideLoader')
         },
         save(item) {
             this.$store.dispatch('emailModule/editEmail', {...item})

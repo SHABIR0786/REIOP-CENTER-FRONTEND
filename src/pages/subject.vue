@@ -433,6 +433,7 @@ export default {
             }
         },
         editSubject(item) {
+            this.$store.dispatch('uxModule/setLoading');
             this.showModal = true
             this.editedItem = {
                 ...item

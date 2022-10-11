@@ -23,7 +23,7 @@
                         </b-input-group>
                     </b-col>
                 </b-row>
-                <!-- <b-row>
+                <b-row>
                     <b-col cols="12">
                         <b-input-group prepend="Select Team" id="team_id" label="Team" label-for="team_id" class="mb-2">
                             <b-form-select v-model="$v.user.team_id.$model" aria-describedby="team_id" :state="validateState('team_id')" :options="teamitems" required>
@@ -31,7 +31,7 @@
                             <b-form-invalid-feedback class="text-center" id="team_id">User Team Field is Required.</b-form-invalid-feedback>
                         </b-input-group>
                     </b-col>
-                </b-row> -->
+                </b-row>
                 
                 <b-row class="mb-1 text-center">
                     <b-col cols="12">
@@ -129,7 +129,7 @@ export default {
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            // teams: 'teamModule/teams',
+            teams: 'teamModule/teams',
             items: 'companyModule/companies',
 
         }),
@@ -148,7 +148,7 @@ export default {
                 role: '',
                 permissions: [],
             },
-            // teamitems: [],
+            teamitems: [],
             companyitems: [],
             selectedCompany:[],
 
@@ -186,9 +186,9 @@ export default {
                 required,
                 email
             },
-            // team_id: {
-            //     required
-            // },
+            team_id: {
+                required
+            },
             // role: {
             //     required
             // },
@@ -239,16 +239,16 @@ export default {
         this.$store.dispatch('companyModule/getTotal')
 
         try {
-            // await this.$store.dispatch("teamModule/getAllTeams", {
-            //     page: 1,
-            //     perPage: this.perPage
-            // })
-            // this.teams.map((team) => {
-            //     this.teamitems.push({
-            //         value: team.id,
-            //         text: team.name
-            //     });
-            // });
+            await this.$store.dispatch("teamModule/getAllTeams", {
+                page: 1,
+                perPage: this.perPage
+            })
+            this.teams.map((team) => {
+                this.teamitems.push({
+                    value: team.id,
+                    text: team.name
+                });
+            });
             await this.$store.dispatch("companyModule/getAllCompanies", {
                 page: 1,
                 perPage: this.perPage
