@@ -789,11 +789,10 @@ export default {
         });
       }
       if(response?.seller_error?.length > 0) {
-        response.seller_error.forEach(el=>{
-          // console.log(el);
+        response.seller_error.forEach(el=> {
           if (el && !this.allData.Error.includes(el)  && !this.allFilters.Error.includes(el)) {
           this.allData.Error.push(el);
-        }
+          }
         });
       }
 

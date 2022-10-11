@@ -371,6 +371,8 @@ export default {
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
+            relatedSkipSources: 'goldenAddressModule/relatedSkipSources',
+            relatedSkipSourcesFields: 'goldenAddressModule/fields'
         }),
     },
     methods: {
