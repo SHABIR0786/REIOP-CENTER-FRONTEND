@@ -188,7 +188,7 @@
               <!-- Select Source  -->
                 <div class="checkbox-select mt-2">
                 <div class="checkbox-select__trigger custom-select" @click="showSourceDropDown()">
-                    <span class="checkbox-select__title">Select Included Type</span>
+                    <span class="checkbox-select__title">Select Included Souce</span>
                 </div>
                 <div id="dropdown" class="checkbox-select__dropdown" v-show="isSourceDropDown">
                 <loading-bars v-if="isListLoading"></loading-bars>
