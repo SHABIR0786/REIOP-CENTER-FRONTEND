@@ -86,7 +86,7 @@ const mutations = {
                 e.total_subjects = e.subjects.length;
                 e.created_at = e.created_at.split('T')[0];
                 e.updated_at = e.updated_at.split('T')[0];
-                e.attempted_skip_trace_sources = e.attempted_skip_trace_sources?JSON.parse(e.attempted_skip_trace_sources).join(","):'';
+                (e.attempted_skip_trace_sources != "null" && e.attempted_skip_trace_sources) ?JSON.parse(e.attempted_skip_trace_sources).join(","):"";
             })
             state.filteredSeller = JSON.stringify(filteredData);
             state.filteredSellersCount = payload.total;
