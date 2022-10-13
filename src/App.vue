@@ -57,6 +57,7 @@ export default {
                     autoHideDelay: 5000,
                     appendToast: true
                     });
+
                 axios({
                     url: `${process.env.VUE_APP_API_URL}/properties/download/${e.exportId}`, // File URL Goes Here
                     method: 'GET',
@@ -69,6 +70,7 @@ export default {
                     a.download = 'export.csv';
                     a.click();
                 });
+                
       });
         },
         '$route'(to, from) {

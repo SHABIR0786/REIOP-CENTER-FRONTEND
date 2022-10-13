@@ -595,13 +595,14 @@ computed: {
         sortDesc: this.sortDesc,
         fields_type: this.fields_type
       }
-      // this.isExporting = true;
+      this.isExporting = true;
       await this.$store.dispatch('propertyModule/exportProperties', exportSubject);
       this.$bvToast.toast(`Document Export Started. Please wait!`, {
           title: 'Export',
           autoHideDelay: 5000,
           appendToast: true
         });
+      this.isExporting = false;
     },
     checkNextStep() {
       if(this.export_type != null) {
