@@ -133,7 +133,6 @@ const mutations = {
                         e['seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_city'] = golden.golden_address_city;
                         e['seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_state'] = golden.golden_address_state;
                         e['seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_zip'] = golden.golden_address_zip;
-
                     });
 
                     // get Max counts for Phones, Emails and Golden addresses
@@ -185,6 +184,7 @@ const mutations = {
                         seperatedRowSubject.list_type = list_type.join(', ');
                         seperatedRowSubject.list_source = list_source.join(', ');
                     }
+                    seperatedRowSubject['seller_id'] = seller.id;
                     seperatedRowSubject['seller_full_name'] = seller.seller_full_name;
                     seperatedRowSubject['seller_first_name'] = seller.seller_first_name;
                     seperatedRowSubject['seller_last_name'] = seller.seller_last_name;
@@ -199,6 +199,7 @@ const mutations = {
                             if (seller.phones && seller.phones[x]) {
                                 let phone = seller.phones[x];
                                 // Seller Phones
+                                seperatedRowSubject['phone_id'] = phone.id;
                                 seperatedRowSubject['seller_phone_number'] = phone.phone_number;
                                 seperatedRowSubject['seller_phone_type'] = phone.phone_type;
                                 seperatedRowSubject['seller_phone_validity'] = phone.phone_validity;
@@ -207,6 +208,7 @@ const mutations = {
                             if (seller.emails && seller.emails[x]) {
                                 let email = seller.emails[x];
                                 // Seller Emails
+                                seperatedRowSubject['email_id'] = email.id;
                                 seperatedRowSubject['seller_email_address'] = email.email_address;
                                 seperatedRowSubject['seller_email_validity'] = email.email_validity;
                                 seperatedRowSubject['seller_email_skip_source'] = email.email_skip_source;
@@ -214,6 +216,7 @@ const mutations = {
                             if (seller.golden_addresses && seller.golden_addresses[x]) {
                                 let golden = seller.golden_addresses[x];
                                 // Seller Golden Addresses
+                                seperatedRowSubject['golden_id'] = golden.id;
                                 seperatedRowSubject['seller_golden_address_address'] = golden.golden_address_address;
                                 seperatedRowSubject['seller_golden_address_city'] = golden.golden_address_city;
                                 seperatedRowSubject['seller_golden_address_state'] = golden.golden_address_state;

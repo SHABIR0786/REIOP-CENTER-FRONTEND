@@ -67,7 +67,12 @@
                 <div class="text-nowrap" style="width: 30px;">{{scope.label}}</div>
             </template>
             <template v-slot:cell(delete)="data">
+                <div v-if="fieldsType == 'samerows' || fieldsType == null">
                 <b-form-checkbox :value='data.item.id' v-model='bulkDeleteItems'></b-form-checkbox>
+                </div>
+                <div v-else>
+                <b-form-checkbox :value='data.item.id+","+data.item.seller_id+","+data.item.phone_id+","+data.item.email_id+","+data.item.golden_id' v-model='bulkDeleteItems'></b-form-checkbox>
+                </div>
             </template>
             <template #head(id)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
@@ -294,6 +299,7 @@ export default {
             if(this.fieldsType == "samerows" || this.fieldsType == null) {
                 return this.items;
             } else {
+                console.log(this.seperatedRowSubjects);
                 return this.seperatedRowSubjects;
             }
          },
