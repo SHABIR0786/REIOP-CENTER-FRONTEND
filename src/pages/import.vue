@@ -152,6 +152,7 @@ export default {
       jsonSheet: [],
       tableLabels: ['emails', 'golden_addresses', 'lists', 'phones', 'sellers', 'subjects'],
       uploadedFields: [],
+      RealUploadedFields: [],
       listPullSettings : '',
       uploadedAllFields: [],
       selectedFields: [],
@@ -544,6 +545,7 @@ export default {
             $this.uploadedAllFields.push(sheetHeader)
           }
         }
+        this.RealUploadedFields = this.uploadedFields;
         this.$store.dispatch('uxModule/hideLoader')
       };
       reader.readAsArrayBuffer(f);
@@ -610,19 +612,21 @@ export default {
       if (table === 'golden') {
         table = 'golden_address'
       }
-       if (!this.uploadedFields.includes(this.mappedItems[index].fromField)) {
+
+       if (!this.uploadedFields.includes(this.mappedItems[index].fromField) && this.RealUploadedFields.includes(this.mappedItems[index].fromField)) {
       this.uploadedFields.push(this.mappedItems[index].fromField)  
         }
-      if (table !== 'seller' && table !== 'email' && table !== 'phone') {
-        this.importedFields[table].push({
-          'label': this.mappedItems[index].toField,
-          'field': this.mappedItems[index].toField
-        });
-        this.uploadedFields.unshift(
-            this.mappedItems[index].fromField
-        )
-      }
-      this.mappedItems.splice(index, 1)
+
+          if (table !== 'seller' && table !== 'email' && table !== 'phone') {
+            this.importedFields[table].push({
+              'label': this.mappedItems[index].toField,
+              'field': this.mappedItems[index].toField
+            });
+            // this.uploadedFields.unshift(
+            //     this.mappedItems[index].fromField
+            // )
+          }
+          this.mappedItems.splice(index, 1)
     },
     async upload() {
       this.$store.dispatch('uxModule/setLoading')

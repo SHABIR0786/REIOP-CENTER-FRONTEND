@@ -391,6 +391,7 @@ export default {
             this.showFilterPropertiesModal = false;
             this.$store.dispatch('uxModule/hideLoader')
             } catch(error) {
+                console.log(error);
             this.$store.dispatch('uxModule/hideLoader')
             }
         },
