@@ -395,9 +395,9 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
             }
         },
-         editItem(item) {
+        async editItem(item) {
             this.$store.dispatch('uxModule/setLoading')
-            this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {                
+            await this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {                
                 item.sellers = [response.seller];
                 item.subjects = response.seller?.subjects;
                 this.editedItem = {

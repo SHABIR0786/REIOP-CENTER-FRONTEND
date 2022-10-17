@@ -364,7 +364,7 @@ export default {
             this.editedItem = { ...item }
             this.showModal = true
             });
-            this.$store.dispatch('uxModule/hideLoader')
+            // this.$store.dispatch('uxModule/hideLoader')
         },
         save(item) {
             this.$store.dispatch('emailModule/editEmail', {...item})

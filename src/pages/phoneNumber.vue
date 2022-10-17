@@ -234,7 +234,7 @@ export default {
                 sortDesc: this.sortDesc
             })
         if (this.$route.query.phone_id) {
-            this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then(() => {
+            await this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then(() => {
                 this.editedItem = this.selectedPhoneNumber
                 this.showModal = true
             });
@@ -243,8 +243,9 @@ export default {
         this.itemsCount = this.total;
         await this.$store.dispatch("filterModule/getAllFilters", 'phonenumbers');
         await this.$store.dispatch("phoneNumberModule/filtersOnTable", 'phonenumbers');
-                    this.$store.dispatch('uxModule/hideLoader')
+        this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
+            console.log(error);
             this.$store.dispatch('uxModule/hideLoader')
         }
     },
@@ -392,10 +393,13 @@ export default {
                     this.editedItem = {
                         ...item
                     }
+                    console.log('this.editedItem',this.editedItem);
+                    console.log('this.phoneNumber.list_id',this.editedItem.list_id);
                     this.showModal = true
                 });
-                this.$store.dispatch('uxModule/hideLoader');
+                // this.$store.dispatch('uxModule/hideLoader');
             } catch (error) {
+                console.log(error);
                 this.$store.dispatch('uxModule/hideLoader');
             }
         },

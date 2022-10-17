@@ -416,6 +416,7 @@ export default {
                 this.subject = {...this.propsData}
                 this.$store.dispatch('uxModule/setLoading');
                 await this.$store.dispatch(`exportModule/getExports`, {'module': 'subjects', id: this.propsData.id});
+                await this.currentModal();
                 this.$store.dispatch('uxModule/hideLoader');
 
             }
