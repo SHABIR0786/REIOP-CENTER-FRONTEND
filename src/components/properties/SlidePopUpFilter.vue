@@ -574,8 +574,44 @@ computed: {
       if(this.marketing_period) {
             this.marketing_end_date = moment(this.marketing_start_date).add(this.marketing_period * 7 ,'days').format('YYYY-MM-DD');
       }
+      const selectedSubjects = [];
+      const selectedSellers = [];
+      const selectedEmails = [];
+      const selectedGoldenAddresses = [];
+      const selectedPhones = [];
+      if(this.fields_type == "separatedrows") {
+        this.selectedItems.forEach(selectedItem => {
+          let selectedItems = selectedItem.split(",");
+          selectedItems.forEach((element,index) => {
+            console.log(element,index);
+            if(element && element != "undefined") {
+            if(index == 0) {
+              selectedSubjects.push(element);
+            }
+            if(index == 1) {
+              selectedSellers.push(element);
+            }
+            if(index == 2) {
+              selectedPhones.push(element);
+            }
+            if(index == 3) {
+              selectedEmails.push(element);
+            }
+            if(index == 3) {
+              selectedGoldenAddresses.push(element);
+            }
+            }
+          });
+        });
+      }
+    
       let custom_view = JSON.parse(JSON.stringify(this.custom_view));
       const exportSubject = {
+        selected_subjects: selectedSubjects,
+        selected_sellers: selectedSellers,
+        selected_phones: selectedPhones,
+        selected_emails: selectedEmails,
+        selected_golden_addresses: selectedGoldenAddresses,
         export_type: this.export_type,
         marketing_channel: this.marketing_channel,
         marketing_start_date: this.marketing_start_date,
@@ -595,7 +631,9 @@ computed: {
         sortDesc: this.sortDesc,
         fields_type: this.fields_type
       }
+
       this.isExporting = true;
+      console.log(exportSubject);
       await this.$store.dispatch('propertyModule/exportProperties', exportSubject);
       this.$bvToast.toast(`Document Export Started. Please wait!`, {
           title: 'Export',
@@ -743,7 +781,7 @@ computed: {
     this.skipSourceListFromDB.forEach(function(item) {
       Instance.skipTraceSources.push(item.list_skip_source)
     });
-document.querySelector('body').addEventListener('click',function(e) {
+  document.querySelector('body').addEventListener('click',function(e) {
       if(!e.target.closest('.checkbox-select__dropdown') && !e.target.closest('.checkbox-select')) {
         if(document.querySelectorAll('.checkbox-select__dropdown')) {
         document.querySelectorAll('.checkbox-select__dropdown').forEach(function(elem){
