@@ -453,16 +453,23 @@ export default {
     },
     watch: {
         async showModal() {
-         if(this.showModal){
-            this.$store.dispatch('uxModule/setLoading')
-            console.log('this world');
-            this.email = {...this.propsData}
-            let response = await this.$store.dispatch('listModule/getSelectedList', this.email.list_id);
-            this.relatedList = [response.list];
-            this.$store.dispatch(`exportModule/getExports`, {'module': 'emails', id: this.propsData.id});
-            await this.$store.dispatch(`emailModule/relatedSkipSources`, this.propsData.id);
-            this.$store.dispatch('uxModule/hideLoader')
-         }
+            try {
+                if(this.showModal){
+                    this.$store.dispatch('uxModule/setLoading')
+                    console.log('this world');
+                    this.email = {...this.propsData}
+                    let response = await this.$store.dispatch('listModule/getSelectedList', this.email.list_id);
+                    this.relatedList = [response.list];
+                    this.$store.dispatch(`exportModule/getExports`, {'module': 'emails', id: this.propsData.id});
+                    await this.$store.dispatch(`emailModule/relatedSkipSources`, this.propsData.id);
+                    await this.currentModal();
+
+                    this.$store.dispatch('uxModule/hideLoader')
+                }
+            } catch (error) {
+                console.log(error);
+                this.$store.dispatch('uxModule/hideLoader');
+            }
 
         }
     }

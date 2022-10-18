@@ -179,11 +179,12 @@
         },
         async created () {
             this.$store.dispatch('uxModule/setLoading')
-            this.$store.dispatch('sellerModule/getTotal')
             try {
+                await this.$store.dispatch('sellerModule/getTotal')
                 await this.$store.dispatch("sellerModule/getAllSellers", {page: 1, perPage: this.perPage})
                 this.$store.dispatch('uxModule/hideLoader')
             } catch (error) {
+                console.log(error);
                 this.$store.dispatch('uxModule/hideLoader')
             }
         },

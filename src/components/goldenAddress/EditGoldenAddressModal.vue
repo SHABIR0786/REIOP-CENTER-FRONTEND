@@ -463,12 +463,22 @@ export default {
     },
     watch: {
       async showModal() {
+        try{
+            if(this.showModal){
+                this.$store.dispatch('uxModule/setLoading')
             this.goldenAddress = { ...this.propsData }
             let response = await this.$store.dispatch('listModule/getSelectedList', this.goldenAddress.list_id);
             this.relatedList = [response.list];
             this.$store.dispatch(`exportModule/getExports`, {'module': 'golden-addresses', id: this.propsData.id});
             await this.$store.dispatch(`goldenAddressModule/relatedSkipSources`, this.propsData.id);
+            await this.currentModal();
+            this.$store.dispatch('uxModule/hideLoader')
+            }
+        } catch (error) {
+                console.log(error);
+                this.$store.dispatch('uxModule/hideLoader');
         }
+    }
     }
 
 }

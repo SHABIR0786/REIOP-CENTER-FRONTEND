@@ -457,15 +457,21 @@ export default {
     },
     watch: {
        async showModal() {
-        if(this.showModal){
-            this.$store.dispatch('uxModule/setLoading')
-            this.phoneNumber = {...this.propsData}
-            let response = await this.$store.dispatch('listModule/getSelectedList', this.phoneNumber.list_id);
-            this.relatedList = [response.list];
-            this.$store.dispatch(`exportModule/getExports`, {'module': 'phones', id: this.propsData.id});
-            await this.$store.dispatch(`phoneNumberModule/relatedSkipSources`, this.propsData.id);
-            this.$store.dispatch('uxModule/hideLoader')
-        }
+        try {
+                if(this.showModal){
+                    this.$store.dispatch('uxModule/setLoading')
+                    this.phoneNumber = {...this.propsData}                    
+                    let response = await this.$store.dispatch('listModule/getSelectedList', this.phoneNumber.list_id);
+                    this.relatedList = [response.list];
+                    this.$store.dispatch(`exportModule/getExports`, {'module': 'phones', id: this.propsData.id});
+                    await this.$store.dispatch(`phoneNumberModule/relatedSkipSources`, this.propsData.id);
+                    await this.currentModal();
+                    this.$store.dispatch('uxModule/hideLoader')
+                }
+            } catch (error) {
+                console.log(error);
+                this.$store.dispatch('uxModule/hideLoader');
+            }
         }
     }
 
