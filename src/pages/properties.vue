@@ -1,6 +1,6 @@
 <template>
-    <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <div class="properties-header">
+<div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
+    <div class="properties-header">
         <h3>Properties</h3>
         <div class="boxes">
             <div>{{totals.subjectsCount}} Subjects</div>
@@ -9,178 +9,155 @@
             <div>{{totals.emailsCount}} Emails</div>
             <div>{{totals.goldenAddressesCount}} Golden Addresses</div>
         </div>
-        </div>
-        <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties"  :sortBy="sortBy" :sortDesc="sortDesc" :totals="totals" :fields_type="fieldsType"></slide-pop-up-filter>
-        <hr>
-        <div>
-            <b-row class="text-end mb-3">
-                <b-col cols="12"  class="d-flex justify-content-end">
-                    <b-input-group class="col-6 d-flex align-items-center">
-                        <b-input-group-append v-if="isPropertySearched">
-                        <b-button @click="clearsearch" variant="outline-primary"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
-                        </b-input-group-append>
-                        <b-form-input v-model="searchProperty" @keyup.enter="search" placeholder="Search"></b-form-input>
-                        <b-input-group-append>
+    </div>
+    <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></slide-pop-up-filter>
+    <hr>
+    <div>
+        <b-row class="text-end mb-3">
+            <b-col cols="12" class="d-flex justify-content-end">
+                <b-input-group class="col-6 d-flex align-items-center">
+                    <b-input-group-append v-if="isPropertySearched">
+                        <b-button @click="clearsearch" variant="outline-primary">
+                            <b-icon icon="x" aria-hidden="true"></b-icon> Clear Search
+                        </b-button>
+                    </b-input-group-append>
+                    <b-form-input v-model="searchProperty" @keyup.enter="search" placeholder="Search"></b-form-input>
+                    <b-input-group-append>
                         <b-button @click="search" variant="primary">Search</b-button>
-                        </b-input-group-append>
-                    </b-input-group>
+                    </b-input-group-append>
+                </b-input-group>
 
-
-                </b-col>
-            </b-row>
-            <b-row class="text-end">
-                <div class="d-flex justify-content-end col-12">
+            </b-col>
+        </b-row>
+        <b-row class="text-end">
+            <div class="d-flex justify-content-end col-12">
                 <b-col cols="2">
                     <b-button variant="primary" class="filter float-right" @click="showCustomModalView = true">Custom View</b-button>
                 </b-col>
-                    <p class="pr-3 pt-1">or</p>
-                 <b-col cols="4 p-0">
+                <p class="pr-3 pt-1">or</p>
+                <b-col cols="4 p-0">
                     <b-form-select class="select-template w-100 float-right" v-model="selectedTemplate" @change="getTemplate($event)" :options="templatesToExport"></b-form-select>
                 </b-col>
-                </div>
-            </b-row>
-        </div>
-        <b-table
-            style="margin-left:20px;"
-            id="subject-table"
-            small
-            striped
-            sort-icon-left
-            no-local-sorting
-            @sort-changed="sortingChanged"
-            hover
-            :busy="isBusy"
-            :fields="propertyColumns"
-            :items="properties"
-            responsive
-            :per-page="0"
-            :current-page="currentPage"
-            :sticky-header="true"
-        >
-            <template #table-busy>
-                <div class="text-center" my-2>
-                    <b-spinner class="align-middle"></b-spinner>
-                    <strong>Loading...</strong>
-                </div>
-            </template>
-            <template #head(delete)="scope">
-                <div class="text-nowrap" style="width: 30px;">{{scope.label}}</div>
-            </template>
-            <template v-slot:cell(delete)="data">
-                <div v-if="fieldsType == 'samerows' || fieldsType == null">
-                <b-form-checkbox :value='data.item.id' v-model='bulkDeleteItems'></b-form-checkbox>
-                </div>
-                <div v-else>
-                <b-form-checkbox :value='data.item.id+","+data.item.seller_id+","+data.item.phone_id+","+data.item.email_id+","+data.item.golden_id' v-model='bulkDeleteItems'></b-form-checkbox>
-                </div>
-            </template>
-            <template #head(id)="scope">
-                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-            </template>
-            <template #head(actions)="scope">
-                <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-            </template>
-            <template #head(total_sellers)="scope">
-                <div style="width: 50px;">{{scope.label}}</div>
-            </template>
-            <template #head(list_stack)="scope">
-                <div style="width: 50px;">{{scope.label}}</div>
-            </template>
-            <template #head(subject_state)="scope">
-                <div style="width: 60px;">{{scope.label}}</div>
-            </template>
-            <template #head(subject_zip)="scope">
-            <div style="width: 60px;">{{scope.label}}</div>
-            </template>
-            <template #head(subject_address)="scope">
-                <div style="width: 150px;">{{scope.label}}</div>
-            </template>
-            <template #head(subject_county)="scope">
-                <div style="width: 100px;">{{scope.label}}</div>
-            </template>
-            <template #head(subject_city)="scope">
-                <div style="width: 100px;">{{scope.label}}</div>
-            </template>
-            <template #head(subject_type)="scope">
-                <div style="width: 90px;">{{scope.label}}</div>
-            </template>
-            <template #head(subject_age)="scope">
-                <div style="width: 60px;">{{scope.label}}</div>
-            </template>
-            <template #head(user_id)="scope">
-                <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
-            </template>
-            <template #head(created_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-            </template>
-            <template #head(updated_at)="scope">
-                <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
-            </template>
-            <template #head()="scope">
-                <div style="width: 150px;">{{ scope.label }}</div>
-            </template>
-            <template v-slot:cell(actions)="data">
-                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
-            </template>
-            <template v-slot:cell(subject_address)="data">
-                <div v-b-tooltip.hover :title="data.item.subject_address">{{ data.item.subject_address }}</div>
-            </template>
-            <template v-slot:cell(subject_city)="data">
-                <div v-b-tooltip.hover :title="data.item.subject_city">{{ data.item.subject_city }}</div>
-            </template>
-            <template v-slot:cell(subject_state)="data">
-                <div v-b-tooltip.hover :title="data.item.subject_state">{{ data.item.subject_state }}</div>
-            </template>
-            <template v-slot:cell(subject_zip)="data">
-                <div v-b-tooltip.hover :title="data.item.subject_zip">{{ data.item.subject_zip }}</div>
-            </template>
-            <template v-slot:cell(subject_county)="data">
-                <div v-b-tooltip.hover :title="data.item.subject_county">{{ data.item.subject_county }}</div>
-            </template>
-            <template v-slot:cell(subject_type)="data">
-                <div v-b-tooltip.hover :title="data.item.subject_type">{{ data.item.subject_type }}</div>
-            </template>
-        </b-table>
-        <b-row style="margin-left:20px;">
-            <b-col class="d-flex align-items-center">
-                <b-form-group
-                        label="Show"
-                        label-for="show-select"
-                        label-cols-sm="6"
-                        label-cols-md="4"
-                        label-cols-lg="3"
-                        label-size="xs"
-                        class="mb-0">
-                    <b-form-select
-                            id="show-select"
-                            v-model="perPage"
-                            :options="pageOptions"
-                            size="xs"
-                            class="ml-3"
-                    ></b-form-select>
-                </b-form-group>
-            </b-col>
-            <b-col class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}}  to {{perPage * currentPage}} of {{total}} entries</p>
-            </b-col>
-            <b-col class="d-flex justify-content-end">
-                <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
-            </b-col>
+            </div>
         </b-row>
-        <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
-        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
-        <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-        <custom-view-v2 :customViews="templatesToExport" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view-v2>
     </div>
+    <b-table style="margin-left:20px;" id="subject-table" small striped sort-icon-left no-local-sorting @sort-changed="sortingChanged" hover :busy="isBusy" :fields="propertyColumns" :items="properties" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+        <template #table-busy>
+            <div class="text-center" my-2>
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>Loading...</strong>
+            </div>
+        </template>
+        <template #head(delete)="scope">
+            <div class="text-nowrap" style="width: 30px;">{{scope.label}}</div>
+        </template>
+        <template v-slot:cell(delete)="data">
+            <div v-if="fieldsType == 'samerows' || fieldsType == null">
+                <b-form-checkbox :value='data.item.id' v-model='bulkDeleteItems'></b-form-checkbox>
+            </div>
+            <div v-else>
+                <b-form-checkbox :value='data.item.id+","+data.item.seller_id+","+data.item.phone_id+","+data.item.email_id+","+data.item.golden_id' v-model='bulkDeleteItems'></b-form-checkbox>
+            </div>
+        </template>
+        <template #head(id)="scope">
+            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+        </template>
+        <template #head(actions)="scope">
+            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+        </template>
+        <template #head(total_sellers)="scope">
+            <div style="width: 50px;">{{scope.label}}</div>
+        </template>
+        <template #head(list_stack)="scope">
+            <div style="width: 50px;">{{scope.label}}</div>
+        </template>
+        <template #head(subject_state)="scope">
+            <div style="width: 60px;">{{scope.label}}</div>
+        </template>
+        <template #head(subject_zip)="scope">
+            <div style="width: 60px;">{{scope.label}}</div>
+        </template>
+        <template #head(subject_address)="scope">
+            <div style="width: 150px;">{{scope.label}}</div>
+        </template>
+        <template #head(subject_county)="scope">
+            <div style="width: 100px;">{{scope.label}}</div>
+        </template>
+        <template #head(subject_city)="scope">
+            <div style="width: 100px;">{{scope.label}}</div>
+        </template>
+        <template #head(subject_type)="scope">
+            <div style="width: 90px;">{{scope.label}}</div>
+        </template>
+        <template #head(subject_age)="scope">
+            <div style="width: 60px;">{{scope.label}}</div>
+        </template>
+        <template #head(user_id)="scope">
+            <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+        </template>
+        <template #head(created_at)="scope">
+            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+        </template>
+        <template #head(updated_at)="scope">
+            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+        </template>
+        <template #head()="scope">
+            <div style="width: 150px;">{{ scope.label }}</div>
+        </template>
+        <template v-slot:cell(actions)="data">
+            <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+        </template>
+        <template v-slot:cell(subject_address)="data">
+            <div v-b-tooltip.hover :title="data.item.subject_address">{{ data.item.subject_address }}</div>
+        </template>
+        <template v-slot:cell(subject_city)="data">
+            <div v-b-tooltip.hover :title="data.item.subject_city">{{ data.item.subject_city }}</div>
+        </template>
+        <template v-slot:cell(subject_state)="data">
+            <div v-b-tooltip.hover :title="data.item.subject_state">{{ data.item.subject_state }}</div>
+        </template>
+        <template v-slot:cell(subject_zip)="data">
+            <div v-b-tooltip.hover :title="data.item.subject_zip">{{ data.item.subject_zip }}</div>
+        </template>
+        <template v-slot:cell(subject_county)="data">
+            <div v-b-tooltip.hover :title="data.item.subject_county">{{ data.item.subject_county }}</div>
+        </template>
+        <template v-slot:cell(subject_type)="data">
+            <div v-b-tooltip.hover :title="data.item.subject_type">{{ data.item.subject_type }}</div>
+        </template>
+    </b-table>
+    <b-row style="margin-left:20px;">
+        <b-col class="d-flex align-items-center">
+            <b-form-group label="Show" label-for="show-select" label-cols-sm="6" label-cols-md="4" label-cols-lg="3" label-size="xs" class="mb-0">
+                <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
+            </b-form-group>
+        </b-col>
+        <b-col class="d-flex align-items-center justify-content-center">
+            <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{perPage * currentPage}} of {{total}} entries</p>
+        </b-col>
+        <b-col class="d-flex justify-content-end">
+            <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+        </b-col>
+    </b-row>
+    <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
+    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+    <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
+    <custom-view :customViews="templatesToExport" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
+</div>
 </template>
+
 <script>
-import { mapGetters } from "vuex"
-import { BIcon } from "bootstrap-vue"
-import  DeleteModal from'@/components/deleteModal/DeleteModal'
+import {
+    mapGetters
+} from "vuex"
+import {
+    BIcon
+} from "bootstrap-vue"
+import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 import AddSubjectModal from "../components/subject/AddSubjectModal";
-import CustomViewV2 from "../components/properties/CustomViewV2";
+import CustomView from "../components/properties/CustomView";
 import SlidePopUpFilter from "../components/properties/SlidePopUpFilter";
 
 export default {
@@ -190,64 +167,213 @@ export default {
         EditSubjectModal,
         DeleteModal,
         AddSubjectModal,
-        CustomViewV2,
+        CustomView,
         SlidePopUpFilter
     },
-    data () {
+    data() {
         return {
-                allFields: [
+            allFields: [
                 //Subject
-                {key:"id", label: "Id", sortable: true},
-                {key: "actions", label: "Actions"},
-                {key: "total_sellers", label: "Total Sellers", sortable: true},
-                {key: "list_stack", label: "List Stack", sortable: true},
+                {
+                    key: "id",
+                    label: "Id",
+                    sortable: true
+                },
+                {
+                    key: "actions",
+                    label: "Actions"
+                },
+                {
+                    key: "total_sellers",
+                    label: "Total Sellers",
+                    sortable: true
+                },
+                {
+                    key: "list_stack",
+                    label: "List Stack",
+                    sortable: true
+                },
 
-                {key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true, visible: false},
+                {
+                    key: "subject_address",
+                    stickyColumn: true,
+                    label: "Subject Address",
+                    sortable: true,
+                    visible: false
+                },
                 // {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
-                {key: "subject_city", label: "Subject City", sortable: true, visible: false},
-                {key: "subject_state", label: "Subject State", sortable: true, visible: false},
-                {key: "subject_zip", label: "Subject Zip", sortable: true},
-                {key: "subject_county", label: "Subject County", sortable: true},
+                {
+                    key: "subject_city",
+                    label: "Subject City",
+                    sortable: true,
+                    visible: false
+                },
+                {
+                    key: "subject_state",
+                    label: "Subject State",
+                    sortable: true,
+                    visible: false
+                },
+                {
+                    key: "subject_zip",
+                    label: "Subject Zip",
+                    sortable: true
+                },
+                {
+                    key: "subject_county",
+                    label: "Subject County",
+                    sortable: true
+                },
                 // {key: "subject_market", label: "Market", sortable: true},
-                {key: "subject_type", label: "Subject Type", sortable: true},
-                {key: "subject_age", label: "Subject Age", sortable: true},
+                {
+                    key: "subject_type",
+                    label: "Subject Type",
+                    sortable: true
+                },
+                {
+                    key: "subject_age",
+                    label: "Subject Age",
+                    sortable: true
+                },
 
-                {key:"created_at", label: "Created Date", sortable: true},
-                {key:"updated_at", label: "Updated Date", sortable: true},
-                {key:"user_id", label: "Uploaded By", sortable: true},
+                {
+                    key: "created_at",
+                    label: "Created Date",
+                    sortable: true
+                },
+                {
+                    key: "updated_at",
+                    label: "Updated Date",
+                    sortable: true
+                },
+                {
+                    key: "user_id",
+                    label: "Uploaded By",
+                    sortable: true
+                },
 
                 //List
-                {key:"list_market", label: "Markets", sortable: true, visible: false},
-                {key:"list_group", label: "Group", sortable: true},
-                {key:"list_type", label: "Type", sortable: true},
-                {key:"list_source", label: "Source", sortable: true},
+                {
+                    key: "list_market",
+                    label: "Markets",
+                    sortable: true,
+                    visible: false
+                },
+                {
+                    key: "list_group",
+                    label: "Group",
+                    sortable: true
+                },
+                {
+                    key: "list_type",
+                    label: "Type",
+                    sortable: true
+                },
+                {
+                    key: "list_source",
+                    label: "Source",
+                    sortable: true
+                },
 
                 //Seller
-                {key: "seller_full_name", label: "Full Name", sortable: true},
-                {key: "seller_first_name", label: "First Name", sortable: true},
-                {key: "seller_middle_name", label: "Middle Name", sortable: true},
-                {key: "seller_last_name", stickyColumn: true, label: "Last Name", sortable: true},
-                {key: "seller_mailing_address", label: "Mailing Address"},
-                {key: "seller_mailing_state", label: "Mailing State"},
-                {key: "seller_mailing_city", label: "Mailing City"},
-                {key: "seller_mailing_zip", label: "Mailing Zip"},
+                {
+                    key: "seller_full_name",
+                    label: "Full Name",
+                    sortable: true
+                },
+                {
+                    key: "seller_first_name",
+                    label: "First Name",
+                    sortable: true
+                },
+                {
+                    key: "seller_middle_name",
+                    label: "Middle Name",
+                    sortable: true
+                },
+                {
+                    key: "seller_last_name",
+                    stickyColumn: true,
+                    label: "Last Name",
+                    sortable: true
+                },
+                {
+                    key: "seller_mailing_address",
+                    label: "Mailing Address"
+                },
+                {
+                    key: "seller_mailing_state",
+                    label: "Mailing State"
+                },
+                {
+                    key: "seller_mailing_city",
+                    label: "Mailing City"
+                },
+                {
+                    key: "seller_mailing_zip",
+                    label: "Mailing Zip"
+                },
                 // Phone Fields 
-                {key: "phone_number", label: "Phone Number", sortable: true},
-                {key: "phone_type", label: "Phone Type", sortable: true},
-                {key: "phone_validity", label: "Phone Validity", sortable: true},
-                {key: "phone_skip_source", label: "Phone Skip Source", sortable: true},
+                {
+                    key: "phone_number",
+                    label: "Phone Number",
+                    sortable: true
+                },
+                {
+                    key: "phone_type",
+                    label: "Phone Type",
+                    sortable: true
+                },
+                {
+                    key: "phone_validity",
+                    label: "Phone Validity",
+                    sortable: true
+                },
+                {
+                    key: "phone_skip_source",
+                    label: "Phone Skip Source",
+                    sortable: true
+                },
                 // Email Fields
-                {key: "email_address", label: "Email Address", sortable: true},
-                {key: "email_validity", label: "Email Validity", sortable: true},
-                {key: "email_skip_source", label: "Skip Source", sortable: true},
+                {
+                    key: "email_address",
+                    label: "Email Address",
+                    sortable: true
+                },
+                {
+                    key: "email_validity",
+                    label: "Email Validity",
+                    sortable: true
+                },
+                {
+                    key: "email_skip_source",
+                    label: "Skip Source",
+                    sortable: true
+                },
                 // Golden Addresses
-                {key: "golden_address_address", label: "Golden Address", sortable: true},
-                {key: "golden_address_city", label: "Golden City", sortable: true},
-                {key: "golden_address_state", label: "Golden State", sortable: true},
-                {key: "golden_address_zip", label: "Golden Zip", sortable: true}
+                {
+                    key: "golden_address_address",
+                    label: "Golden Address",
+                    sortable: true
+                },
+                {
+                    key: "golden_address_city",
+                    label: "Golden City",
+                    sortable: true
+                },
+                {
+                    key: "golden_address_state",
+                    label: "Golden State",
+                    sortable: true
+                },
+                {
+                    key: "golden_address_zip",
+                    label: "Golden Zip",
+                    sortable: true
+                }
             ],
             isBusy: false,
-            fieldsType : null,
+            fieldsType: null,
             showModal: false,
             perPage: 20,
             currentPage: 1,
@@ -261,9 +387,10 @@ export default {
             showFilterPropertiesModal: false,
             showFileType: false,
             selectedTemplate: null,
-            templatesToExport: [
-                { value: null, text: 'Select Template' }
-            ],
+            templatesToExport: [{
+                value: null,
+                text: 'Select Template'
+            }],
             bulkDeleteItems: [],
             allSelected: false,
             propertyFields: [],
@@ -276,51 +403,51 @@ export default {
             },
             sortBy: 'id',
             sortDesc: false,
-            isPropertySearched:false,
-            customViewTemplate:null,
+            isPropertySearched: false,
+            customViewTemplate: null,
+            exportCount: 0,
         }
     },
     computed: {
         ...mapGetters({
-          isCollapsed: 'uxModule/isCollapsed',
-          fields: 'propertyModule/fields',
-          items: 'propertyModule/sameRowSubjects',
-          seperatedRowSubjects: 'propertyModule/seperatedRowSubjects',
-          total: 'propertyModule/total',
-          maxSellers: 'propertyModule/maxSellers',
-          maxPhones: 'propertyModule/maxPhones',
-          maxEmails: 'propertyModule/maxEmails',
-          maxGoldenAddresses: 'propertyModule/maxGoldenAddresses',
-          filteredItems: 'subjectModule/filteredSubject',
-          templates: 'templatesModule/templates',
-          template: 'templatesModule/template'
+            isCollapsed: 'uxModule/isCollapsed',
+            fields: 'propertyModule/fields',
+            items: 'propertyModule/sameRowSubjects',
+            seperatedRowSubjects: 'propertyModule/seperatedRowSubjects',
+            total: 'propertyModule/total',
+            maxSellers: 'propertyModule/maxSellers',
+            maxPhones: 'propertyModule/maxPhones',
+            maxEmails: 'propertyModule/maxEmails',
+            maxGoldenAddresses: 'propertyModule/maxGoldenAddresses',
+            filteredItems: 'subjectModule/filteredSubject',
+            templates: 'templatesModule/templates',
+            template: 'templatesModule/template'
         }),
-         properties () {
-            if(this.fieldsType == "samerows" || this.fieldsType == null) {
+        properties() {
+            if (this.fieldsType == "samerows" || this.fieldsType == null) {
                 return this.items;
             } else {
-                console.log(this.seperatedRowSubjects);
                 return this.seperatedRowSubjects;
             }
-         },
-         propertyColumns() {
-            if(this.fieldsType == null) {
+        },
+        propertyColumns() {
+            if (this.fieldsType == null) {
                 return this.fields;
-            } else if(this.fieldsType == "samerows" || this.fieldsType == "separatedrows") {
+            } else if (this.fieldsType == "samerows" || this.fieldsType == "separatedrows") {
                 return this.propertyFields;
             } else {
                 return this.fields;
             }
-         },
-         filtersCount(){
+        },
+        filtersCount() {
             let total = 0
             for (let item in this.filtersName) {
                 total += this.filtersName[item].length
             }
-        return total;
+            return total;
         },
-        getCustomView(){
-            if(this.customViewTemplate){
+        getCustomView() {
+            if (this.customViewTemplate) {
                 let customViewTemplate = JSON.parse(JSON.stringify(this.customViewTemplate));
                 customViewTemplate.customView = true;
                 return customViewTemplate;
@@ -328,13 +455,23 @@ export default {
                 return this.propertyColumns;
             }
         },
-        rows() { return this.total ? this.total : 1 }
+        rows() {
+            return this.total ? this.total : 1
+        }
     },
     async created() {
         this.$store.dispatch('uxModule/setLoading')
-        this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName})
+        this.totals = await this.$store.dispatch('propertyModule/getTotals', {
+            filter: this.filtersName
+        })
+        this.exportCount = this.totals.subjectsCount;
         try {
-            await this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage,filter: this.filtersName})
+            await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+                page: 1,
+                perPage: this.perPage,
+                filter: this.filtersName,
+                custom: ''
+            })
             await this.$store.dispatch("templatesModule/getAllTemplates")
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -342,232 +479,392 @@ export default {
         }
     },
     methods: {
-    async sortingChanged(ctx) {
-           this.sortBy = ctx.sortBy;
-           this.sortDesc = ctx.sortDesc;
+        async sortingChanged(ctx) {
+            this.sortBy = ctx.sortBy;
+            this.sortDesc = ctx.sortDesc;
             if (this.filtersCount > 0) {
-                await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: this.filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
+                await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchProperty,
+                    filter: this.filtersName,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc,
+                    custom: this.customViewTemplate
+                });
             } else {
-                await this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
+                await this.$store.dispatch('propertyModule/searchSubjects', {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchProperty,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc
+                });
             }
         },
-      async clearsearch() {
-        this.searchProperty = '';
-        this.$store.dispatch('uxModule/setLoading')
-        try {
-        if(this.filtersCount > 0) {
-            await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: this.filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
-        } else {
-        this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
-        }
-        this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search: this.searchProperty});
-        this.isPropertySearched = false;
-        this.$store.dispatch('uxModule/hideLoader')
-        } catch(error) {
-            this.$store.dispatch('uxModule/hideLoader')
-        }
-    
+        async clearsearch() {
+            this.searchProperty = '';
+            this.$store.dispatch('uxModule/setLoading')
+            try {
+                if (this.filtersCount > 0) {
+                    await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+                        page: this.currentPage,
+                        perPage: this.perPage,
+                        search: this.searchProperty,
+                        filter: this.filtersName,
+                        sortBy: this.sortBy,
+                        sortDesc: this.sortDesc,
+                        custom: this.customViewTemplate
+                    });
+                } else {
+                    this.$store.dispatch('propertyModule/searchSubjects', {
+                        page: this.currentPage,
+                        perPage: this.perPage,
+                        search: this.searchProperty,
+                        sortBy: this.sortBy,
+                        sortDesc: this.sortDesc
+                    });
+                }
+                this.totals = await this.$store.dispatch('propertyModule/getTotals', {
+                    filter: this.filtersName,
+                    search: this.searchProperty
+                });
+                this.isPropertySearched = false;
+                this.$store.dispatch('uxModule/hideLoader')
+            } catch (error) {
+                this.$store.dispatch('uxModule/hideLoader')
+            }
         },
-    async search() {
-        this.$store.dispatch('uxModule/setLoading')
-        try {
-        if(this.filtersCount > 0) {
-            await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: this.filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
-        } else {
-        this.$store.dispatch('propertyModule/searchSubjects', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty,sortBy: this.sortBy, sortDesc: this.sortDesc});
-        }
-        this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search: this.searchProperty});
-           if(this.customViewTemplate){
-               this.showCustomView();
+        async search() {
+            this.$store.dispatch('uxModule/setLoading')
+            try {
+                if (this.filtersCount > 0) {
+                    await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+                        page: this.currentPage,
+                        perPage: this.perPage,
+                        search: this.searchProperty,
+                        filter: this.filtersName,
+                        sortBy: this.sortBy,
+                        sortDesc: this.sortDesc,
+                        custom: this.customViewTemplate
+                    });
+                } else {
+                    this.$store.dispatch('propertyModule/searchSubjects', {
+                        page: this.currentPage,
+                        perPage: this.perPage,
+                        search: this.searchProperty,
+                        sortBy: this.sortBy,
+                        sortDesc: this.sortDesc
+                    });
+                }
+                this.totals = await this.$store.dispatch('propertyModule/getTotals', {
+                    filter: this.filtersName,
+                    search: this.searchProperty
+                });
+                if (this.customViewTemplate) {
+                    this.showCustomView();
+                }
+                if (this.searchProperty.length == 0) {
+                    this.isPropertySearched = false;
+                } else {
+                    this.isPropertySearched = true;
+                }
+                this.$store.dispatch('uxModule/hideLoader')
+            } catch (error) {
+                this.$store.dispatch('uxModule/hideLoader')
             }
-        if(this.searchProperty.length == 0) {
-            this.isPropertySearched = false;
-        } else {
-            this.isPropertySearched = true;
-        }
-            this.$store.dispatch('uxModule/hideLoader')
-        } catch(error) {
-            this.$store.dispatch('uxModule/hideLoader')
-        }
-    },
-     async filterProperties(filtersName) {
-        this.$store.dispatch('uxModule/setLoading')
-         try {
-        this.filtersName = filtersName;
-            await this.$store.dispatch("propertyModule/getAllSubjectsV2", { page: this.currentPage, perPage: this.perPage,search: this.searchProperty, filter: filtersName, sortBy: this.sortBy, sortDesc: this.sortDesc });
-            this.totals = await this.$store.dispatch('propertyModule/getTotals',{filter: this.filtersName,search:this.searchProperty});
-            if(this.customViewTemplate){
-               this.showCustomView();
+        },
+        async filterProperties(filtersName) {
+            this.$store.dispatch('uxModule/setLoading')
+            try {
+                this.filtersName = filtersName;
+                await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchProperty,
+                    filter: filtersName,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc,
+                    custom: this.customViewTemplate
+                });
+                this.totals = await this.$store.dispatch('propertyModule/getTotals', {
+                    filter: this.filtersName,
+                    search: this.searchProperty
+                });
+                if (this.customViewTemplate) {
+                    this.showCustomView();
+                }
+                this.$store.dispatch('uxModule/hideLoader')
+            } catch (error) {
+                this.$store.dispatch('uxModule/hideLoader')
             }
-            this.$store.dispatch('uxModule/hideLoader')
-         } catch (error) {
-            this.$store.dispatch('uxModule/hideLoader')
-        }
 
         },
         editItem(item) {
             this.showModal = true
-            this.editedItem = { ...item }
+            this.editedItem = {
+                ...item
+            }
         },
         addPhoneFields(key) {
             let fields = [];
-            if(this.maxPhones > 0) {
-            for(let ms = 0; ms < this.maxSellers; ms++) {
-               let sellerCount = ms + 1;
-            // Adding Phones Fields
-            for(let z = 0; z < this.maxPhones; z++) {
-                let phoneCount = z + 1;
-                    if(key == 'phone_number') {
-                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_number', label: "Seller "+sellerCount +" Phone "+ phoneCount +" Phone Number" , sortable: false});
-                    }
+            if (this.maxPhones > 0) {
+                for (let ms = 0; ms < this.maxSellers; ms++) {
+                    let sellerCount = ms + 1;
+                    // Adding Phones Fields
+                    for (let z = 0; z < this.maxPhones; z++) {
+                        let phoneCount = z + 1;
+                        if (key == 'phone_number') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_phone_' + phoneCount + '_phone_number',
+                                label: "Seller " + sellerCount + " Phone " + phoneCount + " Phone Number",
+                                sortable: false
+                            });
+                        }
 
-                    if(key == 'phone_type') {
-                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_type', label: "Seller "+sellerCount +" Phone "+ phoneCount + " Phone Type", sortable: false});
-                    }
+                        if (key == 'phone_type') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_phone_' + phoneCount + '_phone_type',
+                                label: "Seller " + sellerCount + " Phone " + phoneCount + " Phone Type",
+                                sortable: false
+                            });
+                        }
 
-                    if(key == 'phone_validity') {
-                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_validity', label: "Seller "+sellerCount +" Phone " + phoneCount + " Phone Validity", sortable: false});
-                    }
+                        if (key == 'phone_validity') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_phone_' + phoneCount + '_phone_validity',
+                                label: "Seller " + sellerCount + " Phone " + phoneCount + " Phone Validity",
+                                sortable: false
+                            });
+                        }
 
-                    if(key == 'phone_skip_source') {
-                        fields.push({key: 'seller_'+sellerCount+'_phone_'+phoneCount+'_phone_skip_source', label: "Seller "+sellerCount +" Phone" + phoneCount + "phone Skip Source", sortable: false});
+                        if (key == 'phone_skip_source') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_phone_' + phoneCount + '_phone_skip_source',
+                                label: "Seller " + sellerCount + " Phone" + phoneCount + "phone Skip Source",
+                                sortable: false
+                            });
+                        }
                     }
-              }
-            }
+                }
             }
             return fields;
         },
         addEmailFields(key) {
             let fields = [];
             // Adding Email Fields
-            if(this.maxEmails > 0) {
-            for(let ms = 0; ms < this.maxSellers; ms++) {
-               let sellerCount = ms + 1;
-            for(let z = 0; z < this.maxEmails; z++) {
-                let emailCount = z + 1;
-                    if(key == 'email_address') {
-                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_address', label: "Seller "+sellerCount +" Email "+ emailCount +" Email Address" , sortable: false});
-                    }
+            if (this.maxEmails > 0) {
+                for (let ms = 0; ms < this.maxSellers; ms++) {
+                    let sellerCount = ms + 1;
+                    for (let z = 0; z < this.maxEmails; z++) {
+                        let emailCount = z + 1;
+                        if (key == 'email_address') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_email_' + emailCount + '_email_address',
+                                label: "Seller " + sellerCount + " Email " + emailCount + " Email Address",
+                                sortable: false
+                            });
+                        }
 
-                    if(key == 'email_validity') {
-                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_validity', label: "Seller "+sellerCount +" Email "+ emailCount + " Email Validity", sortable: false});
-                    }
+                        if (key == 'email_validity') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_email_' + emailCount + '_email_validity',
+                                label: "Seller " + sellerCount + " Email " + emailCount + " Email Validity",
+                                sortable: false
+                            });
+                        }
 
-                    if(key == 'email_skip_source') {
-                        fields.push({key: 'seller_'+sellerCount+'_email_'+emailCount+'_email_skip_source', label: "Seller "+sellerCount +" Email " + emailCount + " Email Skip Source", sortable: false});
+                        if (key == 'email_skip_source') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_email_' + emailCount + '_email_skip_source',
+                                label: "Seller " + sellerCount + " Email " + emailCount + " Email Skip Source",
+                                sortable: false
+                            });
+                        }
                     }
-              }
-            }
+                }
             }
             return fields;
         },
         addGoldenAddressesFields(key) {
             let fields = [];
             // Adding Golden Addresses Fields
-            if(this.maxGoldenAddresses > 0) {
-            for(let ms = 0; ms < this.maxSellers; ms++) {
-               let sellerCount = ms + 1;
-            for(let z = 0; z < this.maxGoldenAddresses; z++) {
-                let goldenCount = z + 1;
-                    if(key == 'golden_address_address') {
-                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_address', label: "Seller "+sellerCount +" Golden Address  "+ goldenCount +" Golden Address" , sortable: false});
+            if (this.maxGoldenAddresses > 0) {
+                for (let ms = 0; ms < this.maxSellers; ms++) {
+                    let sellerCount = ms + 1;
+                    for (let z = 0; z < this.maxGoldenAddresses; z++) {
+                        let goldenCount = z + 1;
+                        if (key == 'golden_address_address') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_address',
+                                label: "Seller " + sellerCount + " Golden Address  " + goldenCount + " Golden Address",
+                                sortable: false
+                            });
+                        }
+                        if (key == 'golden_address_city') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_city',
+                                label: "Seller " + sellerCount + " Golden Address  " + goldenCount + " Golden City",
+                                sortable: false
+                            });
+                        }
+                        if (key == 'golden_address_state') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_state',
+                                label: "Seller " + sellerCount + " Golden Address  " + goldenCount + " Golden State",
+                                sortable: false
+                            });
+                        }
+                        if (key == 'golden_address_zip') {
+                            fields.push({
+                                key: 'seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_zip',
+                                label: "Seller " + sellerCount + " Golden Address  " + goldenCount + " Golden Zip",
+                                sortable: false
+                            });
+                        }
                     }
-                    if(key == 'golden_address_city') {
-                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_city', label: "Seller "+sellerCount +" Golden Address  "+ goldenCount + " Golden City", sortable: false});
-                    }
-                    if(key == 'golden_address_state') {
-                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_state', label: "Seller "+sellerCount +" Golden Address  " + goldenCount + " Golden State", sortable: false});
-                    }
-                    if(key == 'golden_address_zip') {
-                        fields.push({key: 'seller_'+sellerCount+'_golden_'+goldenCount+'_golden_address_zip', label: "Seller "+sellerCount +" Golden Address  " + goldenCount + " Golden Zip", sortable: false});
-                    }
-              }
-            }
+                }
             }
             return fields;
         },
         addSellerFields(key) {
             let fields = [];
             // Adding Seller Fields.
-            for(let z = 0; z < this.maxSellers; z++) {
+            for (let z = 0; z < this.maxSellers; z++) {
                 let sellerCount = z + 1;
-                    if(key == 'seller_full_name') {
-                        fields.push({key: sellerCount+'_seller_full_name', label: "Seller "+sellerCount +" Full Name", sortable: false});
-                    }
-                    if(key == 'seller_first_name') {
-                        fields.push({key: sellerCount+'_seller_first_name', label: "Seller "+sellerCount +" First Name", sortable: false});
-                    }
-                    if(key == 'seller_last_name') {
-                        fields.push({key: sellerCount+'_seller_last_name', label: "Seller "+sellerCount +" Last Name", sortable: false});
-                    }
-                    if(key == 'seller_middle_name') {
-                        fields.push({key: sellerCount+'_seller_middle_name', label: "Seller "+sellerCount +" Middle Name", sortable: false});
-                    }
-                    if(key == 'seller_mailing_address') {
-                        fields.push({key: sellerCount+'_seller_mailing_address', label: "Seller "+sellerCount +" Mailing Address", sortable: false});
-                    }
-                    if(key == 'seller_mailing_city') {
-                        fields.push({key: sellerCount+'_seller_mailing_city', label: "Seller "+sellerCount +" Mailing City", sortable: false});
-                    }
-                    if(key == 'seller_mailing_state') {
-                        fields.push({key: sellerCount+'_seller_mailing_state', label: "Seller "+sellerCount +" Mailing State", sortable: false});
-                    }
-                    if(key == 'seller_mailing_zip') {
-                        fields.push({key: sellerCount+'_seller_mailing_zip', label: "Seller "+sellerCount +" Mailing Zip", sortable: false});
-                    }
-            }
-                return fields;
-        },
-        showCustomView(template, fieldsType = null) {
-            if(template) {
-                this.customViewTemplate = template;
-            }
-            if(fieldsType) {
-                this.fieldsType = fieldsType;
-            }
-            this.showCustomModalView = false;
-            let fields = [];
-            if(this.fieldsType == null || this.fieldsType == "samerows") {
-            for(let key in this.customViewTemplate) {
-                if(key !== 'name' && this.customViewTemplate[key] !== false) {
-                    if(key.includes("seller_")){
-                      let sellerFields = this.addSellerFields(key);
-                      fields.push(...sellerFields);
-                    } else if(key.includes("phone_")) {
-                        let phoneFields = this.addPhoneFields(key);
-                        fields.push(...phoneFields);
-                    } else if(key.includes("email_")) {
-                        let emailFields = this.addEmailFields(key);
-                        fields.push(...emailFields);
-                    } else if(key.includes("golden_address_")) {
-                        let goldenAddressesFields = this.addGoldenAddressesFields(key);
-                        fields.push(...goldenAddressesFields);
-                    } else {
-                    let obj = this.allFields.find(o => o['key'] === key);
-                    fields.push(obj);
-                    }
+                if (key == 'seller_full_name') {
+                    fields.push({
+                        key: sellerCount + '_seller_full_name',
+                        label: "Seller " + sellerCount + " Full Name",
+                        sortable: false
+                    });
+                }
+                if (key == 'seller_first_name') {
+                    fields.push({
+                        key: sellerCount + '_seller_first_name',
+                        label: "Seller " + sellerCount + " First Name",
+                        sortable: false
+                    });
+                }
+                if (key == 'seller_last_name') {
+                    fields.push({
+                        key: sellerCount + '_seller_last_name',
+                        label: "Seller " + sellerCount + " Last Name",
+                        sortable: false
+                    });
+                }
+                if (key == 'seller_middle_name') {
+                    fields.push({
+                        key: sellerCount + '_seller_middle_name',
+                        label: "Seller " + sellerCount + " Middle Name",
+                        sortable: false
+                    });
+                }
+                if (key == 'seller_mailing_address') {
+                    fields.push({
+                        key: sellerCount + '_seller_mailing_address',
+                        label: "Seller " + sellerCount + " Mailing Address",
+                        sortable: false
+                    });
+                }
+                if (key == 'seller_mailing_city') {
+                    fields.push({
+                        key: sellerCount + '_seller_mailing_city',
+                        label: "Seller " + sellerCount + " Mailing City",
+                        sortable: false
+                    });
+                }
+                if (key == 'seller_mailing_state') {
+                    fields.push({
+                        key: sellerCount + '_seller_mailing_state',
+                        label: "Seller " + sellerCount + " Mailing State",
+                        sortable: false
+                    });
+                }
+                if (key == 'seller_mailing_zip') {
+                    fields.push({
+                        key: sellerCount + '_seller_mailing_zip',
+                        label: "Seller " + sellerCount + " Mailing Zip",
+                        sortable: false
+                    });
                 }
             }
-                fields.unshift({key:"delete", label: ""},{key: "actions", label: "Actions"});
+            return fields;
+        },
+        async showCustomView(template, fieldsType = null) {
+            if (template) {
+                this.customViewTemplate = template;
+            }
+            this.$store.dispatch('uxModule/setLoading');
+            await this.$store.dispatch('propertyModule/getAllSubjectsV2', {
+                page: this.currentPage,
+                perPage: this.perPage,
+                search: this.searchProperty,
+                filter: this.filtersName,
+                custom: this.customViewTemplate
+            });
+            if (fieldsType) {
+                this.fieldsType = fieldsType;
+            }
+            this.$store.dispatch('uxModule/hideLoader');
+            this.showCustomModalView = false;
+            let fields = [];
+            if (this.fieldsType == null || this.fieldsType == "samerows") {
+                for (let key in this.customViewTemplate) {
+                    if (key !== 'name' && this.customViewTemplate[key] !== false) {
+                        if (key.includes("seller_")) {
+                            let sellerFields = this.addSellerFields(key);
+                            fields.push(...sellerFields);
+                        } else if (key.includes("phone_")) {
+                            let phoneFields = this.addPhoneFields(key);
+                            fields.push(...phoneFields);
+                        } else if (key.includes("email_")) {
+                            let emailFields = this.addEmailFields(key);
+                            fields.push(...emailFields);
+                        } else if (key.includes("golden_address_")) {
+                            let goldenAddressesFields = this.addGoldenAddressesFields(key);
+                            fields.push(...goldenAddressesFields);
+                        } else {
+                            let obj = this.allFields.find(o => o['key'] === key);
+                            fields.push(obj);
+                        }
+                    }
+                }
+                fields.unshift({
+                    key: "delete",
+                    label: ""
+                }, {
+                    key: "actions",
+                    label: "Actions"
+                });
                 this.propertyFields = [...fields];
             } else {
-                fields.unshift({key:"delete", label: ""},{key: "actions", label: "Actions"});
-                for(let key in this.customViewTemplate) {
-                    if(key !== 'name' && this.customViewTemplate[key] !== false) {
+                fields.unshift({
+                    key: "delete",
+                    label: ""
+                }, {
+                    key: "actions",
+                    label: "Actions"
+                });
+                for (let key in this.customViewTemplate) {
+                    if (key !== 'name' && this.customViewTemplate[key] !== false) {
                         let field = this.allFields.find(o => o['key'] === key);
                         fields.push(field);
                     }
                 }
                 this.propertyFields = [...fields];
             }
+            console.log(this.propertyFields);
         },
         save(item) {
             this.$store.dispatch('uxModule/setLoading');
             try {
-            // this.showModal = false
-            this.$store.dispatch('propertyModule/editSubject', {...item})
-            this.$store.dispatch('uxModule/hideLoader');
-            }catch(error) {
+                // this.showModal = false
+                this.$store.dispatch('propertyModule/editSubject', {
+                    ...item
+                })
+                this.$store.dispatch('uxModule/hideLoader');
+            } catch (error) {
                 this.$store.dispatch('uxModule/hideLoader');
             }
             this.$store.dispatch('uxModule/hideLoader');
@@ -575,10 +872,12 @@ export default {
         add(item) {
             this.$store.dispatch('uxModule/setLoading');
             try {
-            this.showAddModal = false
-            this.$store.dispatch('propertyModule/addSubject', {...item});
-            this.$store.dispatch('uxModule/hideLoader');
-            }catch(error) {
+                this.showAddModal = false
+                this.$store.dispatch('propertyModule/addSubject', {
+                    ...item
+                });
+                this.$store.dispatch('uxModule/hideLoader');
+            } catch (error) {
                 this.$store.dispatch('uxModule/hideLoader');
             }
         },
@@ -589,76 +888,91 @@ export default {
         modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
-            this.$store.dispatch('uxModule/setLoading');
+                this.$store.dispatch('uxModule/setLoading');
                 try {
-                this.$store.dispatch('propertyModule/deleteSubject', this.itemToDelete.id);
-                this.$store.dispatch('uxModule/hideLoader');
-                }catch(error) {
-                this.$store.dispatch('uxModule/hideLoader');
+                    this.$store.dispatch('propertyModule/deleteSubject', this.itemToDelete.id);
+                    this.$store.dispatch('uxModule/hideLoader');
+                } catch (error) {
+                    this.$store.dispatch('uxModule/hideLoader');
                 }
             }
         },
         addItem() {
             this.showAddModal = true;
         },
-       async saveCustomView(template, type) {
-          this.showCustomModalView = false;
-          if (type === 'save' && template) {
-            const templateDuplication = Object.assign({}, template);
-            const keys = Object.keys(templateDuplication);
-            keys.forEach(key => {
-              if (!templateDuplication[key]) {
-                delete templateDuplication[key];
-              }
-            });
-            let response = await this.$store.dispatch('templatesModule/createTemplate', templateDuplication);
-            if(response.template) {
-            response = response.template;
-            this.templatesToExport.push({ value: response.id, text: response.name });
-            this.selectedTemplate = response.id;
+        async saveCustomView(template, type) {
+            this.showCustomModalView = false;
+            if (type === 'save' && template) {
+                const templateDuplication = Object.assign({}, template);
+                const keys = Object.keys(templateDuplication);
+                keys.forEach(key => {
+                    if (!templateDuplication[key]) {
+                        delete templateDuplication[key];
+                    }
+                });
+                let response = await this.$store.dispatch('templatesModule/createTemplate', templateDuplication);
+                if (response.template) {
+                    response = response.template;
+                    this.templatesToExport.push({
+                        value: response.id,
+                        text: response.name
+                    });
+                    this.selectedTemplate = response.id;
+                }
+            } else if (type == 'update') {
+                const templateDuplication = Object.assign({}, template);
+                const keys = Object.keys(templateDuplication);
+                keys.forEach(key => {
+                    if (!templateDuplication[key]) {
+                        delete templateDuplication[key];
+                    }
+                });
+                this.selectedTemplate = template.templateId;
+                await this.$store.dispatch('templatesModule/editTemplate', templateDuplication);
+                await this.$store.dispatch("templatesModule/getAllTemplates")
             }
-          }else if(type == 'update') {
-            const templateDuplication = Object.assign({}, template);
-            const keys = Object.keys(templateDuplication);
-            keys.forEach(key => {
-              if (!templateDuplication[key]) {
-                delete templateDuplication[key];
-              }
-            });
-            this.selectedTemplate = template.templateId;
-             await this.$store.dispatch('templatesModule/editTemplate', templateDuplication);
-             await this.$store.dispatch("templatesModule/getAllTemplates")
-          }
-          this.showCustomView(template, template.fields_type);
+            this.showCustomView(template, template.fields_type);
 
         },
         triggerFilter(filter) {
-          this.filter = {};
-          this.showFilterPropertiesModal = false;
+            this.filter = {};
+            this.showFilterPropertiesModal = false;
 
-          if (filter) {
-            const keys = Object.keys(filter);
-            keys.filter(key => {
-              if (filter[key]) {
-                this.filter[key] = filter[key];
-              }
+            if (filter) {
+                const keys = Object.keys(filter);
+                keys.filter(key => {
+                    if (filter[key]) {
+                        this.filter[key] = filter[key];
+                    }
+                })
+            }
+            this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+                page: 1,
+                perPage: this.perPage,
+                filter: this.filter,
+                custom: this.customViewTemplate
             })
-          }
-          this.$store.dispatch("propertyModule/getAllSubjectsV2", {page: 1, perPage: this.perPage, filter: this.filter})
         },
-        async getTemplate (event) {
+        async getTemplate(event) {
             this.$store.dispatch('uxModule/setLoading');
-            await this.$store.dispatch("templatesModule/getTemplate", {id: event});
+            await this.$store.dispatch("templatesModule/getTemplate", {
+                id: event
+            });
             this.showCustomView(this.template);
             this.$store.dispatch('uxModule/hideLoader');
 
         },
-        bulkDelete () {
+        bulkDelete() {
             this.$store.dispatch('propertyModule/deleteMultipleSubjects', this.bulkDeleteItems).then(
-                this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty})
+                this.$store.dispatch('propertyModule/getAllSubjectsV2', {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchProperty,
+                    custom: this.customViewTemplate
+                })
             )
         },
-        selectAll () {
+        selectAll() {
             this.bulkDeleteItems = [];
             if (this.allSelected) {
                 this.items.forEach(e => {
@@ -668,7 +982,7 @@ export default {
         }
     },
     mounted() {
-        if(this.templates) {
+        if (this.templates) {
             this.templates.forEach(e => {
                 const template = {
                     value: '',
@@ -680,25 +994,45 @@ export default {
             })
         }
         this.propertyFields = [...this.fields];
-        this.propertyFields.unshift({key:"delete", label: ""});
+        this.propertyFields.unshift({
+            key: "delete",
+            label: ""
+        });
     },
     watch: {
+        total: {
+            handler: function () {
+                this.exportCount = this.total;
+            }
+        },
         currentPage: {
-            handler: async function() {
-            this.$store.dispatch('uxModule/setLoading')
-               await this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: this.currentPage, perPage: this.perPage, search: this.searchProperty, filter: this.filtersName})
-                if(this.customViewTemplate){
-                this.showCustomView();
+            handler: async function () {
+                this.$store.dispatch('uxModule/setLoading')
+                await this.$store.dispatch('propertyModule/getAllSubjectsV2', {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchProperty,
+                    filter: this.filtersName,
+                    custom: this.customViewTemplate
+                })
+                if (this.customViewTemplate) {
+                    this.showCustomView();
                 }
                 this.$store.dispatch('uxModule/hideLoader')
             }
         },
         perPage: {
-          handler:async function () {
-            this.$store.dispatch('uxModule/setLoading')
-             await this.$store.dispatch('propertyModule/getAllSubjectsV2', {page: 1, perPage: this.perPage, search: this.searchProperty, filter: this.filtersName})
-                if(this.customViewTemplate){
-                this.showCustomView();
+            handler: async function () {
+                this.$store.dispatch('uxModule/setLoading')
+                await this.$store.dispatch('propertyModule/getAllSubjectsV2', {
+                    page: 1,
+                    perPage: this.perPage,
+                    search: this.searchProperty,
+                    filter: this.filtersName,
+                    custom: this.customViewTemplate
+                })
+                if (this.customViewTemplate) {
+                    this.showCustomView();
                 }
                 this.$store.dispatch('uxModule/hideLoader')
             }
@@ -709,63 +1043,68 @@ export default {
 </script>
 
 <style>
-    .info {
-        border: 1px solid black;
-        border-radius: 5px;
-        width: 200px;
-        height: 38px;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-    }
-    .list-page.main-content.wide-content{
-        position:relative;
-    }
+.info {
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 200px;
+    height: 38px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
 
-    .latest {
-        background-color: #B6D7A8;
-    }
-    .add-seller {
-        width: 200px;
-    }
+.list-page.main-content.wide-content {
+    position: relative;
+}
 
-    .filter-icon {
-        font-size: 25px;
-    }
+.latest {
+    background-color: #B6D7A8;
+}
 
-    .b-table-sticky-header {
-        max-height: calc(100vh - 372px) !important;
-    }
+.add-seller {
+    width: 200px;
+}
 
-    .filter-container {
-        text-align: end;
-    }
+.filter-icon {
+    font-size: 25px;
+}
 
-    .select-template {
-        width: 80% !important;
-    }
-    table th {
-      vertical-align: inherit !important;
-      height: 64px;
-    }
-    .properties-header .boxes {
-        float:right;
-    }
-    .properties-header .boxes div{
-        border: 1px solid #d3d8de;
-        border-radius: 0.25rem;
-        color: #3e3e3e;
-        text-align: center;
-        display: inline-block;
-        padding-top: 10px;
-        width: 167px;
-        padding-bottom: 10px;
-        margin-left: 10px;
-        cursor:pointer;
-    }
-    .properties-header h3{
-        display:inline-block;
-    }
+.b-table-sticky-header {
+    max-height: calc(100vh - 372px) !important;
+}
+
+.filter-container {
+    text-align: end;
+}
+
+.select-template {
+    width: 80% !important;
+}
+
+table th {
+    vertical-align: inherit !important;
+    height: 64px;
+}
+
+.properties-header .boxes {
+    float: right;
+}
+
+.properties-header .boxes div {
+    border: 1px solid #d3d8de;
+    border-radius: 0.25rem;
+    color: #3e3e3e;
+    text-align: center;
+    display: inline-block;
+    padding-top: 10px;
+    width: 167px;
+    padding-bottom: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.properties-header h3 {
+    display: inline-block;
+}
 </style>
-
