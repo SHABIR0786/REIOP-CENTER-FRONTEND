@@ -338,6 +338,7 @@
 </template>
 <script>
 import {mapGetters} from "vuex";
+import axios from "axios";
 import moment from 'moment'
 import SaveFilterModal from "./SaveFilterModal";
 import loadingBars from "../loader/loadingBars";
@@ -634,13 +635,37 @@ computed: {
 
       this.isExporting = true;
       console.log(exportSubject);
-      await this.$store.dispatch('propertyModule/exportProperties', exportSubject);
+     let response =  await this.$store.dispatch('propertyModule/exportProperties', exportSubject);
       this.$bvToast.toast(`Document Export Started. Please wait!`, {
           title: 'Export',
           autoHideDelay: 5000,
           appendToast: true
         });
-      this.isExporting = false;
+        console.log(response);
+
+        this.isExporting = false;
+        const instance = this;
+        window.Echo.private(`exportcompleted.${response.batch.id}`).listen("NotifyExportCompleted", (e) => {
+                instance.$bvToast.toast(`Download is Started for the Document.`, {
+                    title: 'Export File Download',
+                    autoHideDelay: 5000,
+                    appendToast: true
+                    });
+
+                axios({
+                    url: `${process.env.VUE_APP_API_URL}/properties/download/${e.exportId}`, // File URL Goes Here
+                    method: 'GET',
+                    responseType: 'blob',
+                }).then((res) => {
+                    const a = document.createElement('a');
+                    document.body.appendChild(a);
+                    const url = window.URL.createObjectURL(new Blob([res.data]));
+                    a.href = url;
+                    a.download = 'export.csv';
+                    a.click();
+                });
+                
+      });
     },
     checkNextStep() {
       if(this.export_type != null) {

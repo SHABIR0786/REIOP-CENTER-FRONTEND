@@ -15,7 +15,6 @@
 <script>
 import SideBar from "@/components/shared/SideBar";
 import NavBar from "@/components/shared/NavBar";
-import axios from "axios";
 import Loader from "@/components/shared/Loader";
 import {
     mapGetters
@@ -49,30 +48,6 @@ export default {
         }
     },
     watch: {
-        authUser: function () {
-            const instance = this;
-            window.Echo.private(`exportcompleted.${this.authUser.id}`).listen("NotifyExportCompleted", (e) => {
-                instance.$bvToast.toast(`Download is Started for the Document.`, {
-                    title: 'Export File Download',
-                    autoHideDelay: 5000,
-                    appendToast: true
-                    });
-
-                axios({
-                    url: `${process.env.VUE_APP_API_URL}/properties/download/${e.exportId}`, // File URL Goes Here
-                    method: 'GET',
-                    responseType: 'blob',
-                }).then((res) => {
-                    const a = document.createElement('a');
-                    document.body.appendChild(a);
-                    const url = window.URL.createObjectURL(new Blob([res.data]));
-                    a.href = url;
-                    a.download = 'export.csv';
-                    a.click();
-                });
-                
-      });
-        },
         '$route'(to, from) {
             switch (from.name) {
                 case "Import":
