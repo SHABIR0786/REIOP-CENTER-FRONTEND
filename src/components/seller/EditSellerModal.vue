@@ -107,14 +107,14 @@
                         </b-row>
                         <b-row>
                             <b-col cols="12">
-                                <b-input-group prepend="Attempted Skip Trace Sources" class="mb-2">
+                                <b-input-group prepend="Attempted Export Skip Trace Source" class="mb-2">
                                     <b-form-input readonly v-model="seller.attempted_skip_trace_sources"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>
                         <b-row>
                             <b-col cols="12">
-                                <b-input-group prepend="Attempted Skip Traces" class="mb-2">
+                                <b-input-group prepend="Exported Skip Trace Attempts" class="mb-2">
                                     <b-form-input readonly v-model="seller.attempted_skip_traces"></b-form-input>
                                 </b-input-group>
                             </b-col>
