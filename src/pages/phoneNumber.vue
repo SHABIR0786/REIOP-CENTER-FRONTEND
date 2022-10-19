@@ -393,8 +393,8 @@ export default {
                     this.editedItem = {
                         ...item
                     }
-                    console.log('this.editedItem',this.editedItem);
-                    console.log('this.phoneNumber.list_id',this.editedItem.list_id);
+                    // console.log('this.editedItem',this.editedItem);
+                    // console.log('this.phoneNumber.list_id',this.editedItem.list_id);
                     this.showModal = true
                 });
                 // this.$store.dispatch('uxModule/hideLoader');

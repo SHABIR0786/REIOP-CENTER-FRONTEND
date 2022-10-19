@@ -299,7 +299,7 @@ export default {
             if(this.fieldsType == "samerows" || this.fieldsType == null) {
                 return this.items;
             } else {
-                console.log(this.seperatedRowSubjects);
+                // console.log(this.seperatedRowSubjects);
                 return this.seperatedRowSubjects;
             }
          },

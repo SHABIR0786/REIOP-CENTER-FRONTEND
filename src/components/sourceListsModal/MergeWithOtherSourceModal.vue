@@ -104,7 +104,7 @@ export default {
                 this.allListItems = this.propsData;
             
                 this.itemTo_Merge = this.itemToMerge;                
-                console.log(this.itemTo_Merge);
+                // console.log(this.itemTo_Merge);
                 if(this.itemTo_Merge.merge_list_type == "list_source"){
                     this.allListItems.map((list) => {
                         if(list.list_source){

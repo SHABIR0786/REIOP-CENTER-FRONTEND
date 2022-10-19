@@ -228,7 +228,7 @@ export default {
             });
             }
             
-            console.log('user', this.user);
+            // console.log('user', this.user);
             
            this. $emit('add', this.user);
         },

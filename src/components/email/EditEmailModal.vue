@@ -456,7 +456,7 @@ export default {
             try {
                 if(this.showModal){
                     this.$store.dispatch('uxModule/setLoading')
-                    console.log('this world');
+                    // console.log('this world');
                     this.email = {...this.propsData}
                     let response = await this.$store.dispatch('listModule/getSelectedList', this.email.list_id);
                     this.relatedList = [response.list];
