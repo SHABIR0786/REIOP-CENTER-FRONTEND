@@ -5,7 +5,11 @@
         <hr>
     </div>
     <b-table id="user-table" lg sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="items" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+            <template #head(actions)="scope">
+            <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
+        </template>
         <template v-slot:cell(actions)="data">
+            <b-icon class="mr-2 cursor-pointer" variant="danger" icon="trash" @click="deleteExport(data.item)"></b-icon>
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="showRawData(data.item)"></b-icon>
             <b-icon class="mr-2 cursor-pointer" icon="download" variant="primary" @click="downloadFile(data.item)"></b-icon>
         </template>
@@ -24,10 +28,13 @@
         </b-col>
     </b-row>
     <edit-export-modal ref="exportModal" :exportItem="exportItem" :showModal="showModal"  @cancel="showModal=false" ></edit-export-modal>
+    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+
 </div>
 </template>
 
 <script>
+import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditExportModal from "../components/export/EditExportModal";
 import {
     mapGetters
@@ -42,11 +49,13 @@ export default {
     name: "Companies",
     components: {
         BIcon,
-        EditExportModal
+        EditExportModal,
+        DeleteModal
     },
     data() {
         return {
             isBusy: false,
+            showDeleteModal: false,
             perPage: 20,
             currentPage: 1,
             pageOptions: [10, 20, 50],
@@ -93,6 +102,23 @@ export default {
         }
     },
     methods: {
+    
+    deleteExport(item) {
+            this.showDeleteModal = true;
+            this.itemToDelete = item;
+    },
+    modalResponse(response) {
+            this.showDeleteModal = false;
+            if (response) {
+                this.$store.dispatch('uxModule/setLoading');
+                try {
+                    this.$store.dispatch('exportModule/deleteExport', this.itemToDelete.id)
+                    this.$store.dispatch('uxModule/hideLoader');
+                } catch (error) {
+                    this.$store.dispatch('uxModule/hideLoader');
+                }
+            }
+        },
     getLivePercentage(item) {
         let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);
         let index = this.filteredItems.findIndex(x=>x.id == item.id);
