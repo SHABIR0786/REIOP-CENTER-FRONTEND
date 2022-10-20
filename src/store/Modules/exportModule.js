@@ -50,7 +50,13 @@ const mutations = {
     },
     SET_EXPORT(state, payload) {
         state.selectedItem = payload;
-    }
+    },
+    DELETE_EXPORT(state, payload) {
+        const EXPORTS = state.items;
+        const findIndex = EXPORTS.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && EXPORTS.splice(findIndex, 1)
+        state.items = EXPORTS;
+    },
 };
 
 const actions = {
@@ -64,6 +70,12 @@ const actions = {
                 commit('EXPORTS_ITEMS', response.exports)
             }
             return response;
+        })
+    },
+    async deleteExport({commit}, data) {
+        return await api.deleteAPI(`/exports/${data}`).then((response) => {
+            commit('DELETE_EXPORT', data)
+            return response
         })
     },
     async getSelectedExport({commit}, data) {        
