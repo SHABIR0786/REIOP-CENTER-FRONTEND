@@ -143,7 +143,7 @@
     <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-    <custom-view :customViews="templatesToExport" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
+    <custom-view :customViews="templatesToExport" :changeTemplate="changeTemplate" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
 </div>
 </template>
 
@@ -384,6 +384,7 @@ export default {
             searchProperty: '',
             showAddModal: false,
             showCustomModalView: false,
+            changeTemplate: false,
             showFilterPropertiesModal: false,
             showFileType: false,
             selectedTemplate: null,
@@ -792,9 +793,14 @@ export default {
             }
             return fields;
         },
-        async showCustomView(template, fieldsType = null) {
+        async showCustomView(template, fieldsType = null, resetSelectedTemplate= false) {
             if (template) {
                 this.customViewTemplate = template;
+                if(resetSelectedTemplate){
+                    this.selectedTemplate= null;
+                    this.changeTemplate= false;
+                }
+
             }
             this.$store.dispatch('uxModule/setLoading');
             await this.$store.dispatch('propertyModule/getAllSubjectsV2', {
@@ -960,6 +966,12 @@ export default {
                 id: event
             });
             this.showCustomView(this.template);
+            if(event!=null){
+                this.changeTemplate= true;
+            }else{
+                this.changeTemplate= false;
+
+            }
             this.$store.dispatch('uxModule/hideLoader');
 
         },

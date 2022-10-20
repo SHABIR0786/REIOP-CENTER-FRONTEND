@@ -212,7 +212,7 @@
                             <b v-b-toggle.new-template-collapse>Create New View Template</b>
                         </b-col>
                         <b-col>
-                            <b-button variant="primary" size="sm" class="mr-2 float-right" @click="$emit('show', customTemplate, fieldsType);">
+                            <b-button variant="primary" size="sm" class="mr-2 float-right" @click="$emit('show', customTemplate, fieldsType,true);">
                                 show View
                             </b-button>
                         </b-col>
@@ -243,6 +243,10 @@ export default {
         showModal: {
             type: Boolean
         },
+        changeTemplate: {
+            type: Boolean,
+            default: false
+        },
         customViews: {
             type: Array
         },
@@ -271,7 +275,10 @@ export default {
             this.email_collapse_icon = false
             this.golden_address_collapse_icon = false;
             this.running_list_collapse_icon = false;
-        }
+            if(this.changeTemplate){                
+                this.resetData();
+            }
+        },
     },
     data() {
         return {
