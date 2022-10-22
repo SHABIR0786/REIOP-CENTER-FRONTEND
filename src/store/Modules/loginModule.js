@@ -16,6 +16,11 @@ export const mutations = {
         setLocalStorage('accessToken', token);
         setLocalStorage('authUser', JSON.stringify(user));
     },
+    Switch_Company_Team(state, {user}) {
+        state.isLogged = true;
+        state.authUser = user || {};
+        setLocalStorage('authUser', JSON.stringify(user));
+    },
     LOGOUT(state) {
         state.isLogged = false;
         state.authUser = null;
@@ -43,7 +48,8 @@ export const actions = {
                 autoHideDelay: 4000,
             })
         }
-
+        commit('SET_ADMIN_MODE', false)
+        setLocalStorage('adminMode',false);
         return userData;
     },
     async logout({ commit }) {
@@ -60,7 +66,13 @@ export const actions = {
         commit('SET_ADMIN_MODE', false)
         setLocalStorage('adminMode',false);
 
-    }
+    },
+    async switchCompanyTeam({ commit }, data) {
+         await api.post(`/auth/switchCompanyTeam`, {...data}).then((response) => {
+            commit('Switch_Company_Team', {user: response.user})
+
+        })
+    },
 }
 
 export const getters = {

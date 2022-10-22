@@ -1,4 +1,5 @@
 <template>
+    <div>
     <b-navbar varint="info" :class="`mb-2 main-content ${isCollapsed ? 'wide-content' : ''}`" class="nav-bar">
         <b-navbar-brand href="/" left>
             <div>
@@ -8,10 +9,13 @@
         <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right>
                 <template #button-content> {{ (user && user.name) ? user.name : "User"}}</template>
-                <b-dropdown-item v-if="user && user.role == 'superadmin' && adminMode == false" @click="switchToAdminView()">
+                <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && user.teams.length > 1" @click="switchTeamViewList()">
+                    <div title="Switch Company/Team Modal"><b-icon icon="person-bounding-box"></b-icon> Switch Team</div>
+                </b-dropdown-item>
+                <b-dropdown-item v-if="user && user.role == 1 && adminMode == false" @click="switchToAdminView()">
                     <div><b-icon icon="person-bounding-box"></b-icon> Switch to Admin View</div>
                 </b-dropdown-item>
-                <b-dropdown-item v-if="user && user.role == 'superadmin' && adminMode == true" @click="switchToTeamView()">
+                <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && adminMode == true" @click="switchToTeamView()">
                     <div><b-icon icon="person-bounding-box"></b-icon> Switch to Team View</div>
                 </b-dropdown-item>
                 <b-dropdown-item v-if="adminMode == false">
@@ -45,15 +49,26 @@
             </b-nav-item-dropdown>
         </b-navbar-nav>
     </b-navbar>
+    <switch-team-modal :showModal="showModal"  @cancel="showModal=false"></switch-team-modal>
+
+    </div>
 </template>
 <script>
 import { BIcon } from "bootstrap-vue"
 import { mapGetters } from "vuex"
+import SwitchTeamModal from "../teams/SwitchTeamModal";
 
 export default {
     name: "Navbar",
     components: {
         BIcon,
+        SwitchTeamModal
+
+    },
+    data() {
+        return {
+            showModal: false,
+        }
     },
     computed: {
         ...mapGetters({
@@ -72,6 +87,10 @@ export default {
         },
         switchToTeamView() {
             this.$store.dispatch('loginModule/switchToTeamView');
+        },
+        switchTeamViewList() {
+            this.showModal = true;
+
         }
     }
 }

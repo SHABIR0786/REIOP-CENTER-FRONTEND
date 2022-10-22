@@ -38,14 +38,14 @@
             </b-form-group>
         </b-col>
         <b-col class="d-flex align-items-center justify-content-center">
-            <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{(currentPage*perPage)>itemsCount?itemsCount:(currentPage*perPage)}} of {{itemsCount}} entries</p>
+            <p class="mb-0">Showing {{currentPage == 1?1:(perPage * (currentPage - 1))}} to {{(currentPage*perPage)>total?total:(currentPage*perPage)}} of {{total}} entries</p>
         </b-col>
         <b-col class="d-flex justify-content-end">
-            <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
+            <b-pagination class="mb-0" v-model="currentPage" :total-rows="total" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         </b-col>
     </b-row>
     <edit-company-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-company-modal>
-    <add-company-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-company-modal>
+    <add-company-modal ref="addcompanymodal" :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-company-modal>
 </div>
 </template>
 
@@ -83,7 +83,6 @@ export default {
             allSelected: false,
             showFilterPropertiesModal: false,
             filteredOrAllData: [],
-            itemsCount: 0,
             sortBy: 'id',
             sortDesc: false,
             isSearched: false,
@@ -97,9 +96,6 @@ export default {
             total: 'companyModule/total',
             authUser: 'loginModule/getAuthUser',
         }),
-        rows() {
-            return this.itemsCount ? this.itemsCount : 1
-        },
     },
     async created() {
         try {
@@ -121,9 +117,7 @@ export default {
     methods: {
         editItem(item) {
             this.showModal = true
-            this.editedItem = {
-                ...item
-            }
+            this.editedItem = JSON.parse(JSON.stringify(item));
         },
         async clearsearch() {
             this.searchCompany = '';
@@ -158,12 +152,6 @@ export default {
             });
             this.filteredOrAllData = this.items;
         },
-        editCompany(item) {
-            this.showModal = true
-            this.editedItem = {
-                ...item
-            }
-        },
        async save(item) {
            await this.$store.dispatch('uxModule/setLoading')
             try {
@@ -182,6 +170,7 @@ export default {
                 ...item
             });
             this.showAddModal = false;
+            this.$refs.addcompanymodal.reset();
             this.$store.dispatch('uxModule/hideLoader')
         },
         deleteCompany(item) {

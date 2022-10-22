@@ -13,7 +13,7 @@ const state = {
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],
     companies: [],
-    total_companies: 0,
+    total: 0,
 }
 
 const mutations = {
@@ -27,7 +27,7 @@ const mutations = {
             e.updated_at = e.updated_at.split('T')[0];
         }
         })
-        state.total_companies = data.length;
+        state.total = data.length;
         state.companies = [...data]
     },
     EDIT_COMPANY(state, payload) {

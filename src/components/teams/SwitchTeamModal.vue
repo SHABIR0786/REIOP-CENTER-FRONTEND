@@ -1,0 +1,81 @@
+<template>
+<b-modal v-model="showModal" size="md" scrollable no-close-on-backdrop>
+    <template #modal-header>
+        <div class="w-100">
+            Switch Company / Teams
+        </div>
+    </template>
+        <b-container fluid>
+                <b-row class="">
+                <b-col cols="12" class="list-group-row" >
+                    <!-- <h5 class="text-center">Company - Team List</h5> -->
+                    <b-list-group class="w-100">
+                        <b-list-group-item role="button" button @click="activeTeam(team)" :class="{ active: team.id == user.team_id }" v-for="team,index in user.teams" :key="index">{{team.company.name }} - {{team.name}}</b-list-group-item>
+                    </b-list-group>
+                </b-col>
+                </b-row>
+           
+        </b-container>
+        <template #modal-footer>
+            <div class="w-100">
+                <b-button variant="primary" size="sm" class="float-right" @click="$emit('cancel')">
+                    Close
+                </b-button>
+            </div>
+        </template>
+</b-modal>
+</template>
+
+<script>
+import {
+    mapGetters
+} from "vuex";
+export default {
+    name: 'SwitchTeamModal',
+    props: {
+        showModal: {
+            type: Boolean
+        }
+    },
+    computed: {
+        ...mapGetters({
+            user: 'loginModule/getAuthUser',
+        })
+    },
+    data() {
+        return {
+        }
+    },
+    methods: {
+        async activeTeam(team){
+            team.user_id = this.user.id;
+            console.log(team);
+            this.$store.dispatch('uxModule/setLoading')
+            await this.$store.dispatch('loginModule/switchCompanyTeam', {
+                    ...team
+                });
+            this.$store.dispatch('uxModule/hideLoader')
+        }
+    },
+    mounted() {
+        console.log('mounted');
+    }
+
+
+
+}
+</script>
+
+<style scoped>
+.input-helper {
+    text-align: start;
+}
+.list-group-row .list-group{
+    overflow-y: auto;
+    max-height:400px;
+}
+.trash-icon{
+    float:right;
+    cursor:pointer;
+}
+</style>
