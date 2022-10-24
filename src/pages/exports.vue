@@ -156,6 +156,7 @@ export default {
         },
         showRawData(data) {
             this.exportItem = data;
+            this.exportItem.marketing_channel_name = data.marketingChannel?.marketing_channel_name;
             this.showModal = true;
         },
         downloadFile(item) {

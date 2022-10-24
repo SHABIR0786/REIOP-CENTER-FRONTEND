@@ -11,6 +11,7 @@ const state = {
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],
     teams: [],
+    companyTeams: [],
     total: 0,
     existTeam: [],
 }
@@ -24,6 +25,15 @@ const mutations = {
             e.total_users = e.users.length;
         })
         state.teams = [...data]
+    },
+    SET_COMPANY_TEAMS(state, payload) {
+        const data = [...payload]
+        data.forEach(e => {
+            e.created_at = e.created_at.split('T')[0];
+            e.updated_at = e.updated_at.split('T')[0];
+            e.total_users = e.users.length;
+        })
+        state.companyTeams = [...data]
     },
     EDIT_TEAM(state, payload) {
         const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
@@ -62,6 +72,19 @@ const actions = {
 
             if(response && response.teams && response.teams.data) {
                 commit('SET_ALL_TEAMS', response.teams.data)
+            }
+
+            return response
+        })
+    },
+    async getCompanyTeams({commit,dispatch }, {companyid}) {
+        return await api.get(`/companyTeams?companyid=${companyid}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if(response && response.teams && response.teams.data) {
+                commit('SET_COMPANY_TEAMS', response.teams)
             }
 
             return response
@@ -127,6 +150,7 @@ const actions = {
 const getters = {
     fields: ({ fields }) => fields,
     teams: ({ teams }) => teams,
+    companyTeams: ({ companyTeams }) => companyTeams,
     total: ({total}) => total,
     existTeam: ({existTeam}) => existTeam
 }

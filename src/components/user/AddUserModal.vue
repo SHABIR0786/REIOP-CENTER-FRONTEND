@@ -1,5 +1,5 @@
 <template>
-<b-modal v-model="showModal" no-close-on-backdrop>
+<b-modal v-model="showModal" no-close-on-backdrop scrollable>
     <template #modal-header>
         <div class="w-100">
             Add User
@@ -23,16 +23,6 @@
                         </b-input-group>
                     </b-col>
                 </b-row>
-                <b-row>
-                    <b-col cols="12">
-                        <b-input-group prepend="Select Team" id="team_id" label="Team" label-for="team_id" class="mb-2">
-                            <b-form-select v-model="$v.user.team_id.$model" aria-describedby="team_id" :state="validateState('team_id')" :options="teamitems" required>
-                            </b-form-select>
-                            <b-form-invalid-feedback class="text-center" id="team_id">User Team Field is Required.</b-form-invalid-feedback>
-                        </b-input-group>
-                    </b-col>
-                </b-row>
-                
                 <b-row class="mb-1 text-center">
                     <b-col cols="12">
                         <b-input-group prepend="Password" label="password" label-for="password" class="mb-2">
@@ -42,53 +32,66 @@
                         </b-input-group>
                     </b-col>
                 </b-row>
-
-                <b-row v-show="user.role!='superadmin'">
+                <hr>
+                <b-row>
                     <b-col cols="12">
                         <b-input-group prepend="Company" id="company_id" class="mb-2">
-                          <b-form-select @change="addcompanyitems" :options="companyitems"></b-form-select>
+                          <b-form-select @change="addcompanyitems" :options="companyitems" v-model="tempCompany.company" ></b-form-select>
                         </b-input-group>
                     </b-col>
                 </b-row>
-                <b-row class="list-group-row" v-show="user.role!='superadmin' && selectedCompany.length>0">
+                <b-row>
                     <b-col cols="12">
-                        <h5>Companies Permission</h5>
-                        <b-list-group class="w-100">
-                            <b-list-group-item v-for="company in selectedCompany" :key="company.id">
-                            Company : {{company.name}}
-                            <b-input-group>
-                                <b-input-group-prepend class="pr-2">
-                                    Role : 
-                                </b-input-group-prepend>
-                                <b-form-radio-group v-model="company.role" :options="company_permission"  :name="'company_role'+company.id" />
-                                <b-input-group-append>
-                                    <b-icon icon="trash" class="trash-icon btn" variant="danger" @click="removecompanyitems(company)"></b-icon>
-                                </b-input-group-append>
-
-                            </b-input-group>
-
-                            </b-list-group-item>
-                        </b-list-group>
+                        <b-input-group prepend="Team" id="team_id" label="Team" label-for="team_id" class="mb-2">
+                            <b-form-select v-model="tempCompany.team" aria-describedby="team_id" :options="teamitems" >
+                            </b-form-select>
+                            <b-form-invalid-feedback class="text-center" id="team_id">User Team Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
                     </b-col>
                 </b-row>
+                
+                
                 <b-row>
-                    <b-col cols="12" class="pt-2">
-                        <!-- <b-input-group prepend="Select Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
-                            <b-form-select v-model="$v.user.role.$model" aria-describedby="role-id" :state="validateState('role')" :options="roles" required>
+                    <b-col cols="12">
+                        <b-input-group prepend="Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                            <b-form-select v-model="tempCompany.role" aria-describedby="role-id" :options="roles" >
                             </b-form-select>
                             <b-form-invalid-feedback class="text-center" id="role-id">User Role Field is Required.</b-form-invalid-feedback>
-                        </b-input-group> -->
+                        </b-input-group>
 
-                        <b-form-checkbox
+                        <!-- <b-form-checkbox
                             id="checkbox_role"
                             v-model="user.role"
                             name="checkbox_role"
-                            value="superadmin"
-                            unchecked-value=""
-                            >
+                            value="1"
+                            unchecked-value="">
                             Make this user a SuperAdmin
-                        </b-form-checkbox>
+                        </b-form-checkbox> -->
 
+                    </b-col>
+                    <b-col cols="12" class="text-center">
+
+                    <b-button variant="primary" v-b-tooltip.hover title="Add (Company - Team - Role)" size="sm" type="button" @click="addCompanyTeam" class="text-center">
+                    + Add
+                </b-button>
+                    </b-col>
+
+                </b-row>
+                <b-row class="list-group-row">
+                    <b-col cols="12">
+                        <h5 class="text-center mt-3" v-if="selectedCompany.length>0">(Company - Team - Role) List</h5>
+                        <b-list-group class="w-100">
+                            <b-list-group-item v-for="item in selectedCompany" :key="item.company.id+item.team.id">
+                            <b-input-group>
+                                <b-input-group-prepend >
+                                    <span class="px-1" v-b-tooltip.hover title="Company Name">{{item.company.name}} </span> - <span class="px-1" v-b-tooltip.hover title="Team Name"> {{item.team.name}} </span> - <span class="px-1" v-b-tooltip.hover title="Role"> {{item.role}} </span>
+                                </b-input-group-prepend>
+                                <b-input-group-append v-b-tooltip.hover title="Remove From List">
+                                    <b-icon icon="trash" class="trash-icon btn" variant="danger" @click="removecompanyitems(item)"></b-icon>
+                                </b-input-group-append>
+                            </b-input-group>
+                            </b-list-group-item>
+                        </b-list-group>
                     </b-col>
                 </b-row>
         </b-container>
@@ -129,7 +132,8 @@ export default {
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            teams: 'teamModule/teams',
+            // teams: 'teamModule/teams',
+            // companyTeams: 'teamModule/companyTeams',
             items: 'companyModule/companies',
 
         }),
@@ -148,6 +152,12 @@ export default {
                 role: '',
                 permissions: [],
             },
+            tempCompany: {
+                company: {},
+                team: {},
+                role: '',
+            },
+            // tempCompany: null,
             teamitems: [],
             companyitems: [],
             selectedCompany:[],
@@ -186,12 +196,6 @@ export default {
                 required,
                 email
             },
-            team_id: {
-                required
-            },
-            // role: {
-            //     required
-            // },
             password: {
                 required,
                 minLength: minLength(6)
@@ -203,32 +207,80 @@ export default {
             const { $dirty, $error } = this.$v.user[name];
             return $dirty ? !$error : null;
         },
-        addcompanyitems(company) {            
-            let index = this.companyitems.findIndex(x=>x.value.id == company.id);
-            this.companyitems.splice(index,1);
-            this.selectedCompany.push(company);
+        async addcompanyitems(company) { 
+            this.$store.dispatch('uxModule/setLoading')
+            try{  
+                var response = await this.$store.dispatch("teamModule/getCompanyTeams", {
+                    companyid: company.id
+                });
+                var companyTeams = response.teams;
+                this.teamitems = [];
+                companyTeams.map((company) => {
+                    
+                    this.teamitems.push({
+                        value: company,
+                        text: company.name
+                    });
+                });
+                this.$store.dispatch('uxModule/hideLoader')
+            }catch(e){
+                console.log(e);
+                this.$store.dispatch('uxModule/hideLoader')
+            }     
+            // let index = this.companyitems.findIndex(x=>x.value.id == company.id);
+            // this.companyitems.splice(index,1);
+            // this.selectedCompany.push(company);
         },
-        removecompanyitems(company) {
-            let index = this.selectedCompany.findIndex(x=>x.id == company.id);
+        removecompanyitems(item) {
+            let index = this.selectedCompany.findIndex(x=>((x.company.id == item.company.id )&&( x.team.id == item.team.id)&&( x.role == item.role)));
             this.selectedCompany.splice(index,1);
-            this.companyitems.push({value:company,text:company.name});
+            // this.companyitems.push({value:company,text:company.name});
+        },
+        addCompanyTeam(){
+            if(!this.tempCompany.company?.id || !this.tempCompany.team?.id || this.tempCompany.role == ''){
+                this.$bvToast.toast("Please Select Company - Team - Role", {
+                    title: "Validate",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+                });
+                return ;
+            }
+            this.selectedCompany.push(this.tempCompany);
+            this.tempCompany={
+                company: {},
+                team: {},
+                role: '',
+            };
+            console.log("tempCompany",this.tempCompany);
+            console.log("selectedCompany",this.selectedCompany);
+
+
         },
         onSubmit() {
             this.$v.user.$touch();
             if (this.$v.user.$anyError) {
                 return;
             }
+            if(this.selectedCompany.length==0){
+                this.$bvToast.toast("Please Add Atleast One Company/Team", {
+                    title: "Validate",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+                });
+                return ;
+            }
             this.user.permissions = [];
-            if(this.user.role != 'superadmin'){
-                this.selectedCompany.map((company)=> {
+            if(this.user.role != 1){
+                this.selectedCompany.map((item)=> {
                 this.user.permissions.push({
-                    company_id: company.id,
-                    role: company.role
+                    company_id: item.company.id,
+                    team_id: item.team.id,
+                    role: item.role
                 });
             });
             }
             
-            // console.log('user', this.user);
+            console.log('user', this.user);
             
            this. $emit('add', this.user);
         },
@@ -239,23 +291,22 @@ export default {
         this.$store.dispatch('companyModule/getTotal')
 
         try {
-            await this.$store.dispatch("teamModule/getAllTeams", {
-                page: 1,
-                perPage: this.perPage
-            })
-            this.teams.map((team) => {
-                this.teamitems.push({
-                    value: team.id,
-                    text: team.name
-                });
-            });
+            // await this.$store.dispatch("teamModule/getAllTeams", {
+            //     page: 1,
+            //     perPage: this.perPage
+            // })
+            // this.teams.map((team) => {
+            //     this.teamitems.push({
+            //         value: team.id,
+            //         text: team.name
+            //     });
+            // });
             await this.$store.dispatch("companyModule/getAllCompanies", {
                 page: 1,
                 perPage: this.perPage
             })
             this.items.map((company) => {
-                    company.role = 'user';
-                
+                    // company.role = 'user';
                 this.companyitems.push({
                     value: company,
                     text: company.name
