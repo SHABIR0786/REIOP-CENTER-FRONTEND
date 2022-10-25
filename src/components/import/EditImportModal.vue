@@ -218,39 +218,40 @@
                     <b-row>
                       <b-col cols="12">
                         <b-input-group  prepend="Market" class="mb-2">
-                          <b-form-select v-model="editData.list_market" :disabled="isReadOnly" :options="list_market_array" required></b-form-select>
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_market" :disabled="isReadOnly" :options="list_market_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_market"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group  prepend="Group" class="mb-2">
-                          <b-form-select v-model="editData.list_group" :disabled="isReadOnly" :options="list_group_array" required></b-form-select>
-
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_group" :disabled="isReadOnly" :options="list_group_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_group"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group  prepend="Type" class="mb-2">
-                          <b-form-select v-model="editData.list_type" :disabled="isReadOnly" :options="list_type_array" required></b-form-select>
-
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_type" :disabled="isReadOnly" :options="list_type_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_type"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group  prepend="Source" class="mb-2">
-                          <b-form-select v-model="editData.list_source" :disabled="isReadOnly" :options="list_source_array" required></b-form-select>
-
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_source" :disabled="isReadOnly" :options="list_source_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_source"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group  prepend="Skip Source" class="mb-2">
-                          <b-form-select v-model="editData.list_skip_source" :disabled="isReadOnly" :options="list_skip_source_array" required></b-form-select>
-
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_skip_source" :disabled="isReadOnly" :options="list_skip_source_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_skip_source"></b-form-input>
                         </b-input-group>
                       </b-col>
                     </b-row>

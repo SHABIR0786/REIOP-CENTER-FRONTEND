@@ -389,6 +389,7 @@ export default {
         async currentModal() {
             this.$store.dispatch('uxModule/setLoading')
             let subject = this.goldenAddress?.sellers?.[0]?.subjects?.[0];
+            subject.lists = this.goldenAddress?.sellers?.[0]?.lists;
             await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
             this.$store.dispatch('uxModule/hideLoader')
 

@@ -147,7 +147,7 @@ const actions = {
                 commit('SET_PHONE_NUMBER', response.phone)
             }
 
-            return response
+            return response.phone;
         })
     },
     async filterPhoneNumber({ commit }, param) {
