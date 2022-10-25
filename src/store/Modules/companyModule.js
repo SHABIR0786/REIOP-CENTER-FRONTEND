@@ -14,6 +14,7 @@ const state = {
     ],
     companies: [],
     total: 0,
+    company:{}
 }
 
 const mutations = {
@@ -45,6 +46,9 @@ const mutations = {
         state.companies.push(payload);
         // const findIndex = state.companies.findIndex(({ id }) => id === payload.id)
         // findIndex !== -1 && state.companies.splice(findIndex, 1, { ...payload })
+    },
+    SET_COMPANY(state, payload) {
+        state.company =payload.company;
     },
 }
 
@@ -101,11 +105,20 @@ const actions = {
             return response
         })
     },
+    async getCompany({commit}, data) {        
+        return await api.get(`/companies/${data}`).then((response) => {
+            if (response ) {                
+                commit('SET_COMPANY', response)
+            }
+            return response
+        })
+    },
 }
 
 const getters = {
     fields: ({ fields }) => fields,
     companies: ({ companies }) => companies,
+    company: ({ company }) => company,
     total: ({total}) => total,
 }
 

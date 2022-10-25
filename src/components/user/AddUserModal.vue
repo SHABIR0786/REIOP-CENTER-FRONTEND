@@ -54,7 +54,7 @@
                 <b-row>
                     <b-col cols="12">
                         <b-input-group prepend="Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
-                            <b-form-select v-model="tempCompany.role" aria-describedby="role-id" :options="roles" >
+                            <b-form-select v-model="tempCompany.role" aria-describedby="role-id" :options="company_permission" >
                             </b-form-select>
                             <b-form-invalid-feedback class="text-center" id="role-id">User Role Field is Required.</b-form-invalid-feedback>
                         </b-input-group>
@@ -71,7 +71,7 @@
                     </b-col>
                     <b-col cols="12" class="text-center">
 
-                    <b-button variant="primary" v-b-tooltip.hover title="Add (Company - Team - Role)" size="sm" type="button" @click="addCompanyTeam" class="text-center">
+                    <b-button variant="primary" v-b-tooltip.hover title="Add Company/Team" size="sm" type="button" @click="addCompanyTeam" class="text-center">
                     + Add
                 </b-button>
                     </b-col>
@@ -79,12 +79,12 @@
                 </b-row>
                 <b-row class="list-group-row">
                     <b-col cols="12">
-                        <h5 class="text-center mt-3" v-if="selectedCompany.length>0">(Company - Team - Role) List</h5>
+                        <h5 class="text-center mt-3" v-if="selectedCompany.length>0">List</h5>
                         <b-list-group class="w-100">
                             <b-list-group-item v-for="item in selectedCompany" :key="item.company.id+item.team.id">
                             <b-input-group>
                                 <b-input-group-prepend >
-                                    <span class="px-1" v-b-tooltip.hover title="Company Name">{{item.company.name}} </span> - <span class="px-1" v-b-tooltip.hover title="Team Name"> {{item.team.name}} </span> - <span class="px-1" v-b-tooltip.hover title="Role"> {{item.role}} </span>
+                                    <span class="px-1" v-b-tooltip.hover title="Company Name">{{item.company.name}} </span> - <span class="px-1" v-b-tooltip.hover title="Team Name"> {{item.team.name}} </span> - <span class="px-1" v-b-tooltip.hover title="Role"> {{company_permission_text[item.role]}} </span>
                                 </b-input-group-prepend>
                                 <b-input-group-append v-b-tooltip.hover title="Remove From List">
                                     <b-icon icon="trash" class="trash-icon btn" variant="danger" @click="removecompanyitems(item)"></b-icon>
@@ -163,28 +163,31 @@ export default {
             selectedCompany:[],
 
 
-            roles: [{
-                    value: "user",
+            roles: [
+                {
+                    value: 3,
                     text: "User"
                 },
                 {
-                    value: "admin",
+                    value: 2,
                     text: "Admin"
                 },
                 {
-                    value: "superadmin",
-                    text: "Superadmin"
+                    value: 1,
+                    text: "SuperAdmin"
                 }
             ],
-            company_permission: [{
-                    value: "user",
-                    text: "User"
-                },
+            company_permission: [
+                // {
+                //     value: 3,
+                //     text: "User"
+                // },
                 {
-                    value: "admin",
+                    value: 2,
                     text: "Admin"
                 }
             ],
+            company_permission_text : ['','SuperAdmin','Admin','User'],
         }
     },
     validations: {
@@ -251,9 +254,6 @@ export default {
                 team: {},
                 role: '',
             };
-            console.log("tempCompany",this.tempCompany);
-            console.log("selectedCompany",this.selectedCompany);
-
 
         },
         onSubmit() {
@@ -279,10 +279,9 @@ export default {
                 });
             });
             }
-            
-            console.log('user', this.user);
-            
-           this. $emit('add', this.user);
+            this.user.team_id = this.user.permissions[0].team_id;
+            this.user.role = 2;            
+           this.$emit('add', this.user);
         },
     },
     async created() {

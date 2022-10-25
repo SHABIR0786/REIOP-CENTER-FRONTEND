@@ -53,10 +53,10 @@
         <template #head()="scope">
           <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
         </template>
-        <template #head(name)="scope">
+        <template #head(team_name)="scope">
           <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
         </template>
-        <template #head(owner)="scope">
+        <template #head(company_name)="scope">
           <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
         </template>
 
@@ -65,11 +65,11 @@
             <p class="user-email">{{data.item.id}}</p>
           </div>
         </template>
-        <template v-slot:cell(name)="data">
+        <template v-slot:cell(team_name)="data">
             <div v-b-tooltip.hover :title="data.item.name">{{ data.item.name }}</div>
         </template>
-          <template v-slot:cell(owner)="data">
-            <div v-b-tooltip.hover :title="data.item.owner">{{ data.item.owner }}</div>
+          <template v-slot:cell(company_name)="data">
+            <div v-b-tooltip.hover :title="companyName(data.item)">{{ companyName(data.item) }}</div>
         </template>
 
         <template v-slot:cell(actions)="data">
@@ -147,6 +147,7 @@ export default {
       fields: 'teamModule/fields',
       items: 'teamModule/teams',
       total: 'teamModule/total',
+      editTeam: 'teamModule/team',
     }),
     rows() { return this.total ? this.total : 1 }
   },
@@ -154,6 +155,13 @@ export default {
     this.$store.dispatch('uxModule/setLoading')
     this.$store.dispatch('teamModule/getTotal')
     try {
+      if(this.$route.query.id) {
+          await this.$store.dispatch('teamModule/getTeam', this.$route.query.id).then(() => {
+              this.editedItem = this.editTeam
+              this.showEditModal = true
+          })
+      }
+
       await this.$store.dispatch("teamModule/getAllTeams", {page: 1, perPage: this.perPage})
       this.$store.dispatch('uxModule/hideLoader')
     } catch (error) {
@@ -169,6 +177,9 @@ export default {
     editItem(item) {
       this.showEditModal = true
       this.editedItem = { ...item }
+    },
+    companyName(item) {
+      return item?.company?.name;
     },
     save(item) {
       // this.showModal = false

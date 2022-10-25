@@ -93,12 +93,20 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             fields: 'companyModule/fields',
             items: 'companyModule/companies',
+            editCompany: 'companyModule/company',
             total: 'companyModule/total',
             authUser: 'loginModule/getAuthUser',
         }),
     },
     async created() {
         try {
+            this.$store.dispatch('uxModule/setLoading')
+            if (this.$route.query.id) {
+                await this.$store.dispatch('companyModule/getCompany', this.$route.query.id).then(() => {
+                    this.editedItem = this.editCompany
+                    this.showModal = true
+                })
+            }
             this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch("companyModule/getAllCompanies", {
                 page: 1,
