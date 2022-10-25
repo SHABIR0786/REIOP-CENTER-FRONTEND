@@ -455,7 +455,6 @@
                 </b-button>
             </div>
         </template>
-        <edit-phone-number-modal :showModal="showEditPhoneModal" :propsData="editedItem" @cancel="showEditPhoneModal = false" @save="editPhoneSave"></edit-phone-number-modal>
         <edit-email-modal :showModal="showEditEmailModal" :propsData="editedItem" @cancel="showEditEmailModal = false" @save="editEmailSave"></edit-email-modal>
         <edit-golden-address-modal :showModal="showGoldenAddressModal" :propsData="editedItem" @cancel="showGoldenAddressModal= false" @save="editAddressSave"></edit-golden-address-modal>
 <!--        <assign-existing-subject :showModal="showAssignSubjectModal" :sellerId="seller.id" :propsSubjects="seller.subjects" @cancel="showAssignSubjectModal = false"></assign-existing-subject>-->
@@ -466,7 +465,6 @@
 </template>
 <script>
 import {mapGetters} from "vuex";
-import EditPhoneNumberModal from "../phoneNumber/EditPhoneNumberModal";
 import EditEmailModal from "../email/EditEmailModal";
 import EditGoldenAddressModal from "../goldenAddress/EditGoldenAddressModal";
 // import AssignExistingSubject from "./AssignExistingSubject";
@@ -477,7 +475,6 @@ import AddGoldenAddressModal from "../goldenAddress/AddGoldenAddressModal";
 export default {
     name: 'EditSellerModal',
     components: {
-        EditPhoneNumberModal,
         EditEmailModal,
         EditGoldenAddressModal,
         // AssignExistingSubject,
@@ -505,18 +502,14 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.seller);
         },
-        editPhone(item) {
-            this.editedItem = { ...item }
-            this.showEditPhoneModal = true;
-        },
         async currentModal(){
             this.$store.dispatch('uxModule/setLoading')
           let subject = this.propsSeller.subjects?.[0];
+          if(subject) {
+          subject.lists = this.propsSeller?.lists;
           await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+          }
           this.$store.dispatch('uxModule/hideLoader')
-        },
-        editPhoneSave (item) {
-            this.$store.dispatch('phoneNumberModule/editPhoneNumber', {...item})
         },
         editEmailSave (item) {
             this.$store.dispatch('emailModule/editEmail', {...item})
@@ -556,6 +549,11 @@ export default {
             this.showAddAddressModal = false
             item.seller_id = this.seller.id
             this.$store.dispatch('goldenAddressModule/addGoldenAddress', {...item})
+        },
+        editPhone(item) {
+            const route = '/phones?phone_id=' + item.id;
+            let routeData = this.$router.resolve({path: route});
+            window.open(routeData.href, '_blank');
         },
         editSubject (item) {
             const route = '/subjects?subject_id=' + item.id;
@@ -643,7 +641,6 @@ export default {
                 {key:"golden_addresses_count", label: "Total Golden Address", sortable: true},
                 {key:"error_number",    label: "Total Errors", sortable: true},
             ],
-            showEditPhoneModal: false,
             showEditEmailModal: false,
             showGoldenAddressModal: false,
             editedItem: {},

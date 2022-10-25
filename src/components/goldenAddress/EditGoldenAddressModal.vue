@@ -389,8 +389,11 @@ export default {
         async currentModal() {
             this.$store.dispatch('uxModule/setLoading')
             let subject = this.goldenAddress?.sellers?.[0]?.subjects?.[0];
-            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
-            this.$store.dispatch('uxModule/hideLoader')
+            if(subject) {
+            subject.lists = this.goldenAddress?.sellers?.[0]?.lists;
+            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject});
+            }
+            this.$store.dispatch('uxModule/hideLoader');
 
         },
         editSellerItem(item) {

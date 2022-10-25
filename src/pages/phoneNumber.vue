@@ -234,9 +234,11 @@ export default {
                 sortDesc: this.sortDesc
             })
         if (this.$route.query.phone_id) {
-            await this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then(() => {
-                this.editedItem = this.selectedPhoneNumber
-                this.showModal = true
+            await this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then((response) => {
+                    this.editedItem = this.selectedPhoneNumber;
+                    this.editedItem.sellers = [response.seller];
+                    this.editedItem.subjects = response.seller.subjects;
+                    this.showModal = true
             });
         }
         this.filteredOrAllData = this.items;
@@ -490,8 +492,10 @@ export default {
                 this.$store.dispatch('uxModule/hideLoader')
             }
             if (this.$route.query.phone_id) {
-                this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then(() => {
-                    this.editedItem = this.selectedPhoneNumber
+                this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then((response) => {
+                    this.editedItem = this.selectedPhoneNumber;
+                    this.editedItem.sellers = [response.seller];
+                    this.editedItem.subjects = response.seller.subjects;
                     this.showModal = true
                 });
             }
