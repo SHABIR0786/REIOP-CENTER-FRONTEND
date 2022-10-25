@@ -505,8 +505,10 @@ export default {
         async currentModal(){
             this.$store.dispatch('uxModule/setLoading')
           let subject = this.propsSeller.subjects?.[0];
-          subject.lists = this.propsSeller.lists;
+          if(subject) {
+          subject.lists = this.propsSeller?.lists;
           await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+          }
           this.$store.dispatch('uxModule/hideLoader')
         },
         editEmailSave (item) {

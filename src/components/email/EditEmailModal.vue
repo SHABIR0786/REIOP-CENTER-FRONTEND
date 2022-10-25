@@ -365,8 +365,10 @@ export default {
             this.$store.dispatch('uxModule/setLoading')
 
           let subject = this.email?.sellers?.[0]?.subjects?.[0];
+          if(subject) {
           subject.lists = this.email?.sellers?.[0]?.lists;
           await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+          }
           this.$store.dispatch('uxModule/hideLoader')
         },
         editSellerItem(item) {
