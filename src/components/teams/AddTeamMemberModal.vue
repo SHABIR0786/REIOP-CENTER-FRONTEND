@@ -9,6 +9,12 @@
             <b-row >
                 <b-row >
                     <b-col cols="12">
+                        <b-input-group prepend="Name" class="mb-2" id="name" label="Name" label-for="name">
+                            <b-form-input :state="validateState('name')" aria-describedby="name" type="text" v-model="$v.user.name.$model" required></b-form-input>
+                            <b-form-invalid-feedback id="name">Member Name Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
+                    </b-col>
+                    <b-col cols="12">
                         <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email">
                             <b-form-input :state="validateState('email')" type="email" v-model="$v.user.email.$model" aria-describedby="email" required></b-form-input>
                             <b-form-invalid-feedback id="email" v-if="$v.user.email.email">Email Field is required.</b-form-invalid-feedback>
@@ -77,6 +83,7 @@ import {
         data() {
             return {
                 user: {
+                    name: '',
                     email: '',
                     password: '',
                     role:''
@@ -95,6 +102,9 @@ import {
         },
         validations: {
                 user: {
+                    name: {
+                        required
+                    },
                     email: {
                         required,
                         email
@@ -125,6 +135,7 @@ import {
         reset() {
             this.user = {
                 role: '',
+                name: '',
                 email:'',
                 password:'',
             };

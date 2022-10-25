@@ -3,12 +3,12 @@
     <div>
       <h3>Teams</h3>
       <div>
-        <b-row>
+        <!-- <b-row>
           <b-col class="d-flex justify-content-end">
             <b-button variant="primary" class="add-seller" @click="showAddModal=true">
               <b-icon icon="plus" aria-hidden="true"></b-icon>Create a New Team</b-button>
           </b-col>
-        </b-row>
+        </b-row> -->
         <hr>
         <b-row class="mb-3">
           <b-col cols="8" class="d-flex align-items-center">
