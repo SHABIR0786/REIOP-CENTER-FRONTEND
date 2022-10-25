@@ -43,8 +43,8 @@
                                 <b-input-group prepend="Company Name" class="mb-2">
                                     <b-form-input :readonly="true" :value="companyName(team)" ></b-form-input>
                                     <b-input-group-append>
-                                <b-input-group-text title="Edit Company" role="button"  @click="editCompany(team)" >
-                                    <b-icon  icon="pencil" variant="primary" class="pr-1" ></b-icon> Edit
+                                <b-input-group-text title="Company Detail" role="button"  @click="editCompany(team)" >
+                                    <b-icon  icon="box-arrow-up-right" variant="primary" class="pr-1" ></b-icon> 
                                 </b-input-group-text>
                             </b-input-group-append>
                                 </b-input-group>
@@ -312,6 +312,8 @@
         watch: {
             showModal() {
                 this.team= {...this.propsData}
+                this.team.created_at = this.team.created_at?this.team.created_at.split('T')[0]: '';
+                this.team.updated_at = this.team.updated_at?this.team.updated_at.split('T')[0]: ''
             }
         }
 
