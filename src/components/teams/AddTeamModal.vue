@@ -1,5 +1,5 @@
 <template>
-    <b-modal v-model="showModal" no-close-on-backdrop>
+    <b-modal v-model="showModal" no-close-on-backdrop scrollable>
         <template #modal-header>
             <div class="w-100">
                 Add Team

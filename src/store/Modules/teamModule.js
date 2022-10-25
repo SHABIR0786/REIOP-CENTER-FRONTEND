@@ -4,9 +4,11 @@ const state = {
     fields: [
         {key:"id", label: "Id", sortable: true},
         {key: "actions", label: "Actions"},
-        {key: "name", label: "Name", sortable: true},
-        {key: "owner", label: "Owner", sortable: true},
-        {key: "total_users", label: "Members Number", sortable: true},
+        {key: "team_name", label: "Team Name", sortable: true},
+        {key: "company_name", label: "Company Name", sortable: true},
+
+        // {key: "owner", label: "Owner", sortable: true},
+        // {key: "total_users", label: "Members Number", sortable: true},
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],
@@ -14,6 +16,8 @@ const state = {
     companyTeams: [],
     total: 0,
     existTeam: [],
+    team:{}
+
 }
 
 const mutations = {
@@ -56,11 +60,16 @@ const mutations = {
     },
     DELETE_TEAM_MEMBER(state, payload) {
         const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
-        findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+        console.log(findIndex);
+        
+        // findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
     },
     FILLED_DATA(state, data){
         state.existTeam = data;
-    }
+    },
+    SET_TEAM(state, payload) {
+        state.team =payload.team;
+    },
 }
 
 const actions = {
@@ -124,12 +133,14 @@ const actions = {
     },
     async addTeamMember({commit}, data) {
         return await api.post(`/teams/add-member`, {...data}).then((response) => {
-            commit('ADD_TEAM_MEMBER', data)
+            if(response.success==true) {
+                commit('ADD_TEAM_MEMBER', data)
+            }
             return response
         })
     },
     async deleteTeamMember({commit}, data) {
-        return await api.deleteAPI(`/teams/delete-member/${data}`).then((response) => {
+        return await api.deleteAPI(`/teams/delete-member/${data.team_id}/${data.user_id}`).then((response) => {
             commit('DELETE_TEAM_MEMBER', data)
             return response
         })
@@ -144,7 +155,15 @@ const actions = {
     },
     async filledData({commit} , data){
         commit ('FILLED_DATA', data);
-    }
+    },
+    async getTeam({commit}, data) {        
+        return await api.get(`/teams/${data}`).then((response) => {
+            if (response ) {                
+                commit('SET_TEAM', response)
+            }
+            return response
+        })
+    },
 }
 
 const getters = {
@@ -152,7 +171,9 @@ const getters = {
     teams: ({ teams }) => teams,
     companyTeams: ({ companyTeams }) => companyTeams,
     total: ({total}) => total,
-    existTeam: ({existTeam}) => existTeam
+    existTeam: ({existTeam}) => existTeam,
+    team: ({ team }) => team,
+
 }
 
 export default {

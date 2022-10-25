@@ -56,7 +56,7 @@
                 <b-col cols="12" class="list-group-row mb-2" v-if="Teams.length>0">
                     <h5 class="text-center my-1 m-0">Team List</h5>
                     <b-list-group class="w-100">
-                        <b-list-group-item v-for="team,index in Teams" :key="team.id+index">{{team.name}} <b-icon icon="trash" v-if="team.id=='new'" class="trash-icon" variant="danger" @click="remove_team(team)"></b-icon></b-list-group-item>
+                        <b-list-group-item v-for="team,index in Teams" :key="team.id+index">{{team.name}} <b-icon icon="trash" v-if="team.id=='new'" class="trash-icon" title="Delete" variant="danger" @click="remove_team(team)"></b-icon><b-icon v-if="team.id!='new'" icon="pencil" variant="primary" class="trash-icon mr-2" title="Edit"  @click="editTeam(team)"></b-icon></b-list-group-item>
                     </b-list-group>
                 </b-col>
                 </b-row>
@@ -305,6 +305,21 @@ export default {
             
            this.$emit('save', this.company);
         },
+        editTeam(item) {
+                let team_id = item?.id;
+                if(team_id){
+                const route = '/teams?id=' + team_id;
+                let routeData = this.$router.resolve({path: route});
+                window.open(routeData.href, '_blank');
+            }else{
+                this.$bvToast.toast("Team Id not found", {
+                    title: "Validate",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+                });
+            }
+
+            },
     },
     async created() {
         // this.$store.dispatch('uxModule/setLoading');

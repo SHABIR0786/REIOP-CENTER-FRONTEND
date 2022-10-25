@@ -25,8 +25,9 @@ import activity from "@/pages/activity";
 export const routes = [
     {name: "Login", path: "/login", component: Login, title: "Login", isNavbar: false},
     {name: "Home", path: "/", component: Home, title: "Home", icon: "house-fill", isNavbar: true, meta: {requireAuth: true, roles:[2,1], collapse: false, adminMode: true, isURL: false}},
-    {name: "Users", path: "/users", component: User, title: "Users", icon: "person", isNavbar: true, meta: {requireAuth: true, roles:[1], collapse: false, adminMode: true, isURL: false}},
+    {name: "Users", path: "/users", component: User, title: "Users", icon: "people-fill", isNavbar: true, meta: {requireAuth: true, roles:[1], collapse: false, adminMode: true, isURL: false}},
     {name: "Company", path: "/company", component: Company, title: "Companies", icon: "building", isNavbar: true, meta: {requireAuth: true, roles:[1], collapse: false, adminMode: true, isURL: false}},
+    {name: "Teams", path: "/teams", component: Team, title: "Teams", icon: "people-fill", isNavbar: true, meta: {requireAuth: true, roles:[1],collapse: false, adminMode: true, isURL: false}},
     {name: "Activity", path: "/activity-v2", component: activity, title: "Activity", src:"pulse.svg", icon: "upload", isNavbar: false, meta: {requireAuth: true, roles:[1,2,3],collapse: false, adminMode: false, isURL: true}},
     {name: "Activity", path: "/activity", component: activity, title: "Activity", src:"pulse.svg", icon: "upload", isNavbar: true, meta: {requireAuth: true, roles:[1,2,3],collapse: false, adminMode: false, isURL: true}},
     {name: "List", path: "/list", component: List, title: "List", icon: "list-ul", isNavbar: true, meta: {requireAuth: true, roles:[1,2,3], collapse: false, adminMode: false, isURL: false}},
@@ -39,7 +40,6 @@ export const routes = [
     {name: "Label", path: "/labels", component: Labels, title: "Labels", isNavbar: false, meta: {requireAuth: true, admin:[1,2], isURL: false}},
     {name: "BackgroundProcesses", path: "/background-processes", component: BackgroundProcesses, title: "Background Processes", isNavbar: false, meta: {requireAuth: true, roles:[2,1], isURL: false}},
     {name: "Error", path: "/errors", component: Error, title: "Errors", isNavbar: false, meta: {requireAuth: true, roles:[2,1], isURL: false}},
-    {name: "Teams", path: "/teams", component: Team, title: "Teams", isNavbar: false, meta: {requireAuth: true, roles:[2,1]}},
     {name: "PhoneTypes", path: "/phoneTypes", component: phoneTypes, title: "Phone Types", isNavbar: false, meta: {requireAuth: true, roles:[2,1]}},
     {name: "SubjectTypes", path: "/subjectTypes", component: subjectTypes, title: "Subject Types", isNavbar: false, meta: {requireAuth: true, roles:[2,1]}},
     {name: "CompanyTypes", path: "/companyTypes", component: companyTypes, title: "Company Types", isNavbar: false, meta: {requireAuth: true, roles:[2,1]}},

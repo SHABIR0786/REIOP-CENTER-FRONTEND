@@ -211,7 +211,7 @@ export default {
                 ...item
             });
             if(result == "user_exist") {
-                this.$bvToast.toast(`User with the following Email Already exist`, {
+                this.$bvToast.toast(`User Email Already exist.`, {
                 title: 'Already Exist',
                 autoHideDelay: 5000,
                 variant: "danger",

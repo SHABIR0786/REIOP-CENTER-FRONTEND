@@ -1,25 +1,35 @@
 <template>
-    <b-modal v-model="showModal" no-close-on-backdrop>
+    <b-modal v-model="showModal" no-close-on-backdrop scrollable>
         <template #modal-header>
             <div class="w-100">
                 Add Team Member
             </div>
         </template>
         <b-container fluid>
-            <b-row class="text-center">
-                <b-row class="mb-1 text-center">
+            <b-row >
+                <b-row >
                     <b-col cols="12">
-                        <b-input-group prepend="User Email" class="mb-2">
-                            <b-form-input :state="user.email.length > 0" type="email" v-model="user.email"></b-form-input>
+                        <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email">
+                            <b-form-input :state="validateState('email')" type="email" v-model="$v.user.email.$model" aria-describedby="email" required></b-form-input>
+                            <b-form-invalid-feedback id="email" v-if="$v.user.email.email">Email Field is required.</b-form-invalid-feedback>
+                            <b-form-invalid-feedback id="email" v-if="$v.user.email.required">Enter valid Email.</b-form-invalid-feedback>
                         </b-input-group>
                     </b-col>
-                </b-row>
-                <b-row class="mb-1 text-center">
+                
                     <b-col cols="12">
-                        <b-input-group prepend="User Password" class="mb-2">
-                            <b-input v-model="user.password"></b-input>
+                        <b-input-group prepend="Password" label="password" label-for="password" class="mb-2">
+                            <b-input v-model="$v.user.password.$model" aria-describedby="password" :state="validateState('password')" required></b-input>
+                            <b-form-invalid-feedback id="role-id" v-if="$v.user.password.minLength">Password Field is Required.</b-form-invalid-feedback>
+                            <b-form-invalid-feedback id="role-id" v-if="$v.user.password.required">At Least 6 character is Required.</b-form-invalid-feedback>
                         </b-input-group>
-                        <b-form-text class="input-helper">At Least 6 Characters</b-form-text>
+                    </b-col>
+                    <b-col cols="12">
+                        <b-input-group prepend="Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                            <b-form-select v-model="$v.user.role.$model" aria-describedby="role-id" :options="company_permission" :state="validateState('role')" required>
+                            </b-form-select>
+                            <b-form-invalid-feedback id="role-id">Role Field is Required.</b-form-invalid-feedback>
+                        </b-input-group>
+
                     </b-col>
                 </b-row>
             </b-row>
@@ -37,9 +47,8 @@
                 <b-button
                         variant="primary"
                         size="sm"
-                        :disabled="user.password.length < 6"
                         class="float-right mr-2"
-                        @click="$emit('add', user)"
+                        @click="onSubmit"
                 >
                     Add
                 </b-button>
@@ -48,8 +57,15 @@
     </b-modal>
 </template>
 <script>
+import { validationMixin } from "vuelidate";
+import {
+    required,
+    minLength,
+    email
+} from "vuelidate/lib/validators";
     export default {
         name: 'AddTeamMemberModal',
+        mixins: [validationMixin],
         props: {
             showModal: {
                 type: Boolean
@@ -63,9 +79,65 @@
                 user: {
                     email: '',
                     password: '',
+                    role:''
                 },
+                company_permission: [
+                // {
+                //     value: 3,
+                //     text: "User"
+                // },
+                {
+                    value: 2,
+                    text: "Admin"
+                }
+            ],
             }
         },
+        validations: {
+                user: {
+                    email: {
+                        required,
+                        email
+                    },
+                    password: {
+                        required,
+                        minLength: minLength(6)
+                    },
+                    role: {
+                        required
+                    },
+                }
+            },
+        methods: {
+            validateState(name) {
+            const { $dirty, $error } = this.$v.user[name];
+            return $dirty ? !$error : null;
+        },
+        onSubmit() {
+            this.$v.user.$touch();
+            if (this.$v.user.$anyError) {
+                return;
+            }
+           this.$emit('add', this.user);
+
+
+        },
+        reset() {
+            this.user = {
+                role: '',
+                email:'',
+                password:'',
+            };
+            this.$v.user.$reset();
+        },
+        },
+        watch: {
+            showModal() {
+                if(this.showModal){
+                    this.reset();
+                }
+            }
+    }
     }
 </script>
 
