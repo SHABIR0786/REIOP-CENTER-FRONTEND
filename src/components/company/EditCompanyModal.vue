@@ -301,7 +301,6 @@ export default {
             // this.Teams.map((team)=> {
             //     this.company.teamId.push(team.id);
             // });
-            console.log('this.company',this.company);
             
            this.$emit('save', this.company);
         },

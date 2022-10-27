@@ -185,7 +185,6 @@ export default {
             return $dirty ? !$error : null;
         },
         // addTeam(team) {
-        //     // console.log('team', team);
             
         //     let index = this.teamitems.findIndex(x=>x.value.id == team.id);
         //     this.teamitems.splice(index,1);

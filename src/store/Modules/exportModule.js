@@ -46,7 +46,6 @@ const mutations = {
         })
         state.exports = data;
         state.totalexports = payload.total;
-        console.log(data);
     },
     SET_EXPORT(state, payload) {
         state.selectedItem = payload;

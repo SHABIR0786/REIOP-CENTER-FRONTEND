@@ -428,7 +428,6 @@ export default {
             if (this.fieldsType == "samerows" || this.fieldsType == null) {
                 return this.items;
             } else {
-                // console.log(this.seperatedRowSubjects);
                 return this.seperatedRowSubjects;
             }
         },
@@ -861,7 +860,6 @@ export default {
                 }
                 this.propertyFields = [...fields];
             }
-            console.log(this.propertyFields);
         },
         save(item) {
             this.$store.dispatch('uxModule/setLoading');

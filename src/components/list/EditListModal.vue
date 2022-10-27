@@ -296,8 +296,8 @@ export default {
             {key:"id",  label: "Imports", sortable: true},
             {key:"list_run_year",  label: "Run Year", sortable: true},
             {key:"list_run_month",   label: "Run Month", sortable: true},
-            {key:"overridden_run_year",  label: "Overridden Run Year", sortable: false},
-            {key:"overridden_run_month",   label: "Overridden Run Month", sortable: false},
+            // {key:"overridden_run_year",  label: "Overridden Run Year", sortable: false},
+            // {key:"overridden_run_month",   label: "Overridden Run Month", sortable: false},
             {key:"subjects_count",  label: "Total Subjects", sortable: true},
             {key:"sellers_count",   label: "Total Sellers", sortable: true},
             {key:"phones_count",    label: "Total Phones", sortable: true},
@@ -335,7 +335,6 @@ export default {
             let result = await this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName, list_id: this.propsData.id});
             this.list = {...this.propsData,...result?.uniqueCounts}
             this.$store.dispatch('uxModule/hideLoader')
-            console.log(this.list);
         }
         },
       currentPage: {

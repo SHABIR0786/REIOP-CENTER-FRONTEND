@@ -215,9 +215,7 @@ export default {
                     role: company.role
                 });
             });
-            }
-            // console.log('this.user', this.user);
-            
+            }            
            this. $emit('save', this.user);
         },
     },
