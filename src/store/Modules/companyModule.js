@@ -87,8 +87,8 @@ const actions = {
     },
     async addCompany({ commit }, data) {
         return await api.post(`/companies`, {...data}).then((response) => {
-            commit('ADD_COMPANY', response.company)
-            return response.company;
+            if(response.success){commit('ADD_COMPANY', response.company)}
+            return response;
         })
     },
     async deleteCompany({ commit }, data) {

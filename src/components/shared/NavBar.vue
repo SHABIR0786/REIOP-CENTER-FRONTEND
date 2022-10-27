@@ -12,6 +12,9 @@
                 <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && user.teams.length > 1" @click="switchTeamViewList()">
                     <div title="Switch Company/Team Modal"><b-icon icon="person-bounding-box"></b-icon> Switch Team</div>
                 </b-dropdown-item>
+                <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2)">
+                    <router-link class="link-label" to="/teamAdmin"><b-icon title="Team Admin" icon="person-bounding-box"></b-icon> Team Admin</router-link>
+                </b-dropdown-item>
                 <b-dropdown-item v-if="user && user.role == 1 && adminMode == false" @click="switchToAdminView()">
                     <div><b-icon icon="person-bounding-box"></b-icon> Switch to Admin View</div>
                 </b-dropdown-item>

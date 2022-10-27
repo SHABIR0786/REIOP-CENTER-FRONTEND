@@ -53,6 +53,7 @@ export default {
             await this.$store.dispatch('loginModule/switchCompanyTeam', {
                     ...team
                 });
+                this.$router.go();
             this.$store.dispatch('uxModule/hideLoader')
         }
     }

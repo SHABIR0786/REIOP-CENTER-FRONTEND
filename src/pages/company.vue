@@ -29,6 +29,7 @@
     <b-table id="user-table" lg sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteCompany(data.item)"></b-icon>
         </template>
     </b-table>
     <b-row>
@@ -174,16 +175,36 @@ export default {
         },
         async add(item) {
             this.$store.dispatch('uxModule/setLoading')
-           await this.$store.dispatch('companyModule/addCompany', {
+            let response = await this.$store.dispatch('companyModule/addCompany', {
                 ...item
             });
-            this.showAddModal = false;
-            this.$refs.addcompanymodal.reset();
+            if(response.success){
+                this.showAddModal = false;
+                this.$refs.addcompanymodal.reset();
+                this.$bvToast.toast("Team Added successfully", {
+                    title: "Message",
+                    variant: 'success',
+                    autoHideDelay: 5000,
+                });
+            }else{
+                this.$bvToast.toast(response.error, {
+                    title: "Validate",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+                });
+            }
             this.$store.dispatch('uxModule/hideLoader')
         },
         deleteCompany(item) {
-            this.showDeleteModal = true;
-            this.itemToDelete = item;
+            this.$bvToast.toast("Company Delete Functionality is in progress! Because of table relationships", {
+                    title: "In progress",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+
+              });
+              return item;
+        //       this.showDeleteModal = true;
+        //         this.itemToDelete = item;
         },
         modalResponse(response) {
             this.showDeleteModal = false;

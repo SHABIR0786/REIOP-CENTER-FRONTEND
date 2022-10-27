@@ -21,6 +21,8 @@ import sourceLists from "@/pages/sourceLists";
 import skipSourceLists from "@/pages/skipSourceLists";
 import seneryError from "@/pages/seneryError";
 import activity from "@/pages/activity";
+import teamAdmin from "@/pages/teamAdmin";
+
 
 export const routes = [
     {name: "Login", path: "/login", component: Login, title: "Login", isNavbar: false},
@@ -47,4 +49,6 @@ export const routes = [
     {name: "SkipSourceLists", path: "/skipSourceLists", component: skipSourceLists, title: "Skip Source Lists", isNavbar: false, meta: {requireAuth: true, roles:[2,1]}},
     {name: "marketingChannels", path: "/marketingChannels", component: marketingChannels, title: "Marketing Channels", isNavbar: false, meta: {requireAuth: true, roles:[2,1]}},
     {name: "senery-error", path: "/senery-error", component: seneryError, title: "senery error", isNavbar: false, meta: {requireAuth: true, roles:[2,1]}},
+    {name: "teamAdmin", path: "/teamAdmin", component: teamAdmin, title: "Team Admin", icon: "people-fill", isNavbar: false, meta: {requireAuth: true, roles:[2,1], isURL: false}},
+
 ]

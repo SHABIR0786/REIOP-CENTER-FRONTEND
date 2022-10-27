@@ -162,6 +162,14 @@ const actions = {
             return response
         })
     },
+    async updateTeamName({commit}, data) {        
+        return await api.post(`/updateTeamName`, {...data}).then((response) => {
+            if (response ) {                
+                commit('SET_TEAM', response)
+            }
+            return response
+        })
+    },
 }
 
 const getters = {
