@@ -41,17 +41,8 @@
         <template #head(actions)="scope">
           <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
         </template>
-
         <template #head(id)="scope">
           <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-        </template>
-
-        <template #head(users)="scope">
-          <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-        </template>
-
-        <template #head()="scope">
-          <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
         </template>
         <template #head(team_name)="scope">
           <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
@@ -59,9 +50,15 @@
         <template #head(company_name)="scope">
           <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
         </template>
+        <template #head(created_at)="scope">
+          <div class="text-nowrap" style="width: 50px;">{{ scope.label }}</div>
+        </template>
+        <template #head(updated_at)="scope">
+          <div class="text-nowrap" style="width: 50px;">{{ scope.label }}</div>
+        </template>
 
         <template v-slot:cell(id)="data">
-          <div :title="data.item.id">
+          <div v-b-tooltip.hover :title="data.item.id">
             <p class="user-email">{{data.item.id}}</p>
           </div>
         </template>
@@ -69,12 +66,14 @@
             <div v-b-tooltip.hover :title="data.item.name">{{ data.item.name }}</div>
         </template>
           <template v-slot:cell(company_name)="data">
-            <div v-b-tooltip.hover :title="companyName(data.item)">{{ companyName(data.item) }}</div>
+            <div v-b-tooltip.hover :title="companyName(data.item)">
+              <b-icon  icon="box-arrow-up-right" variant="primary" class="mr-1" title="Company Detail" @click="editCompany(data.item)" ></b-icon>{{ companyName(data.item) }}
+            </div>
         </template>
 
         <template v-slot:cell(actions)="data">
-          <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-          <b-icon class="cursor-pointer" variant="danger" icon="trash" disabled @click="deleteItem(data.item)"></b-icon>
+          <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" title="Edit Team" @click="editItem(data.item)"></b-icon>
+          <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Delete Team" @click="deleteItem(data.item)"></b-icon>
         </template>
       </b-table>
       <b-row>
@@ -196,14 +195,36 @@ export default {
           this.$store.dispatch("teamModule/getAllTeams", {page: 1, perPage: this.perPage})
     },
     deleteItem(item){
-      this.showDeleteModal = true;
-      this.itemToDelete = item;
+      this.$bvToast.toast("Team Delete Functionality is in progress! Because of table relationships", {
+                    title: "In progress",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+
+              });
+              return item;
+      // this.showDeleteModal = true;
+      // this.itemToDelete = item;
     },
     modalResponse(response) {
       this.showDeleteModal = false;
       if (response) {
         this.$store.dispatch('teamModule/deleteTeam', this.itemToDelete.id)
       }
+    },
+    editCompany(item) { 
+        let company_id = item?.company?.id;
+        if(company_id){
+        const route = '/company?id=' + company_id;
+        let routeData = this.$router.resolve({path: route});
+        window.open(routeData.href, '_blank');
+    }else{
+        this.$bvToast.toast("Company Id not found", {
+            title: "Validate",
+            variant: 'warning',
+            autoHideDelay: 5000,
+        });
+    }
+
     },
   },
   mounted() {},

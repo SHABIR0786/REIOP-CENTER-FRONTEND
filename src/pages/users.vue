@@ -2,14 +2,14 @@
 <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
     <h3>Users</h3>
     <div>
-        <b-row>
+        <!-- <b-row>
             <b-col cols="12" class="d-flex justify-content-end">
                 <b-button variant="primary" class="add-seller" @click="addItem()">
                     <b-icon icon="plus" aria-hidden="true"></b-icon> Add User
                 </b-button>
             </b-col>
         </b-row>
-        <hr>
+        <hr> -->
         <b-row class="mb-3">
             <b-col cols="6" offset-md="6">
                 <b-input-group class="mt-3">
@@ -26,15 +26,15 @@
             </b-col>
         </b-row>
     </div>
-    <b-table id="user-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">       
-        <template v-slot:cell(company_role)="data">
-            <b-icon class="mr-2 cursor-pointer" icon="info-circle" variant="primary" @click="companyRoleItem(data.item)"></b-icon>
-        </template>
+    <b-table id="user-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
             <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteUser(data.item)"></b-icon>
-
         </template>
+        <template v-slot:cell(role)="data">
+            {{role_text[data.item.role]}}
+        </template>
+        
 
     </b-table>
     <b-row>
@@ -51,8 +51,6 @@
         </b-col>
     </b-row>
     <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-user-modal>
-    <add-user-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-user-modal>
-    <company-role-user-modal :showModal="showCompanyRoleModal" :propsData="CompanyRole_Item" @cancel="showCompanyRoleModal=false"></company-role-user-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
 
 </div>
@@ -66,9 +64,7 @@ import {
     BIcon
 } from "bootstrap-vue"
 import EditUserModal from "../components/user/EditUserModal";
-import CompanyRoleUserModal from "../components/user/CompanyRoleUserModal";
-import AddUserModal from "../components/user/AddUserModal";
-import { setLocalStorage } from '../utils/localStorage';
+// import { setLocalStorage } from '../utils/localStorage';
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 
@@ -78,8 +74,6 @@ export default {
     components: {
         BIcon,
         EditUserModal,
-        AddUserModal,
-        CompanyRoleUserModal,
         DeleteModal
     },
     data() {
@@ -105,24 +99,42 @@ export default {
             sortBy: 'id',
             sortDesc: false,
             isSearched: false,
+            role_text : ['','SuperAdmin','Admin','User'],
+            fields: [
+                {key:"id", label: "Id", sortable: true},
+                {key: "name", label: "Name", sortable: true},
+                {key: "email", label: "email", sortable: true},
+                {key:"created_at", label: "Created Date", sortable: true},
+                {key:"updated_at", label: "Updated Date", sortable: true},
+                {key:"actions", label: "Actions"},
+            ],
+
         }
     },
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            fields: 'userModule/fields',
             items: 'userModule/users',
             total: 'userModule/total',
             authUser: 'loginModule/getAuthUser',
+            editUserData: 'userModule/user',
         }),
         rows() {
             return this.itemsCount ? this.itemsCount : 1
         },
     },
     async created() {
-        // this.$store.dispatch('userModule/getTotal')
         try {
             this.$store.dispatch('uxModule/setLoading')
+            if (this.$route.query.id) {
+                await this.$store.dispatch('userModule/getUser', this.$route.query.id).then(() => {
+                    
+                    this.editedItem = {...this.editUserData}
+                    this.showModal = true
+                })
+            }
+        
+            await this.$store.dispatch('userModule/getTotal');
             await this.$store.dispatch("userModule/getAllUsers", {
                 page: 1,
                 perPage: this.perPage,
@@ -139,17 +151,20 @@ export default {
         this.itemsCount = this.total;
     },
     methods: {
-        editItem(item) {
+        async editItem(item) {   
+            this.editedItem = {...item}
             this.showModal = true
-            this.editedItem = {
-                ...item
-            }
-        },
-        companyRoleItem(item) {
-            this.showCompanyRoleModal = true
-            this.CompanyRole_Item = {
-                ...item
-            }
+            // try {
+            //     this.$store.dispatch('uxModule/setLoading')         
+            //     await this.$store.dispatch('userModule/getUser', item.id).then(() => {                    
+            //             this.editedItem = {...this.editUserData}
+            //             this.showModal = true
+            //         })
+            //     this.$store.dispatch('uxModule/hideLoader')
+            // } catch (error) {
+            //     console.log(error);
+            //     this.$store.dispatch('uxModule/hideLoader')
+            // }
         },
         async clearsearch() {
             this.searchUser = '';
@@ -191,13 +206,22 @@ export default {
             }
         },
        async save(item) {
-           await this.$store.dispatch('uxModule/setLoading')
+           this.$store.dispatch('uxModule/setLoading')
             try {
-            this.$store.dispatch('userModule/editUser', {
+            let response = await this.$store.dispatch('userModule/editUser', {
                 ...item
             })
             if(this.authUser.id == item.id) {
-                setLocalStorage('authUser', JSON.stringify(item));
+                // setLocalStorage('authUser', JSON.stringify(response));
+                    await this.$store.dispatch('loginModule/logout')
+                    this.$router.push({name: "Login"}).catch(() => {})
+            }
+            if(response.user){
+                this.$bvToast.toast("User Updated successfully", {
+                    title: "Message",
+                    variant: 'success',
+                    autoHideDelay: 5000,
+                });
             }
             this.$store.dispatch('uxModule/hideLoader')
             } catch(error) {
@@ -205,26 +229,17 @@ export default {
             }
             this.showModal = false
         },
-        async add(item) {
-            this.$store.dispatch('uxModule/setLoading')
-           let result = await this.$store.dispatch('userModule/addUser', {
-                ...item
-            });
-            if(result == "user_exist") {
-                this.$bvToast.toast(`User Email Already exist.`, {
-                title: 'Already Exist',
-                autoHideDelay: 5000,
-                variant: "danger",
-                appendToast: false
-                });
-            } else {
-                this.showAddModal = false;
-            }
-            this.$store.dispatch('uxModule/hideLoader')
-        },
+
         deleteUser(item) {
-            this.showDeleteModal = true;
-            this.itemToDelete = item;
+            this.$bvToast.toast("User Delete Functionality is in progress! Because of table relationships", {
+                    title: "In progress",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+
+              });
+              return item;
+            // this.showDeleteModal = true;
+            // this.itemToDelete = item;
         },
         async modalResponse(response) {
             this.showDeleteModal = false;

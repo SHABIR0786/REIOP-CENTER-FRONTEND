@@ -49,16 +49,17 @@ export default {
     methods: {
         async activeTeam(team){
             team.user_id = this.user.id;
-            console.log(team);
+            // console.log(team);
             this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch('loginModule/switchCompanyTeam', {
                     ...team
                 });
+                this.$router.go();
             this.$store.dispatch('uxModule/hideLoader')
         }
     },
     mounted() {
-        console.log('mounted');
+        // console.log('mounted');
     }
 
 

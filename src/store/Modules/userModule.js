@@ -3,17 +3,23 @@ import * as api from "../Services/api"
 const state = {
     fields: [
         {key:"id", label: "Id", sortable: true},
-        {key: "team_id", label: "Team Id"},
+        // {key: "team_id", label: "Team Id"},
         {key: "name", label: "Name", sortable: true},
         {key: "email", label: "email", sortable: true},
         {key: "role", label: "Role", sortable: true},
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
-        {key: "company_role", label: "Company"},
+        // {key: "company_role", label: "Company"},
         {key:"actions", label: "Actions"},
     ],
     users: [],
+    teamAdminMembers: [],
+
     total_users: 0,
+    total_team_members: 0,
+
+    user:{}
+
 }
 
 const mutations = {
@@ -29,6 +35,19 @@ const mutations = {
         })
         state.total_users = data.length;
         state.users = [...data]
+    },
+    SET_ALL_TEAM_ADMIN_MEMEBERS(state, payload) {
+        const data = [...payload]
+        data.forEach(e => {
+            if(e.created_at) {
+            e.created_at = e.created_at.split('T')[0];
+            }
+            if(e.updated_at) {
+            e.updated_at = e.updated_at.split('T')[0];
+        }
+        })
+        state.total_team_members = data.length;
+        state.teamAdminMembers = [...data]
     },
     EDIT_USER(state, payload) {
         const findIndex = state.users.findIndex(({ id }) => id === payload.id)
@@ -46,6 +65,9 @@ const mutations = {
         // const findIndex = state.users.findIndex(({ id }) => id === payload.id)
         // findIndex !== -1 && state.users.splice(findIndex, 1, { ...payload })
     },
+    SET_USER(state, payload) {
+        state.user =payload.user;
+    },
 }
 
 const actions = {
@@ -56,6 +78,18 @@ const actions = {
             }
             if(response && response.users && response.users.data) {
                 commit('SET_ALL_USERS', response.users.data)
+            }
+
+            return response.users.data;
+        })
+    },
+    async getTeamAdminMembers({ commit, dispatch }, {page, perPage}) {
+        return await api.get(`/teamAdminMemebers?page=${page}&perPage=${perPage}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+            if(response && response.users && response.users.data) {
+                commit('SET_ALL_TEAM_ADMIN_MEMEBERS', response.users.data)
             }
 
             return response.users.data;
@@ -108,12 +142,24 @@ const actions = {
             return response
         })
     },
+    async getUser({commit}, data) {        
+        return await api.get(`/users/${data}`).then((response) => {
+            if (response.user) {    
+                            
+                commit('SET_USER', response)
+            }
+            return response
+        })
+    },
 }
 
 const getters = {
     fields: ({ fields }) => fields,
     users: ({ users }) => users,
+    user: ({ user }) => user,
     total: ({total}) => total,
+    // users: ({ users }) => users,
+
 }
 
 export default {
