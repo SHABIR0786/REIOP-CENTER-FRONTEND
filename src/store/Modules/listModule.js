@@ -28,7 +28,8 @@ const state = {
     sourceList: [],
     skipSourceList: [],
     list: {},
-    subjectRelatedList: [],
+    subjectRunningList: [],
+    sellerRunningList: [],
     sameDate:null,
     sameSource:null,
     allSkipSourceList:[],
@@ -176,10 +177,13 @@ const mutations = {
         state.allSourceList = JSON.stringify(data);
     },
     SUBJECT_RELATED_LIST(state, payload) {
-        payload.data.forEach(e =>{
-            delete e.subjects;
-        })
-        state.subjectRelatedList = JSON.stringify(payload.data);
+        // payload.forEach(e =>{
+        //     delete e.subjects;
+        // })
+        state.subjectRunningList = JSON.stringify(payload);
+    },
+    SELLER_RELATED_LIST(state, payload) {
+        state.sellerRunningList = JSON.stringify(payload);
     },
     just_test() {
     },
@@ -325,9 +329,15 @@ const actions = {
         })
     },
 
-    async getSubjectRelatedList({ commit }, data) {
-        return await api.post(`/lists/subjectRelatedLists`, {...data}).then((response) => {
-            commit('SUBJECT_RELATED_LIST', response.subjectRelatedList)
+    async getSubjectRunningList({ commit }, data) {
+        return await api.post(`/lists/subjectRunningLists`, {...data}).then((response) => {
+            commit('SUBJECT_RELATED_LIST', response.subjectRunningList)
+            return response
+        })
+    },
+    async getSellerRunningList({ commit }, data) {
+        return await api.post(`/lists/sellerRunningLists`, {...data}).then((response) => {
+            commit('SELLER_RELATED_LIST', response.sellerRunningLists)
             return response
         })
     },
@@ -473,9 +483,15 @@ const getters = {
         }
         return [];
     },
-    subjectRelatedList: ({ subjectRelatedList }) => {
-        if (typeof subjectRelatedList === 'string') {
-            return JSON.parse(subjectRelatedList);
+    subjectRunningList: ({ subjectRunningList }) => {
+        if (typeof subjectRunningList === 'string') {
+            return JSON.parse(subjectRunningList);
+        }
+        return [];
+    },
+    sellerRunningList: ({ sellerRunningList }) => {
+        if( typeof sellerRunningList === 'string') {
+            return JSON.parse(sellerRunningList);
         }
         return [];
     },

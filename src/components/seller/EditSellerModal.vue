@@ -201,7 +201,7 @@
                       </template>
                     </b-table>
                   </b-tab>
-                <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'"  @click="currentModal()">
+                <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'">
                     <b-table
                         id="related-table"
                         small
@@ -502,13 +502,9 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.seller);
         },
-        async currentModal(){
-            this.$store.dispatch('uxModule/setLoading')
-          let subject = this.propsSeller.subjects?.[0];
-          if(subject) {
-          subject.lists = this.propsSeller?.lists;
-          await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
-          }
+        async currentModal() {
+          this.$store.dispatch('uxModule/setLoading')
+          await this.$store.dispatch(`listModule/getSellerRunningList`, {id:this.propsSeller.id})
           this.$store.dispatch('uxModule/hideLoader')
         },
         editEmailSave (item) {
@@ -652,7 +648,7 @@ export default {
     },
     computed: {
             ...mapGetters({
-            tabData: 'listModule/subjectRelatedList',
+            tabData: 'listModule/sellerRunningList',
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',

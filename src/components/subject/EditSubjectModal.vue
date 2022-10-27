@@ -184,7 +184,7 @@
                           </template>
                         </b-table>
                     </b-tab>
-                    <b-tab :title="(tabData ? tabData.length : '') + ' Related Running Lists'"  @click="currentModal()">
+                    <b-tab :title="(tabData ? tabData.length : '') + ' Related Running Lists'" >
                     <b-table
                         id="related-table"
                         small
@@ -370,7 +370,7 @@ export default {
         },
         async currentModal() {
             this.$store.dispatch('uxModule/setLoading')
-            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...this.propsData})
+            await this.$store.dispatch(`listModule/getSubjectRunningList`, {id:this.propsData.id})
             this.$store.dispatch('uxModule/hideLoader')
         },
         editSellerItem(item) {
@@ -401,7 +401,7 @@ export default {
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
-            tabData: 'listModule/subjectRelatedList',
+            tabData: 'listModule/subjectRunningList',
         }),
         rows() { return this.total ? this.total : 1 }
     },

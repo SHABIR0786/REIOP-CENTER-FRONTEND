@@ -165,7 +165,7 @@
                       </template>
                     </b-table>
                   </b-tab>
-                <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'"  @click="currentModal()">
+                <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'">
                     <b-table
                         id="related-table"
                         small
@@ -203,7 +203,7 @@
                     </b-table>
                   </b-tab>
 
-                  <b-tab :title="(relatedSkipSources?relatedSkipSources.length:'') + ' Related Skip Sources'"  @click="currentModal()">
+                  <b-tab :title="(relatedSkipSources?relatedSkipSources.length:'') + ' Related Skip Sources'">
                     <b-table
                         id="related-table"
                         small
@@ -221,7 +221,7 @@
                   </b-tab>
 
 
-                  <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'"  @click="currentModal()">
+                  <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'">
                     <b-table
                         id="related-table"
                         small
@@ -367,7 +367,7 @@ export default {
     computed: {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
-            tabData: 'listModule/subjectRelatedList',
+            tabData: 'listModule/sellerRunningList',
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
@@ -388,10 +388,9 @@ export default {
         },
         async currentModal() {
             this.$store.dispatch('uxModule/setLoading')
-            let subject = this.goldenAddress?.sellers?.[0]?.subjects?.[0];
-            if(subject) {
-            subject.lists = this.goldenAddress?.sellers?.[0]?.lists;
-            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject});
+            let seller = this.goldenAddress?.sellers?.[0];
+            if(seller) {
+            await this.$store.dispatch(`listModule/getSellerRunningList`, {id:seller.id});
             }
             this.$store.dispatch('uxModule/hideLoader');
 
