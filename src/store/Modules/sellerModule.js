@@ -9,8 +9,8 @@ const state = {
         {key: "seller_total_subjects", label: "Total Subjects", sortable: true},
         {key: "seller_total_phones", label: "Total Phones", sortable: true},
         {key: "seller_total_emails", label: "Total Emails", sortable: true},
-        {key: "attempted_skip_traces", label: "Attempted Skip Traces", sortable: true},
-        {key: "attempted_skip_trace_sources", label: "Attempted Skip Trace Sources", sortable: true},
+        {key: "attempted_skip_traces", label: "Export Attempted Skip Traces", sortable: true},
+        {key: "attempted_skip_trace_sources", label: "Export Attempted Skip Trace Sources", sortable: true},
 
         {key: "seller_first_name", label: "First Name", sortable: true},
         {key: "seller_middle_name", label: "Middle Name", sortable: true},
