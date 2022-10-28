@@ -125,7 +125,7 @@
 
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab :title="(seller.lists?seller.lists.length:'')+' Related Lists'" active>
+                    <b-tab :title="(sellerRelatedList.length)+' Related Lists'" active>
                     <b-table
                         id="list-table"
                         small
@@ -135,7 +135,7 @@
                         responsive
                         :busy="isBusy"
                         :fields="listFieldsFiltered"
-                        :items="seller.lists"
+                        :items="sellerRelatedList"
                         :per-page="0"
                         :sticky-header="true"
                         class="table_height_all_modal"
@@ -505,6 +505,7 @@ export default {
         async currentModal() {
           this.$store.dispatch('uxModule/setLoading')
           await this.$store.dispatch(`listModule/getSellerRunningList`, {id:this.propsSeller.id})
+          await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:this.propsSeller.id})
           this.$store.dispatch('uxModule/hideLoader')
         },
         editEmailSave (item) {
@@ -649,6 +650,7 @@ export default {
     computed: {
             ...mapGetters({
             tabData: 'listModule/sellerRunningList',
+            sellerRelatedList: 'listModule/sellerRelatedList',
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',

@@ -30,6 +30,8 @@ const state = {
     list: {},
     subjectRunningList: [],
     sellerRunningList: [],
+    subjectRelatedList: [],
+    sellerRelatedList: [],
     sameDate:null,
     sameSource:null,
     allSkipSourceList:[],
@@ -176,14 +178,23 @@ const mutations = {
 
         state.allSourceList = JSON.stringify(data);
     },
-    SUBJECT_RELATED_LIST(state, payload) {
+    SUBJECT_RUNNING_LIST(state, payload) {
         // payload.forEach(e =>{
         //     delete e.subjects;
         // })
         state.subjectRunningList = JSON.stringify(payload);
     },
-    SELLER_RELATED_LIST(state, payload) {
+    SUBJECT_RELATED_LIST(state, payload) {
+        // payload.forEach(e =>{
+        //     delete e.subjects;
+        // })
+        state.subjectRelatedList = JSON.stringify(payload);
+    },
+    SELLER_RUNNING_LIST(state, payload) {
         state.sellerRunningList = JSON.stringify(payload);
+    },
+    SELLER_RELATED_LIST(state, payload) {
+        state.sellerRelatedList = JSON.stringify(payload);
     },
     just_test() {
     },
@@ -331,13 +342,25 @@ const actions = {
 
     async getSubjectRunningList({ commit }, data) {
         return await api.post(`/lists/subjectRunningLists`, {...data}).then((response) => {
-            commit('SUBJECT_RELATED_LIST', response.subjectRunningList)
+            commit('SUBJECT_RUNNING_LIST', response.subjectRunningList)
+            return response
+        })
+    },
+    async getSubjectRelatedList({ commit }, data) {
+        return await api.post(`/lists/subjectRelatedLists`, {...data}).then((response) => {
+            commit('SUBJECT_RELATED_LIST', response.subjectRelatedLists)
+            return response
+        })
+    },
+    async getSellerRelatedList({ commit }, data) {
+        return await api.post(`/lists/sellerRelatedLists`, {...data}).then((response) => {
+            commit('SELLER_RELATED_LIST', response.sellerRelatedLists)
             return response
         })
     },
     async getSellerRunningList({ commit }, data) {
         return await api.post(`/lists/sellerRunningLists`, {...data}).then((response) => {
-            commit('SELLER_RELATED_LIST', response.sellerRunningLists)
+            commit('SELLER_RUNNING_LIST', response.sellerRunningLists)
             return response
         })
     },
@@ -492,6 +515,18 @@ const getters = {
     sellerRunningList: ({ sellerRunningList }) => {
         if( typeof sellerRunningList === 'string') {
             return JSON.parse(sellerRunningList);
+        }
+        return [];
+    },
+    subjectRelatedList: ({ subjectRelatedList }) => {
+        if (typeof subjectRelatedList === 'string') {
+            return JSON.parse(subjectRelatedList);
+        }
+        return [];
+    },
+    sellerRelatedList: ({ sellerRelatedList }) => {
+        if( typeof sellerRelatedList === 'string') {
+            return JSON.parse(sellerRelatedList);
         }
         return [];
     },

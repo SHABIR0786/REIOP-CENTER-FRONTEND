@@ -90,7 +90,7 @@
             </b-row>
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab :title="(relatedList?relatedList.length:'')+' Related Lists'" active>
+                    <b-tab :title="(sellerRelatedList.length)+' Related Lists'" active>
                     <b-table
                         id="list-table"
                         small
@@ -368,6 +368,7 @@ export default {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
             tabData: 'listModule/sellerRunningList',
+            sellerRelatedList: 'listModule/sellerRelatedList',
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
@@ -391,6 +392,7 @@ export default {
             let seller = this.goldenAddress?.sellers?.[0];
             if(seller) {
             await this.$store.dispatch(`listModule/getSellerRunningList`, {id:seller.id});
+            await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:seller.id})
             }
             this.$store.dispatch('uxModule/hideLoader');
 
