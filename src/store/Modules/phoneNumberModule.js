@@ -121,7 +121,7 @@ const actions = {
                 dispatch('loginModule/logout', null, {root: true})
             }
 
-            if (response && response?.phoneSkipSources && response?.phones?.phoneSkipSources) {
+            if (response && response.phoneSkipSources) {
                 commit('SET_RELATED_SKIP_SOURCES', response.phoneSkipSources)
             }
 

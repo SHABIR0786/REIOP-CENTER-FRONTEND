@@ -124,8 +124,8 @@ const actions = {
                 dispatch('loginModule/logout', null, {root: true})
             }
 
-            if (response && response.emailSkipSources && response.phones.emailSkipSources) {
-                commit('SET_RELATED_SKIP_SOURCES', response.emailSkipSources)
+            if (response && response.goldenAddressSkipSource) {
+                commit('SET_RELATED_SKIP_SOURCES', response.goldenAddressSkipSource)
             }
 
             return response;
