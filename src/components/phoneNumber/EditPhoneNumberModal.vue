@@ -59,7 +59,7 @@
                         <b-row>
                             <b-col cols="12">
                                 <b-input-group prepend="Skip Source" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="phoneNumber.phone_skip_source"></b-form-input>
+                                    <b-form-input :readonly="isReadOnly" v-model="phone_skip_sources"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>
@@ -82,7 +82,7 @@
             </b-row>
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab :title="(relatedList?relatedList.length:'')+' Related Lists'" active>
+                    <b-tab :title="(sellerRelatedList.length)+' Related Lists'" active>
                     <b-table
                         id="list-table"
                         small
@@ -92,7 +92,7 @@
                         responsive
                         :busy="isBusy"
                         :fields="listFieldsFiltered"
-                        :items="relatedList"
+                        :items="sellerRelatedList"
                         :per-page="0"
                         :sticky-header="true"
                         class="table_height_all_modal"
@@ -157,7 +157,7 @@
                       </template>
                     </b-table>
                   </b-tab>
-                    <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'"  @click="currentModal()">
+                    <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'">
                     <b-table
                         id="related-table"
                         small
@@ -194,7 +194,7 @@
                       </template>
                     </b-table>
                   </b-tab>
-                  <b-tab :title="(relatedSkipSources?relatedSkipSources.length:'') + ' Related Skip Sources'"  @click="currentModal()">
+                  <b-tab :title="(relatedSkipSources?relatedSkipSources.length:'') + ' Related Skip Sources'">
                     <b-table
                         id="related-table"
                         small
@@ -211,7 +211,7 @@
                     >
                     </b-table>
                   </b-tab>
-                  <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'"  @click="currentModal()">
+                  <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'">
                     <b-table
                         id="related-table"
                         small
@@ -368,10 +368,10 @@ export default {
         },
         async currentModal(){
             this.$store.dispatch('uxModule/setLoading')
-            let subject = this.phoneNumber?.sellers?.[0]?.subjects?.[0];
-            if(subject) {
-            subject.lists = this.phoneNumber?.sellers?.[0]?.lists;
-            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+            let seller = this.phoneNumber?.sellers?.[0];
+            if(seller) {
+            await this.$store.dispatch(`listModule/getSellerRunningList`, {id:seller.id})
+            await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:seller.id})
             }
             this.$store.dispatch('uxModule/hideLoader')
 
@@ -403,9 +403,9 @@ export default {
                 user_id: '',
                 seller_id: '',
                 sellers: [],
-                subjects: [],
-
+                subjects: []
             },
+            phone_skip_sources: '',
             listFieldsFiltered: null,
             relatedList:null,
             isBusy: false,
@@ -446,7 +446,8 @@ export default {
     computed: {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
-            tabData: 'listModule/subjectRelatedList',
+            tabData: 'listModule/sellerRunningList',
+            sellerRelatedList: 'listModule/sellerRelatedList',
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
@@ -475,6 +476,9 @@ export default {
                 console.log(error);
                 this.$store.dispatch('uxModule/hideLoader');
             }
+        },
+        relatedSkipSources() {
+            this.phone_skip_sources = this.relatedSkipSources.map(i=>i['phone_skip_source']).join();
         }
     }
 

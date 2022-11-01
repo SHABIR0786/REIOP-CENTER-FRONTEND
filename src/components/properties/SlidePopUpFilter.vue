@@ -584,7 +584,6 @@ computed: {
         this.selectedItems.forEach(selectedItem => {
           let selectedItems = selectedItem.split(",");
           selectedItems.forEach((element,index) => {
-            // console.log(element,index);
             if(element && element != "undefined") {
             if(index == 0) {
               selectedSubjects.push(element);
@@ -634,7 +633,6 @@ computed: {
       }
 
       this.isExporting = true;
-      // console.log(exportSubject);
      let response =  await this.$store.dispatch('propertyModule/exportProperties', exportSubject);
       this.$bvToast.toast(`Document Export Started. Please wait!`, {
           title: 'Export',

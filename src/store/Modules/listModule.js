@@ -5,7 +5,7 @@ const state = {
         {key:"id", label: "ID", sortable: true},
         {key:"actions", stickyColumn: true, label: "Actions"},
         {key:"subjects_unique_count", label: "Unique Subjects", sortable: true},
-        {key:"list_total_individual_list", label: "Total Running Lists", sortable: true},
+        {key:"total_running_lists", label: "Total Running Lists", sortable: true},
         {key:"list_market", label: "Markets", sortable: true},
         {key:"list_group", label: "Group", sortable: true},
         {key:"list_type", label: "Type", sortable: true},
@@ -28,7 +28,10 @@ const state = {
     sourceList: [],
     skipSourceList: [],
     list: {},
+    subjectRunningList: [],
+    sellerRunningList: [],
     subjectRelatedList: [],
+    sellerRelatedList: [],
     sameDate:null,
     sameSource:null,
     allSkipSourceList:[],
@@ -175,11 +178,23 @@ const mutations = {
 
         state.allSourceList = JSON.stringify(data);
     },
+    SUBJECT_RUNNING_LIST(state, payload) {
+        // payload.forEach(e =>{
+        //     delete e.subjects;
+        // })
+        state.subjectRunningList = JSON.stringify(payload);
+    },
     SUBJECT_RELATED_LIST(state, payload) {
-        payload.data.forEach(e =>{
-            delete e.subjects;
-        })
-        state.subjectRelatedList = JSON.stringify(payload.data);
+        // payload.forEach(e =>{
+        //     delete e.subjects;
+        // })
+        state.subjectRelatedList = JSON.stringify(payload);
+    },
+    SELLER_RUNNING_LIST(state, payload) {
+        state.sellerRunningList = JSON.stringify(payload);
+    },
+    SELLER_RELATED_LIST(state, payload) {
+        state.sellerRelatedList = JSON.stringify(payload);
     },
     just_test() {
     },
@@ -325,9 +340,27 @@ const actions = {
         })
     },
 
+    async getSubjectRunningList({ commit }, data) {
+        return await api.post(`/lists/subjectRunningLists`, {...data}).then((response) => {
+            commit('SUBJECT_RUNNING_LIST', response.subjectRunningList)
+            return response
+        })
+    },
     async getSubjectRelatedList({ commit }, data) {
         return await api.post(`/lists/subjectRelatedLists`, {...data}).then((response) => {
-            commit('SUBJECT_RELATED_LIST', response.subjectRelatedList)
+            commit('SUBJECT_RELATED_LIST', response.subjectRelatedLists)
+            return response
+        })
+    },
+    async getSellerRelatedList({ commit }, data) {
+        return await api.post(`/lists/sellerRelatedLists`, {...data}).then((response) => {
+            commit('SELLER_RELATED_LIST', response.sellerRelatedLists)
+            return response
+        })
+    },
+    async getSellerRunningList({ commit }, data) {
+        return await api.post(`/lists/sellerRunningLists`, {...data}).then((response) => {
+            commit('SELLER_RUNNING_LIST', response.sellerRunningLists)
             return response
         })
     },
@@ -473,9 +506,27 @@ const getters = {
         }
         return [];
     },
+    subjectRunningList: ({ subjectRunningList }) => {
+        if (typeof subjectRunningList === 'string') {
+            return JSON.parse(subjectRunningList);
+        }
+        return [];
+    },
+    sellerRunningList: ({ sellerRunningList }) => {
+        if( typeof sellerRunningList === 'string') {
+            return JSON.parse(sellerRunningList);
+        }
+        return [];
+    },
     subjectRelatedList: ({ subjectRelatedList }) => {
         if (typeof subjectRelatedList === 'string') {
             return JSON.parse(subjectRelatedList);
+        }
+        return [];
+    },
+    sellerRelatedList: ({ sellerRelatedList }) => {
+        if( typeof sellerRelatedList === 'string') {
+            return JSON.parse(sellerRelatedList);
         }
         return [];
     },

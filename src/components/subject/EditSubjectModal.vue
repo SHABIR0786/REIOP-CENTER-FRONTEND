@@ -104,7 +104,7 @@
 
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab :title="(subject.lists?subject.lists.length:'')+' Related Lists'" active>
+                    <b-tab :title="(subjectRelatedList.length)+' Related Lists'" active>
                         <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing List</b-button>
@@ -119,7 +119,7 @@
                                 responsive
                                 :busy="isBusy"
                                 :fields="listFieldsFiltered"
-                                :items="subject.lists"
+                                :items="subjectRelatedList"
                                 :per-page="0"
                                 :sticky-header="true"
                                 class="table_height_all_modal"
@@ -184,7 +184,7 @@
                           </template>
                         </b-table>
                     </b-tab>
-                    <b-tab :title="(tabData ? tabData.length : '') + ' Related Running Lists'"  @click="currentModal()">
+                    <b-tab :title="(tabData ? tabData.length : '') + ' Related Running Lists'" >
                     <b-table
                         id="related-table"
                         small
@@ -370,7 +370,8 @@ export default {
         },
         async currentModal() {
             this.$store.dispatch('uxModule/setLoading')
-            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...this.propsData})
+            await this.$store.dispatch(`listModule/getSubjectRunningList`, {id:this.propsData.id});
+            await this.$store.dispatch(`listModule/getSubjectRelatedList`, {id:this.propsData.id});
             this.$store.dispatch('uxModule/hideLoader')
         },
         editSellerItem(item) {
@@ -401,7 +402,8 @@ export default {
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
-            tabData: 'listModule/subjectRelatedList',
+            tabData: 'listModule/subjectRunningList',
+            subjectRelatedList: 'listModule/subjectRelatedList',
         }),
         rows() { return this.total ? this.total : 1 }
     },

@@ -50,7 +50,7 @@
                         <b-row>
                             <b-col cols="12">
                                 <b-input-group prepend="Skip Source" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="email.email_skip_source"></b-form-input>
+                                    <b-form-input :readonly="isReadOnly" v-model="email_skip_sources"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>
@@ -75,7 +75,7 @@
             </b-row>
             <b-row class="mt-5">
                 <b-tabs class="w-100" content-class="mt-3" fill>
-                    <b-tab :title="(relatedList?relatedList.length:'')+' Related Lists'" active>
+                    <b-tab :title="(sellerRelatedList.length)+' Related Lists'" active>
                     <b-table
                         id="list-table"
                         small
@@ -85,7 +85,7 @@
                         responsive
                         :busy="isBusy"
                         :fields="listFieldsFiltered"
-                        :items="relatedList"
+                        :items="sellerRelatedList"
                         :per-page="0"
                         :sticky-header="true"
                         class="table_height_all_modal"
@@ -150,7 +150,7 @@
                       </template>
                     </b-table>
                   </b-tab>
-                <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'"  @click="currentModal()">
+                <b-tab :title="(tabData?tabData.length:'') + ' Related Running Lists'">
                     <b-table
                         id="related-table"
                         small
@@ -188,7 +188,7 @@
                     </b-table>
                 </b-tab>
 
-                <b-tab :title="(relatedSkipSources?relatedSkipSources.length:'') + ' Related Skip Sources'"  @click="currentModal()">
+                <b-tab :title="(relatedSkipSources?relatedSkipSources.length:'') + ' Related Skip Sources'">
                     <b-table
                         id="related-table"
                         small
@@ -205,7 +205,7 @@
                     </b-table>
                   </b-tab>
 
-                <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'"  @click="currentModal()">
+                <b-tab :title="(exportItems ? exportItems.length : '') + ' Related Exports'">
                     <b-table
                         id="related-table"
                         small
@@ -364,10 +364,10 @@ export default {
         async currentModal(){
             this.$store.dispatch('uxModule/setLoading')
 
-          let subject = this.email?.sellers?.[0]?.subjects?.[0];
-          if(subject) {
-          subject.lists = this.email?.sellers?.[0]?.lists;
-          await this.$store.dispatch(`listModule/getSubjectRelatedList`, {...subject})
+          let seller = this.email?.sellers?.[0];
+          if(seller) {
+          await this.$store.dispatch(`listModule/getSellerRunningList`, {id:seller.id})
+          await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:seller.id})
           }
           this.$store.dispatch('uxModule/hideLoader')
         },
@@ -391,7 +391,8 @@ export default {
     computed: {
         ...mapGetters({
             sellerFields: 'sellerModule/fields',
-            tabData: 'listModule/subjectRelatedList',
+            tabData: 'listModule/sellerRunningList',
+            sellerRelatedList: 'listModule/sellerRelatedList',
             exportFields: 'exportModule/fields',
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
@@ -411,6 +412,7 @@ export default {
                 subjects: [],
 
             },
+            email_skip_sources: '',
             relatedList:null,
             listFieldsFiltered: null,
             sellerTableSkipFields:["seller_total_subjects","seller_total_phones","seller_total_emails","seller_mailing_address_line2","seller_company_owned","created_at","updated_at","user_id","delete"],
@@ -443,8 +445,8 @@ export default {
         ],
             relatedSkipSourcesFields: [
                 {key:"id", label: "Id", sortable: true},
-                {key:"phone_skip_source", label: "Skip Source", sortable: true},
-                {key:"phone_skip_date", label: "Skip Date", sortable: true}
+                {key:"email_skip_source", label: "Skip Source", sortable: true},
+                {key:"email_skip_date", label: "Skip Date", sortable: true}
             ],
         }
     },
@@ -459,7 +461,6 @@ export default {
             try {
                 if(this.showModal){
                     this.$store.dispatch('uxModule/setLoading')
-                    // console.log('this world');
                     this.email = {...this.propsData}
                     let response = await this.$store.dispatch('listModule/getSelectedList', this.email.list_id);
                     this.relatedList = [response.list];
@@ -474,6 +475,9 @@ export default {
                 this.$store.dispatch('uxModule/hideLoader');
             }
 
+        },
+        relatedSkipSources() {
+            this.email_skip_sources = this.relatedSkipSources.map(i=>i['email_skip_source']).join();
         }
     }
 

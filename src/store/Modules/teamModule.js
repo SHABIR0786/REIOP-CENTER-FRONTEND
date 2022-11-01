@@ -59,10 +59,8 @@ const mutations = {
         findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
     },
     DELETE_TEAM_MEMBER(state, payload) {
-        const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
-        console.log(findIndex);
-        
-        // findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+        const findIndex = state.teams.findIndex(({ id }) => id === payload.id)        
+        findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
     },
     FILLED_DATA(state, data){
         state.existTeam = data;
