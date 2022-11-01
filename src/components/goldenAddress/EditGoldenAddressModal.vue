@@ -374,7 +374,7 @@ export default {
             listFields: 'listModule/fields',
             relatedSkipSources: 'goldenAddressModule/relatedSkipSources',
             relatedSkipSourcesFields: 'goldenAddressModule/fields'
-        }),
+        })
     },
     methods: {
         editListItem(item) {

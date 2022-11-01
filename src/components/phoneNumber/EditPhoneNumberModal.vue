@@ -59,7 +59,7 @@
                         <b-row>
                             <b-col cols="12">
                                 <b-input-group prepend="Skip Source" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="phoneNumber.phone_skip_source"></b-form-input>
+                                    <b-form-input :readonly="isReadOnly" v-model="phone_skip_sources"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>
@@ -403,9 +403,9 @@ export default {
                 user_id: '',
                 seller_id: '',
                 sellers: [],
-                subjects: [],
-
+                subjects: []
             },
+            phone_skip_sources: '',
             listFieldsFiltered: null,
             relatedList:null,
             isBusy: false,
@@ -476,6 +476,9 @@ export default {
                 console.log(error);
                 this.$store.dispatch('uxModule/hideLoader');
             }
+        },
+        relatedSkipSources() {
+            this.phone_skip_sources = this.relatedSkipSources.map(i=>i['phone_skip_source']).join();
         }
     }
 

@@ -50,7 +50,7 @@
                         <b-row>
                             <b-col cols="12">
                                 <b-input-group prepend="Skip Source" class="mb-2">
-                                    <b-form-input :readonly="isReadOnly" v-model="email.email_skip_source"></b-form-input>
+                                    <b-form-input :readonly="isReadOnly" v-model="email_skip_sources"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>
@@ -412,6 +412,7 @@ export default {
                 subjects: [],
 
             },
+            email_skip_sources: '',
             relatedList:null,
             listFieldsFiltered: null,
             sellerTableSkipFields:["seller_total_subjects","seller_total_phones","seller_total_emails","seller_mailing_address_line2","seller_company_owned","created_at","updated_at","user_id","delete"],
@@ -444,8 +445,8 @@ export default {
         ],
             relatedSkipSourcesFields: [
                 {key:"id", label: "Id", sortable: true},
-                {key:"phone_skip_source", label: "Skip Source", sortable: true},
-                {key:"phone_skip_date", label: "Skip Date", sortable: true}
+                {key:"email_skip_source", label: "Skip Source", sortable: true},
+                {key:"email_skip_date", label: "Skip Date", sortable: true}
             ],
         }
     },
@@ -474,6 +475,9 @@ export default {
                 this.$store.dispatch('uxModule/hideLoader');
             }
 
+        },
+        relatedSkipSources() {
+            this.email_skip_sources = this.relatedSkipSources.map(i=>i['email_skip_source']).join();
         }
     }
 
