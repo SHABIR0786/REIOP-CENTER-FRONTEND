@@ -127,7 +127,9 @@ const actions = {
     },
     async deleteTeam({ commit }, data) {
         return await api.deleteAPI(`/teams/${data}`).then((response) => {
-            commit('DELETE_TEAM', data)
+            if(response.status ==true){
+                commit('DELETE_TEAM', data)
+            }
             return response
         })
     },

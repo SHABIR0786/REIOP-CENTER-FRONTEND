@@ -6,7 +6,7 @@
             </div>
         </template>
         <b-container fluid>
-            <h4>Are you sure You want to delete this item?</h4>
+            <h4>{{title}}</h4>
         </b-container>
         <template #modal-footer>
             <div class="w-100">
@@ -36,6 +36,10 @@
         props: {
             showModal: {
                 type: Boolean
+            },
+            title:{
+                type: String,
+                default: "Are you sure You want to delete this item?",
             }
         }
     }

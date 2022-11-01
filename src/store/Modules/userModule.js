@@ -15,7 +15,7 @@ const state = {
     users: [],
     teamAdminMembers: [],
 
-    total_users: 0,
+    total: 0,
     total_team_members: 0,
 
     user:{}
@@ -54,8 +54,14 @@ const mutations = {
         findIndex !== -1 && state.users.splice(findIndex, 1, { ...payload })
     },
     DELETE_USER(state, payload) {
-        const findIndex = state.users.findIndex(({ id }) => id === payload)
-        findIndex !== -1 && state.users.splice(findIndex, 1)
+        if(payload.created_at) {
+            payload.created_at = payload.created_at.split('T')[0];
+        }
+        if(payload.updated_at) {
+            payload.updated_at = payload.updated_at.split('T')[0];
+        }
+        const findIndex = state.users.findIndex(({ id }) => id === payload.id)
+        findIndex !== -1 && state.users.splice(findIndex, 1,{...payload})
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -71,8 +77,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllUsers({ commit, dispatch }, {page, perPage}) {
-        return await api.get(`/users?page=${page}&perPage=${perPage}`).then((response) => {
+    async getAllUsers({ commit, dispatch }, {page, perPage,isActive}) {
+        return await api.get(`/users?page=${page}&perPage=${perPage}&status=${isActive}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
@@ -95,14 +101,16 @@ const actions = {
             return response.users.data;
         })
     },
-    async searchUsers({ commit, dispatch }, {page, perPage, search}) {
-        return await api.get(`/users?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+    async searchUsers({ commit, dispatch }, {page, perPage, search,isActive}) {
+        return await api.get(`/users?page=${page}&perPage=${perPage}&search=${search}&status=${isActive}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
 
             if(response && response.users && response.users.data) {
                 commit('SET_ALL_USERS', response.users.data)
+                commit ('GET_TOTAL', response.count);
+                
             }
             return response
         })
@@ -121,12 +129,12 @@ const actions = {
             return response.user;
         })
     },
-    async deleteTeam({ commit }, data) {
-        return await api.deleteAPI(`/users/${data}`).then((response) => {
-            commit('DELETE_USER', data)
-            return response
-        })
-    },
+    // async deleteTeam({ commit }, data) {
+    //     return await api.deleteAPI(`/users/${data}`).then((response) => {
+    //         commit('DELETE_USER', data)
+    //         return response
+    //     })
+    // },
     async getTotal({ commit }) {
         return await api.get(`/totals/users`).then((response) => {
             if (response && response.count > -1) {
@@ -137,8 +145,8 @@ const actions = {
     },
     async deleteUser({ commit }, data) {
 
-        return await api.deleteAPI(`/users/${data}`).then((response) => {
-            commit('DELETE_USER', data)
+        return await api.deleteAPI(`/users/${data.id}/${data.status}`).then((response) => {
+            commit('DELETE_USER', response.user)
             return response
         })
     },

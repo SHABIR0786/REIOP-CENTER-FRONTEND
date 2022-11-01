@@ -4,7 +4,7 @@
     <div>
         <b-row>
             <b-col cols="12" class="d-flex justify-content-end">
-                <b-button variant="primary" class="add-seller" @click="addItem()">
+                <b-button variant="primary" class="add-seller cursor-pointer" @click="addItem()">
                     <b-icon icon="plus" aria-hidden="true"></b-icon> Add Company
                 </b-button>
             </b-col>
@@ -31,6 +31,15 @@
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
             <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteCompany(data.item)"></b-icon>
         </template>
+        <template v-slot:cell(plan)="data">
+            <div v-b-tooltip.hover :title="data.item.plan.name"><b-icon  icon="box-arrow-up-right" variant="primary" class="mr-1" title="Company Detail" @click="editPlanLink(data.item.plan)" ></b-icon>{{ data.item.plan.name }}</div>
+        </template>
+        <template v-slot:cell(number_of_users)="data">
+            <div v-b-tooltip.hover :title="data.item.plan.number_of_users">{{ data.item.plan.number_of_users }}</div>
+        </template>
+        <template v-slot:cell(number_of_teams)="data">
+            <div v-b-tooltip.hover :title="data.item.plan.number_of_teams">{{ data.item.plan.number_of_teams }}</div>
+        </template>
     </b-table>
     <b-row>
         <b-col class="d-flex align-items-center">
@@ -47,6 +56,8 @@
     </b-row>
     <edit-company-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-company-modal>
     <add-company-modal ref="addcompanymodal" :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-company-modal>
+    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure? you want to delete this Company with all of its teams"></delete-modal>
+
 </div>
 </template>
 
@@ -59,6 +70,8 @@ import {
 } from "bootstrap-vue"
 import EditCompanyModal from "../components/company/EditCompanyModal";
 import AddCompanyModal from "../components/company/AddCompanyModal";
+import DeleteModal from "../components/deleteModal/DeleteModal";
+
 
 
 export default {
@@ -66,7 +79,8 @@ export default {
     components: {
         BIcon,
         EditCompanyModal,
-        AddCompanyModal
+        AddCompanyModal,
+        DeleteModal
     },
     data() {
         return {
@@ -98,6 +112,7 @@ export default {
             total: 'companyModule/total',
             authUser: 'loginModule/getAuthUser',
         }),
+    rows() { return this.total ? this.total : 1 }
     },
     async created() {
         try {
@@ -108,7 +123,6 @@ export default {
                     this.showModal = true
                 })
             }
-            this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch("companyModule/getAllCompanies", {
                 page: 1,
                 perPage: this.perPage,
@@ -116,15 +130,19 @@ export default {
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             })
+            await this.$store.dispatch('companyModule/getTotal')
+            this.filteredOrAllData = this.items;
+            this.itemsCount = this.total;
+
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
-        this.filteredOrAllData = this.items;
-        this.itemsCount = this.total;
+        
     },
     methods: {
         editItem(item) {
+            console.log('hello',item);
             this.showModal = true
             this.editedItem = JSON.parse(JSON.stringify(item));
         },
@@ -162,11 +180,24 @@ export default {
             this.filteredOrAllData = this.items;
         },
        async save(item) {
-           await this.$store.dispatch('uxModule/setLoading')
+            this.$store.dispatch('uxModule/setLoading')
             try {
-            this.$store.dispatch('companyModule/editCompany', {
+                let response = await this.$store.dispatch('companyModule/editCompany', {
                 ...item
-            })
+            });
+            if(response.success == true){
+                this.$bvToast.toast("Company Updated successfully", {
+                    title: "Message",
+                    variant: 'success',
+                    autoHideDelay: 5000,
+                });
+            }else{
+                this.$bvToast.toast(response.error, {
+                    title: "Validate",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+                });
+            }
             this.$store.dispatch('uxModule/hideLoader')
             } catch(error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -196,21 +227,43 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
         },
         deleteCompany(item) {
-            this.$bvToast.toast("Company Delete Functionality is in progress! Because of table relationships", {
-                    title: "In progress",
-                    variant: 'warning',
-                    autoHideDelay: 5000,
+            // this.$bvToast.toast("Company Delete Functionality is in progress! Because of table relationships", {
+            //         title: "In progress",
+            //         variant: 'warning',
+            //         autoHideDelay: 5000,
 
-              });
-              return item;
-        //       this.showDeleteModal = true;
-        //         this.itemToDelete = item;
+            //   });
+            //   return item;
+              this.showDeleteModal = true;
+                this.itemToDelete = item;
         },
-        modalResponse(response) {
-            this.showDeleteModal = false;
-            if (response) {
-                this.$store.dispatch('companyModule/deleteCompany', this.itemToDelete.id)
+        async modalResponse(response) {
+        this.$store.dispatch('uxModule/setLoading')
+
+      this.showDeleteModal = false;
+        if (response) {
+            let responseRequest = await this.$store.dispatch('companyModule/deleteCompany', this.itemToDelete.id)
+            if(responseRequest.success==true) {
+
+            this.$bvToast.toast(responseRequest.message, {
+                title: "Message",
+                variant: 'success',
+                autoHideDelay: 5000,
+            });
+
+            const findIndex = this.items.findIndex(({ id }) => id == this.itemToDelete.id)
+            findIndex !== -1 && this.items.splice(findIndex, 1)
+
+            }else{
+            this.$bvToast.toast(responseRequest.error, {
+                title: "Error",
+                variant: 'danger',
+                autoHideDelay: 5000,
+            });
             }
+
+        }
+        this.$store.dispatch('uxModule/hideLoader');
         },
         addItem() {
             this.showAddModal = true;
@@ -234,6 +287,9 @@ export default {
                 });
             }
         },
+        // planData(item,column) {
+        //     if(column)
+        // },
         async doCreatedOperation() {
             try {
                 await this.$store.dispatch("companyModule/getAllCompanies", {
@@ -255,11 +311,27 @@ export default {
             }
             this.filteredOrAllData = this.items;
             this.itemsCount = this.total;
+        },
+        editPlanLink(plan) { 
+            let plan_id = plan?.id;
+            if(plan_id){
+            const route = '/plans?id=' + plan_id;
+            let routeData = this.$router.resolve({path: route});
+            window.open(routeData.href, '_blank');
+        }else{
+            this.$bvToast.toast("Plan Id not found", {
+                title: "Validate",
+                variant: 'warning',
+                autoHideDelay: 5000,
+            });
         }
+
+        },
     },
     watch: {
         currentPage: {
             handler: async function () {
+
                 await this.$store.dispatch('companyModule/getAllCompanies', {
                     page: this.currentPage,
                     perPage: this.perPage,
@@ -272,6 +344,7 @@ export default {
         },
         perPage: {
             handler: async function () {
+                
                 this.$store.dispatch('uxModule/setLoading')
                 await this.$store.dispatch('companyModule/getAllCompanies', {
                     page: 1,

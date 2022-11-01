@@ -30,6 +30,8 @@ import marketingChannelModule from "./Modules/marketingChannelModule";
 import filterModule from "./Modules/filterModule";
 import companyModule from "./Modules/companyModule";
 import exportModule from "./Modules/exportModule";
+import planModule from "./Modules/PlanModule";
+
 
 
 
@@ -66,7 +68,8 @@ export default new Vuex.Store({
         filterModule: filterModule,
         userModule: userModule,
         companyModule: companyModule,
-        exportModule: exportModule
+        exportModule: exportModule,
+        planModule:planModule,
 
     },
     state,
