@@ -18,14 +18,14 @@
             >
               Are you uploading skip trace data?
             </b-button>
-            or
+            <!-- or
             <b-button
                 class="data-type-btn"
                 @click="skip_option = 'validate'"
                 :class="{'active-skip-option': skip_option === 'validate'}"
             >
               Are you updating phone or email validity?
-            </b-button>
+            </b-button> -->
           </b-col>
         </b-row>
 

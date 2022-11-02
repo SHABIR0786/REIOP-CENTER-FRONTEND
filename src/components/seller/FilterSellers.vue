@@ -589,6 +589,35 @@
               </b-card-text>
             </b-tab>
 
+            <!-- Total Golden Addresses Filter  -->
+            <b-tab @click="tab('TotalGoldensAddresses')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Total Golden Addresses</span>
+                  <span v-if="allFilters.TotalGoldensAddresses.length > 0" class="filter-count">{{ allFilters.TotalGoldensAddresses.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.TotalGoldensAddresses"
+                      :key="result"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="TotalEmails">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
           </b-tabs>
         </b-card>
       </div>
@@ -665,9 +694,10 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned:[],
-        TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
-        TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
-        TotalEmails:['1','2','3','4','5','6','7','8','9','10'],
+        TotalSubjects:Array.from(Array(11).keys()),
+        TotalPhones:Array.from(Array(11).keys()),
+        TotalEmails:Array.from(Array(11).keys()),
+        TotalGoldensAddresses:Array.from(Array(11).keys()),
         AttemptedSkipTraceSources:[],
         HasSkipTraceData:["Yes","No"]
       },
@@ -683,6 +713,7 @@ export default {
         TotalSubjects:[],
         TotalPhones:[],
         TotalEmails:[],
+        TotalGoldensAddresses:[],
         AttemptedSkipTraceSources:[],
         HasSkipTraceData:[]
       },
@@ -695,9 +726,10 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned:[],
-        TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
-        TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
-        TotalEmails:['1','2','3','4','5','6','7','8','9','10'],
+        TotalSubjects:Array.from(Array(11).keys()),
+        TotalPhones:Array.from(Array(11).keys()),
+        TotalEmails:Array.from(Array(11).keys()),
+        TotalGoldensAddresses:Array.from(Array(11).keys()),
         AttemptedSkipTraceSources:[],
         HasSkipTraceData:["Yes","No"]
      
@@ -774,9 +806,10 @@ export default {
         Error:[],
         RunDate: [],
         CompanyOwned:[],
-        TotalSubjects:['1','2','3','4','5','6','7','8','9','10'],
-        TotalPhones:['1','2','3','4','5','6','7','8','9','10'],
-        TotalEmails:['1','2','3','4','5','6','7','8','9','10'],
+        TotalSubjects:Array.from(Array(11).keys()),
+        TotalPhones:Array.from(Array(11).keys()),
+        TotalEmails:Array.from(Array(11).keys()),
+        TotalGoldensAddresses:Array.from(Array(11).keys()),
         AttemptedSkipTraceSources:[],
         HasSkipTraceData:["Yes","No"]
       };
@@ -842,8 +875,10 @@ export default {
               }
             }
           });
-        for(let category in this.allData){
-          this.allData[category].sort((a, b) => a.localeCompare(b))
+        for(let category in this.allData) {
+        if(category != 'TotalSubjects' && category != 'TotalPhones' && category != 'TotalEmails' && category != 'TotalGoldensAddresses') {
+          this.allData[category].sort((a, b) => a.localeCompare(b));
+        }
         }
       }
 
@@ -859,6 +894,7 @@ export default {
         this.allData.TotalSubjects.shift();
         this.allData.TotalPhones.shift();
         this.allData.TotalEmails.shift();
+        this.allData.TotalGoldensAddresses.shift();
         this.allData.HasSkipTraceData.shift();
         this.allData.AttemptedSkipTraceSources.shift();
     },
@@ -936,12 +972,15 @@ export default {
           TotalSubjects:[],
           TotalPhones:[],
           TotalEmails:[],
+          TotalGoldensAddresses: [],
           AttemptedSkipTraceSources:[],
           HasSkipTraceData:[]
         };
       }
       for (let category in this.allData) {
-        this.allData[category].sort((a, b) => a.localeCompare(b));
+        if(category != 'TotalSubjects' && category != 'TotalPhones' && category != 'TotalEmails' && category != 'TotalGoldensAddresses') {
+          this.allData[category].sort((a, b) => a.localeCompare(b));
+        }
       }
       let response = await this.$store.dispatch("sellerModule/SellerfilterList", {filter: this.allFilters, search:this.search});
       this.MapFilters(response);
@@ -972,6 +1011,7 @@ export default {
         TotalSubjects:[],
         TotalPhones:[],
         TotalEmails:[],
+        TotalGoldensAddresses:[],
         AttemptedSkipTraceSources:[],
         HasSkipTraceData:[]
       };
@@ -987,6 +1027,7 @@ export default {
         TotalSubjects:[],
         TotalPhones:[],
         TotalEmails:[],
+        TotalGoldensAddresses:[],
         AttemptedSkipTraceSources:[],
         HasSkipTraceData:[]
       };
