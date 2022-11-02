@@ -2,25 +2,13 @@
 <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
     <h3>Users</h3>
     <div>
-        <!-- <b-row>
-            <b-col cols="12" class="d-flex justify-content-end">
-                <b-button variant="primary" class="add-seller" @click="addItem()">
-                    <b-icon icon="plus" aria-hidden="true"></b-icon> Add User
-                </b-button>
-            </b-col>
-        </b-row>
-        <hr> -->
         <b-row class="mb-3">
             <b-col cols="6" offset-md="6">
                 <b-input-group class="mt-3">
-                    <b-input-group-append v-if="isSearched">
-                        <b-button @click="clearsearch" variant="outline-primary">
-                            <b-icon icon="x" aria-hidden="true"></b-icon> Clear Search
-                        </b-button>
-                    </b-input-group-append>
-                    <b-form-input v-model="searchUser" @keyup.enter="search" placeholder="Search"></b-form-input>
-                    <b-input-group-append>
-                        <b-button @click="search" variant="primary">Search</b-button>
+                    
+                    <b-form-input v-model="searchUser" debounce="500" @keyup.enter="search" placeholder="Search"></b-form-input>
+                    <b-input-group-append >
+                        <b-form-select v-model="isActive" :options="isActiveStatus" @change="search()"></b-form-select>
                     </b-input-group-append>
                 </b-input-group>
             </b-col>
@@ -28,11 +16,11 @@
     </div>
     <b-table id="user-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template v-slot:cell(actions)="data">
-            <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteUser(data.item)"></b-icon>
+            <b-icon class="mr-2 cursor-pointer" icon="pencil" v-b-tooltip.hover title="Edit User" variant="primary" @click="editItem(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="gear" v-b-tooltip.hover title="Deactivate User" @click="deleteUser(data.item)"></b-icon>
         </template>
-        <template v-slot:cell(role)="data">
-            {{role_text[data.item.role]}}
+        <template v-slot:cell(status)="data">
+            <b-icon class="mr-2 cursor-pointer" :icon="userStatusIcon[data.item.status]" :variant="userStatusVariant[data.item.status]"></b-icon> {{userStatus[data.item.status]}}
         </template>
         
 
@@ -51,8 +39,7 @@
         </b-col>
     </b-row>
     <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-user-modal>
-    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
-
+    <user-status-modal :showModal="showUserStatusModal" :propsData="editedItem" @cancel="showUserStatusModal=false" @save="UserStausUpdate"></user-status-modal>
 </div>
 </template>
 
@@ -64,8 +51,9 @@ import {
     BIcon
 } from "bootstrap-vue"
 import EditUserModal from "../components/user/EditUserModal";
+import UserStatusModal from "../components/user/UserStatusModal";
+
 // import { setLocalStorage } from '../utils/localStorage';
-import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
 
 
@@ -74,7 +62,7 @@ export default {
     components: {
         BIcon,
         EditUserModal,
-        DeleteModal
+        UserStatusModal
     },
     data() {
         return {
@@ -83,11 +71,10 @@ export default {
             perPage: 20,
             currentPage: 1,
             editedItem: {},
-            showDeleteModal: false,
+            showUserStatusModal:false,
             itemToDelete: {},
             pageOptions: [10, 20, 50],
             searchUser: '',
-            showAddModal: false,
             showCompanyRoleModal: false,
             CompanyRole_Item: {},
 
@@ -98,16 +85,32 @@ export default {
             itemsCount: 0,
             sortBy: 'id',
             sortDesc: false,
-            isSearched: false,
+            isActive: null,
+
             role_text : ['','SuperAdmin','Admin','User'],
             fields: [
                 {key:"id", label: "Id", sortable: true},
                 {key: "name", label: "Name", sortable: true},
                 {key: "email", label: "email", sortable: true},
+                {key: "status", label: "Status", sortable: true},
                 {key:"created_at", label: "Created Date", sortable: true},
                 {key:"updated_at", label: "Updated Date", sortable: true},
                 {key:"actions", label: "Actions"},
             ],
+            userStatus :['Deactive','Active'],
+            userStatusIcon :['x-circle','check-circle-fill'],
+            userStatusVariant :['danger','success'],
+
+            isActiveStatus: [
+            { value: null, text: 'All Users' },
+            { value: 1, text: 'Active Users' },
+            { value: 0, text: 'Deactive Users' },
+
+
+        ]
+
+
+
 
         }
     },
@@ -139,6 +142,7 @@ export default {
                 page: 1,
                 perPage: this.perPage,
                 search: this.searchUser,
+                isActive: this.isActive,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             })
@@ -166,26 +170,23 @@ export default {
             //     this.$store.dispatch('uxModule/hideLoader')
             // }
         },
-        async clearsearch() {
-            this.searchUser = '';
-            await this.search();
-            this.isSearched = false;
+        status(){
+            this.isActive =!this.isActive;
+           this.search();
         },
         async search() {
+           this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch('userModule/searchUsers', {
                 page: this.currentPage,
                 perPage: this.perPage,
                 search: this.searchUser,
+                isActive: this.isActive,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             })
             this.itemsCount = this.total;
             this.filteredOrAllData = this.items;
-            if (this.searchUser.length == 0) {
-                this.isSearched = false;
-            } else {
-                this.isSearched = true;
-            }
+            this.$store.dispatch('uxModule/hideLoader')
         },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
@@ -194,6 +195,7 @@ export default {
                 page: 1,
                 perPage: this.perPage,
                 search: this.searchUser,
+                isActive: this.isActive,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
             });
@@ -231,36 +233,30 @@ export default {
         },
 
         deleteUser(item) {
-            this.$bvToast.toast("User Delete Functionality is in progress! Because of table relationships", {
-                    title: "In progress",
-                    variant: 'warning',
-                    autoHideDelay: 5000,
-
-              });
-              return item;
-            // this.showDeleteModal = true;
-            // this.itemToDelete = item;
+            this.showUserStatusModal = true;
+            this.editedItem = item;
         },
-        async modalResponse(response) {
-            this.showDeleteModal = false;
-            if (response) {
+        async UserStausUpdate(user) {
+
+            console.log('user',user);
+            this.showUserStatusModal = false;
+            if (user) {
                 this.$store.dispatch('uxModule/setLoading');
                 try {
-                    await this.$store.dispatch('userModule/deleteUser', this.itemToDelete.id)
-                    this.$bvToast.toast("User Deleted Successfully!", {
-                    title: "User Deleted!",
-                    variant: 'success',
-                    autoHideDelay: 5000,
-
-              });
+                    let response = await this.$store.dispatch('userModule/deleteUser', user)
+                    if(response.success==true){
+                        this.$bvToast.toast("User Status Updated Successfully!", {
+                            title: "User Status!",
+                            variant: 'success',
+                            autoHideDelay: 5000,
+                        });
+                    }
+                    
                 this.$store.dispatch('uxModule/hideLoader');
                 }catch(error) {
                 this.$store.dispatch('uxModule/hideLoader');
                 }
             }
-        },
-        addItem() {
-            this.showAddModal = true;
         },
         bulkDelete() {
             this.$store.dispatch('userModule/deleteMultipleUsers', this.bulkDeleteItems).then(() => {
@@ -287,6 +283,7 @@ export default {
                     page: 1,
                     perPage: this.perPage,
                     search: this.searchUser,
+                    isActive: this.isActive,
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc
                 })
@@ -307,23 +304,29 @@ export default {
     watch: {
         currentPage: {
             handler: async function () {
+                this.$store.dispatch('uxModule/setLoading');
+
                 await this.$store.dispatch('userModule/getAllUsers', {
                     page: this.currentPage,
                     perPage: this.perPage,
                     search: this.searchUser,
+                    isActive: this.isActive,
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc
                 })
+                this.$store.dispatch('uxModule/hideLoader');
                 this.filteredOrAllData = this.items
             }
         },
         perPage: {
             handler: async function () {
+
                 this.$store.dispatch('uxModule/setLoading')
                 await this.$store.dispatch('userModule/getAllUsers', {
                     page: 1,
                     perPage: this.perPage,
                     search: this.searchUser,
+                    isActive: this.isActive,
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc
                 })
@@ -331,7 +334,12 @@ export default {
                 this.$store.dispatch('uxModule/hideLoader')
             }
         },
-    }
+        searchUser() {
+            console.log('this.searchUser',this.searchUser);
+            this.search();
+        }
+    },
+
 }
 </script>
 

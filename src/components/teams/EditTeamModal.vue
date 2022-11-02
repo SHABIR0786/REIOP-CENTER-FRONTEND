@@ -79,7 +79,7 @@
 
                             <b-col cols="6" class="text-right">
                             <b-button variant="primary" class="add-member" @click="showAddMemberModal = true">
-                            <b-icon icon="plus" aria-hidden="true"></b-icon>Add New Team Member</b-button>
+                            <b-icon icon="plus-circle" aria-hidden="true"></b-icon> Add New Team Member</b-button>
                         </b-col>
 
                         </b-row>
@@ -117,8 +117,8 @@
                                 </template> -->
                                     <template v-slot:cell(actions)="data">
                                     <!-- <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon> -->
-                                    <b-icon  icon="box-arrow-up-right" class="cursor-pointer mr-1" variant="primary" title="View Member" @click="editMember(data.item)"></b-icon> 
-                                    <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
+                                    <b-icon  icon="box-arrow-up-right" class="cursor-pointer mr-2" variant="primary" title="View Member" @click="editMember(data.item)"></b-icon> 
+                                    <b-icon class="cursor-pointer" variant="danger" icon="dash-circle" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
                                     </template>
                             </b-table>
                         </b-col>
@@ -136,7 +136,7 @@
             </div>
         </template>
         <add-team-member-modal :showModal="showAddMemberModal" @cancel="showAddMemberModal=false" @add="addMember"></add-team-member-modal>
-        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure You want to remove this member?"></delete-modal>
 
     </b-modal>
 </template>

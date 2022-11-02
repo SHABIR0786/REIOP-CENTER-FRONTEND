@@ -36,17 +36,27 @@ export const mutations = {
 export const actions = {
     async login({ commit }, {vm, email, password}) {
         let userData = await api.post('/auth/login', {email, password});
-
         if (userData && userData.access_token) {
             api.setHeader(userData.access_token);
             commit('SIGN_IN', {user: userData.user, token: userData.access_token})
-        } else {
+        }else if(userData.success == false){
+            vm.$bvToast.toast(userData.message, {
+                title: 'Oops!',
+                solid: true,
+                variant: 'danger',
+                autoHideDelay: 4000,
+            })
+            
+            return ;
+
+        }else {
             vm.$bvToast.toast('You have entered an invalid username or password.', {
                 title: 'Oops!',
                 solid: true,
                 variant: 'danger',
                 autoHideDelay: 4000,
             })
+            return ;
         }
         commit('SET_ADMIN_MODE', false)
         setLocalStorage('adminMode',false);

@@ -8,7 +8,6 @@ const state = {
         {key: "plan", label: "Plan", sortable: true},
         {key: "number_of_users", label: "No. of Users", sortable: true},
         {key: "number_of_teams", label: "No. of Teams", sortable: true},
-
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],
@@ -22,13 +21,16 @@ const mutations = {
         const data = [...payload]
         data.forEach(e => {
             if(e.created_at) {
-            e.created_at = e.created_at.split('T')[0];
+                e.created_at = e.created_at.split('T')[0];
             }
             if(e.updated_at) {
-            e.updated_at = e.updated_at.split('T')[0];
-        }
+                e.updated_at = e.updated_at.split('T')[0];
+            }
+            if(e.plan == null){
+                e.plan = {};
+            }
         })
-        state.total = data.length;
+        // state.total = data.length;
         state.companies = [...data]
     },
     EDIT_COMPANY(state, payload) {
@@ -81,7 +83,9 @@ const actions = {
         delete data.companies;
         delete data.total_companies;
         return await api.put(`/companies/${data.id}`, {...data}).then((response) => {
-            commit('EDIT_COMPANY', data)
+            if(response.success){
+                commit('EDIT_COMPANY', response.company);
+            }
             return response
         })
     },
@@ -93,7 +97,9 @@ const actions = {
     },
     async deleteCompany({ commit }, data) {
         return await api.deleteAPI(`/companies/${data}`).then((response) => {
-            commit('DELETE_COMPANY', data)
+            if(response.status ==true){
+                commit('DELETE_COMPANY', data)
+            }
             return response
         })
     },

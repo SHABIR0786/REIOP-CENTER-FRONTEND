@@ -1,5 +1,5 @@
 <template>
-<b-modal v-model="showModal" size="md" scrollable no-close-on-backdrop>
+<b-modal v-model="showModal" size="xl" scrollable no-close-on-backdrop>
     <template #modal-header>
         <div class="w-100">
             Add Company
@@ -7,39 +7,36 @@
     </template>
         <b-container fluid>
                 <b-row class="">
-                    <b-col cols="12">
+                    <b-col cols="12" lg="6" md="12">
+                    <b-col cols="12" class="mb-3">
                         <b-input-group prepend="Name" v-b-tooltip.hover title="Company Name" class="mb-2" id="name" label="Name" label-for="name">
                             <b-form-input id="name" name="name" :state="validateState('name')" aria-describedby="name" type="text" v-model="$v.company.name.$model" required></b-form-input>
-                            <b-form-invalid-feedback id="name">Name Field is Required.</b-form-invalid-feedback>
+                            <b-form-invalid-feedback id="name">Company Name is Required.</b-form-invalid-feedback>
                         </b-input-group>
                     </b-col>
-                    <b-col cols="12">
+                    <b-col cols="12" class="my-3">
                         <b-input-group prepend="Plan" id="plan" class="mb-2">
-                          <b-form-select v-model="company.plan" v-b-tooltip.hover title="Company Plan" :state="validateState('plan')" required :options="planitems"></b-form-select>
-                          <b-form-invalid-feedback id="plan" class="text">Plan Field is Required.</b-form-invalid-feedback>
+                          <b-form-select v-model="company.plan" v-b-tooltip.hover title="Company Plan" :state="validateState('plan')" required :searchable="true" :options="planitems"></b-form-select>
+                          <b-form-invalid-feedback id="plan" class="text">Select a Plan.</b-form-invalid-feedback>
                         </b-input-group>
                     </b-col>
                     
-                <b-col cols="12">
-                        <b-input-group prepend="No. of Users" title="Number Of Users" class="mb-2" id="number_of_users" label="Number Of Users" label-for="number_of_users">
-                            <b-form-input id="number_of_users" name="number_of_users" :state="validateState('number_of_users')"  type="text" v-model="company.number_of_users" required></b-form-input>
-                            <b-input-group-append>
-                                <b-input-group-text title="Unlimited Users" role="button"  @click="company.number_of_users='Unlimited'" ><span class="text-danger">Unlimited</span></b-input-group-text>
-                            </b-input-group-append>
-                            <b-form-invalid-feedback id="number_of_users">Number Of Users Field is Required.</b-form-invalid-feedback>
+                <b-col cols="12" class="my-3">
+                        <b-input-group prepend="No. of Users" title="Number Of Users" class="mb-2">
+                            <b-form-input  type="text" :value="company.plan.number_of_users" readonly></b-form-input>
                         </b-input-group>
                 </b-col>
-                <b-col cols="12">
-                        <b-input-group prepend="No. of Teams" title="Number Of Teams" class="mb-2" id="number_of_teams" label="Number Of Teams" label-for="number_of_teams">
-                            <b-form-input id="number_of_teams" name="number_of_teams" :state="validateState('number_of_teams')"  type="text" v-model="company.number_of_teams" required></b-form-input>
-                            <b-input-group-append>
-                                <b-input-group-text title="Unlimited Teams" role="button"  @click="company.number_of_teams='Unlimited'" ><span class="text-danger">Unlimited</span></b-input-group-text>
-                            </b-input-group-append>
-                            <b-form-invalid-feedback id="number_of_teams">Number Of Teams Field is Required.</b-form-invalid-feedback>
+                <b-col cols="12" class="my-3">
+                        <b-input-group prepend="No. of Teams" title="Number Of Teams" class="mb-2" id="number_of_teams">
+                            <b-form-input  type="text" :value="company.plan.number_of_teams" readonly></b-form-input>
                         </b-input-group>
                     </b-col>
+            </b-col>
+            <b-col cols="12" lg="6" md="12">
+
+                
                     <b-col cols="12">
-                            <b-input-group prepend="Team" v-b-tooltip.hover title="Team Name" id="new_team" class="mb-2">
+                            <b-input-group prepend="Team Name" title="Team Name" id="new_team" class="mb-2">
                                 <b-form-input id="add_new_team" name="add_new_team" @keyup.enter="addTeam(new_team)"  type="text" v-model="new_team" ></b-form-input>
                                 <b-input-group-append>
                                     <b-input-group-text v-b-tooltip.hover title="Add Team (Press Enter key)" role="button" @click="addTeam(new_team)">
@@ -49,11 +46,13 @@
                             </b-input-group>
                     </b-col>
                     <b-col cols="12" class="list-group-row" v-if="newTeams.length>0">
-                        <h5 class="text-center">Team List</h5>
+                        <h5 class="text-center">Team List ({{newTeams.length}})</h5>
                         <b-list-group class="w-100">
                             <b-list-group-item v-for="team,index in newTeams" :key="team+index">{{team}} <b-icon icon="trash" class="trash-icon" variant="danger"  title="Remove Team" @click="removeTeam(team)"></b-icon></b-list-group-item>
                         </b-list-group>
                     </b-col>
+            </b-col>
+
                 </b-row>
            
         </b-container>
@@ -92,11 +91,8 @@ export default {
     computed: {
         ...mapGetters({
             isCollapsed: 'uxModule/isCollapsed',
-            // teams: 'teamModule/teams',
+            plansList: 'planModule/plansList',
         }),
-        rows() {
-            return this.total ? this.total : 1
-        }
     },
     data() {
         return {
@@ -104,29 +100,10 @@ export default {
             new_team: '',
             company: {
                 name: '',
-                plan:null,
-                number_of_users: 0,
-                number_of_teams: 0,
+                plan:{},
             },
             teamitems: [],
-            planitems: [
-                {
-                    value: 'Basic',
-                    text: 'Basic'
-                },
-                {
-                    value: 'Pro',
-                    text: 'Pro'
-                },
-                {
-                    value: 'Premium',
-                    text: 'Premium'
-                },
-                {
-                    value: 'Alpha Team',
-                    text: 'Alpha Team'
-                },
-            ],
+            planitems: [],
             
             newTeams:[],
 
@@ -138,12 +115,6 @@ export default {
                 required,
             },
             plan: {
-                required
-            },
-            number_of_users: {
-                required
-            },
-            number_of_teams: {
                 required
             },
         }
@@ -171,10 +142,6 @@ export default {
             if (this.$v.company.$anyError) {
                 return;
             }
-
-            if(!this.validateTeamNumber()){
-                return ;
-            }
             if(this.newTeams.length==0){
                 this.$bvToast.toast("Please Add Atleast One Team", {
                     title: "Validate",
@@ -182,6 +149,17 @@ export default {
                     autoHideDelay: 5000,
                 });
                 return ;
+            }
+            if(this.company.plan.number_of_teams!="Unlimited"){
+                if(this.newTeams.length>this.company.plan.number_of_teams){
+                    this.$bvToast.toast("Please Select Plan according to Team List", {
+                        title: "Validate",
+                        variant: 'warning',
+                        autoHideDelay: 5000,
+    
+                    });
+                    return false;
+                }
             }
 
             this.company.newTeams = [];  
@@ -194,46 +172,15 @@ export default {
         reset() {
             this.company = {
                 name: '',
-                plan:null,
-                number_of_users: 0,
-                number_of_teams: 0,
+                plan:{},
             };
+            this.new_team ='';
             this.newTeams = [];
             this.$v.company.$reset();
         },
-        validateTeamNumber() {
-            if(isNaN(this.company.number_of_users) && this.company.number_of_users!="Unlimited"){
-                this.$bvToast.toast("The No. of Users should be Number or Unlimited", {
-                    title: "Validate",
-                    variant: 'warning',
-                    autoHideDelay: 5000,
-                });
-                return false;
-            }
-            if(isNaN(this.company.number_of_teams) && this.company.number_of_teams!="Unlimited"){
-                this.$bvToast.toast("The No. of Teams should be Number or Unlimited", {
-                    title: "Validate",
-                    variant: 'warning',
-                    autoHideDelay: 5000,
-
-                });
-                return false;
-            }
-            if(!isNaN(this.company.number_of_teams) && this.company.number_of_teams!="Unlimited"){
-                if(this.newTeams.length>this.company.number_of_teams){
-                    this.$bvToast.toast("The No. of Teams is maximum "+this.company.number_of_teams, {
-                        title: "Validate",
-                        variant: 'warning',
-                        autoHideDelay: 5000,
-                    });
-                    return false;
-                }
-            }
-            return true;
-        },
         validateAddTeam() {
-            if(isNaN(this.company.number_of_teams) && this.company.number_of_teams!="Unlimited"){
-                this.$bvToast.toast("The No. of Teams should be Number or Unlimited", {
+            if(!(this.company.plan?.number_of_teams)){
+                this.$bvToast.toast("Please Select a Plan", {
                     title: "Validate",
                     variant: 'warning',
                     autoHideDelay: 5000,
@@ -241,12 +188,13 @@ export default {
                 });
                 return false;
             }
-            if(!isNaN(this.company.number_of_teams) && this.company.number_of_teams!="Unlimited"){
-                if(this.newTeams.length>=this.company.number_of_teams){
-                    this.$bvToast.toast("The No. of Teams is maximum "+this.company.number_of_teams, {
+            if(this.company.plan.number_of_teams!="Unlimited"){
+                if(this.newTeams.length>=this.company.plan.number_of_teams){
+                    this.$bvToast.toast("The Plan is Completed.", {
                         title: "Validate",
                         variant: 'warning',
                         autoHideDelay: 5000,
+    
                     });
                     return false;
                 }
@@ -255,6 +203,31 @@ export default {
         },
     },
     async created() {
+        this.$store.dispatch('uxModule/setLoading')
+        try {
+            await this.$store.dispatch("planModule/getPlansList");
+            this.plansList.map((plan) => {
+                this.planitems.push({
+                    value: plan,
+                    text: plan.name
+                });
+            });
+            this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+        this.$store.dispatch('uxModule/hideLoader')
+        }
+
+    },
+    watch:{
+        async showModal(){
+            if(this.showModal){
+                this.reset();
+            }
+
+        }
+        
+        
+
     }
 }
 </script>

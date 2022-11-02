@@ -12,7 +12,7 @@
         <hr>
         <b-row class="mb-3">
           <b-col cols="8" class="d-flex align-items-center">
-            <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+            <!-- <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon> -->
           </b-col>
           <b-col cols="4">
             <b-form-input v-model="search" placeholder="Search"></b-form-input>
@@ -100,7 +100,7 @@
     </div>
     <add-team-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-team-modal>
     <edit-team-modal :showModal="showEditModal" :propsData="editedItem" @cancel="showEditModal=false" @save="save"></edit-team-modal>
-    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure? you want to delete this Team with all of its data"></delete-modal>
     <confirm-modal :showModal="showUserExistModal"   @modalResponse="userExist">
       <template v-slot:userExist>A team already exists with this owner email. Please use a different owner email</template>
     </confirm-modal>
@@ -195,21 +195,42 @@ export default {
           this.$store.dispatch("teamModule/getAllTeams", {page: 1, perPage: this.perPage})
     },
     deleteItem(item){
-      this.$bvToast.toast("Team Delete Functionality is in progress! Because of table relationships", {
-                    title: "In progress",
-                    variant: 'warning',
-                    autoHideDelay: 5000,
+      // this.$bvToast.toast("Team Delete Functionality is in progress! Because of table relationships", {
+      //               title: "In progress",
+      //               variant: 'warning',
+      //               autoHideDelay: 5000,
 
-              });
-              return item;
-      // this.showDeleteModal = true;
-      // this.itemToDelete = item;
+      //         });
+              // return item;
+      this.showDeleteModal = true;
+      this.itemToDelete = item;
     },
-    modalResponse(response) {
+    async modalResponse(response) {
+    this.$store.dispatch('uxModule/setLoading')
+
       this.showDeleteModal = false;
       if (response) {
-        this.$store.dispatch('teamModule/deleteTeam', this.itemToDelete.id)
+        let responseRequest = await this.$store.dispatch('teamModule/deleteTeam', this.itemToDelete.id)
+        if(responseRequest.success==true) {
+
+          this.$bvToast.toast(responseRequest.message, {
+              title: "Message",
+              variant: 'success',
+              autoHideDelay: 5000,
+          });
+          const findIndex = this.items.findIndex(({ id }) => id == this.itemToDelete.id)
+          findIndex !== -1 && this.items.splice(findIndex, 1)
+        }else{
+          this.$bvToast.toast(responseRequest.error, {
+              title: "Error",
+              variant: 'danger',
+              autoHideDelay: 5000,
+          });
+        }
+
       }
+      this.$store.dispatch('uxModule/hideLoader');
+
     },
     editCompany(item) { 
         let company_id = item?.company?.id;

@@ -2,29 +2,16 @@
 <b-modal v-model="showModal" size="md" no-close-on-backdrop>
     <template #modal-header>
         <div class="w-100">
-            Edit User
+            User Status
         </div>
     </template>
         <b-container fluid>
             <b-row class="mb-1">
                     <b-col cols="12">
-                        <b-input-group prepend="Name" class="mb-2" id="name" label="Name" label-for="name">
-                            <b-form-input :state="validateState('name')" aria-describedby="name" type="text" v-model="$v.user.name.$model" required></b-form-input>
-                            <b-form-invalid-feedback id="name">User Name Field is Required.</b-form-invalid-feedback>
+                        <b-input-group prepend="Status" class="mb-2" id="status" label="Status" label-for="status">
+                            <b-form-select :state="validateState('status')" aria-describedby="status" :options="isActiveStatus" v-model="$v.user.status.$model" required></b-form-select>
+                            <b-form-invalid-feedback id="name">User Status Field is Required.</b-form-invalid-feedback>
                         </b-input-group>
-                    </b-col>
-                    <b-col cols="12">
-                        <b-input-group prepend="Email" class="mb-2" >
-                            <b-form-input type="email" :value="user.email" disabled></b-form-input>
-                        </b-input-group>
-                    </b-col>
-
-                    <b-col cols="12">
-                        <b-input-group prepend="Password" class="mb-2">
-                            <b-input v-model="user.password" ></b-input>
-                        </b-input-group>
-                        <small class="text-primary">If Empty, By Default set Previous Password.</small>
-
                     </b-col>
                 </b-row>
 
@@ -49,12 +36,9 @@ import {
     // minLength,
     // email
 } from "vuelidate/lib/validators";
-import {
-    mapGetters
-} from "vuex";
 export default {
     mixins: [validationMixin],
-    name: 'EditUserModal',
+    name: 'UserStatusModal',
     props: {
         showModal: {
             type: Boolean
@@ -63,42 +47,24 @@ export default {
             type: Object
         },
     },
-    computed: {
-        ...mapGetters({
-            isCollapsed: 'uxModule/isCollapsed',
-
-        }),
-    },
     data() {
         return {
-            perPage: 20,
             user: {
-                name: '',
-                email: '',
-                password: '',
+                status: null,
 
             },
+            isActiveStatus: [
+                { value: 1, text: 'Active' },
+                { value: 0, text: 'Deactive' },
+            ]
         }
     },
     validations: {
         user: {
-            name: {
+            status: {
                 required
             },
-            // password: {
-            //     required,
-            //     minLength: minLength(6)
-            // }
-            // email: {
-            //     required,
-            //     email
-            // },
-            // team_id: {
-            //     required
-            // },
-            // role: {
-            //     required
-            // }
+
         }
     },
     methods: {
@@ -114,9 +80,9 @@ export default {
                 
                 return;
             }
-            if(this.user.password.length > 0 && this.user.password.length < 6) {
+            if(this.user.status==null) {
 
-                this.$bvToast.toast("Password Field should be minimum 6 character", {
+                this.$bvToast.toast("User Status Field is required.", {
                     title: "Validate",
                     variant: 'warning',
                     autoHideDelay: 5000,
@@ -129,14 +95,12 @@ export default {
            this. $emit('save', this.user);
         },
     },
-    async created() {
-
-    },
             watch: {
             showModal() {
                 if(this.showModal){
+                    console.log('this.propsData',this.propsData);
+                    
                     this.user= {...this.propsData};
-                    this.user.password = '';
                 }
             }
         }

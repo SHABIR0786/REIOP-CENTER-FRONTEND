@@ -13,6 +13,9 @@
                                         <b-input-group-text title="Edit Team" role="button"  @click="showEditModal=true" >
                                             <b-icon icon="pencil" variant="primary"></b-icon>
                                         </b-input-group-text>
+                                        <b-input-group-text v-if="authUser.role == 1" title="Team Detail" role="button"  @click="editTeamFunction(team)" >
+                                            <b-icon icon="box-arrow-up-right" variant="primary"></b-icon>
+                                        </b-input-group-text>
                                     </b-input-group-append>
                                 </b-input-group>
 
@@ -22,11 +25,11 @@
                             <b-col cols="6">
                                 <b-input-group prepend="Company Name" class="mb-2">
                                     <b-form-input :readonly="true" :value="companyName(team)" ></b-form-input>
-                                    <!-- <b-input-group-append>
-                                            <b-input-group-text title="Company Detail" role="button"  @click="editCompany(team)" >
+                                    <b-input-group-append>
+                                            <b-input-group-text v-if="authUser.role == 1" title="Company Detail" role="button"  @click="editCompany(team)" >
                                                 <b-icon  icon="box-arrow-up-right" variant="primary" ></b-icon> 
                                             </b-input-group-text>
-                                    </b-input-group-append> -->
+                                    </b-input-group-append>
                                 </b-input-group>
                             </b-col>
                             <!-- <b-col cols="6">
@@ -59,7 +62,7 @@
 
                             <b-col cols="6" class="text-right">
                             <b-button variant="primary" class="add-member" @click="showAddMemberModal = true">
-                            <b-icon icon="plus" aria-hidden="true"></b-icon>Add New Team Member</b-button>
+                            <b-icon icon="plus-circle" aria-hidden="true"></b-icon> Add New Team Member</b-button>
                         </b-col>
 
                         </b-row>
@@ -98,7 +101,7 @@
                                     <template v-slot:cell(actions)="data">
                                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                                     <!-- <b-icon  icon="box-arrow-up-right" class="cursor-pointer mr-1" variant="primary" title="View Member" @click="editMember(data.item)"></b-icon>  -->
-                                    <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
+                                    <b-icon class="cursor-pointer" variant="danger" icon="dash-circle" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
                                     </template>
                             </b-table>
                         </b-col>
@@ -109,7 +112,7 @@
             </b-row>
         </b-container>
         <add-team-member-modal :showModal="showAddMemberModal" @cancel="showAddMemberModal=false" @add="addMember"></add-team-member-modal>
-        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure You want to remove this member?"></delete-modal>
         <edit-team-admin-modal :showModal="showEditModal" :propsData="team" @cancel="showEditModal=false" @save="updateTeamName"></edit-team-admin-modal>
         <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="updateUser"></edit-user-modal>
 
@@ -401,15 +404,19 @@ export default {
             async updateTeamName(item){
                 try{
                     this.$store.dispatch('uxModule/setLoading');
-                    console.log('item team',item);
-                    this.showEditModal=false;
-
                     let response = await this.$store.dispatch('teamModule/updateTeamName', {...item})
                     if(response.team){
                         this.team.name = response.team.name;
+                        this.$bvToast.toast("Team Updated successfully", {
+                            title: "Message",
+                            variant: 'success',
+                            autoHideDelay: 5000,
+                        });
                     }
+                    this.showEditModal=false;
                     this.$store.dispatch('uxModule/hideLoader')
                 }catch(e) {
+                    this.showEditModal=false;
                     this.$store.dispatch('uxModule/hideLoader')
                     console.log('error',e);
                     
