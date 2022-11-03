@@ -478,7 +478,7 @@ export default {
             }
         },
         relatedSkipSources() {
-            this.phone_skip_sources = this.relatedSkipSources.map(i=>i['phone_skip_source']).join();
+            this.phone_skip_sources = [...new Set(this.relatedSkipSources.map(i=>i['phone_skip_source']))].join();
         }
     }
 

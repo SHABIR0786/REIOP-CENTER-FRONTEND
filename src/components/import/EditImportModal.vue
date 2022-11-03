@@ -17,31 +17,26 @@
                             variant="primary"
                             size="md"
                             class="ml-3"
-                            @click="editImport()"
-                    >
-                        Edit
-                    </b-button>
+                            @click="editImport()">Edit</b-button>
                     <b-button
                             v-if="isReadOnly === false"
                             variant="primary"
                             size="md"
                             class="ml-3"
-                            @click="edit()"
-                    >
-                        Save
+                            @click="edit()">
+                            Save
                     </b-button>
                   <b-button
                       v-if="isReadOnly === true"
                       variant="primary"
                       size="md"
                       class="ml-3"
-                      @click="rollback(editData)"
-                  >
+                      @click="rollback(editData)">
                     Delete
                   </b-button>
                 </b-row>
                 <b-row>
-                  <b-col>
+                <b-col>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group prepend="User Id" class="mb-2">
@@ -457,6 +452,7 @@ export default {
         deep: true,
         handler() {
           this.editData = {...this.data}
+          console.log(this.editData);
           if(!this.editData.list_skip_source){
             this.editData.list_skip_source = 'N/A';
           }

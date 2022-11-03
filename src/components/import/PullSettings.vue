@@ -225,6 +225,8 @@
             allFieldsMapped: false,
             isSameDataDateAsPullDate: null,
             errors: [],
+            sameDate: null,
+            sameSource: null
         }
       },
       async mounted() {
@@ -285,9 +287,11 @@
           this.skipSource = this.skipSource.sort();
           this.skipSource.unshift('Add a new Skip Source')
         }
-
         if (this.importDetails && this.importDetails.pull_settings) {
           this.list = this.importDetails.pull_settings;
+          this.isSameDataDateAsPullDate = this.list.list_data_date == null?true:false;
+          this.sameDate = this.list.list_skip_date == null?true:false;
+          this.sameSource = this.list.list_skip_source == null?true:false;
         }
       },
       computed: {
@@ -298,9 +302,6 @@
             typeList: 'listModule/typeList',
             sourceList: 'listModule/sourceList',
             skipSourceList: 'listModule/skipSourceList',
-            sameDate: 'listModule/sameDate',
-            sameSource: 'listModule/sameSource',
-
         })
       },
       methods: {
@@ -328,11 +329,11 @@
               this.isSameDataDateAsPullDate === null ||
               (this.isSameDataDateAsPullDate === false && this.list.list_data_date.length  === 0) ||
               (this.importDetails.upload_type === 'appended' && (this.list.list_skip_date.length === 0 || this.list.list_skip_source.length === 0))
-              ){
+              ) {
            this.allFieldsMapped = true;
            return
           }
-          if(this.list.list_data_date.length  != 0 && this.isSameDataDateAsPullDate === false && this.list.list_pull_date){
+          if(this.list.list_data_date?.length  != 0 && this.isSameDataDateAsPullDate === false && this.list.list_pull_date){
             let list_pull_date = moment(this.list.list_pull_date);
             let list_data_date = moment(this.list.list_data_date);
             if(!list_pull_date.isValid()){
@@ -367,14 +368,14 @@
           this.$emit('pullSettingsResponse', this.list);
         },
         dateCheckbox($event){
-          this.$store.dispatch('listModule/saveSkipDateChoose', $event)
+          this.sameDate = $event;
           if(!$event) {this.list.list_skip_date = this.list.list_pull_date}
           else {
             this.list.list_skip_date = ''
           }
         },
         sourceCheckbox($event){
-          this.$store.dispatch('listModule/saveSkipSourceChoose', $event)
+          this.sameSource = $event;
           if(!$event) {this.list.list_skip_source = this.list.list_source}
           else {
             this.list.list_skip_source = ''

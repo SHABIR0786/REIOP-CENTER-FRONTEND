@@ -32,8 +32,6 @@ const state = {
     sellerRunningList: [],
     subjectRelatedList: [],
     sellerRelatedList: [],
-    sameDate:null,
-    sameSource:null,
     allSkipSourceList:[],
     allSourceList:[],
     importPullList:[],
@@ -155,12 +153,6 @@ const mutations = {
         allSkipSourceList.find(el => el.id === payload.id).list_skip_source = payload.list_skip_source
         state.allSkipSourceList = JSON.stringify(allSkipSourceList)
     },
-    SET_SKIP_SOURCE_CHOOSE(state, payload) {
-        state.sameSource = payload
-    },
-    SET_SKIP_DATE_CHOOSE(state, payload) {
-        state.sameDate = payload
-    },
     GET_SKIP_SOURCE_LIST(state, payload) {
         const data = [...payload]
         data.forEach(e => {
@@ -208,8 +200,6 @@ const mutations = {
         state.sourceList = [];
         state.skipSourceList = [];
         state.total = 0;
-        state.sameDate = null;
-        state.sameSource = null;
         state.importPullList = [];
     },
 }
@@ -498,8 +488,6 @@ const getters = {
         }
         return [];
     },
-    sameDate: state => state.sameDate,
-    sameSource: state => state.sameSource,
     list: ({ list }) => {
         if (typeof list === 'string') {
             return JSON.parse(list);
