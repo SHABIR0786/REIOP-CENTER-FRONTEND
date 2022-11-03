@@ -477,7 +477,7 @@ export default {
 
         },
         relatedSkipSources() {
-            this.email_skip_sources = this.relatedSkipSources.map(i=>i['email_skip_source']).join();
+            this.email_skip_sources = [...new Set(this.relatedSkipSources.map(i=>i['email_skip_source']))].join();
         }
     }
 
