@@ -2,7 +2,7 @@
     <b-modal v-model="showModal">
         <template #modal-header>
             <div class="w-100">
-                Delete
+                {{header}}
             </div>
         </template>
         <b-container fluid>
@@ -40,6 +40,10 @@
             title:{
                 type: String,
                 default: "Are you sure You want to delete this item?",
+            },
+            header:{
+                type: String,
+                default: "Delete",
             }
         }
     }

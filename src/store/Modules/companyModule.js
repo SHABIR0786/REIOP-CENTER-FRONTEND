@@ -13,7 +13,10 @@ const state = {
     ],
     companies: [],
     total: 0,
-    company:{}
+    company:{},
+    add_team:{},
+    user_company_role:{},
+
 }
 
 const mutations = {
@@ -37,6 +40,14 @@ const mutations = {
         const findIndex = state.companies.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.companies.splice(findIndex, 1, { ...payload })
     },
+    ADD_TEAM(state, payload) {
+        
+        state.add_team = payload.team;
+    },
+    SET_COMPANY_ADMIN(state, payload) {
+        
+        state.user_company_role = payload.user;
+    },
     DELETE_COMPANY(state, payload) {
         const findIndex = state.companies.findIndex(({ id }) => id === payload)
         findIndex !== -1 && state.companies.splice(findIndex, 1)
@@ -50,6 +61,29 @@ const mutations = {
         // findIndex !== -1 && state.companies.splice(findIndex, 1, { ...payload })
     },
     SET_COMPANY(state, payload) {
+        if(payload?.company?.teams){
+            payload?.company?.teams.forEach(e => {
+                if(e.created_at) {
+                    e.created_at = e.created_at.split('T')[0];
+                }
+                if(e.updated_at) {
+                    e.updated_at = e.updated_at.split('T')[0];
+                }
+            })
+        }
+        if(payload?.company?.users){
+            payload?.company?.users.forEach(e => {
+                if(e.created_at) {
+                    e.created_at = e.created_at.split('T')[0];
+                }
+                if(e.updated_at) {
+                    e.updated_at = e.updated_at.split('T')[0];
+                }
+            })
+        }
+        if(payload?.company?.plan == null){
+            payload.company.plan = {};
+        }
         state.company =payload.company;
     },
 }
@@ -119,6 +153,22 @@ const actions = {
             return response
         })
     },
+    async addTeam({ commit }, data) {
+        return await api.post(`/companies/addTeam`, {...data}).then((response) => {
+            if(response.success){
+                commit('ADD_TEAM', response);
+            }
+            return response
+        })
+    },
+    async setCompanyAdmin({ commit }, data) {
+        return await api.post(`/updatecompanyAdmin`, {...data}).then((response) => {
+            if(response.success){
+                commit('SET_COMPANY_ADMIN', response);
+            }
+            return response
+        })
+    },
 }
 
 const getters = {
@@ -126,6 +176,7 @@ const getters = {
     companies: ({ companies }) => companies,
     company: ({ company }) => company,
     total: ({total}) => total,
+    user_company_role: ({user_company_role}) => user_company_role,
 }
 
 export default {

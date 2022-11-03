@@ -212,7 +212,7 @@ export default {
             if(response.success){
                 this.showAddModal = false;
                 this.$refs.addcompanymodal.reset();
-                this.$bvToast.toast("Team Added successfully", {
+                this.$bvToast.toast("Company Added successfully", {
                     title: "Message",
                     variant: 'success',
                     autoHideDelay: 5000,

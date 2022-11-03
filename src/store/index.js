@@ -31,6 +31,7 @@ import filterModule from "./Modules/filterModule";
 import companyModule from "./Modules/companyModule";
 import exportModule from "./Modules/exportModule";
 import planModule from "./Modules/PlanModule";
+import companyAdminModule from "./Modules/companyAdminModule";
 
 
 
@@ -70,6 +71,7 @@ export default new Vuex.Store({
         companyModule: companyModule,
         exportModule: exportModule,
         planModule:planModule,
+        companyAdminModule:companyAdminModule,
 
     },
     state,

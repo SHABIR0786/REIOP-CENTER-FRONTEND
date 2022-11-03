@@ -206,6 +206,15 @@ export default {
     methods: {
         async addMember(user) {
                 try{
+                    if(!this.authUser.team_id){
+                        this.$bvToast.toast("Please select any Team (from Switch Team)", {
+                            title: "Warning",
+                            variant: 'warning',
+                            autoHideDelay: 5000,
+                        });
+                        return;
+                    }
+
                     this.$store.dispatch('uxModule/setLoading');
                     this.showAddMemberModal = false;
                     if(user) {

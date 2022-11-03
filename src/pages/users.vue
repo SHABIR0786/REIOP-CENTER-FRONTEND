@@ -85,7 +85,7 @@ export default {
             itemsCount: 0,
             sortBy: 'id',
             sortDesc: false,
-            isActive: null,
+            isActive: 'All',
 
             role_text : ['','SuperAdmin','Admin','User'],
             fields: [
@@ -102,12 +102,12 @@ export default {
             userStatusVariant :['danger','success'],
 
             isActiveStatus: [
-            { value: null, text: 'All Users' },
-            { value: 1, text: 'Active Users' },
-            { value: 0, text: 'Deactive Users' },
+                { value: 'All', text: 'All Users' },
+                { value: 'Active', text: 'Active Users' },
+                { value: 'Deactive', text: 'Deactive Users' },
 
 
-        ]
+            ]
 
 
 
