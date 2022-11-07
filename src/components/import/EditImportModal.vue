@@ -250,6 +250,20 @@
                         </b-input-group>
                       </b-col>
                     </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group prepend="Run Month" class="mb-2">
+                          <b-form-input readonly v-model="editData.list_run_month"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-input-group prepend="Run Year" class="mb-2">
+                          <b-form-input readonly v-model="editData.list_run_year"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
                     </b-col>
                 </b-row>
                 <b-row class="pb-2">
@@ -400,6 +414,8 @@ export default {
                 error_phones: '',
                 notes:'',
                 status:'',
+                list_run_month: '',
+                list_run_year: '',
 
             },
             progresspercentage: '',
