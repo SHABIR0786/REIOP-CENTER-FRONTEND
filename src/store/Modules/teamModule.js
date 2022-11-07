@@ -2,7 +2,7 @@ import * as api from "../Services/api"
 
 const state = {
     fields: [
-        {key:"id", label: "Id", sortable: true},
+        {key:"id", label: "ID", sortable: true},
         {key: "actions", label: "Actions"},
         {key: "team_name", label: "Team Name", sortable: true},
         {key: "company_name", label: "Company Name", sortable: true},
@@ -134,7 +134,7 @@ const actions = {
     async addTeamMember({commit}, data) {
         return await api.post(`/teams/add-member`, {...data}).then((response) => {
             if(response.success==true) {
-                commit('ADD_TEAM_MEMBER', data)
+                commit('ADD_TEAM_MEMBER', response.user)
             }
             return response
         })

@@ -221,8 +221,8 @@
                   @click="editTeam(data.item)"
                 ></b-icon
               >
-          <!-- <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" title="Edit Team" @click="editItem(data.item)"></b-icon>
-          <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Delete Team" @click="deleteItem(data.item)"></b-icon> -->
+          <!-- <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" title="Edit Team" @click="editItem(data.item)"></b-icon> -->
+          <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Delete Team" @click="deleteTeamItem(data.item)"></b-icon>
         </template>
             </b-table>
             
@@ -277,7 +277,7 @@
                 </div>
               </template>
               <template v-slot:cell(company_role)="data">
-                <div v-b-tooltip.hover :title="data.item.company_role">
+                <div v-b-tooltip.hover :title="role_text[data.item.company_role]">
                   {{ role_text[data.item.company_role] }}
                 </div>
               </template>
@@ -290,13 +290,13 @@
                   title="Set Company Admin"
                   @click="editCompanyAdmin(data.item)"
                 ></b-icon>
-                <!-- <b-icon
+                <b-icon
                   class="cursor-pointer"
                   variant="danger"
                   icon="trash"
-                  title="Delete Team"
+                  title="Remove Memeber"
                   @click="deleteItem(data.item)"
-                ></b-icon> -->
+                ></b-icon>
               </template>
             </b-table>
             </b-tab>
@@ -313,10 +313,22 @@
         >
           Cancel
         </b-button>
+        <b-button
+          variant="danger"
+          size="sm"
+          class="mr-3 float-left"
+          @click="$emit('delete')"
+          >
+              Delete Company
+          </b-button>
         
       </div>
     </template>
     <edit-company-admin-modal :showModal="showCompanyAdminModal" :propsData="edit_company_admin" @cancel="showCompanyAdminModal=false" @updateRole="updateCompanyAdmin"></edit-company-admin-modal>
+    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure? you want to remove this member from all of this company teams." header="Remove Member"></delete-modal>
+    <delete-modal :showModal="showTeamDeleteModal" @cancel="showTeamDeleteModal=false" @modalResponse="modalResponseTeam" title="Are you sure? you want to delete this Team with all of its data" header="Delete Team"></delete-modal>
+
+
   </b-modal>
 </template>
 
@@ -326,6 +338,7 @@ import { BIcon } from "bootstrap-vue";
 import { required } from "vuelidate/lib/validators";
 import { mapGetters } from "vuex";
 import EditCompanyAdminModal from "./EditCompanyAdminModal.vue";
+import DeleteModal from "../../components/deleteModal/DeleteModal";
 
 
 export default {
@@ -333,7 +346,8 @@ export default {
   name: "AddTeamMemberModal",
   components: {
     BIcon,
-    EditCompanyAdminModal
+    EditCompanyAdminModal,
+    DeleteModal,
   },
   props: {
     showModal: {
@@ -389,6 +403,11 @@ export default {
       search_user: "",
       tab: "teams",
       isBusy: false,
+      itemToDelete: {},
+      itemToDeleteTeam: {},
+      showDeleteModal: false,
+      showTeamDeleteModal: false,
+
       temp_company: {
         plan: {},
       },
@@ -440,8 +459,8 @@ export default {
     },
     async updateCompanyAdmin (user) {
           this.showCompanyAdminModal = false;
-          this.$store.dispatch('uxModule/setLoading')
           if(user) {
+            this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch('companyModule/setCompanyAdmin', {...user}).then((response) => {
                 if(response.success) {
                     this.$bvToast.toast("Role Updated successfully", {
@@ -507,7 +526,92 @@ export default {
         }
       }
     },
+    deleteItem(item) {
+      if(item.company_role == 2){
+        this.$bvToast.toast("You Can't remove to this Company Admin.", {
+          title: "Warning",
+          variant: 'warning',
+          autoHideDelay: 5000,
+      });
+      return 
+      }
+      this.showDeleteModal = true;
+      this.itemToDelete = item;
 
+
+      
+    },
+    async modalResponse(response) {
+        this.$store.dispatch('uxModule/setLoading')
+
+      this.showDeleteModal = false;
+        if (response) {
+            let responseRequest = await this.$store.dispatch('companyAdminModule/removeMember', {'user_id':this.itemToDelete.id,'company_id':this.company.id})
+            if(responseRequest.success==true) {
+
+            this.$bvToast.toast(responseRequest.message, {
+                title: "Message",
+                variant: 'success',
+                autoHideDelay: 5000,
+            });
+
+            const findIndex = this.company.users.findIndex(({ id }) => id == this.itemToDelete.id)
+            findIndex !== -1 && this.company.users.splice(findIndex, 1)
+            this.useritems = this.company?.users?this.company.users:[];
+
+
+            }else{
+            this.$bvToast.toast(responseRequest.error, {
+                title: "Error",
+                variant: 'danger',
+                autoHideDelay: 5000,
+            });
+            }
+
+        }
+        this.$store.dispatch('uxModule/hideLoader');
+    },
+    deleteTeamItem(item) {
+      this.showTeamDeleteModal = true;
+      this.itemToDeleteTeam = item;
+
+    },
+    async modalResponseTeam(response) {
+      this.$store.dispatch('uxModule/setLoading')
+try{
+      this.showTeamDeleteModal = false;
+      if (response) {
+        let responseRequest = await this.$store.dispatch('teamModule/deleteTeam', this.itemToDeleteTeam.id)
+        if(responseRequest.success==true) {
+
+          this.$bvToast.toast(responseRequest.message, {
+              title: "Message",
+              variant: 'success',
+              autoHideDelay: 5000,
+          });
+
+          const findIndex = this.company.teams.findIndex(({ id }) => id == this.itemToDeleteTeam.id)
+            findIndex !== -1 && this.company.teams.splice(findIndex, 1)
+            this.teamitems = this.company?.teams?this.company.teams:[];
+            this.$store.dispatch('uxModule/hideLoader');
+
+        }else{
+          this.$bvToast.toast(responseRequest.error, {
+              title: "Error",
+              variant: 'danger',
+              autoHideDelay: 5000,
+          });
+        this.$store.dispatch('uxModule/hideLoader');
+        }
+
+      }
+    }catch(e){
+      console.log('error',e);
+      this.$store.dispatch('uxModule/hideLoader');
+      
+    }
+      this.$store.dispatch('uxModule/hideLoader');
+    },
     reset() {
       this.company = {
         plan_id: null,

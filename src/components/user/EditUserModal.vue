@@ -37,6 +37,15 @@
                 <b-button variant="primary" size="sm" type="button" @click="onSubmit" class="float-right mr-2">
                     Update
                 </b-button>
+                <b-button
+                    variant="transparent"
+                    size="sm"
+                    class="mr-3 float-left"
+                    @click="$emit('status')"
+                    v-b-tooltip.hover title="Deactivate User"
+                    >
+                    <b-icon class="cursor-pointer" variant="danger" icon="gear" ></b-icon> Status
+                </b-button>
             </div>
         </template>
 </b-modal>

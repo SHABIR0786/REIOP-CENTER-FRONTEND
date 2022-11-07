@@ -80,9 +80,25 @@ const mutations = {
         const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
     },
+    UPDATE_TEAM_ACCESS(state, payload) {
+        console.log('state',state,payload);
+        // const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
+        // findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+    },
+    UPDATE_ADD_MEMBER_TEAM_ACCESS(state, payload) {
+        console.log('state',state,payload);
+        // const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
+        // findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+    },
     DELETE_TEAM_MEMBER(state, payload) {
         const findIndex = state.teams.findIndex(({ id }) => id === payload.id)        
         findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+    },
+    REMOVE_MEMBER(state, payload) {
+        const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
+        console.log('findIndex',findIndex);
+                
+        // findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
     },
     FILLED_DATA(state, data){
         state.existTeam = data;
@@ -214,10 +230,34 @@ const actions = {
             return response
         })
     },
+    async removeMember({ commit }, data) {
+        return await api.deleteAPI(`/removeMember/${data.user_id}/${data.company_id}`).then((response) => {
+            if(response.status ==true){
+                commit('REMOVE_MEMBER', data)
+            }
+            return response
+        })
+    },
     async addTeamMember({commit}, data) {
         return await api.post(`/teams/add-member`, {...data}).then((response) => {
             if(response.success==true) {
                 commit('ADD_TEAM_MEMBER', data)
+            }
+            return response
+        })
+    },
+    async updateTeamAccess({commit}, data) {
+        return await api.post(`/teamsAccess`, {...data}).then((response) => {
+            if(response.success==true) {
+                commit('UPDATE_TEAM_ACCESS', data)
+            }
+            return response
+        })
+    },
+    async addMemberTeamAccess({commit}, data) {
+        return await api.post(`/addMemberTeamAccess`, {...data}).then((response) => {
+            if(response.success==true) {
+                commit('UPDATE_ADD_MEMBER_TEAM_ACCESS', data)
             }
             return response
         })

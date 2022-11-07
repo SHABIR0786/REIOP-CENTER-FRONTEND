@@ -27,12 +27,42 @@
         </b-row>
     </div>
     <b-table id="user-table" lg sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+        <template #head(actions)="scope">
+          <div class="text-nowrap" style="width: 20px;">{{scope.label}}</div>
+        </template>
+        <template #head(id)="scope">
+          <div class="text-nowrap" style="width: 10px;">{{scope.label}}</div>
+        </template>
+        <template #head(name)="scope">
+          <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+        </template>
+        <template #head(plan)="scope">
+          <div class="text-nowrap" style="width: 100px;">{{ scope.label }}</div>
+        </template>
+        <template #head(number_of_users)="scope">
+          <div class="text-nowrap" style="width: 40px;">{{ scope.label }}</div>
+        </template>
+        <template #head(number_of_teams)="scope">
+          <div class="text-nowrap" style="width: 40px;">{{ scope.label }}</div>
+        </template>
+        <template #head(created_at)="scope">
+          <div class="text-nowrap" style="width: 40px;">{{ scope.label }}</div>
+        </template>
+        <template #head(updated_at)="scope">
+          <div class="text-nowrap" style="width: 40px;">{{ scope.label }}</div>
+        </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
             <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteCompany(data.item)"></b-icon>
         </template>
+        <template v-slot:cell(id)="data">
+            <div v-b-tooltip.hover :title="data.item.id">{{ data.item.id }}</div>
+        </template>
+        <template v-slot:cell(name)="data">
+            <div class="text-nowrap" v-b-tooltip.hover :title="data.item.name">{{ data.item.name }}</div>
+        </template>
         <template v-slot:cell(plan)="data">
-            <div v-b-tooltip.hover :title="data.item.plan.name"><b-icon  icon="box-arrow-up-right" variant="primary" class="mr-1" title="Company Detail" @click="editPlanLink(data.item.plan)" ></b-icon>{{ data.item.plan.name }}</div>
+            <div v-b-tooltip.hover :title="data.item.plan.name"><b-icon  icon="box-arrow-up-right" variant="primary" class="mr-1" title="Plan Detail" @click="editPlanLink(data.item.plan)" ></b-icon>{{ data.item.plan.name }}</div>
         </template>
         <template v-slot:cell(number_of_users)="data">
             <div v-b-tooltip.hover :title="data.item.plan.number_of_users">{{ data.item.plan.number_of_users }}</div>
@@ -54,7 +84,7 @@
             <b-pagination class="mb-0" v-model="currentPage" :total-rows="total" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         </b-col>
     </b-row>
-    <edit-company-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-company-modal>
+    <edit-company-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save" @delete="showDeleteModal=true;showModal=false"></edit-company-modal>
     <add-company-modal ref="addcompanymodal" :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-company-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure? you want to delete this Company with all of its teams"></delete-modal>
 
@@ -121,6 +151,8 @@ export default {
                 await this.$store.dispatch('companyModule/getCompany', this.$route.query.id).then(() => {
                     this.editedItem = this.editCompany
                     this.showModal = true
+                    this.itemToDelete = this.editCompany;
+
                 })
             }
             await this.$store.dispatch("companyModule/getAllCompanies", {
@@ -142,9 +174,13 @@ export default {
     },
     methods: {
         editItem(item) {
-            console.log('hello',item);
-            this.showModal = true
-            this.editedItem = JSON.parse(JSON.stringify(item));
+            try{
+                this.showModal = true
+                this.editedItem = JSON.parse(JSON.stringify(item));
+                this.itemToDelete = item;
+            }catch(error){
+                console.log('error',error);
+            }            
         },
         async clearsearch() {
             this.searchCompany = '';

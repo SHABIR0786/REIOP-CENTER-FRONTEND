@@ -130,13 +130,22 @@
         </b-container>
         <template #modal-footer>
             <div class="w-100">
+                
                 <b-button variant="primary" size="sm" class="float-right" @click="$emit('cancel')">
                     Cancel
                 </b-button>
+                <b-button
+                    variant="danger"
+                    size="sm"
+                    class="mr-3 float-left"
+                    @click="$emit('delete')"
+                    >
+                        Delete Team
+                    </b-button>
             </div>
         </template>
         <add-team-member-modal :showModal="showAddMemberModal" @cancel="showAddMemberModal=false" @add="addMember"></add-team-member-modal>
-        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure You want to remove this member?"></delete-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" header="Remove Member" title="Are you sure You want to remove this member?"></delete-modal>
 
     </b-modal>
 </template>
@@ -173,6 +182,8 @@
                                 variant: 'success',
                                 autoHideDelay: 5000,
                             });
+                            // let temp_pivot = {'user_id':response.user.id,'team_id':this.team.id}
+                            // response.user['pivot'] = temp_pivot;
                             this.team.users.push(response.user);
                         }else{
                             this.$bvToast.toast(response.error, {

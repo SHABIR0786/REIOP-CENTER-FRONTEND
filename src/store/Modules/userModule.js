@@ -18,7 +18,8 @@ const state = {
     total: 0,
     total_team_members: 0,
 
-    user:{}
+    user:{},
+    user_exist:{},
 
 }
 
@@ -73,6 +74,9 @@ const mutations = {
     },
     SET_USER(state, payload) {
         state.user =payload.user;
+    },
+    USER_EXIST(state, payload) {
+        state.user_exist =payload.user;
     },
 }
 
@@ -159,6 +163,15 @@ const actions = {
             return response
         })
     },
+    async userExist({commit}, email) {        
+        return await api.get(`/userExist/${email}`).then((response) => {
+            if (response.success) {    
+                            
+                commit('USER_EXIST', response)
+            }
+            return response
+        })
+    },
 }
 
 const getters = {
@@ -167,6 +180,8 @@ const getters = {
     user: ({ user }) => user,
     total: ({total}) => total,
     // users: ({ users }) => users,
+    user_exist: ({ user_exist }) => user_exist,
+
 
 }
 

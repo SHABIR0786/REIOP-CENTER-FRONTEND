@@ -60,9 +60,14 @@
                             <h3>Team Members </h3>
                         </b-col>
 
-                            <b-col cols="6" class="text-right">
-                            <b-button variant="primary" class="add-member" @click="showAddMemberModal = true">
+                            <b-col cols="6" class="text-right float-right">
+
+                            <b-button variant="primary" class="" @click="showAddMemberModal = true">
                             <b-icon icon="plus-circle" aria-hidden="true"></b-icon> Add New Team Member</b-button>
+                            <b-button variant="primary" class="cursor-pointer float-right mx-2" @click="showSwithTeamModal=true">
+                        <b-icon icon="arrow-down-up" aria-hidden="true"></b-icon> Switch Team
+                        </b-button>
+
                         </b-col>
 
                         </b-row>
@@ -115,6 +120,7 @@
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure You want to remove this member?"></delete-modal>
         <edit-team-admin-modal :showModal="showEditModal" :propsData="team" @cancel="showEditModal=false" @save="updateTeamName"></edit-team-admin-modal>
         <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="updateUser"></edit-user-modal>
+        <switch-team-modal :showModal="showSwithTeamModal"  @cancel="showSwithTeamModal=false"></switch-team-modal>
 
 </div>
 </template>
@@ -131,13 +137,15 @@ import  DeleteModal from'@/components/deleteModal/DeleteModal';
 import EditTeamAdminModal from "../components/teamAdmin/EditTeamAdminModal";
 import EditUserModal from "../components/user/EditUserModal";
 // import { setLocalStorage } from '../utils/localStorage';
+import SwitchTeamModal from "../components/teams/SwitchTeamModal.vue";
+
 
 
 
 
 export default {
     name: "Users",
-    components: {AddTeamMemberModal,DeleteModal,BIcon,EditTeamAdminModal,EditUserModal},
+    components: {AddTeamMemberModal,DeleteModal,BIcon,EditTeamAdminModal,EditUserModal,SwitchTeamModal},
 
     data() {
         return {
@@ -164,7 +172,7 @@ export default {
                     {key: "actions", label: "Actions"},
                 ],
                 role_text : ['','SuperAdmin','Admin','User'],
-            
+                showSwithTeamModal:false,
 
         }
     },

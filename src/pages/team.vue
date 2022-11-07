@@ -39,10 +39,10 @@
           </div>
         </template>
         <template #head(actions)="scope">
-          <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+          <div class="text-nowrap" style="width: 20px;">{{scope.label}}</div>
         </template>
         <template #head(id)="scope">
-          <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
+          <div class="text-nowrap" style="width: 10px;">{{scope.label}}</div>
         </template>
         <template #head(team_name)="scope">
           <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
@@ -51,10 +51,10 @@
           <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
         </template>
         <template #head(created_at)="scope">
-          <div class="text-nowrap" style="width: 50px;">{{ scope.label }}</div>
+          <div class="text-nowrap" style="width: 40px;">{{ scope.label }}</div>
         </template>
         <template #head(updated_at)="scope">
-          <div class="text-nowrap" style="width: 50px;">{{ scope.label }}</div>
+          <div class="text-nowrap" style="width: 40px;">{{ scope.label }}</div>
         </template>
 
         <template v-slot:cell(id)="data">
@@ -99,8 +99,8 @@
       </b-row>
     </div>
     <add-team-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-team-modal>
-    <edit-team-modal :showModal="showEditModal" :propsData="editedItem" @cancel="showEditModal=false" @save="save"></edit-team-modal>
-    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure? you want to delete this Team with all of its data"></delete-modal>
+    <edit-team-modal :showModal="showEditModal" :propsData="editedItem" @cancel="showEditModal=false" @save="save" @delete="showDeleteModal = true;showEditModal=false"></edit-team-modal>
+    <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" header="Delete Team" title="Are you sure? you want to delete this Team with all of its data"></delete-modal>
     <confirm-modal :showModal="showUserExistModal"   @modalResponse="userExist">
       <template v-slot:userExist>A team already exists with this owner email. Please use a different owner email</template>
     </confirm-modal>
@@ -158,6 +158,7 @@ export default {
           await this.$store.dispatch('teamModule/getTeam', this.$route.query.id).then(() => {
               this.editedItem = this.editTeam
               this.showEditModal = true
+              this.itemToDelete = this.editTeam;
           })
       }
 
@@ -175,7 +176,8 @@ export default {
 
     editItem(item) {
       this.showEditModal = true
-      this.editedItem = { ...item }
+      this.editedItem = { ...item };
+      this.itemToDelete = item;
     },
     companyName(item) {
       return item?.company?.name;

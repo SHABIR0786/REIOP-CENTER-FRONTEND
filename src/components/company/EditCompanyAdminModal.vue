@@ -85,12 +85,16 @@ export default {
     },
     methods: {
         onSubmit() {
-            if(!(this.user?.id && this.user?.company_id && this.user?.company_role))
-            this.$bvToast.toast("Please Enter Valid Data", {
-                title: "Validate",
-                variant: "warning",
-                autoHideDelay: 5000,
-            });
+            if(!(this.user?.id && this.user?.company_id && this.user?.company_role)){
+                this.$bvToast.toast("Please Select Role", {
+                    title: "Validate",
+                    variant: "warning",
+                    autoHideDelay: 5000,
+                });
+                return ;
+
+            }
+            
             console.log('this.user', this.user);
             
            this. $emit('updateRole', this.user);
