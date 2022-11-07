@@ -38,7 +38,7 @@
             <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         </b-col>
     </b-row>
-    <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save" @Status="showUserStatusModal=true;showModal=false"></edit-user-modal>
+    <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save" @status_modal="showUserStatusModal=true;showModal=false"></edit-user-modal>
     <user-status-modal :showModal="showUserStatusModal" :propsData="editedItem" @cancel="showUserStatusModal=false" @save="UserStausUpdate"></user-status-modal>
 </div>
 </template>

@@ -15,7 +15,7 @@
             <!-- <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon> -->
           </b-col>
           <b-col cols="4">
-            <b-form-input v-model="search" placeholder="Search"></b-form-input>
+            <b-form-input v-model="search" debounce="500" @keyup.enter="searchTeam" placeholder="Search"></b-form-input>
           </b-col>
         </b-row>
       </div>
@@ -72,6 +72,7 @@
         </template>
 
         <template v-slot:cell(actions)="data">
+          <b-icon class="mr-2 cursor-pointer" icon="person-plus" variant="primary" title="Add Member" @click="editItem_Add(data.item)"></b-icon>
           <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" title="Edit Team" @click="editItem(data.item)"></b-icon>
           <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Delete Team" @click="deleteItem(data.item)"></b-icon>
         </template>
@@ -99,7 +100,7 @@
       </b-row>
     </div>
     <add-team-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-team-modal>
-    <edit-team-modal :showModal="showEditModal" :propsData="editedItem" @cancel="showEditModal=false" @save="save" @delete="showDeleteModal = true;showEditModal=false"></edit-team-modal>
+    <edit-team-modal :showModal="showEditModal" :showEditAddModal="showEdit_AddModal" :propsData="editedItem" @cancel="showEditModal=false;showEdit_AddModal=false" @save="save" @delete="showDeleteModal = true;showEditModal=false"></edit-team-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" header="Delete Team" title="Are you sure? you want to delete this Team with all of its data"></delete-modal>
     <confirm-modal :showModal="showUserExistModal"   @modalResponse="userExist">
       <template v-slot:userExist>A team already exists with this owner email. Please use a different owner email</template>
@@ -137,6 +138,8 @@ export default {
       search: '',
       showAddModal: false,
       showEditModal: false,
+      showEdit_AddModal: false,
+
       showUserExistModal: false,
     }
   },
@@ -178,6 +181,12 @@ export default {
       this.showEditModal = true
       this.editedItem = { ...item };
       this.itemToDelete = item;
+    },
+    editItem_Add(item) {
+      this.showEditModal = true;
+      this.editedItem = { ...item };
+      this.itemToDelete = item;
+      this.showEdit_AddModal = true;
     },
     companyName(item) {
       return item?.company?.name;
@@ -249,6 +258,12 @@ export default {
     }
 
     },
+    async searchTeam() {
+        this.$store.dispatch('uxModule/setLoading')
+        await  this.$store.dispatch('teamModule/searchTeams', {page: this.currentPage, perPage: this.perPage, search: this.search})
+
+        this.$store.dispatch('uxModule/hideLoader')
+    },
   },
   mounted() {},
   watch: {
@@ -262,11 +277,10 @@ export default {
         this.$store.dispatch('teamModule/getAllTeams', {page: 1, perPage: this.perPage, search: this.search})
       }
     },
-    search: {
-      handler: function () {
-        this.$store.dispatch('teamModule/searchTeams', {page: this.currentPage, perPage: this.perPage, search: this.search})
-      }
-    }
+    search() {
+            this.searchTeam();
+    },
+
   }
 }
 </script>

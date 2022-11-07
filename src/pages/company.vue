@@ -13,15 +13,7 @@
         <b-row class="mb-3">
             <b-col cols="6" offset-md="6">
                 <b-input-group class="mt-3">
-                    <b-input-group-append v-if="isSearched">
-                        <b-button @click="clearsearch" variant="outline-primary">
-                            <b-icon icon="x" aria-hidden="true"></b-icon> Clear Search
-                        </b-button>
-                    </b-input-group-append>
-                    <b-form-input v-model="searchCompany" @keyup.enter="search" placeholder="Search"></b-form-input>
-                    <b-input-group-append>
-                        <b-button @click="search" variant="primary">Search</b-button>
-                    </b-input-group-append>
+                    <b-form-input v-model="searchCompany" debounce="500" @keyup.enter="search_Company()" placeholder="Search"></b-form-input>
                 </b-input-group>
             </b-col>
         </b-row>
@@ -182,26 +174,18 @@ export default {
                 console.log('error',error);
             }            
         },
-        async clearsearch() {
-            this.searchCompany = '';
-            await this.search();
-            this.isSearched = false;
-        },
-        async search() {
-            await this.$store.dispatch('companyModule/searchCompanies', {
-                page: this.currentPage,
-                perPage: this.perPage,
-                search: this.searchCompany,
-                sortBy: this.sortBy,
-                sortDesc: this.sortDesc
-            })
-            this.itemsCount = this.total;
-            this.filteredOrAllData = this.items;
-            if (this.searchCompany.length == 0) {
-                this.isSearched = false;
-            } else {
-                this.isSearched = true;
-            }
+        async search_Company() {
+            this.$store.dispatch('uxModule/setLoading')
+                await this.$store.dispatch('companyModule/searchCompanies', {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchCompany,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc
+                })
+                this.itemsCount = this.total;
+                this.filteredOrAllData = this.items;
+            this.$store.dispatch('uxModule/hideLoader')
         },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
@@ -392,6 +376,9 @@ export default {
                 this.filteredOrAllData = this.items
                 this.$store.dispatch('uxModule/hideLoader')
             }
+        },
+        searchCompany() {
+            this.search_Company();
         },
     }
 }
