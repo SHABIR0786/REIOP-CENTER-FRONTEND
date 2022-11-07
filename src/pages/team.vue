@@ -72,7 +72,7 @@
         </template>
 
         <template v-slot:cell(actions)="data">
-          <b-icon class="mr-2 cursor-pointer" icon="person-plus" variant="primary" title="Add Member" @click="editItem_Add(data.item)"></b-icon>
+          <b-icon class="mr-2 cursor-pointer" icon="person-plus" variant="info" title="Add Member" @click="editItem_Add(data.item)"></b-icon>
           <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" title="Edit Team" @click="editItem(data.item)"></b-icon>
           <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Delete Team" @click="deleteItem(data.item)"></b-icon>
         </template>
@@ -297,4 +297,11 @@ export default {
     vertical-align: inherit !important;
     height: 64px;
   }
+  table td div{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px !important;
+    cursor:pointer;
+}
 </style>

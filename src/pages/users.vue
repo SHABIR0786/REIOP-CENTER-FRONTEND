@@ -395,4 +395,11 @@ table th {
     vertical-align: inherit !important;
     height: 64px;
 }
+table td div{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px !important;
+    cursor:pointer;
+}
 </style>

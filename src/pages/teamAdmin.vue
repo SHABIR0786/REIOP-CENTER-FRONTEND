@@ -63,7 +63,7 @@
                             <b-col cols="6" class="text-right float-right">
 
                             <b-button variant="primary" class="" @click="showAddMemberModal = true">
-                            <b-icon icon="plus-circle" aria-hidden="true"></b-icon> Add New Team Member</b-button>
+                            <b-icon icon="person-plus" aria-hidden="true"></b-icon> Add New Team Member</b-button>
                             <b-button variant="primary" class="cursor-pointer float-right mx-2" @click="showSwithTeamModal=true">
                         <b-icon icon="arrow-down-up" aria-hidden="true"></b-icon> Switch Team
                         </b-button>
