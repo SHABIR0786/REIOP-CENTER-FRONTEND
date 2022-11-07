@@ -256,7 +256,7 @@ export default {
         this.$store.dispatch('subjectModule/deleteSubject', item.id)
       },
       openRelatedImports(item){
-        const route = '/import-v2?batch_id='+item.process_id;
+        const route = '/activity-v2?batch_id='+item.process_id;
         let routeData = this.$router.resolve({path: route});
         window.open(routeData.href, '_blank');
       }
