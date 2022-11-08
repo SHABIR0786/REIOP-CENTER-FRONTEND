@@ -39,6 +39,9 @@ const mutations = {
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
+            if(e.golden_skip_source.length > 0) {
+            e.golden_skip_source = [...new Set(e.skip_sources.map(i=>i['golden_skip_source']))].join();
+            }
         })
         state.goldenAddresses = JSON.stringify(data);
         state.total = payload.total;
@@ -71,6 +74,9 @@ const mutations = {
             // e.list_stack = e.lists.length;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
+            if(e.golden_skip_source.length > 0) {
+                e.golden_skip_source = [...new Set(e.skip_sources.map(i=>i['golden_skip_source']))].join();
+            }
         })
         }
         state.filteredGoldenAddress =JSON.stringify(filteredData);
