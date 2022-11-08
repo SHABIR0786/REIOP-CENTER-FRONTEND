@@ -39,8 +39,8 @@ export const actions = {
         if (userData && userData.access_token) {
             api.setHeader(userData.access_token);
             commit('SIGN_IN', {user: userData.user, token: userData.access_token})
-        }else if(userData.success == false){
-            vm.$bvToast.toast(userData.message, {
+        }else if(userData.status == 401){
+            vm.$bvToast.toast(userData.error, {
                 title: 'Oops!',
                 solid: true,
                 variant: 'danger',
@@ -49,8 +49,8 @@ export const actions = {
             
             return ;
 
-        }else {
-            vm.$bvToast.toast('You have entered an invalid username or password.', {
+        }else if(userData.status == 422){
+            vm.$bvToast.toast(userData.error['email']?userData.error['email']:''+' '+userData.error['password']?userData.error['password']:'', {
                 title: 'Oops!',
                 solid: true,
                 variant: 'danger',

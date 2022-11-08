@@ -9,7 +9,7 @@
             <b-row v-if="user_exist">
                 <b-col cols="12">
                         <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email" title="Find User" >
-                            <b-form-input :state="validateUserCheck('email')" @keyup.enter="FindEmail(user_check.email)" type="email" :readonly="show_save_button" v-model="$v.user_check.email.$model" aria-describedby="email" required placeholder="Enter Email and Find User"></b-form-input>
+                            <b-form-input :state="validateUserCheck('email')" @keyup.enter="FindEmail(user_check.email)" @blur="FindEmail(user_check.email)" type="email" :readonly="show_save_button" v-model="$v.user_check.email.$model" aria-describedby="email" required placeholder="Enter Email & Find User"></b-form-input>
                             <b-input-group-append>
                                 <b-input-group-text role="button"  @click="FindEmail(user_check.email)" title="Find User">
                                     <b-icon  icon="search" variant="primary" ></b-icon> 
@@ -62,6 +62,9 @@
                     </b-col>
                 </b-row>
             </b-row>
+            <span v-b-tooltip.hover title="Search User by Email. Enter Email press search button or enter key. To change email press Reset button.">
+          <b-icon  icon="exclamation-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+        </span>
         </b-container>
         <template #modal-footer>
             <div class="w-100">

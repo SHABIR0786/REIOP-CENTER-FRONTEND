@@ -7,7 +7,7 @@
       <b-row v-if="user_exist">
                 <b-col cols="6">
                         <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email" title="Find User">
-                            <b-form-input :state="validateUserCheck('email')" @keyup.enter="FindEmail(user_check.email)" type="email" v-model="$v.user_check.email.$model" aria-describedby="email" required :readonly="show_save_button" placeholder="Enter Email and Find User"></b-form-input>
+                            <b-form-input :state="validateUserCheck('email')" @keyup.enter="FindEmail(user_check.email)" @blur="FindEmail(user_check.email)" type="email" v-model="$v.user_check.email.$model" aria-describedby="email" required :readonly="show_save_button" placeholder="Enter Email & Find User"></b-form-input>
                             <b-input-group-append>
                                 <b-input-group-text role="button"  @click="FindEmail(user_check.email)" title="Find User">
                                     <b-icon  icon="search" variant="primary" ></b-icon> 
@@ -31,7 +31,7 @@
                           <b-form-select v-model="user_check.company_role" aria-describedby="company-role-id" :options="company_permission" required>
                           </b-form-select>
                       </b-input-group>
-                      <small class="text-primary">Make this user Company Admin</small>
+                      <small class="text-primary">Make this user Company Admin (Optional)</small>
 
                       
                   </b-col>
@@ -70,15 +70,22 @@
                     <b-form-select v-model="user.company_role" aria-describedby="company-role-id" :options="company_permission" required>
                     </b-form-select>
                 </b-input-group>
-                <small class="text-primary">Make this user Company Admin</small>
+                <small class="text-primary">Make this user Company Admin (Optional)</small>
 
                 
             </b-col>
         </b-row>
+        <span v-b-tooltip.hover title="Search User by Email. Enter Email press search button or enter key. To change email press Reset button.">
+          <b-icon  icon="exclamation-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+        </span>
         <hr>
       <b-row class="my-2">
           <b-col cols="6">
-            <h5>Access In Teams ({{ModalData.userTeamIds.length}})</h5>
+            <h5>Access In Teams ({{ModalData.userTeamIds.length}}) <span v-b-tooltip.hover title="Select Teams that you want to give Access to User. Select Atleast 1 Team.">
+                <b-icon  icon="exclamation-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+              </span>
+          </h5>
+            
     </b-col>
         <b-col cols="6">
           <b-form-input
@@ -214,9 +221,14 @@ export default {
                 //     text: "User"
                 // },
                 {
+                    value: null,
+                    text: "Select Role"
+                },
+                {
                     value: 2,
                     text: "Company Admin"
-                }
+                },
+                
             ],
             team_permission: [
                 // {
