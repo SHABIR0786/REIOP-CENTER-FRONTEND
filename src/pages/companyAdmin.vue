@@ -11,7 +11,7 @@
               <b-input-group prepend="Company Name" class="mb-2">
                   <b-form-input :readonly="true" :value="company.name" ></b-form-input>
                   <b-button variant="primary" class="cursor-pointer mx-1" @click="addMeberMultiSelectTeam()">
-                      <b-icon icon="plus-circle" aria-hidden="true"></b-icon> Add Member
+                      <b-icon icon="person-plus" aria-hidden="true"></b-icon> Add Member
                 </b-button>
                   <b-button variant="primary" class="cursor-pointer" @click="showSwitchCompanyModal=true">
                   <b-icon icon="arrow-down-up" aria-hidden="true"></b-icon> Switch Company
@@ -599,4 +599,11 @@ export default {
     vertical-align: inherit !important;
     height: 64px;
   }
+  table td div{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px !important;
+    cursor:pointer;
+}
 </style>

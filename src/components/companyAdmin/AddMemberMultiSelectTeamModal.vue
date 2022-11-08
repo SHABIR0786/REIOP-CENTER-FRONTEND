@@ -6,13 +6,19 @@
     <b-container fluid>
       <b-row v-if="user_exist">
                 <b-col cols="6">
-                        <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email">
-                            <b-form-input :state="validateUserCheck('email')" type="email" v-model="$v.user_check.email.$model" aria-describedby="email" required></b-form-input>
+                        <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email" title="Find User">
+                            <b-form-input :state="validateUserCheck('email')" @keyup.enter="FindEmail(user_check.email)" type="email" v-model="$v.user_check.email.$model" aria-describedby="email" required :readonly="show_save_button" placeholder="Enter Email and Find User"></b-form-input>
+                            <b-input-group-append>
+                                <b-input-group-text role="button"  @click="FindEmail(user_check.email)" title="Find User">
+                                    <b-icon  icon="search" variant="primary" ></b-icon> 
+                                </b-input-group-text>
+                            </b-input-group-append>
                             <b-form-invalid-feedback id="email" v-if="$v.user_check.email.email">Email Field is required.</b-form-invalid-feedback>
                             <b-form-invalid-feedback id="email" v-if="$v.user_check.email.required">Enter valid Email.</b-form-invalid-feedback>
                         </b-input-group>
+                        <small class="text-primary" v-if="please_wait">Plesae Wait...</small>
                     </b-col>
-                    <b-col cols="6">
+                    <b-col cols="6" v-if="show_save_button">
                       <b-input-group prepend="Team Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
                           <b-form-select v-model="$v.user_check.role.$model" aria-describedby="role-id" :options="team_permission" :state="validateUserCheck('role')" required>
                           </b-form-select>
@@ -20,7 +26,7 @@
                       </b-input-group>
 
                   </b-col>
-                    <b-col cols="6">
+                    <b-col cols="6" v-if="show_save_button">
                       <b-input-group prepend="Company Role" id="company-role-id" label="Role" label-for="company-role-id" class="mb-2">
                           <b-form-select v-model="user_check.company_role" aria-describedby="company-role-id" :options="company_permission" required>
                           </b-form-select>
@@ -39,7 +45,7 @@
             </b-col>
             <b-col cols="6">
               <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email">
-                  <b-form-input :state="validateState('email')" type="email" v-model="$v.user.email.$model" aria-describedby="email" required></b-form-input>
+                  <b-form-input :state="validateState('email')" type="email" v-model="$v.user.email.$model" aria-describedby="email" required :readonly="show_save_button"></b-form-input>
                   <b-form-invalid-feedback id="email" v-if="$v.user.email.email">Email is required.</b-form-invalid-feedback>
                   <b-form-invalid-feedback id="email" v-if="$v.user.email.required">Enter valid Email.</b-form-invalid-feedback>
               </b-input-group>
@@ -131,8 +137,16 @@
         >
           Cancel
         </b-button>
-        <b-button variant="primary" size="sm" type="button" @click="onSubmit" class="float-right mr-2">
+        <b-button variant="primary" size="sm" type="button" @click="onSubmit" class="float-right mr-2" v-if="show_save_button">
                     Add Memeber with Team Access
+                </b-button>
+                <b-button
+                        variant="primary"
+                        size="sm"
+                        class="float-left"
+                        @click="reset_form()"
+                >
+                    Reset
                 </b-button>
         
       </div>
@@ -182,13 +196,13 @@ export default {
                 name: '',
                 email: '',
                 password: '',
-                role:''
+                role:2
 
 
             },
             user_check: {
                     email: '',
-                    role:'',
+                    role:2,
                 company_role:null,
                 },
             user_exist:true,
@@ -229,6 +243,9 @@ export default {
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],
     role_text : ['','SuperAdmin','Company Admin','User'],
+    show_save_button:false,
+    please_wait:false,
+
     };
   },
 
@@ -274,49 +291,63 @@ export default {
         name: '',
         email: '',
         password: '',
-        role:''
+        role:2,
       };
       this.ModalData = {};
       this.teamitems = [];
       this.$v.user.$reset();
       this.user_check = {
-                role: '',
+                role: 2,
                 email:'',
         company_role:null,
             };
             this.$v.user_check.$reset();
             this.user_exist=true;
+            this.show_save_button = false;
+            this.please_wait = false;
 
     },
-    async onSubmit() {
+    reset_form() {
+      this.user ={
+        company_role:null,
+        name: '',
+        email: '',
+        password: '',
+        role:2,
+      };
+      this.$v.user.$reset();
+      this.user_check = {
+        role: 2,
+        email:'',
+        company_role:null,
+      };
+      this.$v.user_check.$reset();
+      this.user_exist=true;
+      this.show_save_button = false;
+      this.please_wait = false;
+      this.ModalData.userTeamIds = [];
 
 
+    },
 
-      if(this.user_exist){
+    async FindEmail(email){
             try{
                 this.$v.user_check.$touch();
                 if (this.$v.user_check.$anyError) {
                     return;
                 }
-                this.$store.dispatch('uxModule/setLoading');
-                let response = await this.$store.dispatch('userModule/userExist', this.user_check.email);
+                // this.$store.dispatch('uxModule/setLoading');
+                this.please_wait = true;
+                let response = await this.$store.dispatch('userModule/userExist', email);
                 if(response.success){
-                    
-
-                    if(this.ModalData.userTeamIds.length<1){
-                      this.$bvToast.toast("Please Select atleast one Team", {
-                        title: "Validate",
-                        variant: "warning",
+                    // this.$store.dispatch('uxModule/hideLoader')
+                    this.$bvToast.toast("User Found", {
+                        title: "Message",
+                        variant: 'success',
                         autoHideDelay: 5000,
-                      });
-                    this.$store.dispatch('uxModule/hideLoader')
-                      return ;
-                    }
-                  this.user_check['company_id'] = this.ModalData.company_id;
-                  this.user_check['userTeamIds'] = this.ModalData.userTeamIds;
-
-                  this.$emit("addMemberTeamAccess", this.user_check);
-
+                    });
+                    // this.$emit('add', this.user_check);
+                    this.user_exist = true;
                 }else{
                     this.$bvToast.toast(response.message, {
                         title: "Warning",
@@ -326,14 +357,41 @@ export default {
                     this.user_exist = false;
                     this.user.email = this.user_check.email;
                     this.user.role = this.user_check.role;
-                    this.user.company_role = this.user_check.company_role;
-
-                    this.$store.dispatch('uxModule/hideLoader')
+                   
+                    // this.$store.dispatch('uxModule/hideLoader')
                 }
+                this.show_save_button = true;
+                this.please_wait = false;
+
             }catch(e) {
-                this.$store.dispatch('uxModule/hideLoader')
+                // this.$store.dispatch('uxModule/hideLoader')
                 console.log('error',e);
             }
+            
+
+        },
+    async onSubmit() {
+
+
+
+      if(this.user_exist){
+          this.$v.user_check.$touch();
+          if (this.$v.user_check.$anyError) {
+              return;
+          }
+          if(this.ModalData.userTeamIds.length<1){
+                this.$bvToast.toast("Please Select atleast one Team", {
+                  title: "Validate",
+                  variant: "warning",
+                  autoHideDelay: 5000,
+                });
+              this.$store.dispatch('uxModule/hideLoader')
+                return ;
+          }
+          this.user_check['company_id'] = this.ModalData.company_id;
+          this.user_check['userTeamIds'] = this.ModalData.userTeamIds;
+          this.$emit("addMemberTeamAccess", this.user_check);
+
             
         }else{
 
@@ -355,9 +413,6 @@ export default {
           
           this.$emit("addMemberTeamAccess", this.user);
         }
-
-
-
 
     },
     SEARCHTEAM(){

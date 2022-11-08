@@ -127,16 +127,20 @@
               ></b-list-group-item>
             </b-list-group>
           </b-col> -->
-          <b-col cols="12" class="text-right">
+          <b-col cols="12" >
+            
           <b-button
           variant="primary"
           size="sm"
           type="button"
           @click="onSubmit"
-          class=""
+          class=" float-right"
         >
           Update
         </b-button>
+        <b-button variant="primary" class="cursor-pointer float-left mr-2" size="sm"  @click="addMeberMultiSelectTeam()">
+                      <b-icon icon="person-plus" aria-hidden="true"></b-icon> Add Member
+                </b-button>
         </b-col>
           
       </b-row>
@@ -230,7 +234,10 @@
           <b-tab title="Company Members" :active="tab == 'teams_members'">
             <b-row class="my-3">
               <b-col cols="6" class="d-flex align-items-center">
-                <h3>Company Members</h3>
+                <h3>Company Members</h3> 
+                <b-button variant="outline-primary" size="sm" class="cursor-pointer float-right ml-3" @click="addMeberMultiSelectTeam()">
+                      <b-icon icon="person-plus" variant="info"></b-icon> Add Member
+                </b-button>
               </b-col>
               <b-col cols="6">
                 <b-form-input
@@ -327,6 +334,7 @@
     <edit-company-admin-modal :showModal="showCompanyAdminModal" :propsData="edit_company_admin" @cancel="showCompanyAdminModal=false" @updateRole="updateCompanyAdmin"></edit-company-admin-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure? you want to remove this member from all of this company teams." header="Remove Member"></delete-modal>
     <delete-modal :showModal="showTeamDeleteModal" @cancel="showTeamDeleteModal=false" @modalResponse="modalResponseTeam" title="Are you sure? you want to delete this Team with all of its data" header="Delete Team"></delete-modal>
+    <add-member-multi-select-team-modal :showModal="showAddMutliSeletModal" :propsData="addMemberMutliSeletItem" @cancel="showAddMutliSeletModal=false" @addMemberTeamAccess="addMemberTeamAccess"></add-member-multi-select-team-modal>
 
 
   </b-modal>
@@ -339,7 +347,7 @@ import { required } from "vuelidate/lib/validators";
 import { mapGetters } from "vuex";
 import EditCompanyAdminModal from "./EditCompanyAdminModal.vue";
 import DeleteModal from "../../components/deleteModal/DeleteModal";
-
+import AddMemberMultiSelectTeamModal from "../../components/companyAdmin/AddMemberMultiSelectTeamModal";
 
 export default {
   mixins: [validationMixin],
@@ -348,6 +356,7 @@ export default {
     BIcon,
     EditCompanyAdminModal,
     DeleteModal,
+    AddMemberMultiSelectTeamModal
   },
   props: {
     showModal: {
@@ -432,7 +441,8 @@ export default {
     showCompanyAdminModal: false,
     edit_company_admin:{},
     role_text : ['','SuperAdmin','Company Admin','User'],
-
+    showAddMutliSeletModal:false,
+    addMemberMutliSeletItem:{},
     };
   },
   validations: {
@@ -711,8 +721,55 @@ try{
         this.useritems = this.company.users;
 
         
-    }
-    
+    },
+    async addMeberMultiSelectTeam() {
+
+      this.addMemberMutliSeletItem['company_id'] = this.company?.id;
+      this.addMemberMutliSeletItem['teams'] = this.company?.teams?this.company.teams:[];
+      this.addMemberMutliSeletItem['userTeamIds'] = [];      
+
+      this.showAddMutliSeletModal = true;
+
+    },
+    async addMemberTeamAccess(user) {
+      if(user) {
+        
+            this.$store.dispatch('uxModule/setLoading')
+            await this.$store.dispatch('companyAdminModule/addMemberTeamAccess', {...user}).then((response) => {
+                if(response.success) {
+                    this.$bvToast.toast("Member Added Successfully with Team Access", {
+                    title: "Message",
+                    variant: "success",
+                    autoHideDelay: 5000,
+                    });
+
+                    // const newArrMap = this.company.users.map(obj => {
+                    // if (obj.id === response.user.id) {
+                    //     return {...obj, userTeamIds: response.user.userTeamIds,number_of_teams: response.user.number_of_teams};
+                    // }
+
+                    // return obj;
+                    // });
+                    response.user.created_at = response.user.created_at.split('T')[0];
+                    response.user.updated_at = response.user.updated_at.split('T')[0];
+                    this.company.users.push(response.user);
+                    // this.company.users = newArrMap;
+                    this.useritems = this.company?.users?this.company.users:[];
+                    this.showAddMutliSeletModal = false;
+
+                }else{
+                    this.$bvToast.toast(response.error, {
+                    title: "Error",
+                    variant: "danger",
+                    autoHideDelay: 5000,
+                    });
+
+                }
+            })
+            this.$store.dispatch('uxModule/hideLoader')
+          }
+      
+    },
 
   },
 
@@ -764,5 +821,12 @@ try{
 .trash-icon {
   float: right;
   cursor: pointer;
+}
+table td div{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px !important;
+    cursor:pointer;
 }
 </style>

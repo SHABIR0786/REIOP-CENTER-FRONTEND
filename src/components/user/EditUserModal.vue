@@ -41,8 +41,8 @@
                     variant="transparent"
                     size="sm"
                     class="mr-3 float-left"
-                    @click="$emit('status')"
-                    v-b-tooltip.hover title="Deactivate User"
+                    @click="$emit('status_modal')"
+                    v-b-tooltip.hover title="User Status"
                     >
                     <b-icon class="cursor-pointer" variant="danger" icon="gear" ></b-icon> Status
                 </b-button>

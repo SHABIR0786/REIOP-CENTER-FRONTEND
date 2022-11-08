@@ -56,6 +56,8 @@ const mutations = {
         state.total = payload;
     },
     ADD_COMPANY(state, payload) {
+        payload.created_at = payload.created_at.split('T')[0];
+        payload.updated_at = payload.updated_at.split('T')[0];
         state.companies.push(payload);
         // const findIndex = state.companies.findIndex(({ id }) => id === payload.id)
         // findIndex !== -1 && state.companies.splice(findIndex, 1, { ...payload })

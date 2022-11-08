@@ -13,15 +13,7 @@
         <b-row class="mb-3">
             <b-col cols="6" offset-md="6">
                 <b-input-group class="mt-3">
-                    <b-input-group-append v-if="isSearched">
-                        <b-button @click="clearsearch" variant="outline-primary">
-                            <b-icon icon="x" aria-hidden="true"></b-icon> Clear Search
-                        </b-button>
-                    </b-input-group-append>
-                    <b-form-input v-model="searchCompany" @keyup.enter="search" placeholder="Search"></b-form-input>
-                    <b-input-group-append>
-                        <b-button @click="search" variant="primary">Search</b-button>
-                    </b-input-group-append>
+                    <b-form-input v-model="searchCompany" debounce="500" @keyup.enter="search_Company()" placeholder="Search"></b-form-input>
                 </b-input-group>
             </b-col>
         </b-row>
@@ -52,8 +44,9 @@
           <div class="text-nowrap" style="width: 40px;">{{ scope.label }}</div>
         </template>
         <template v-slot:cell(actions)="data">
-            <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteCompany(data.item)"></b-icon>
+            <b-icon class="mr-2 cursor-pointer p-0" icon="person-plus" variant="info" @click="addMeberMultiSelectTeam(data.item)" title="Add Member"></b-icon>
+            <b-icon class="mr-2 cursor-pointer p-0" icon="pencil" variant="primary" @click="editItem(data.item)" title="Edit"></b-icon>
+            <b-icon class="cursor-pointer p-0" variant="danger" icon="trash" @click="deleteCompany(data.item)" title="Delete"></b-icon>
         </template>
         <template v-slot:cell(id)="data">
             <div v-b-tooltip.hover :title="data.item.id">{{ data.item.id }}</div>
@@ -87,6 +80,7 @@
     <edit-company-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save" @delete="showDeleteModal=true;showModal=false"></edit-company-modal>
     <add-company-modal ref="addcompanymodal" :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @add="add"></add-company-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure? you want to delete this Company with all of its teams"></delete-modal>
+    <add-member-multi-select-team-modal :showModal="showAddMutliSeletModal" :propsData="addMemberMutliSeletItem" @cancel="showAddMutliSeletModal=false" @addMemberTeamAccess="addMemberTeamAccess"></add-member-multi-select-team-modal>
 
 </div>
 </template>
@@ -101,6 +95,7 @@ import {
 import EditCompanyModal from "../components/company/EditCompanyModal";
 import AddCompanyModal from "../components/company/AddCompanyModal";
 import DeleteModal from "../components/deleteModal/DeleteModal";
+import AddMemberMultiSelectTeamModal from "../components/companyAdmin/AddMemberMultiSelectTeamModal";
 
 
 
@@ -110,7 +105,8 @@ export default {
         BIcon,
         EditCompanyModal,
         AddCompanyModal,
-        DeleteModal
+        DeleteModal,
+        AddMemberMultiSelectTeamModal
     },
     data() {
         return {
@@ -131,6 +127,10 @@ export default {
             sortBy: 'id',
             sortDesc: false,
             isSearched: false,
+            showAddMutliSeletModal:false,
+            addMemberMutliSeletItem:{},
+
+
         }
     },
     computed: {
@@ -182,26 +182,64 @@ export default {
                 console.log('error',error);
             }            
         },
-        async clearsearch() {
-            this.searchCompany = '';
-            await this.search();
-            this.isSearched = false;
+        async addMeberMultiSelectTeam(company) {
+            console.log('company',company);
+            
+
+            this.addMemberMutliSeletItem['company_id'] = company?.id;
+            const temp_teams = company?.teams?company.teams:[];
+            temp_teams.forEach(e => {
+                    e.created_at = e.created_at.split('T')[0];
+                    e.updated_at = e.updated_at.split('T')[0];
+                })
+            this.addMemberMutliSeletItem['teams'] = temp_teams;
+            this.addMemberMutliSeletItem['userTeamIds'] = [];      
+
+            this.showAddMutliSeletModal = true;
+
         },
-        async search() {
-            await this.$store.dispatch('companyModule/searchCompanies', {
-                page: this.currentPage,
-                perPage: this.perPage,
-                search: this.searchCompany,
-                sortBy: this.sortBy,
-                sortDesc: this.sortDesc
+        async addMemberTeamAccess(user) {
+      if(user) {
+        
+            this.$store.dispatch('uxModule/setLoading')
+            await this.$store.dispatch('companyAdminModule/addMemberTeamAccess', {...user}).then((response) => {
+                if(response.success) {
+                    this.$bvToast.toast("Member Added Successfully with Team Access", {
+                    title: "Message",
+                    variant: "success",
+                    autoHideDelay: 5000,
+                    });
+
+                    // this.company.users = newArrMap;
+                    this.showAddMutliSeletModal = false;
+                    this.$store.dispatch('uxModule/hideLoader')
+
+                }else{
+                    this.$bvToast.toast(response.error, {
+                    title: "Error",
+                    variant: "danger",
+                    autoHideDelay: 5000,
+                    });
+                    this.$store.dispatch('uxModule/hideLoader')
+
+                }
             })
-            this.itemsCount = this.total;
-            this.filteredOrAllData = this.items;
-            if (this.searchCompany.length == 0) {
-                this.isSearched = false;
-            } else {
-                this.isSearched = true;
-            }
+            this.$store.dispatch('uxModule/hideLoader')
+          }
+      
+    },
+        async search_Company() {
+            this.$store.dispatch('uxModule/setLoading')
+                await this.$store.dispatch('companyModule/searchCompanies', {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchCompany,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc
+                })
+                this.itemsCount = this.total;
+                this.filteredOrAllData = this.items;
+            this.$store.dispatch('uxModule/hideLoader')
         },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
@@ -393,6 +431,9 @@ export default {
                 this.$store.dispatch('uxModule/hideLoader')
             }
         },
+        searchCompany() {
+            this.search_Company();
+        },
     }
 }
 </script>
@@ -448,5 +489,12 @@ export default {
 table th {
     vertical-align: inherit !important;
     height: 64px;
+}
+table td div{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px !important;
+    cursor:pointer;
 }
 </style>

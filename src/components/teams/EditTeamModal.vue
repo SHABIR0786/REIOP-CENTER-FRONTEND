@@ -162,7 +162,11 @@
             },
             propsData: {
                 type: Object
-            }
+            },
+            showEditAddModal: {
+                type: Boolean,
+                default: false
+            },
         },
         methods: {
             edit() {
@@ -342,7 +346,15 @@
             showModal() {
                 this.team= {...this.propsData}
                 this.team.created_at = this.team.created_at?this.team.created_at.split('T')[0]: '';
-                this.team.updated_at = this.team.updated_at?this.team.updated_at.split('T')[0]: ''
+                this.team.updated_at = this.team.updated_at?this.team.updated_at.split('T')[0]: '';
+                if(this.showEditAddModal == true){
+                    this.showAddMemberModal = true;
+                }
+            },
+            showEditAddModal() {
+                if(this.showEditAddModal == true){
+                    this.showAddMemberModal = true;
+                }
             }
         }
 
