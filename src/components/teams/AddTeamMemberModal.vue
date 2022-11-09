@@ -63,7 +63,7 @@
                 </b-row>
             </b-row>
             <span v-b-tooltip.hover title="Search User by Email. Enter Email press search button or enter key. To change email press Reset button.">
-          <b-icon  icon="exclamation-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+          <b-icon  icon="info-circle" variant="primary cursor-pointer" role="button"></b-icon> 
         </span>
         </b-container>
         <template #modal-footer>

@@ -63,7 +63,16 @@
           </div>
         </template>
         <template v-slot:cell(team_name)="data">
-            <div v-b-tooltip.hover :title="data.item.name">{{ data.item.name }}</div>
+            <div v-b-tooltip.hover :title="data.item.name">
+            <!-- <b-icon
+              icon="box-arrow-up-right"
+              variant="primary"
+              class="mr-2"
+              role="button"
+              title="Team View"
+              @click="editTeamLink(data.item)"
+            ></b-icon> -->
+              {{ data.item.name }}</div>
         </template>
           <template v-slot:cell(company_name)="data">
             <div v-b-tooltip.hover :title="companyName(data.item)">
@@ -264,6 +273,20 @@ export default {
 
         this.$store.dispatch('uxModule/hideLoader')
     },
+    // editTeamLink(item) {
+    //     let team_id = item?.id;
+    //     if (team_id) {
+    //         const route = "/teams?id=" + team_id;
+    //         let routeData = this.$router.resolve({ path: route });
+    //         window.open(routeData.href, "_blank");
+    //     } else {
+    //         this.$bvToast.toast("Team Id not found", {
+    //         title: "Validate",
+    //         variant: "warning",
+    //         autoHideDelay: 5000,
+    //         });
+    //     }
+    // },
   },
   mounted() {},
   watch: {

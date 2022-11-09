@@ -76,13 +76,13 @@
             </b-col>
         </b-row>
         <span v-b-tooltip.hover title="Search User by Email. Enter Email press search button or enter key. To change email press Reset button.">
-          <b-icon  icon="exclamation-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+          <b-icon  icon="info-circle" variant="primary cursor-pointer" role="button"></b-icon> 
         </span>
         <hr>
       <b-row class="my-2">
           <b-col cols="6">
             <h5>Access In Teams ({{ModalData.userTeamIds.length}}) <span v-b-tooltip.hover title="Select Teams that you want to give Access to User. Select Atleast 1 Team.">
-                <b-icon  icon="exclamation-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+                <b-icon  icon="info-circle" variant="primary cursor-pointer" role="button"></b-icon> 
               </span>
           </h5>
             
