@@ -7,7 +7,8 @@
       <b-row v-if="user_exist">
                 <b-col cols="6">
                         <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email" title="Find User">
-                            <b-form-input :state="validateUserCheck('email')" @keyup.enter="FindEmail(user_check.email)" @blur="FindEmail(user_check.email)" type="email" v-model="$v.user_check.email.$model" aria-describedby="email" required :readonly="show_save_button" placeholder="Enter Email & Find User"></b-form-input>
+                          <!-- @blur="FindEmail(user_check.email)" -->
+                            <b-form-input :state="validateUserCheck('email')" @keyup.enter="FindEmail(user_check.email)"  type="email" v-model="$v.user_check.email.$model" aria-describedby="email" required :readonly="show_save_button" placeholder="Enter Email & Find User"></b-form-input>
                             <b-input-group-append>
                                 <b-input-group-text role="button"  @click="FindEmail(user_check.email)" title="Find User">
                                     <b-icon  icon="search" variant="primary" ></b-icon> 

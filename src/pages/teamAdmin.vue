@@ -106,7 +106,7 @@
                                     <template v-slot:cell(actions)="data">
                                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                                     <!-- <b-icon  icon="box-arrow-up-right" class="cursor-pointer mr-1" variant="primary" title="View Member" @click="editMember(data.item)"></b-icon>  -->
-                                    <b-icon class="cursor-pointer" variant="danger" icon="dash-circle" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
+                                    <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
                                     </template>
                             </b-table>
                         </b-col>

@@ -9,7 +9,7 @@
                 <b-row class="">
                     <b-col cols="12" lg="6" md="12">
                     <b-col cols="12" class="mb-3">
-                        <b-input-group prepend="Name" v-b-tooltip.hover title="Company Name" class="mb-2" id="name" label="Name" label-for="name">
+                        <b-input-group prepend="Company Name" v-b-tooltip.hover title="Company Name" class="mb-2" id="name" label="Name" label-for="name">
                             <b-form-input id="name" name="name" :state="validateState('name')" aria-describedby="name" type="text" v-model="$v.company.name.$model" required></b-form-input>
                             <b-form-invalid-feedback id="name">Company Name is Required.</b-form-invalid-feedback>
                         </b-input-group>

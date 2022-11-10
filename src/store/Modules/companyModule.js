@@ -6,6 +6,7 @@ const state = {
         {key:"actions", label: "Actions"},
         {key: "name", label: "Name", sortable: true},
         {key: "plan", label: "Plan", sortable: true},
+        {key: "custom_plan", label: "Custom Plan", sortable: true},
         {key: "number_of_users", label: "No. of Users", sortable: true},
         {key: "number_of_teams", label: "No. of Teams", sortable: true},
         {key:"created_at", label: "Created Date", sortable: true},
@@ -37,6 +38,12 @@ const mutations = {
         state.companies = [...data]
     },
     EDIT_COMPANY(state, payload) {
+        if(payload.created_at) {
+            payload.created_at = payload.created_at.split('T')[0];
+        }
+        if(payload.updated_at) {
+            payload.updated_at = payload.updated_at.split('T')[0];
+        }
         const findIndex = state.companies.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.companies.splice(findIndex, 1, { ...payload })
     },
