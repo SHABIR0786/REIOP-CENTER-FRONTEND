@@ -37,6 +37,19 @@
                             <b-col cols="6">
                                 <b-input-group prepend="Team Name" class="mb-2">
                                     <b-form-input :readonly="isReadOnly" v-model="team.name"></b-form-input>
+                                    <!-- <b-input-group-append>
+                                <b-input-group-text role="button"  @click="FindEmail(user_check.email)" title="Find User">
+                                    <b-icon
+                                    icon="box-arrow-up-right"
+                                    variant="primary"
+                                    class="mr-2"
+                                    role="button"
+                                    title="Team View"
+                                    @click="editTeam(team)"
+                                    ></b-icon>
+                                </b-input-group-text>
+                            </b-input-group-append> -->
+                                    
                                 </b-input-group>
                             </b-col>
                             <b-col cols="6">
@@ -118,7 +131,7 @@
                                     <template v-slot:cell(actions)="data">
                                     <!-- <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon> -->
                                     <b-icon  icon="box-arrow-up-right" class="cursor-pointer mr-2" variant="primary" title="View Member" @click="editMember(data.item)"></b-icon> 
-                                    <b-icon class="cursor-pointer" variant="danger" icon="dash-circle" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
+                                    <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
                                     </template>
                             </b-table>
                         </b-col>
@@ -317,6 +330,20 @@
                 }
 
             },
+            // editTeam(item) {
+            //     let team_id = item?.id;
+            //     if (team_id) {
+            //         const route = "/teams?id=" + team_id;
+            //         let routeData = this.$router.resolve({ path: route });
+            //         window.open(routeData.href, "_blank");
+            //     } else {
+            //         this.$bvToast.toast("Team Id not found", {
+            //         title: "Validate",
+            //         variant: "warning",
+            //         autoHideDelay: 5000,
+            //         });
+            //     }
+            // },
         },
         data() {
             return {

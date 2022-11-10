@@ -3,6 +3,9 @@ import * as api from "../Services/api"
 
 export const state = {
     isLogged: false,
+    isReset: false,
+    isForgotData: {},
+    resetPassword: {},
     accessToken: getLocalStorage('accessToken') || '',
     authUser: JSON.parse(getLocalStorage('authUser')) || {},
     adminMode: getLocalStorage('adminMode') || false,
@@ -15,6 +18,13 @@ export const mutations = {
         state.accessToken = token;
         setLocalStorage('accessToken', token);
         setLocalStorage('authUser', JSON.stringify(user));
+    },
+    FORGOT_PASSWORD(state, data) {
+        state.isForgotData = data;
+    },
+    RESET_PASSWORD(state, data) {
+        state.isReset = true;
+        state.resetPassword = data;
     },
     Switch_Company_Team(state, {user}) {
         state.isLogged = true;
@@ -39,8 +49,8 @@ export const actions = {
         if (userData && userData.access_token) {
             api.setHeader(userData.access_token);
             commit('SIGN_IN', {user: userData.user, token: userData.access_token})
-        }else if(userData.success == false){
-            vm.$bvToast.toast(userData.message, {
+        }else if(userData.status == 401){
+            vm.$bvToast.toast(userData.error, {
                 title: 'Oops!',
                 solid: true,
                 variant: 'danger',
@@ -49,8 +59,8 @@ export const actions = {
             
             return ;
 
-        }else {
-            vm.$bvToast.toast('You have entered an invalid username or password.', {
+        }else if(userData.status == 422){
+            vm.$bvToast.toast(userData.error['email']?userData.error['email']:''+' '+userData.error['password']?userData.error['password']:'', {
                 title: 'Oops!',
                 solid: true,
                 variant: 'danger',
@@ -61,6 +71,70 @@ export const actions = {
         commit('SET_ADMIN_MODE', false)
         setLocalStorage('adminMode',false);
         return userData;
+    },
+    async forgot({ commit }, {vm, email}) {
+        let Response = await api.post('/auth/forgot', {email});
+        if (Response.success == true) {
+            vm.$bvToast.toast(Response.message, {
+                title: 'Message',
+                solid: true,
+                variant: 'success',
+                autoHideDelay: 4000,
+            })
+            
+            commit('FORGOT_PASSWORD',Response.user)
+        }else if(Response.status == 401){
+            vm.$bvToast.toast(Response.error, {
+                title: 'Oops!',
+                solid: true,
+                variant: 'danger',
+                autoHideDelay: 4000,
+            })
+            
+            return ;
+
+        }else if(Response.status == 422){
+            vm.$bvToast.toast(Response.error['email']?Response.error['email']:'', {
+                title: 'Oops!',
+                solid: true,
+                variant: 'danger',
+                autoHideDelay: 4000,
+            })
+            return ;
+        }
+        return Response;
+    },
+    async resetPassword({ commit }, {vm, form}) {
+        let Response = await api.post('/auth/resetPassword', {...form});
+        if (Response.success == true) {
+            vm.$bvToast.toast(Response.message, {
+                title: 'Message',
+                solid: true,
+                variant: 'success',
+                autoHideDelay: 4000,
+            })
+            
+            commit('RESET_PASSWORD',Response.user)
+        }else if(Response.status == 401){
+            vm.$bvToast.toast(Response.error, {
+                title: 'Oops!',
+                solid: true,
+                variant: 'danger',
+                autoHideDelay: 4000,
+            })
+            
+            return ;
+
+        }else if(Response.status == 422){
+            vm.$bvToast.toast(Response.error['password']?Response.error['password']:'' + ' Enter Valid Data', {
+                title: 'Oops!',
+                solid: true,
+                variant: 'danger',
+                autoHideDelay: 4000,
+            })
+            return ;
+        }
+        return Response;
     },
     async logout({ commit }) {
         await api.post('/auth/logout');
@@ -89,6 +163,8 @@ export const getters = {
     isLogged: ({ isLogged }) => isLogged,
     getAuthUser: ({ authUser }) => authUser,
     getAdminMode: ({adminMode}) => JSON.parse(adminMode),
+    isReset: ({ isReset }) => isReset,
+
 }
 
 export default {

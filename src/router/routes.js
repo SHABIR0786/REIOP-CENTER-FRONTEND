@@ -9,6 +9,8 @@ import Email from "../pages/email"
 import GoldenAddress from "../pages/goldenAddress"
 import Properties from "../pages/properties"
 import Login from "../pages/login"
+import Forgot from "../pages/forgot"
+import resetPassword from "../pages/resetPassword"
 import Labels from  "../pages/label"
 import BackgroundProcesses from "../pages/backgroundProcesses"
 import Error from "../pages/error"
@@ -30,6 +32,8 @@ import companyAdmin from "@/pages/companyAdmin";
 
 export const routes = [
     {name: "Login", path: "/login", component: Login, title: "Login", isNavbar: false},
+    {name: "Forgot", path: "/forgotPassword", component: Forgot, title: "Forgot", isNavbar: false},
+    {name: "resetPassword", path: "/resetPassword", component: resetPassword, title: "Reset Password", isNavbar: false},
     {name: "Home", path: "/", component: Home, title: "Home", icon: "house-fill", isNavbar: true, meta: {requireAuth: true, roles:[2,1], collapse: false, adminMode: true, isURL: false}},
     {name: "Users", path: "/users", component: User, title: "Users", icon: "people-fill", isNavbar: true, meta: {requireAuth: true, roles:[1], collapse: false, adminMode: true, isURL: false}},
     {name: "Company", path: "/company", component: Company, title: "Companies", icon: "building", isNavbar: true, meta: {requireAuth: true, roles:[1], collapse: false, adminMode: true, isURL: false}},

@@ -7,7 +7,7 @@
       <b-row class="">
         <b-col cols="6">
           <b-input-group
-            prepend="Name"
+            prepend="Company Name"
             class="mb-2"
             id="name"
             label="Name"
@@ -27,7 +27,6 @@
             >
           </b-input-group>
         </b-col>
-
         <b-col cols="6">
           <b-input-group prepend="Plan" id="plan" class="mb-2">
             <b-form-select
@@ -36,6 +35,9 @@
               :state="validateState('plan')"
               required
               :options="planitems"
+              :readonly="company.custom_plan==1"
+              :disabled="company.custom_plan==1"
+
             ></b-form-select>
             <b-form-invalid-feedback id="plan" 
               >Select a Plan.</b-form-invalid-feedback
@@ -43,7 +45,7 @@
           </b-input-group>
         </b-col>
 
-        <b-col cols="6" class="my-1">
+        <b-col cols="6" class="my-1" v-if="company.custom_plan==0">
           <b-input-group
             prepend="No. of Users"
             title="Number Of Users"
@@ -56,7 +58,7 @@
             ></b-form-input>
           </b-input-group>
         </b-col>
-        <b-col cols="6" class="my-1">
+        <b-col cols="6" class="my-1" v-if="company.custom_plan==0">
           <b-input-group
             prepend="No. of Teams"
             title="Number Of Teams"
@@ -68,6 +70,47 @@
               :value="company.plan.number_of_teams"
               readonly
             ></b-form-input>
+          </b-input-group>
+        </b-col>
+        <b-col cols="6" class="my-1" v-if="company.custom_plan==1">
+          <b-input-group
+            prepend="No. of Users"
+            title="Number Of Users"
+            class="mb-2"
+          >
+            <b-form-input
+              type="text"
+              v-model="company.number_of_users"
+            ></b-form-input>
+            <b-input-group-append>
+                                <b-input-group-text title="Unlimited Users" role="button"  @click="company.number_of_users='Unlimited'" ><span class="text-danger">Unlimited</span></b-input-group-text>
+                            </b-input-group-append>
+          </b-input-group>
+        </b-col>
+        <b-col cols="6" class="my-1" v-if="company.custom_plan==1">
+          <b-input-group
+            prepend="No. of Teams"
+            title="Number Of Teams"
+            class="mb-2"
+            id="number_of_teams"
+          >
+            <b-form-input
+              type="text"
+              v-model="company.number_of_teams"
+            ></b-form-input>
+            <b-input-group-append>
+                                <b-input-group-text title="Unlimited Teams" role="button"  @click="company.number_of_teams='Unlimited'" ><span class="text-danger">Unlimited</span></b-input-group-text>
+                            </b-input-group-append>
+          </b-input-group>
+        </b-col>
+        <b-col cols="12">
+          <b-input-group class="my-2">
+            <span v-b-tooltip.hover title="Custom Plan overwrite the selected plan." class="mr-4">
+              <b-icon  icon="info-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+            </span>
+            <b-form-radio v-model="company.custom_plan"  value='0'>Select Plan</b-form-radio>
+            <b-form-radio v-model="company.custom_plan" class="ml-2" value='1'>Custom Plan</b-form-radio>
+            
           </b-input-group>
         </b-col>
           <!-- <b-col cols="6">
@@ -396,6 +439,9 @@ export default {
       new_team: "",
       company: {
         name: "",
+        number_of_users: '',
+        number_of_teams: '',
+
         plan: {},
       },
       teamitems: [],
@@ -654,6 +700,29 @@ try{
       if (!this.validateAddTeam()) {
         return;
       }
+
+
+      if(this.company.custom_plan == 1){
+        if((isNaN(this.company.number_of_users) && this.company.number_of_users!="Unlimited") || this.company.number_of_users==''){
+          this.$bvToast.toast("The No. of Users should be Number or Unlimited", {
+              title: "Validate",
+              variant: 'warning',
+              autoHideDelay: 5000,
+          });
+          return ;
+      }
+      if((isNaN(this.company.number_of_teams) && this.company.number_of_teams!="Unlimited") || this.company.number_of_teams==''){
+          this.$bvToast.toast("The No. of Teams should be Number or Unlimited", {
+              title: "Validate",
+              variant: 'warning',
+              autoHideDelay: 5000,
+          });
+          return ;
+      }
+
+      }
+
+
 
       this.$emit("save", this.company);
     },

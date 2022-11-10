@@ -31,6 +31,9 @@
         <template #head(plan)="scope">
           <div class="text-nowrap" style="width: 100px;">{{ scope.label }}</div>
         </template>
+        <template #head(custom_plan)="scope">
+          <div style="width: 30px;">{{ scope.label }}</div>
+        </template>
         <template #head(number_of_users)="scope">
           <div class="text-nowrap" style="width: 40px;">{{ scope.label }}</div>
         </template>
@@ -57,11 +60,24 @@
         <template v-slot:cell(plan)="data">
             <div v-b-tooltip.hover :title="data.item.plan.name"><b-icon  icon="box-arrow-up-right" variant="primary" class="mr-1" title="Plan Detail" @click="editPlanLink(data.item.plan)" ></b-icon>{{ data.item.plan.name }}</div>
         </template>
+        <template v-slot:cell(custom_plan)="data">
+            <div >
+            
+                <span v-if="data.item.custom_plan==1" class="text-success"><b-icon class="mr-2 cursor-pointer" icon="check-circle-fill" variant="'success"></b-icon>Yes</span>
+                <!-- <span v-if="data.item.custom_plan==0">No</span> -->
+            </div>
+        </template>
         <template v-slot:cell(number_of_users)="data">
-            <div v-b-tooltip.hover :title="data.item.plan.number_of_users">{{ data.item.plan.number_of_users }}</div>
+            <div>
+                <span v-b-tooltip.hover :title="data.item.number_of_users" v-if="data.item.custom_plan==1">{{ data.item.number_of_users }}</span>
+                <span v-b-tooltip.hover :title="data.item.plan.number_of_users" v-if="data.item.custom_plan==0">{{ data.item.plan.number_of_users }}</span>
+            </div>
         </template>
         <template v-slot:cell(number_of_teams)="data">
-            <div v-b-tooltip.hover :title="data.item.plan.number_of_teams">{{ data.item.plan.number_of_teams }}</div>
+            <div>
+                <span v-b-tooltip.hover :title="data.item.number_of_teams" v-if="data.item.custom_plan==1">{{ data.item.number_of_teams }}</span>
+                <span v-b-tooltip.hover :title="data.item.plan.number_of_teams" v-if="data.item.custom_plan==0">{{ data.item.plan.number_of_teams }}</span>
+            </div>
         </template>
     </b-table>
     <b-row>
@@ -129,6 +145,8 @@ export default {
             isSearched: false,
             showAddMutliSeletModal:false,
             addMemberMutliSeletItem:{},
+            // customPlanIcon :['x-circle','check-circle-fill'],
+            // customPlanVariant :['danger','success'],
 
 
         }
