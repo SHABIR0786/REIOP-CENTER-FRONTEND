@@ -373,7 +373,6 @@ export default {
             exportItems: 'exportModule/exports',
             listFields: 'listModule/fields',
             relatedSkipSources: 'goldenAddressModule/relatedSkipSources',
-            relatedSkipSourcesFields: 'goldenAddressModule/fields'
         })
     },
     methods: {
@@ -458,6 +457,11 @@ export default {
                 {key:"golden_addresses_count", label: "Total Golden Address", sortable: true},
                 {key:"error_number",    label: "Total Errors", sortable: true}
         ],
+        relatedSkipSourcesFields: [
+                {key:"id", label: "Id", sortable: true},
+                {key:"golden_skip_source", label: "Skip Source", sortable: true},
+                {key:"golden_skip_date", label: "Skip Date", sortable: true}
+            ],
         }
     },
     mounted() {

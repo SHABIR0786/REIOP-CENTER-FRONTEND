@@ -704,6 +704,7 @@ export default {
           this.importedFields = {
             seller: this.sellerFields,
             subject: this.subjectFields,
+            golden_address: this.goldenAddressFields,
             phone: this.phoneNumberFields.filter(function (el) {
               return el.field === "phone_number" || el.field === "phone_type"
             }),
