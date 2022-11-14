@@ -1,7 +1,7 @@
 <template>
     <b-modal v-model="showModal" no-close-on-backdrop>
         <template #modal-header>
-            <div class="w-100">Label</div>
+            <div class="w-100">Custom Field</div>
         </template>
         <b-container fluid>
             <b-row class="text-center">
@@ -15,7 +15,7 @@
 
                 <b-row class="mb-1 text-center">
                     <b-col cols="12">
-                        <b-input-group prepend="Label" class="mb-2">
+                        <b-input-group prepend="Name" class="mb-2">
                             <b-form-input v-model="label.label"></b-form-input>
                         </b-input-group>
                     </b-col>
@@ -34,7 +34,7 @@
                                 v-model="label.section"
                                 :options="sections"
                                 size="xs"
-                                class="ml-3"></b-form-select>
+                                class=""></b-form-select>
                         </b-input-group>
                     </b-col>
                 </b-row>

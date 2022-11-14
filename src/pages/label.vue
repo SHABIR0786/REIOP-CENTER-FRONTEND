@@ -3,7 +3,7 @@
     <b-row>
      <b-col cols="12" class="d-flex justify-content-end mb-3">
             <b-button variant="primary" class="add-seller" @click="addItem()">
-                <b-icon icon="plus" aria-hidden="true"></b-icon> Add Label
+                <b-icon icon="plus" aria-hidden="true"></b-icon> Add Custom Field
             </b-button>
       </b-col>
     </b-row>

@@ -29,10 +29,10 @@
                 <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && user.teams.length > 0 && (user.teams.length > 1 || user.team_id==null)" @click="switchTeamViewList()">
                     <div title="Switch Company/Team Modal"><b-icon icon="person-lines-fill"></b-icon> Switch Team</div>
                 </b-dropdown-item>
-                <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && user.companies_admin.length > 0" >
+                <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && user.companies_admin.length > 0" to="/companyAdmin">
                     <router-link class="link-label" to="/companyAdmin" ><b-icon title="Company Admin" icon="person-check-fill"></b-icon> Company Admin</router-link>
                 </b-dropdown-item>
-                <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && user.teams.length > 0">
+                <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && user.teams.length > 0" to="/teamAdmin">
                     <router-link class="link-label" to="/teamAdmin"><b-icon title="Team Admin" icon="person-check-fill"></b-icon> Team Admin</router-link>
                 </b-dropdown-item>
                 <b-dropdown-item v-if="user && user.role == 1 && adminMode == false" @click="switchToAdminView()">
@@ -42,32 +42,32 @@
                     <div><b-icon icon="person-bounding-box"></b-icon> Switch to Team View</div>
                 </b-dropdown-item>
               <b-dropdown-item @click="closeTeamView()" v-if="isTeamViewAccess == true"><b-icon icon="x-square"></b-icon> Close Team View</b-dropdown-item>
-                <b-dropdown-item v-if="adminMode == false">
-                    <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Labels</router-link>
+                <b-dropdown-item v-if="adminMode == false" to="/labels">
+                    <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Custom Fields</router-link>
                 </b-dropdown-item>
                  <!--v-if="user && user.role === 'admin'"-->
                 <!-- <b-dropdown-item v-if="adminMode == false">
                 <router-link class="link-label" to="/teams"><b-icon icon="card-list"></b-icon> Teams</router-link>
               </b-dropdown-item> -->
-              <b-dropdown-item  v-if="adminMode == false">
+              <b-dropdown-item  v-if="adminMode == false" to="/phoneTypes">
                 <router-link class="link-label" to="/phoneTypes"><b-icon icon="phone"></b-icon> Phone Types</router-link>
               </b-dropdown-item>
-              <b-dropdown-item v-if="adminMode == false">
+              <b-dropdown-item v-if="adminMode == false" to="/subjectTypes">
                 <router-link class="link-label" to="/subjectTypes"><b-icon icon="house"></b-icon> Subject Types</router-link>
               </b-dropdown-item>
-              <b-dropdown-item v-if="adminMode == false">
+              <b-dropdown-item v-if="adminMode == false" to="/companyTypes">
                 <router-link class="link-label" to="/companyTypes"><b-icon icon="building"></b-icon> Company Types</router-link>
               </b-dropdown-item>
-              <b-dropdown-item  v-if="adminMode == false">
+              <b-dropdown-item  v-if="adminMode == false" to="/listSources">
                 <router-link class="link-label" to="/listSources"><b-icon icon="folder-check"></b-icon> List Sources</router-link>
               </b-dropdown-item>
-              <b-dropdown-item v-if="adminMode == false">
+              <b-dropdown-item v-if="adminMode == false" to="/skipSourceLists">
                 <router-link class="link-label" to="/skipSourceLists"><b-icon icon="folder-symlink"></b-icon> Skip Source Lists</router-link>
               </b-dropdown-item>
-              <b-dropdown-item v-if="adminMode == false">
+              <b-dropdown-item v-if="adminMode == false" to="/marketingChannels">
                 <router-link class="link-label" to="/marketingChannels"><b-icon icon="building"></b-icon> Marketing Channels</router-link>
               </b-dropdown-item>
-              <b-dropdown-item v-if="adminMode == false">
+              <b-dropdown-item v-if="adminMode == false" to="/errors">
                 <router-link class="link-label" to="/errors"><b-icon icon="exclamation-circle-fill" variant="warning"></b-icon> Errors</router-link>
               </b-dropdown-item>
               <b-dropdown-item @click="logout"><b-icon icon="power"></b-icon> Logout</b-dropdown-item>
@@ -128,9 +128,7 @@ export default {
             this.showModal = true;
 
         },
-        async activeTeam(team){
-            console.log('team',team);
-            
+        async activeTeam(team){            
             team.user_id = this.user.id;
             this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch('loginModule/switchCompanyTeam', {
