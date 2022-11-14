@@ -7,9 +7,23 @@
             </div>
         </b-navbar-brand>
         <b-navbar-nav v-if="isTeamViewAccess == true">
-        <b-nav-text class="h6 text-white m-auto" title="Company name - Team name">Team view Access : {{companyTeamName}}</b-nav-text>
+        <b-nav-text class="h6 text-white m-auto" title="Company name - Team name">Team view Access : {{companyTeamName}} <b-icon icon="x-square" role="button" class="text-warning ml-2" title="Close Team View" @click="closeTeamView()"></b-icon></b-nav-text>
       </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
+
+
+      <b-form-select
+      v-if="isTeamViewAccess == false"
+      v-b-tooltip.hover
+      title="Switch Company/Team"
+      @change="activeTeam(team)"
+      v-model="team.id"
+      class=" mr-3 bg-transparent text-white border-0 cursor-pointer"
+    >
+        <b-form-select-option class="text-dark" :value="team.id" v-for="team,index in user.teams" :key="index">{{team.company.name }} - {{team.name}}</b-form-select-option>
+    </b-form-select>
+
+
             <b-nav-item-dropdown right>
                 <template #button-content> {{ (user && user.name) ? user.name : "User"}}</template>
                 <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && user.teams.length > 0 && (user.teams.length > 1 || user.team_id==null)" @click="switchTeamViewList()">
@@ -27,6 +41,7 @@
                 <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && adminMode == true" @click="switchToTeamView()">
                     <div><b-icon icon="person-bounding-box"></b-icon> Switch to Team View</div>
                 </b-dropdown-item>
+              <b-dropdown-item @click="closeTeamView()" v-if="isTeamViewAccess == true"><b-icon icon="x-square"></b-icon> Close Team View</b-dropdown-item>
                 <b-dropdown-item v-if="adminMode == false">
                     <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Labels</router-link>
                 </b-dropdown-item>
@@ -55,7 +70,6 @@
               <b-dropdown-item v-if="adminMode == false">
                 <router-link class="link-label" to="/errors"><b-icon icon="exclamation-circle-fill" variant="warning"></b-icon> Errors</router-link>
               </b-dropdown-item>
-              <b-dropdown-item @click="closeTeamView()" v-if="isTeamViewAccess == true"><b-icon icon="x-square"></b-icon> Close Team View</b-dropdown-item>
               <b-dropdown-item @click="logout"><b-icon icon="power"></b-icon> Logout</b-dropdown-item>
             </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -79,6 +93,9 @@ export default {
     data() {
         return {
             showModal: false,
+            team:{
+                id:null
+            },
         }
     },
     computed: {
@@ -110,12 +127,26 @@ export default {
         switchTeamViewList() {
             this.showModal = true;
 
+        },
+        async activeTeam(team){
+            console.log('team',team);
+            
+            team.user_id = this.user.id;
+            this.$store.dispatch('uxModule/setLoading')
+            await this.$store.dispatch('loginModule/switchCompanyTeam', {
+                    ...team
+                });
+                this.$router.go();
+            this.$store.dispatch('uxModule/hideLoader')
         }
-    }
+    },
+    mounted() {
+    this.team.id = this.user.team_id;    
+    },
 }
 </script>
 
-<style>
+<style scoped>
     .link-label {
         text-decoration: none;
         color: #000;
