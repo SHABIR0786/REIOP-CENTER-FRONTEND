@@ -47,9 +47,9 @@
             </ul>
         </div>
         <div :class="`collapse-expend2 ${toggleClass}`" @click="toggleSidebar">
-                <span class="white-arrow" :class="{'arrow-collapsed': isCollapsed}">
+                <!-- <span class="white-arrow" :class="{'arrow-collapsed': isCollapsed}">
                     <b-icon icon="caret-left-fill"></b-icon>
-                </span>
+                </span> -->
                 <span class="coloured-bars">
                     <b-icon icon="list"></b-icon>
                 </span>

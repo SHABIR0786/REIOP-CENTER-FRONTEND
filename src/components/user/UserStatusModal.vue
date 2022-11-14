@@ -12,6 +12,9 @@
                             <b-form-select :state="validateState('status')" aria-describedby="status" :options="isActiveStatus" v-model="$v.user.status.$model" required></b-form-select>
                             <b-form-invalid-feedback id="name">User Status Field is Required.</b-form-invalid-feedback>
                         </b-input-group>
+                        <span v-b-tooltip.hover title="If User Status is Deactive then User can't Login to REI OP-Center.">
+                            <b-icon  icon="info-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+                        </span>
                     </b-col>
                 </b-row>
 

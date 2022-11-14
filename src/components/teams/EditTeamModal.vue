@@ -30,6 +30,15 @@
                     >
                         Save
                     </b-button>
+                    <b-button
+                            variant="primary"
+                            size="md"
+                            class="ml-3"
+                            @click="teamViewAccess()"
+                    >
+                    Team View Access
+                    <b-icon  icon="box-arrow-up-right" aria-hidden="true"></b-icon> 
+                    </b-button>
                 </b-row>
                 <b-row>
                     <b-col>
@@ -185,6 +194,25 @@
             edit() {
                 this.isReadOnly = true;
                 this.$emit('save', this.team);
+            },
+            async teamViewAccess(){
+
+                if(this.team?.id){
+                    let team_id = this.team.id;
+                    const route = '/?id=' + team_id;
+                    let routeData = this.$router.resolve({path: route});
+                    window.open(routeData.href, '_blank');
+                    
+                }else{
+                    this.$bvToast.toast('Team Id not found', {
+                        title: "Validate",
+                        variant: 'danger',
+                        autoHideDelay: 5000,
+                    });
+                }
+
+
+                
             },
             async addMember(user) {
                 try{

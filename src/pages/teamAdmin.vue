@@ -103,11 +103,11 @@
                                 <!-- <template v-slot:cell(updated_at)="data">
                                     <div >{{ pivot_data_check(data.item,'updated_at') }}</div>
                                 </template> -->
-                                    <template v-slot:cell(actions)="data">
-                                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                                    <!-- <template v-slot:cell(actions)="data"> -->
+                                    <!-- <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon> -->
                                     <!-- <b-icon  icon="box-arrow-up-right" class="cursor-pointer mr-1" variant="primary" title="View Member" @click="editMember(data.item)"></b-icon>  -->
-                                    <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Remove Member" @click="deleteMember(data.item)"></b-icon>
-                                    </template>
+                                    <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Remove Member" @click="deleteMember(data.item)"></b-icon> -->
+                                    <!-- </template> -->
                             </b-table>
                         </b-col>
                         </b-row>
@@ -117,7 +117,7 @@
             </b-row>
         </b-container>
         <add-team-member-modal :showModal="showAddMemberModal" @cancel="showAddMemberModal=false" @add="addMember"></add-team-member-modal>
-        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure You want to remove this member?"></delete-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" title="Are you sure You want to remove this member?" header="Remove Member"></delete-modal>
         <edit-team-admin-modal :showModal="showEditModal" :propsData="team" @cancel="showEditModal=false" @save="updateTeamName"></edit-team-admin-modal>
         <edit-user-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="updateUser"></edit-user-modal>
         <switch-team-modal :showModal="showSwithTeamModal"  @cancel="showSwithTeamModal=false"></switch-team-modal>
@@ -169,7 +169,7 @@ export default {
                     // {key: "role", label: "Role", sortable: true},
                     {key:"created_at", label: "Team Joining Date", sortable: true},
                     // {key:"updated_at", label: "Updated Date", sortable: true},
-                    {key: "actions", label: "Actions"},
+                    // {key: "actions", label: "Actions"},
                 ],
                 role_text : ['','SuperAdmin','Admin','User'],
                 showSwithTeamModal:false,
@@ -445,7 +445,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .filter-count {
     border-radius: 50%;
     background-color: #808080a6;
@@ -496,5 +496,8 @@ export default {
 table th {
     vertical-align: inherit !important;
     height: 64px;
+}
+.table-responsive{
+  min-height: 450px !important;
 }
 </style>

@@ -217,12 +217,14 @@
             </b-input-group>
           </b-col>
               <b-col cols="6">
-                <b-form-input
-                  v-model="search_team"
-                  debounce="500"
-                  @keyup.enter="SEARCHTEAM()"
-                  placeholder="Search Team"
-                ></b-form-input>
+              <b-input-group>
+              <b-form-input v-model="search_team" debounce="1000" @keyup.enter="SEARCHTEAM()" placeholder="Search Team" title="Auto Search when User stop Typing"></b-form-input>
+              <b-input-group-append>
+                  <b-input-group-text role="button"  @click="SEARCHTEAM()" title="Search">
+                      <b-icon icon="search" variant="primary" ></b-icon> 
+                  </b-input-group-text>
+                </b-input-group-append>
+              </b-input-group>
               </b-col>
             </b-row>
             <b-table
@@ -283,12 +285,14 @@
                 </b-button>
               </b-col>
               <b-col cols="6">
-                <b-form-input
-                  v-model="search_user"
-                  debounce="500"
-                  @keyup.enter="SEARCHUSER()"
-                  placeholder="Search User"
-                ></b-form-input>
+              <b-input-group>
+              <b-form-input v-model="search_user" debounce="1000" @keyup.enter="SEARCHUSER()" placeholder="Search User" title="Auto Search when User stop Typing"></b-form-input>
+              <b-input-group-append>
+                  <b-input-group-text role="button"  @click="SEARCHUSER()" title="Search">
+                      <b-icon icon="search" variant="primary" ></b-icon> 
+                  </b-input-group-text>
+                </b-input-group-append>
+              </b-input-group>
               </b-col>
             </b-row>
             <b-table

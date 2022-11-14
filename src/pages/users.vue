@@ -1,12 +1,20 @@
 <template>
 <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-    <h3>Users</h3>
     <div>
-        <b-row class="mb-3">
-            <b-col cols="6" offset-md="6">
-                <b-input-group class="mt-3">
+        <b-row class="my-3">
+            <b-col cols="6">
+                <h3>Users </h3>
+            </b-col>
+            <b-col cols="6">
+                <b-input-group class="">
                     
-                    <b-form-input v-model="searchUser" debounce="500" @keyup.enter="search" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchUser" debounce="1000" @keyup.enter="search" placeholder="Search" title="Auto Search when User stop Typing"></b-form-input>
+                    <b-input-group-append>
+                        <b-input-group-text role="button"  @click="search()" title="Search">
+                            <b-spinner v-if="loading" small variant="primary" class="my-auto ml-2"></b-spinner>
+                            <b-icon  v-else icon="search" variant="primary" ></b-icon> 
+                        </b-input-group-text>
+                    </b-input-group-append>
                     <b-input-group-append >
                         <b-form-select v-model="isActive" :options="isActiveStatus" @change="search()"></b-form-select>
                     </b-input-group-append>
@@ -14,10 +22,10 @@
             </b-col>
         </b-row>
     </div>
-    <b-table id="user-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-table id="user-table" small sort-icon-left no-local-sorting striped hover :busy="loading" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" v-b-tooltip.hover title="Edit User" variant="primary" @click="editItem(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="gear" v-b-tooltip.hover title="Deactivate User" @click="deleteUser(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="primary" icon="gear" v-b-tooltip.hover title="User Status" @click="deleteUser(data.item)"></b-icon>
         </template>
         <template v-slot:cell(status)="data">
             <b-icon class="mr-2 cursor-pointer" :icon="userStatusIcon[data.item.status]" :variant="userStatusVariant[data.item.status]"></b-icon> {{userStatus[data.item.status]}}
@@ -86,7 +94,7 @@ export default {
             sortBy: 'id',
             sortDesc: false,
             isActive: 'All',
-
+            loading: false,
             role_text : ['','SuperAdmin','Admin','User'],
             fields: [
                 {key:"id", label: "Id", sortable: true},
@@ -175,7 +183,8 @@ export default {
            this.search();
         },
         async search() {
-           this.$store.dispatch('uxModule/setLoading')
+        //    this.$store.dispatch('uxModule/setLoading')
+           this.loading = true;
             await this.$store.dispatch('userModule/searchUsers', {
                 page: this.currentPage,
                 perPage: this.perPage,
@@ -186,7 +195,8 @@ export default {
             })
             this.itemsCount = this.total;
             this.filteredOrAllData = this.items;
-            this.$store.dispatch('uxModule/hideLoader')
+            this.loading = false;
+            // this.$store.dispatch('uxModule/hideLoader')
         },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
@@ -343,7 +353,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .filter-count {
     border-radius: 50%;
     background-color: #808080a6;
@@ -401,5 +411,8 @@ table td div{
     text-overflow: ellipsis;
     max-width: 250px !important;
     cursor:pointer;
+}
+.table-responsive{
+  min-height: 450px !important;
 }
 </style>

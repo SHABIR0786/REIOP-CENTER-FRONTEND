@@ -11,6 +11,7 @@ export function setHeader(token) {
 }
 
 export async function get(subURL) {
+  setHeaderTeamAccessId();
   return axios.get(urlPrefix + subURL)
       .then((response) => {
         if(response.status == 401) {
@@ -24,6 +25,7 @@ export async function get(subURL) {
 }
 
 export async function post(subURL, data) {
+  setHeaderTeamAccessId();
   return axios.post(urlPrefix + subURL, data)
     .then((response) => {
       if(response.status == 401) {
@@ -37,6 +39,7 @@ export async function post(subURL, data) {
 }
 
 export async function put(subURL, data) {
+  setHeaderTeamAccessId();
   return axios.put(urlPrefix + subURL, data)
     .then((response) => {
       if(response.status == 401) {
@@ -50,6 +53,7 @@ export async function put(subURL, data) {
 }
 
 export async function deleteAPI(subURL) {
+  setHeaderTeamAccessId();
   return axios.delete(urlPrefix + subURL)
     .then((response) => {
       if(response.status == 401) {
@@ -60,4 +64,12 @@ export async function deleteAPI(subURL) {
       console.warn("Error DELETE" + error);
       return error;
     });
+}
+
+function setHeaderTeamAccessId() {
+  let teamId = sessionStorage.getItem('teamAccessId');
+  if (teamId) {
+      axios.defaults.headers.common['teamAccessId'] = teamId;
+  }
+
 }

@@ -16,7 +16,12 @@ const state = {
     companyTeams: [],
     total: 0,
     existTeam: [],
-    team:{}
+    team:{},
+    isTeamViewAccess : false,
+    teamViewAccessData : {},
+    companyTeamName : '',
+
+
 
 }
 
@@ -67,6 +72,19 @@ const mutations = {
     },
     SET_TEAM(state, payload) {
         state.team =payload.team;
+    },
+    SET_TEAM_VIEW_ACCESS(state, payload) {
+        state.isTeamViewAccess = true;
+        state.teamViewAccessData = payload.team;
+        state.companyTeamName = payload.team?.company['name']+' - '+payload.team['name'];
+    },
+    SET_CLOSE_TEAM_VIEW_ACCESS(state) {
+        console.log('SET_CLOSE_TEAM_VIEW_ACCESS');
+        
+        sessionStorage.removeItem("teamAccessId");
+        state.isTeamViewAccess = false;
+        state.teamViewAccessData = {};
+        state.companyTeamName = '';
     },
 }
 
@@ -172,6 +190,18 @@ const actions = {
             return response
         })
     },
+    async teamViewAccess({commit}) {        
+        return await api.get(`/teamViewAccess`).then((response) => {
+            if (response.success) {                
+                commit('SET_TEAM_VIEW_ACCESS', response)
+            }
+            return response
+        })
+    },
+    async CloseTeamViewAccess({commit}) {        
+            
+        commit('SET_CLOSE_TEAM_VIEW_ACCESS')
+    },
 }
 
 const getters = {
@@ -181,6 +211,13 @@ const getters = {
     total: ({total}) => total,
     existTeam: ({existTeam}) => existTeam,
     team: ({ team }) => team,
+    isTeamViewAccess: ({ isTeamViewAccess }) => isTeamViewAccess,
+    teamViewAccessData: ({ teamViewAccessData }) => teamViewAccessData,
+    companyTeamName: ({ companyTeamName }) => companyTeamName,
+
+
+
+    
 
 }
 

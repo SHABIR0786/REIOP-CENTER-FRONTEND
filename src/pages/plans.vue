@@ -2,7 +2,7 @@
   <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
     <div>
       <div>
-        <b-row class="my-2">
+        <b-row class="my-3">
             <b-col cols="6">
                 <h3>Plans </h3>
             </b-col>
@@ -11,13 +11,19 @@
               <b-icon icon="plus-circle" aria-hidden="true"></b-icon> Add New Plan</b-button>
           </b-col>
         </b-row>
-        <b-row class="mb-3">
-          <b-col cols="8" class="text-right">
-            <!-- <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon> -->
-            <b-spinner v-if="loading" variant="primary"></b-spinner>
-          </b-col>
-          <b-col cols="4">
-            <b-form-input v-model="search" debounce="500" placeholder="Search"></b-form-input>
+        <b-row class="mb-2">
+
+          <b-col cols="6" offset-md="6">
+            <b-input-group class="mt-1">
+              <b-form-input v-model="search" debounce="1000" @keyup.enter="searchPlan()" placeholder="Search" title="Auto Search when User stop Typing"></b-form-input>
+              <b-input-group-append>
+                  <b-input-group-text role="button"  @click="searchPlan()" title="Search">
+                    <b-spinner v-if="loading" small variant="primary" class="my-auto ml-2"></b-spinner>
+                    <b-icon v-else icon="search" variant="primary" ></b-icon> 
+                  </b-input-group-text>
+              </b-input-group-append>
+            </b-input-group>
+
           </b-col>
         </b-row>
       </div>
@@ -28,7 +34,7 @@
           sort-icon-left
           hover
           responsive
-          :busy="isBusy"
+          :busy="loading"
           :fields="fields"
           :items="items"
           :per-page="0"
@@ -221,6 +227,11 @@ export default {
         this.$store.dispatch('planModule/deletePlan', this.itemToDelete.id)
       }
     },
+    async searchPlan(){
+      this.loading = true;
+      await this.$store.dispatch('planModule/searchPlans', {page: this.currentPage, perPage: this.perPage, search: this.search})
+      this.loading = false;
+    }
   },
   mounted() {},
   watch: {
@@ -235,9 +246,8 @@ export default {
       this.$store.dispatch('uxModule/hideLoader');
     },
     async search() {
-      this.loading = true;
-      await this.$store.dispatch('planModule/searchPlans', {page: this.currentPage, perPage: this.perPage, search: this.search})
-      this.loading = false;
+      this.searchPlan();
+
     }
   }
 }
@@ -255,4 +265,7 @@ export default {
     vertical-align: inherit !important;
     height: 64px;
   }
+  .table-responsive{
+  min-height: 450px !important;
+}
 </style>

@@ -30,7 +30,7 @@
               <b-col cols="6">
                 <b-form-input
                   v-model="search_team"
-                  debounce="500"
+                  debounce="1000"
                   @keyup.enter="SEARCHTEAM()"
                   placeholder="Search Team"
                 ></b-form-input>
@@ -96,7 +96,7 @@
               <b-col cols="6">
                 <b-form-input
                   v-model="search_user"
-                  debounce="500"
+                  debounce="1000"
                   @keyup.enter="SEARCHUSER()"
                   placeholder="Search User"
                 ></b-form-input>
@@ -134,7 +134,7 @@
                 <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
               </template>
               <template #head(number_of_teams)="scope">
-                <div class="text-nowrap" style="width: 40px;">{{scope.label}}</div>
+                <div style="width: 40px;">{{scope.label}}</div>
               </template>
               <template #head(company_role)="scope">
                 <div class="text-nowrap" style="width: 50px;">{{scope.label}}</div>
@@ -605,5 +605,8 @@ export default {
     text-overflow: ellipsis;
     max-width: 250px !important;
     cursor:pointer;
+}
+.table-responsive{
+  min-height: 450px !important;
 }
 </style>

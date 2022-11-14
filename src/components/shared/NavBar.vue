@@ -6,6 +6,9 @@
                 <img class="logo" src="@/assets/images/REI OPCENTER_v3-02.png">
             </div>
         </b-navbar-brand>
+        <b-navbar-nav v-if="isTeamViewAccess == true">
+        <b-nav-text class="h6 text-white m-auto" title="Company name - Team name">Team view Access : {{companyTeamName}}</b-nav-text>
+      </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right>
                 <template #button-content> {{ (user && user.name) ? user.name : "User"}}</template>
@@ -52,7 +55,8 @@
               <b-dropdown-item v-if="adminMode == false">
                 <router-link class="link-label" to="/errors"><b-icon icon="exclamation-circle-fill" variant="warning"></b-icon> Errors</router-link>
               </b-dropdown-item>
-                <b-dropdown-item @click="logout"><b-icon icon="power"></b-icon> Logout</b-dropdown-item>
+              <b-dropdown-item @click="closeTeamView()" v-if="isTeamViewAccess == true"><b-icon icon="x-square"></b-icon> Close Team View</b-dropdown-item>
+              <b-dropdown-item @click="logout"><b-icon icon="power"></b-icon> Logout</b-dropdown-item>
             </b-nav-item-dropdown>
         </b-navbar-nav>
     </b-navbar>
@@ -82,12 +86,20 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             user: 'loginModule/getAuthUser',
             adminMode: 'loginModule/getAdminMode',
+            isTeamViewAccess: 'teamModule/isTeamViewAccess',
+            companyTeamName: 'teamModule/companyTeamName',
+
+
         })
     },
     methods: {
         async logout () {
             await this.$store.dispatch('loginModule/logout')
-            this.$router.push({name: "Login"}).catch(() => {})
+        },
+        async closeTeamView () {
+            sessionStorage.removeItem("teamAccessId");
+            this.$store.dispatch('teamModule/CloseTeamViewAccess')
+            this.$router.go();
         },
         switchToAdminView() {
             this.$store.dispatch('loginModule/switchToAdminView')

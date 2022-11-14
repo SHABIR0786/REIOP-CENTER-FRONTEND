@@ -89,12 +89,14 @@
             
     </b-col>
         <b-col cols="6">
-          <b-form-input
-            v-model="search_team"
-            debounce="500"
-            @keyup.enter="SEARCHTEAM()"
-            placeholder="Search Team"
-          ></b-form-input>
+          <b-input-group>
+          <b-form-input v-model="search_team" debounce="1000" @keyup.enter="SEARCHTEAM()" placeholder="Search Team" title="Auto Search when User stop Typing"></b-form-input>
+          <b-input-group-append>
+              <b-input-group-text role="button"  @click="SEARCHTEAM()" title="Search">
+                  <b-icon icon="search" variant="primary" ></b-icon> 
+              </b-input-group-text>
+            </b-input-group-append>
+          </b-input-group>
         </b-col>
       </b-row>
       <b-table

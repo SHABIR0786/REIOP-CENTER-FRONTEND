@@ -1,7 +1,6 @@
 <template>
   <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
     <div>
-      <h3>Teams</h3>
       <div>
         <!-- <b-row>
           <b-col class="d-flex justify-content-end">
@@ -9,13 +8,22 @@
               <b-icon icon="plus" aria-hidden="true"></b-icon>Create a New Team</b-button>
           </b-col>
         </b-row> -->
-        <hr>
-        <b-row class="mb-3">
-          <b-col cols="8" class="d-flex align-items-center">
-            <!-- <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon> -->
-          </b-col>
-          <b-col cols="4">
-            <b-form-input v-model="search" debounce="500" @keyup.enter="searchTeam" placeholder="Search"></b-form-input>
+        <!-- <hr> -->
+        <b-row class="my-3">
+          <b-col cols="6">
+                <h3>Teams </h3>
+            </b-col>
+          <b-col cols="6">
+            <b-input-group>
+              <b-form-input v-model="search" debounce="1000" @keyup.enter="searchTeam()" placeholder="Search" title="Auto Search when User stop Typing"></b-form-input>
+              <b-input-group-append>
+                  <b-input-group-text role="button"  @click="searchTeam()" title="Search">
+                    <b-spinner v-if="loading" small variant="primary" class="my-auto ml-2"></b-spinner>
+                      <b-icon v-else icon="search" variant="primary" ></b-icon> 
+                  </b-input-group-text>
+              </b-input-group-append>
+            </b-input-group>
+
           </b-col>
         </b-row>
       </div>
@@ -26,18 +34,12 @@
           sort-icon-left
           hover
           responsive
-          :busy="isBusy"
+          :busy="loading"
           :fields="fields"
           :items="items"
           :per-page="0"
           :sticky-header="true"
       >
-        <template #table-busy>
-          <div class="text-center" my-2>
-            <b-spinner class="align-middle"></b-spinner>
-            <strong>Loading...</strong>
-          </div>
-        </template>
         <template #head(actions)="scope">
           <div class="text-nowrap" style="width: 20px;">{{scope.label}}</div>
         </template>
@@ -148,7 +150,7 @@ export default {
       showAddModal: false,
       showEditModal: false,
       showEdit_AddModal: false,
-
+      loading: false,
       showUserExistModal: false,
     }
   },
@@ -268,10 +270,11 @@ export default {
 
     },
     async searchTeam() {
-        this.$store.dispatch('uxModule/setLoading')
+        this.loading = true;
+        // this.$store.dispatch('uxModule/setLoading')
         await  this.$store.dispatch('teamModule/searchTeams', {page: this.currentPage, perPage: this.perPage, search: this.search})
-
-        this.$store.dispatch('uxModule/hideLoader')
+        this.loading = false;
+        // this.$store.dispatch('uxModule/hideLoader')
     },
     // editTeamLink(item) {
     //     let team_id = item?.id;
@@ -326,5 +329,8 @@ export default {
     text-overflow: ellipsis;
     max-width: 300px !important;
     cursor:pointer;
+}
+.table-responsive{
+  min-height: 450px !important;
 }
 </style>

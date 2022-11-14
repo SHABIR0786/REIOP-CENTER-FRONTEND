@@ -139,6 +139,7 @@ export const actions = {
     async logout({ commit }) {
         await api.post('/auth/logout');
         api.setHeader(null);
+        sessionStorage.removeItem("teamAccessId");
         commit('LOGOUT');
         window.location.href = '/login';
     },

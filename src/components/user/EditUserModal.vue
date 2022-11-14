@@ -145,7 +145,7 @@
                     @click="$emit('status_modal')"
                     v-b-tooltip.hover title="User Status"
                     >
-                    <b-icon class="cursor-pointer" variant="danger" icon="gear" ></b-icon> Status
+                    <b-icon class="cursor-pointer" variant="primary" icon="gear" ></b-icon> Status
                 </b-button>
             </div>
         </template>
@@ -326,5 +326,8 @@ export default {
 }
 table td div.w_100{
     width: 100% !important;
+}
+.table-responsive{
+  min-height: 450px !important;
 }
 </style>

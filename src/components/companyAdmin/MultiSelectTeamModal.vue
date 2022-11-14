@@ -6,7 +6,7 @@
     <b-container fluid>
       <b-row class="mb-1">
             <b-col cols="6">
-                <b-input-group prepend="Name" class="mb-2" id="name" label="Name" label-for="name">
+                <b-input-group prepend="User Name" class="mb-2" id="name" label="Name" label-for="name">
                     <b-form-input type="text" :value="ModalData.name" readonly></b-form-input>
                     <b-form-invalid-feedback id="name">User Name Field is Required.</b-form-invalid-feedback>
                 </b-input-group>
@@ -17,10 +17,15 @@
                 </b-input-group>
             </b-col>
             <b-col cols="6">
-                <b-input-group prepend="Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                <b-input-group prepend="Company Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
                     <b-form-select v-model="ModalData.company_role" aria-describedby="role-id" :options="company_permission" required>
                     </b-form-select>
                 </b-input-group>
+                <small class="text-primary">Make this user Company Admin (Optional)</small>
+                <span v-b-tooltip.hover class="ml-3" title="A Company Admin can't remove the Access of another Admin. (Once it set). Email support@reiopcenter.com for more information.">
+          <b-icon  icon="info-circle" variant="primary cursor-pointer" role="button"></b-icon> 
+        </span>
+
                 
             </b-col>
             <b-col cols="6">
@@ -38,7 +43,7 @@
         <b-col cols="6">
           <b-form-input
             v-model="search_team"
-            debounce="500"
+            debounce="1000"
             @keyup.enter="SEARCHTEAM()"
             placeholder="Search Team"
           ></b-form-input>
@@ -147,6 +152,10 @@ export default {
                 //     value: 3,
                 //     text: "User"
                 // },
+                {
+                    value: null,
+                    text: "Select Role"
+                },
                 {
                     value: 2,
                     text: "Company Admin"

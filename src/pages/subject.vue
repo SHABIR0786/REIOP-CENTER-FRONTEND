@@ -1,8 +1,10 @@
 <template>
 <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-    <h3>Subjects</h3>
     <div>
         <b-row>
+            <b-col cols="4" class="d-flex">
+                <h3>Subjects</h3>
+            </b-col>
             <b-col cols="8" class="d-flex">
                 <div class="info total">
                     <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -36,7 +38,7 @@
                 </b-input-group>
             </b-col>
             <b-col cols="6">
-                <b-input-group class="mt-3">
+                <b-input-group class="">
                     <b-input-group-append v-if="isSearched">
                         <b-button @click="clearsearch" variant="outline-primary">
                             <b-icon icon="x" aria-hidden="true"></b-icon> Clear Search
@@ -612,7 +614,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .filter-count {
     border-radius: 50%;
     background-color: #808080a6;

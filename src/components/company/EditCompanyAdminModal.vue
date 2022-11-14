@@ -10,7 +10,6 @@
                     <b-col cols="12">
                         <b-input-group prepend="Name" class="mb-2" id="name" label="Name" label-for="name">
                             <b-form-input type="text" :value="user.name" readonly></b-form-input>
-                            <b-form-invalid-feedback id="name">User Name Field is Required.</b-form-invalid-feedback>
                         </b-input-group>
                     </b-col>
                     <b-col cols="12">
@@ -20,10 +19,12 @@
                     </b-col>
 
                     <b-col cols="12">
-                        <b-input-group prepend="Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                        <b-input-group prepend="Company Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
                             <b-form-select v-model="user.company_role" aria-describedby="role-id" :options="company_permission" required>
                             </b-form-select>
                         </b-input-group>
+                      <small class="text-primary">Make this user Company Admin (Optional)</small>
+
 
                     </b-col>
                 </b-row>
@@ -35,7 +36,7 @@
                     Cancel
                 </b-button>
                 <b-button variant="primary" size="sm" type="button" @click="onSubmit" class="float-right mr-2">
-                    Update
+                    Update Role
                 </b-button>
             </div>
         </template>
@@ -77,9 +78,17 @@ export default {
                 //     text: "User"
                 // },
                 {
+                    value: null,
+                    text: "Select Role"
+                },
+                {
                     value: 2,
                     text: "Company Admin"
-                }
+                },
+                {
+                    value: 3,
+                    text: "Remove Company Admin Access"
+                },
             ],
         }
     },

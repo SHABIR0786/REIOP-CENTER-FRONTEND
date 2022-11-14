@@ -25,9 +25,22 @@ export default {
         })
     },
     async created () {
-        await this.$store.dispatch('homeModule/getTotalRows').then(() => {
-          this.$store.dispatch('uxModule/hideLoader')
-        })
+        try {
+            if (this.$route.query.id) {
+                sessionStorage.setItem('teamAccessId', this.$route.query.id)
+                this.$store.dispatch('teamModule/teamViewAccess');
+                this.$store.dispatch('loginModule/switchToTeamView');
+                this.$router.push({name: 'Home'}).catch(() => {})
+            }
+            this.$store.dispatch('uxModule/setLoading')
+            await this.$store.dispatch('homeModule/getTotalRows').then(() => {
+            })
+            this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+            console.log('error',error);
+            this.$store.dispatch('uxModule/hideLoader')
+        }
+
     }
 }
 </script>

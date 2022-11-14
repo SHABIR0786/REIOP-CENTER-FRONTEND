@@ -49,11 +49,11 @@
         cursor: pointer;
         position: absolute;
         top: 0;
-        left: 277px;
+        left: 260px;
         width: 30px;   
         transition: 0.2s;
         &.collapsemenu {
-            left: 56px;
+            left: 0px;
             transition: 0.2s;
         }
         span{

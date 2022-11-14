@@ -1,8 +1,10 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-        <h3>Lists</h3>
         <div>
             <b-row>
+                <b-col cols="4" class="d-flex">
+                    <h3>Lists</h3>
+                </b-col>
                 <b-col cols="8" class="d-flex">
                     <div class="info total">
                         <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -26,7 +28,7 @@
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
                 </b-col>
                 <b-col cols="4">
-                    <b-form-input v-model="searchList" placeholder="Search"></b-form-input>
+                    <b-form-input v-model="searchList" debounce="1000" placeholder="Search"></b-form-input>
                 </b-col>
             </b-row>
         </div>
@@ -306,7 +308,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     .info {
         border: 1px solid black;
         border-radius: 5px;

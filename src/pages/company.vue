@@ -1,24 +1,33 @@
 <template>
 <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-    <h3>Companies</h3>
     <div>
-        <b-row>
-            <b-col cols="12" class="d-flex justify-content-end">
-                <b-button variant="primary" class="add-seller cursor-pointer" @click="addItem()">
+
+        <b-row class="my-2">
+            <b-col cols="6">
+                <h3>Companies </h3>
+            </b-col>
+            <b-col cols="6" class="text-right">
+                <b-button variant="primary" class="cursor-pointer" @click="addItem()">
                     <b-icon icon="plus" aria-hidden="true"></b-icon> Add Company
                 </b-button>
-            </b-col>
+          </b-col>
         </b-row>
-        <hr>
-        <b-row class="mb-3">
+        <!-- <hr> -->
+        <b-row class="mb-2">
             <b-col cols="6" offset-md="6">
-                <b-input-group class="mt-3">
-                    <b-form-input v-model="searchCompany" debounce="500" @keyup.enter="search_Company()" placeholder="Search"></b-form-input>
+                <b-input-group class="mt-1">
+                    <b-form-input v-model="searchCompany" debounce="1000" @keyup.enter="search_Company()" placeholder="Search" title="Auto Search when User stop Typing"></b-form-input>
+                    <b-input-group-append>
+                        <b-input-group-text role="button"  @click="search_Company()" title="Search">
+                            <b-spinner v-if="loading" small variant="primary" class="my-auto ml-2"></b-spinner>
+                            <b-icon  v-else icon="search" variant="primary" ></b-icon> 
+                        </b-input-group-text>
+                    </b-input-group-append>
                 </b-input-group>
             </b-col>
         </b-row>
     </div>
-    <b-table id="user-table" lg sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-table id="user-table" lg sort-icon-left no-local-sorting striped hover :busy="loading" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template #head(actions)="scope">
           <div class="text-nowrap" style="width: 20px;">{{scope.label}}</div>
         </template>
@@ -63,7 +72,7 @@
         <template v-slot:cell(custom_plan)="data">
             <div >
             
-                <span v-if="data.item.custom_plan==1" class="text-success"><b-icon class="mr-2 cursor-pointer" icon="check-circle-fill" variant="'success"></b-icon>Yes</span>
+                <span v-if="data.item.custom_plan==1" class="text-primary"><b-icon class="mr-1 cursor-pointer" icon="check-circle-fill" variant="'success"></b-icon>Yes</span>
                 <!-- <span v-if="data.item.custom_plan==0">No</span> -->
             </div>
         </template>
@@ -147,7 +156,7 @@ export default {
             addMemberMutliSeletItem:{},
             // customPlanIcon :['x-circle','check-circle-fill'],
             // customPlanVariant :['danger','success'],
-
+            loading: false,
 
         }
     },
@@ -201,7 +210,7 @@ export default {
             }            
         },
         async addMeberMultiSelectTeam(company) {
-            console.log('company',company);
+            // console.log('company',company);
             
 
             this.addMemberMutliSeletItem['company_id'] = company?.id;
@@ -247,7 +256,8 @@ export default {
       
     },
         async search_Company() {
-            this.$store.dispatch('uxModule/setLoading')
+            // this.$store.dispatch('uxModule/setLoading')
+            this.loading = true;
                 await this.$store.dispatch('companyModule/searchCompanies', {
                     page: this.currentPage,
                     perPage: this.perPage,
@@ -257,7 +267,9 @@ export default {
                 })
                 this.itemsCount = this.total;
                 this.filteredOrAllData = this.items;
-            this.$store.dispatch('uxModule/hideLoader')
+            this.loading = false;
+
+            // this.$store.dispatch('uxModule/hideLoader')
         },
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
@@ -456,7 +468,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .filter-count {
     border-radius: 50%;
     background-color: #808080a6;
@@ -514,5 +526,8 @@ table td div{
     text-overflow: ellipsis;
     max-width: 250px !important;
     cursor:pointer;
+}
+.table-responsive{
+  min-height: 450px !important;
 }
 </style>
