@@ -1,10 +1,11 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
+      <h3>Emails</h3>
         <div>
             <b-row>
-              <b-col cols="4" class="d-flex">
+              <!-- <b-col cols="4" class="d-flex">
                 <h3>Emails</h3>
-              </b-col>
+              </b-col> -->
                 <b-col cols="8" class="d-flex">
                     <div class="info total">
                         <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -35,7 +36,7 @@
                 </b-input-group>
                 </b-col>
                 <b-col cols="6">
-                    <b-input-group class="">
+                    <b-input-group class="mt-3">
                         <b-input-group-append v-if="isEmailSearched">
                         <b-button @click="clearsearch" variant="outline-primary"><b-icon icon="x" aria-hidden="true"></b-icon> Clear Search</b-button>
                         </b-input-group-append>
@@ -514,7 +515,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
     .info {
         border: 1px solid black;
         border-radius: 5px;

@@ -327,7 +327,7 @@ export default {
 table td div.w_100{
     width: 100% !important;
 }
-.table-responsive{
+/* .table-responsive{
   min-height: 450px !important;
-}
+} */
 </style>

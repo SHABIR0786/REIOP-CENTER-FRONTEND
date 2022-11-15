@@ -3,7 +3,7 @@ import * as api from "../Services/api";
 const state = {
     fields: [
         {key: "field", label: "Field", sortable: true},
-        {key: "label", label: "Label", sortable: true},
+        {key: "label", label: "Custom Fields", sortable: true},
         {key: "description", label: "Description", sortable: true},
         {key: "visible", label: "Visible", sortable: true},
         {key: "actions", label: "Actions"}
@@ -21,7 +21,11 @@ const mutations = {
     },
     ADD_LABEL(state, payload) {
         state.labels.push(payload);
-    }
+    },
+    DELETE_LABEL(state, payload) {
+        const findIndex = state.labels.findIndex(({ id }) => id === payload)
+        findIndex !== -1 && state.labels.splice(findIndex, 1)
+    },
 }
 
 const actions = {
@@ -41,6 +45,12 @@ const actions = {
     async addLabel({ commit }, data) {
         return await api.post(`/labels`, data).then((response) => {
             commit('ADD_LABEL', response.label)
+            return response
+        })
+    },
+    async deleteLabel({ commit }, data) {
+        return await api.deleteAPI(`/labels/${data}`).then((response) => {
+            commit('DELETE_LABEL', data)
             return response
         })
     },
