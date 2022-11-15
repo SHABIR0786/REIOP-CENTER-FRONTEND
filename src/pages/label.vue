@@ -26,12 +26,20 @@
                     <strong>Loading...</strong>
                 </div>
             </template>
+            <template v-slot:cell(visible)="data">
+                {{data.value== 1 || data.value== true ? 'Yes' : 'No'}}
+            </template>
             <template v-slot:cell(actions)="data">
-                <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                <b-icon class="mr-3 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                <b-icon title="Merge with other Field" class="mr-2 cursor-pointer" icon="arrow-left-right" variant="info" @click="mergeFunction(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+
             </template>
         </b-table>
         <label-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></label-modal>
         <add-label-modal :showModal="showAddModal" @cancel="showAddModal=false"></add-label-modal>
+        <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" header="Delete Custom Field" title="Are you sure, You want to Delete Custom Field."></delete-modal>
+
     </div>
 </template>
 <script>
@@ -39,13 +47,15 @@
     import { BIcon } from "bootstrap-vue"
     import LabelModal from "../components/label/LabelModal";
     import AddLabelModal from "../components/label/AddLabelModal";
+    import  DeleteModal from'@/components/deleteModal/DeleteModal'
 
     export default {
         name: "Label",
         components: {
             BIcon,
             LabelModal,
-            AddLabelModal
+            AddLabelModal,
+            DeleteModal,
         },
         data () {
             return {
@@ -92,9 +102,22 @@
                 this.showDeleteModal = true;
                 this.itemToDelete = item;
             },
-            modalResponse() {
+            async modalResponse(response) {
                 this.showDeleteModal = false;
-            }
+                this.$store.dispatch('uxModule/setLoading')
+                if (response) {
+                await this.$store.dispatch('labelModule/deleteLabel', this.itemToDelete.id)
+                }
+                this.$store.dispatch('uxModule/hideLoader')
+            },
+            async mergeFunction() {
+                this.$bvToast.toast("On which tables need to implement merge functionality ?", {
+                            title: "Pending",
+                            variant: 'success',
+                            autoHideDelay: 5000,
+                });
+                        
+            },
         }
     }
 </script>
