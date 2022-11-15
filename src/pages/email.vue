@@ -91,9 +91,6 @@
             <template #head(actions)="scope">
                 <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
             </template>
-            <template #head(seller_id)="scope">
-                <div style="width: 60px;">{{scope.label}}</div>
-            </template>
             <template #head(email_address)="scope">
               <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
             </template>
@@ -359,14 +356,25 @@ export default {
         return  total
         },
         async editItem(item) {
-          this.$store.dispatch('uxModule/setLoading')
-             await this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
-            item.sellers = [response.seller];
-            item.subjects = response.seller.subjects;
-            this.editedItem = { ...item }
-            this.showModal = true
-            });
-            // this.$store.dispatch('uxModule/hideLoader')
+            const subjects = [];
+                item.sellers.forEach(function(seller) {
+                    if(seller.subjects) {
+                        seller.subjects.forEach(function(subject) {
+                            if(subjects.length == 0) {
+                                subjects.push(subject);
+                            } else {
+                                if(subjects.findIndex(x=>x.id == subject.id) != -1) {
+                                    subjects.push(subject);
+                                }
+                            }
+                        })
+                    }
+                });
+                item.subjects = subjects;
+                this.editedItem = {
+                    ...item
+                }
+                this.showModal = true
         },
         save(item) {
             this.$store.dispatch('emailModule/editEmail', {...item})

@@ -77,9 +77,6 @@
         <template #head(actions)="scope">
             <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
         </template>
-        <template #head(seller_id)="scope">
-            <div class="text-nowrap" style="width: 60px;">{{scope.label}}</div>
-        </template>
         <template #head(phone_number)="scope">
             <div style="width: 100px;">{{scope.label}}</div>
         </template>
@@ -389,23 +386,25 @@ export default {
             }
         },
         async editItem(item) {
-            this.$store.dispatch('uxModule/setLoading');
-            try {
-                await this.$store.dispatch('sellerModule/getSeller', item.seller_id).then((response) => {
-                    item.sellers = [response.seller];
-                    item.subjects = response.seller.subjects;
-                    this.editedItem = {
-                        ...item
+                const subjects = [];
+                item.sellers.forEach(function(seller) {
+                    if(seller.subjects) {
+                        seller.subjects.forEach(function(subject) {
+                            if(subjects.length == 0) {
+                                subjects.push(subject);
+                            } else {
+                                if(subjects.findIndex(x=>x.id == subject.id) != -1) {
+                                    subjects.push(subject);
+                                }
+                            }
+                        })
                     }
-                    // console.log('this.editedItem',this.editedItem);
-                    // console.log('this.phoneNumber.list_id',this.editedItem.list_id);
-                    this.showModal = true
                 });
-                // this.$store.dispatch('uxModule/hideLoader');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('uxModule/hideLoader');
-            }
+                item.subjects = subjects;
+                this.editedItem = {
+                    ...item
+                }
+                this.showModal = true
         },
         save(item) {
             this.$store.dispatch('uxModule/setLoading');

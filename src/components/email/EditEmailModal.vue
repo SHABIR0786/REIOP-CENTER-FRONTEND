@@ -63,13 +63,6 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="Seller Id" class="mb-2">
-                                    <b-form-input readonly v-model="email.seller_id"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
                     </b-col>
                 </b-row>
             </b-row>
@@ -410,10 +403,8 @@ export default {
                 seller_id: '',
                 sellers: [],
                 subjects: [],
-
             },
             email_skip_sources: '',
-            relatedList:null,
             listFieldsFiltered: null,
             sellerTableSkipFields:["seller_total_subjects","seller_total_phones","seller_total_emails","seller_mailing_address_line2","seller_company_owned","created_at","updated_at","user_id","delete"],
             isBusy: false,
@@ -462,8 +453,6 @@ export default {
                 if(this.showModal){
                     this.$store.dispatch('uxModule/setLoading')
                     this.email = {...this.propsData}
-                    let response = await this.$store.dispatch('listModule/getSelectedList', this.email.list_id);
-                    this.relatedList = [response.list];
                     this.$store.dispatch(`exportModule/getExports`, {'module': 'emails', id: this.propsData.id});
                     await this.$store.dispatch(`emailModule/relatedSkipSources`, this.propsData.id);
                     await this.currentModal();

@@ -70,13 +70,6 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
-                        <b-row>
-                            <b-col cols="12">
-                                <b-input-group prepend="Seller Id" class="mb-2">
-                                    <b-form-input readonly v-model="phoneNumber.seller_id"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
                     </b-col>
                 </b-row>
             </b-row>
@@ -371,7 +364,7 @@ export default {
             let seller = this.phoneNumber?.sellers?.[0];
             if(seller) {
             await this.$store.dispatch(`listModule/getSellerRunningList`, {id:seller.id})
-            await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:seller.id})
+            // await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:seller.id})
             }
             this.$store.dispatch('uxModule/hideLoader')
 
@@ -407,7 +400,6 @@ export default {
             },
             phone_skip_sources: '',
             listFieldsFiltered: null,
-            relatedList:null,
             isBusy: false,
             isReadOnly: true,
             showAssignSellerModal: false,
@@ -465,8 +457,6 @@ export default {
                 if(this.showModal){
                     this.$store.dispatch('uxModule/setLoading')
                     this.phoneNumber = {...this.propsData}                    
-                    let response = await this.$store.dispatch('listModule/getSelectedList', this.phoneNumber.list_id);
-                    this.relatedList = [response.list];
                     this.$store.dispatch(`exportModule/getExports`, {'module': 'phones', id: this.propsData.id});
                     await this.$store.dispatch(`phoneNumberModule/relatedSkipSources`, this.propsData.id);
                     await this.currentModal();

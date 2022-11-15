@@ -4,7 +4,6 @@ const state = {
     fields: [
         {key:"delete", label: ""},
         {key:"id", label: "ID", sortable: true},
-        {key: "seller_id", label: "Seller ID", sortable: true},
         {key: "actions", stickyColumn: true, label: "Actions"},
         {key: "golden_address_address", label: "Golden Address", sortable: true},
         {key: "golden_address_address_line2", label: "Golden Address Line 2", sortable: true},
