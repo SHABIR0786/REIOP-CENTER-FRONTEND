@@ -233,15 +233,15 @@ export default {
           return "Failed";
         }
       },
-      async showImports(){
+      async showImports() {
         this.$store.dispatch('uxModule/setLoading')
         await this.$store.dispatch('importV2Module/getTotal')
         await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
-       this.filteredItems = this.items;
-       const Instance = this;
-       this.filteredItems.forEach((item)=>{
-         Instance.calculatePercentage(item);
-       });
+        this.filteredItems = this.items;
+        const Instance = this;
+        this.filteredItems.forEach((item) => {
+        Instance.calculatePercentage(item);
+        });
         try {
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -638,6 +638,7 @@ export default {
         if(response) {
            this.$store.dispatch('uxModule/setLoading')
            await this.$store.dispatch('importV2Module/deleteProcess', this.itemToRollback.id);
+           await this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage});
            await this.showImports();
            this.$store.dispatch('uxModule/hideLoader');
         }
