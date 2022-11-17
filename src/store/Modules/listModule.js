@@ -301,6 +301,7 @@ const actions = {
     
     async getAllLists({ commit, dispatch }, {page, perPage}) {
         return await api.get(`/lists?page=${page}&perPage=${perPage}`).then((response) => {
+            console.log(response);
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
