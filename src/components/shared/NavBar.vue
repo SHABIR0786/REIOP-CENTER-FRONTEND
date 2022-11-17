@@ -41,7 +41,7 @@
                 <b-dropdown-item v-if="user && (user.role == 1 || user.role == 2) && adminMode == true" @click="switchToTeamView()">
                     <div><b-icon icon="person-bounding-box"></b-icon> Switch to Team View</div>
                 </b-dropdown-item>
-              <b-dropdown-item @click="closeTeamView()" v-if="isTeamViewAccess == true"><b-icon icon="x-square"></b-icon> Close Team View</b-dropdown-item>
+              <b-dropdown-item @click="closeTeamView()" v-if="isTeamViewAccess == true && adminMode == true"><b-icon icon="x-square"></b-icon> Close Team View</b-dropdown-item>
                 <b-dropdown-item v-if="adminMode == false" to="/labels">
                     <router-link class="link-label" to="/labels"><b-icon icon="tools"></b-icon> Custom Fields</router-link>
                 </b-dropdown-item>

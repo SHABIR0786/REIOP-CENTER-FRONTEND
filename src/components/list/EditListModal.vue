@@ -68,6 +68,42 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
+                        <!-- custom fields -->
+                        <b-row v-if="list.list_custom_field_1">
+                          <b-col cols="12">
+                            <b-input-group  prepend="Custom Field 1" class="mb-2">
+                              <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_1"></b-form-input>
+                            </b-input-group>
+                          </b-col>
+                        </b-row>
+                        <b-row v-if="list.list_custom_field_2">
+                          <b-col cols="12">
+                            <b-input-group  prepend="Custom Field 2" class="mb-2">
+                              <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_2"></b-form-input>
+                            </b-input-group>
+                          </b-col>
+                        </b-row>
+                        <b-row v-if="list.list_custom_field_3">
+                          <b-col cols="12">
+                            <b-input-group  prepend="Custom Field 3" class="mb-2">
+                              <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_3"></b-form-input>
+                            </b-input-group>
+                          </b-col>
+                        </b-row>
+                        <b-row v-if="list.list_custom_field_4">
+                          <b-col cols="12">
+                            <b-input-group  prepend="Custom Field 4" class="mb-2">
+                              <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_4"></b-form-input>
+                            </b-input-group>
+                          </b-col>
+                        </b-row>
+                        <b-row v-if="list.list_custom_field_5">
+                          <b-col cols="12">
+                            <b-input-group  prepend="Custom Field 5" class="mb-2">
+                              <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_5"></b-form-input>
+                            </b-input-group>
+                          </b-col>
+                        </b-row>
                     </b-col>
                     <b-col>
 
@@ -290,6 +326,13 @@ export default {
             phones_count:'',
             emails_count:'',
             golden_addresses_count:'',
+            //custom fields
+            list_custom_field_1:'',
+            list_custom_field_2:'',
+            list_custom_field_3:'',
+            list_custom_field_4:'',
+            list_custom_field_5:'',
+
           },
           sellerTableSkipFields:["seller_total_subjects","seller_total_phones","seller_total_emails","seller_mailing_address_line2","seller_company_owned","created_at","updated_at","user_id","delete"],
           relatedTableFields: [

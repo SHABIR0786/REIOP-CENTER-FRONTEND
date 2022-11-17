@@ -19,14 +19,14 @@
                     Is this a single pull from a provider with Raw Data?
                 </b-button>
                 or
-                <b-button
+                <!-- <b-button
                         class="upload-type"
                         @click="upload_type = 'combined'"
                         :class="{'active-upload-type': upload_type === 'combined'}"
                 >
                     Is this a combined upload with data from multiple providers and lists?
                 </b-button>
-                or
+                or -->
                 <b-button
                         class="upload-type"
                         @click="upload_type = 'appended'"

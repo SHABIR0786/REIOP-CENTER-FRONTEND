@@ -5,18 +5,16 @@
                 Add List {{list}}
             </div>
         </template>
-        <b-container fluid>
-            <b-row class="text-center">
-                <b-row>
-                    <b-col cols="12">
-                        <b-input-group :prepend="list" class="mb-2">
+            <b-row class="px-0 mx-0">
+                
+                    <b-col cols="12" class="mx-0 px-0">
+                        <b-input-group :prepend="list" class="mb-2 mx-0">
                             <b-form-input @keyup.enter="sendRequest()" v-model="listField"></b-form-input>
                         </b-input-group>
                     </b-col>
-                </b-row>
+                
 
             </b-row>
-        </b-container>
         <template #modal-footer>
             <div class="w-100">
                 <b-button variant="primary" size="sm" class="float-right" @click="$emit('cancel')">

@@ -198,6 +198,7 @@ export default {
       this.$store.dispatch('uxModule/setLoading')
       await this.getList();
       await this.showImports();
+      await this.$store.dispatch('labelModule/visibleCustomFields')
       this.$store.dispatch('uxModule/hideLoader')
     },
     computed: {
@@ -211,7 +212,8 @@ export default {
           lists: 'listModule/lists',
           total: 'importV2Module/total',
           editData: 'importV2Module/editData',
-          showImportFirstPage: 'importV2Module/showImportFirstPage'
+          showImportFirstPage: 'importV2Module/showImportFirstPage',
+          visibleCstomField: 'labelModule/visible_custom_fields'
       }),
       rows() { return this.total ? this.total : 0 },
       getPreviousStep() {

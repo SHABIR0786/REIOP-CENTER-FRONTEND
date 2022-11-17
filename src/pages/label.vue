@@ -1,12 +1,12 @@
 <template>
     <div :class="`list-page main-content ${isCollapsed ? 'wide-content' : ''}`">
-    <b-row>
+    <!-- <b-row>
      <b-col cols="12" class="d-flex justify-content-end mb-3">
             <b-button variant="primary" class="add-seller" @click="addItem()">
                 <b-icon icon="plus" aria-hidden="true"></b-icon> Add Custom Field
             </b-button>
       </b-col>
-    </b-row>
+    </b-row> -->
         <b-table
                 id="email-table"
                 small
@@ -31,8 +31,8 @@
             </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-3 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                <b-icon title="Merge with other Field" class="mr-2 cursor-pointer" icon="arrow-left-right" variant="info" @click="mergeFunction(data.item)"></b-icon>
-                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                <!-- <b-icon title="Merge with other Field" class="mr-2 cursor-pointer" icon="arrow-left-right" variant="info" @click="mergeFunction(data.item)"></b-icon> -->
+                <!-- <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon> -->
 
             </template>
         </b-table>
@@ -66,13 +66,20 @@
                 currentPage: 1,
                 editedItem: {},
                 showDeleteModal: false,
-                itemToDelete: {}
+                itemToDelete: {},
+                fields: [
+                    {key: "field", label: "Field", sortable: true},
+                    {key: "label", label: "Custom Fields", sortable: true},
+                    {key: "description", label: "Description", sortable: true},
+                    {key: "visible", label: "Visible", sortable: true},
+                    {key: "actions", label: "Actions"}
+                ],
             }
         },
         computed: {
             ...mapGetters({
                 isCollapsed: 'uxModule/isCollapsed',
-                fields: 'labelModule/fields',
+                // fields: 'labelModule/fields',
                 items: 'labelModule/labels'
             })
         },
