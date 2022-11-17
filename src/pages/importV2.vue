@@ -212,8 +212,7 @@ export default {
           lists: 'listModule/lists',
           total: 'importV2Module/total',
           editData: 'importV2Module/editData',
-          showImportFirstPage: 'importV2Module/showImportFirstPage',
-          visibleCstomField: 'labelModule/visible_custom_fields'
+          showImportFirstPage: 'importV2Module/showImportFirstPage'
       }),
       rows() { return this.total ? this.total : 0 },
       getPreviousStep() {

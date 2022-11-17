@@ -10,13 +10,14 @@ const state = {
     ],
     labels: [],
     //custom fields
-    visible_custom_fields: {
+    visibleCustomFields: {
         list_custom_field_1: false,
         list_custom_field_2: false,
         list_custom_field_3: false,
         list_custom_field_4: false,
         list_custom_field_5: false,
     },
+    customFieldsArray:[],
 
 }
 
@@ -26,8 +27,9 @@ const mutations = {
     },
     SET_ENABLE_LABELS(state, payload) {
         payload.forEach(e => {
-            state.visible_custom_fields[e.field] = e.visible==1?true:false;
+            state.visibleCustomFields[e.field] = e.visible==1?true:false;
           });
+          state.customFieldsArray = payload;
     },
     EDIT_LABEL(state, payload) {
         const findIndex = state.labels.findIndex(({ id }) => id === payload.id)
@@ -80,7 +82,9 @@ const actions = {
 const getters = {
     fields: ({ fields }) => fields,
     labels: ({ labels }) => labels,
-    visible_custom_fields: ({ visible_custom_fields }) => visible_custom_fields,
+    visibleCustomFields: ({ visibleCustomFields }) => visibleCustomFields,
+    customFieldsArray: ({ customFieldsArray }) => customFieldsArray,
+
 }
 
 export default {

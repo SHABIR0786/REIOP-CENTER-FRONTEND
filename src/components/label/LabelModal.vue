@@ -23,7 +23,7 @@
             </b-row>
 
             <div>
-                <b-form-checkbox v-model="label.visible">Show this field in Import section</b-form-checkbox>
+                <b-form-checkbox :readyonly="readyonly" :disabled="readyonly" v-model="label.visible">Show this field in Import section</b-form-checkbox>
             </div>
         </b-container>
         <template #modal-footer>
@@ -52,11 +52,58 @@
                     description: '',
                     visible: false,
                 },
+                readyonly: false,
+                readonlyfields: [
+                    "list_type",
+                    "list_group",
+                    "list_market",
+                    "list_source",
+                    "list_run_mont",
+                    "list_run_year",
+                    "list_stack",
+                    "seller_first_name",
+                    "seller_last_name",
+                    "seller_full_name",
+                    "seller_middle_name",
+                    "seller_mailing_address",
+                    "seller_mailing_city",
+                    "seller_mailing_state",
+                    "seller_mailing_zip",
+                    "Seller_mailing_address_line2",
+                    "seller_company_owned",
+                    "subject_address",
+                    "subject_address_line2",
+                    "subject_city",
+                    "subject_state",
+                    "subject_zip",
+                    "subject_county",
+                    "subject_market",
+                    "subject_age",
+                    "subject_type",
+                    "phone_number",
+                    "phone_type",
+                    "phone_validity",
+                    "phone_skip_source",
+                    "email_address",
+                    "email_validity",
+                    "email_skip_source",
+                    "golden_address_address",
+                    "golden_address_city",
+                    "golden_address_State",
+                    "golden_address_address_line2",
+                    "golden_address_zip"
+                ],
             }
         },
         watch: {
             showModal() {
                 this.label = {...this.propsData}
+                console.log(this.label);
+                if(this.readonlyfields.includes(this.label.field)) {
+                    this.readyonly  = true;
+                } else {
+                    this.readyonly = false;
+                }
                 if (this.propsData.visible ===  1) {
                     this.label.visible = true;
                 }

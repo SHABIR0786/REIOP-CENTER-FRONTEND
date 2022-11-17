@@ -56,32 +56,32 @@
                       <p>Custom Fields <span class="small">(Optional)</span></p>
                   </div>
                     <b-row class="mb-2" v-if="is_show_custom_fields">
-                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_1']">
-                          <b-input-group prepend="Custom Field 1">
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCustomField['list_custom_field_1']">
+                          <b-input-group :prepend="getCustomField('list_custom_field_1')">
                                 <b-form-select v-model="list.list_custom_field_1" :options="customField1" @change="addNewField($event)">
                                 </b-form-select>
                             </b-input-group>
                         </b-col>
-                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_2']">
-                          <b-input-group prepend="Custom Field 2">
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCustomField['list_custom_field_2']">
+                          <b-input-group :prepend="getCustomField('list_custom_field_2')">
                                 <b-form-select v-model="list.list_custom_field_2" :options="customField2" @change="addNewField($event)">
                                 </b-form-select>
                             </b-input-group>
                         </b-col>
-                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_3']">
-                          <b-input-group prepend="Custom Field 3">
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCustomField['list_custom_field_3']">
+                          <b-input-group :prepend="getCustomField('list_custom_field_3')">
                                 <b-form-select v-model="list.list_custom_field_3" :options="customField3" @change="addNewField($event)">
                                 </b-form-select>
                             </b-input-group>
                         </b-col>
-                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_4']">
-                          <b-input-group prepend="Custom Field 4">
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCustomField['list_custom_field_4']">
+                          <b-input-group :prepend="getCustomField('list_custom_field_4')">
                                 <b-form-select v-model="list.list_custom_field_4" :options="customField4" @change="addNewField($event)">
                                 </b-form-select>
                             </b-input-group>
                         </b-col>
-                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_5']">
-                          <b-input-group prepend="Custom Field 5">
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCustomField['list_custom_field_5']">
+                          <b-input-group :prepend="getCustomField('list_custom_field_5')">
                                 <b-form-select v-model="list.list_custom_field_5" :options="customField5" @change="addNewField($event)">
                                 </b-form-select>
                             </b-input-group>
@@ -270,6 +270,7 @@
             pull_date: [],
             showSettingsModal: false,
             settingSection: '',
+            selectFieldName: '',
             allFieldsMapped: false,
             isSameDataDateAsPullDate: null,
             errors: [],
@@ -398,7 +399,7 @@
           this.sameDate = this.list.list_skip_date == null?true:false;
           this.sameSource = this.list.list_skip_source == null?true:false;
         }
-        this.is_show_custom_fields = Object.values(this.visibleCstomField).includes(true);
+        this.is_show_custom_fields = Object.values(this.visibleCustomField).includes(true);
         this.$store.dispatch('uxModule/hideLoader');
 
       },
@@ -416,10 +417,24 @@
             customField3List: 'listModule/customField3List',
             customField4List: 'listModule/customField4List',
             customField5List: 'listModule/customField5List',
-            visibleCstomField: 'labelModule/visible_custom_fields',
+            visibleCustomField: 'labelModule/visibleCustomFields',
+            customFieldsArray: 'labelModule/customFieldsArray',
+
         })
       },
       methods: {
+        getCustomField(field) {
+          let index = this.customFieldsArray.findIndex(x=>x.field == field);
+          if(index != -1) {
+            if(this.customFieldsArray[index].label) {
+              return this.customFieldsArray[index].label;
+            } else {
+            return field;
+            }
+          } else {
+            return field;
+          }
+        },
         dateFormat(date) {
           return moment(date).format("MM/Y");
         },
@@ -501,54 +516,65 @@
           this.$emit('goBack', 'PullSettings');
         },
         addNewField(event) {
+          console.log(event);
              switch (event) {
                 case 'Add a new Market':
                     this.settingSection = 'Market';
+                    this.selectFieldName =  'Market';
                     this.showSettingsModal = true;
                     this.list.list_market = '';
                     break
                 case 'Add a new Group':
                     this.settingSection = 'Group';
+                    this.selectFieldName =  'Group';
                     this.showSettingsModal = true;
                     this.list.list_group = '';
                     break
                 case 'Add a new Type':
                     this.settingSection = 'Type';
+                    this.selectFieldName =  'Type';
                     this.showSettingsModal = true;
                     this.list.list_type = '';
                     break
                 case 'Add a new Source':
                     this.settingSection = 'Source';
+                    this.selectFieldName =  'Source';
                     this.showSettingsModal = true;
                     this.list.list_source = '';
                     break
                  case 'Add a new Skip Source':
                    this.settingSection = 'Skip Source';
+                   this.selectFieldName =  'Skip Source';
                    this.showSettingsModal = true;
                    this.list.list_skip_source = '';
                    break
                   case 'Add a new custom Field 1':
-                   this.settingSection = 'Custom Field 1';
+                   this.settingSection = this.getCustomField('list_custom_field_1');
+                   this.selectFieldName =  'Custom Field 1';
                    this.showSettingsModal = true;
                    this.list.list_custom_field_1 = '';
                    break
                   case 'Add a new custom Field 2':
-                   this.settingSection = 'Custom Field 2';
+                   this.settingSection = this.getCustomField('list_custom_field_2');
+                   this.selectFieldName =  'Custom Field 2';
                    this.showSettingsModal = true;
                    this.list.list_custom_field_2 = '';
                    break
                   case 'Add a new custom Field 3':
-                   this.settingSection = 'Custom Field 3';
+                   this.settingSection = this.getCustomField('list_custom_field_3');
+                   this.selectFieldName =  'Custom Field 3';
                    this.showSettingsModal = true;
                    this.list.list_custom_field_3 = '';
                    break
                   case 'Add a new custom Field 4':
-                   this.settingSection = 'Custom Field 4';
+                   this.settingSection = this.getCustomField('list_custom_field_4');
+                   this.selectFieldName =  'Custom Field 4';
                    this.showSettingsModal = true;
                    this.list.list_custom_field_4 = '';
                    break
                   case 'Add a new custom Field 5':
-                   this.settingSection = 'Custom Field 5';
+                   this.settingSection = this.getCustomField('list_custom_field_5');
+                   this.selectFieldName =  'Custom Field 5';
                    this.showSettingsModal = true;
                    this.list.list_custom_field_5 = '';
                    break
@@ -556,9 +582,9 @@
                    
             }
         },
-        add (response) {
+        add (response) {          
           try{
-          switch (this.settingSection) {
+          switch (this.selectFieldName) {
             case "Market":
               if((this.market.indexOf(response)) === -1){
                 this.market.splice(this.market.length -1, 0, response);
