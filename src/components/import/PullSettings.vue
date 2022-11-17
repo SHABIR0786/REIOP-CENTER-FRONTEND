@@ -52,6 +52,41 @@
                             </b-input-group>
                         </b-col>
                     </b-row>
+                    <div class="info-text" v-if="is_show_custom_fields">
+                      <p>Custom Fields <span class="small">(Optional)</span></p>
+                  </div>
+                    <b-row class="mb-2" v-if="is_show_custom_fields">
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_1']">
+                          <b-input-group prepend="Custom Field 1">
+                                <b-form-select v-model="list.list_custom_field_1" :options="customField1" @change="addNewField($event)">
+                                </b-form-select>
+                            </b-input-group>
+                        </b-col>
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_2']">
+                          <b-input-group prepend="Custom Field 2">
+                                <b-form-select v-model="list.list_custom_field_2" :options="customField2" @change="addNewField($event)">
+                                </b-form-select>
+                            </b-input-group>
+                        </b-col>
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_3']">
+                          <b-input-group prepend="Custom Field 3">
+                                <b-form-select v-model="list.list_custom_field_3" :options="customField3" @change="addNewField($event)">
+                                </b-form-select>
+                            </b-input-group>
+                        </b-col>
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_4']">
+                          <b-input-group prepend="Custom Field 4">
+                                <b-form-select v-model="list.list_custom_field_4" :options="customField4" @change="addNewField($event)">
+                                </b-form-select>
+                            </b-input-group>
+                        </b-col>
+                        <b-col cols="9 my-1" class="mx-auto" v-if="this.visibleCstomField['list_custom_field_5']">
+                          <b-input-group prepend="Custom Field 5">
+                                <b-form-select v-model="list.list_custom_field_5" :options="customField5" @change="addNewField($event)">
+                                </b-form-select>
+                            </b-input-group>
+                        </b-col>
+                    </b-row>
                     <b-row class="mb-2" v-if="list.list_pull_date">
                       <b-col cols="9" class="mx-auto">
                       <div class="text-center text-info m-4">
@@ -212,6 +247,13 @@
                 list_hash: '',
                 user_id: '',
                 team_id: '',
+                //custom fields
+                list_custom_field_1:'',
+                list_custom_field_2:'',
+                list_custom_field_3:'',
+                list_custom_field_4:'',
+                list_custom_field_5:'',
+
             },
             list_data_date:'',
             market:[],
@@ -219,6 +261,12 @@
             type: [],
             source: [],
             skipSource: [],
+            //custom fields
+            customField1: [],
+            customField2: [],
+            customField3: [],
+            customField4: [],
+            customField5: [],
             pull_date: [],
             showSettingsModal: false,
             settingSection: '',
@@ -226,10 +274,14 @@
             isSameDataDateAsPullDate: null,
             errors: [],
             sameDate: null,
-            sameSource: null
+            sameSource: null,
+            is_show_custom_fields:false,
+
         }
       },
       async mounted() {
+        this.$store.dispatch('uxModule/setLoading')
+        await this.$store.dispatch('labelModule/visibleCustomFields')
        let response = await this.$store.dispatch('listModule/getImportPullLists', {page: this.currentPage, perPage: this.perPage});
        this.lists = response?.lists?.data;
       if (this.marketList.length > 0) {
@@ -246,6 +298,22 @@
         }
         if (this.skipSourceList.length > 0) {
           this.skipSource = this.skipSourceList
+        }
+        //custom fields
+        if (this.customField1List.length > 0) {
+          this.customField1 = this.customField1List
+        }
+        if (this.customField2List.length > 0) {
+          this.customField2 = this.customField2List
+        }
+        if (this.customField3List.length > 0) {
+          this.customField3 = this.customField3List
+        }
+        if (this.customField4List.length > 0) {
+          this.customField4 = this.customField4List
+        }
+        if (this.customField5List.length > 0) {
+          this.customField5 = this.customField5List
         }
         this.lists.forEach(e => {
             if((this.market.indexOf(e.list_market)) === -1 && e.list_market){
@@ -265,6 +333,22 @@
             }
             if((this.pull_date.indexOf(e.list_pull_date)) === -1){
               this.pull_date.push(e.list_pull_date);
+            }
+            //custom fields
+            if((this.customField1.indexOf(e.list_custom_field_1)) === -1 && e.list_custom_field_1){
+              this.customField1.push(e.list_custom_field_1);
+            }
+            if((this.customField2.indexOf(e.list_custom_field_2)) === -1 && e.list_custom_field_2){
+              this.customField2.push(e.list_custom_field_2);
+            }
+            if((this.customField3.indexOf(e.list_custom_field_3)) === -1 && e.list_custom_field_3){
+              this.customField3.push(e.list_custom_field_3);
+            }
+            if((this.customField4.indexOf(e.list_custom_field_4)) === -1 && e.list_custom_field_4){
+              this.customField4.push(e.list_custom_field_4);
+            }
+            if((this.customField5.indexOf(e.list_custom_field_5)) === -1 && e.list_custom_field_5){
+              this.customField5.push(e.list_custom_field_5);
             }
         });
         if (!this.market.includes('Add a new Market')){
@@ -287,12 +371,36 @@
           this.skipSource = this.skipSource.sort();
           this.skipSource.unshift('Add a new Skip Source')
         }
+        //custom fields
+        if (!this.customField1.includes('Add a new custom Field 1')){
+          this.customField1 = this.customField1.sort();
+          this.customField1.unshift('Add a new custom Field 1')
+        }
+        if (!this.customField2.includes('Add a new custom Field 2')){
+          this.customField2 = this.customField2.sort();
+          this.customField2.unshift('Add a new custom Field 2')
+        }
+        if (!this.customField3.includes('Add a new custom Field 3')){
+          this.customField3 = this.customField3.sort();
+          this.customField3.unshift('Add a new custom Field 3')
+        }
+        if (!this.customField4.includes('Add a new custom Field 4')){
+          this.customField4 = this.customField4.sort();
+          this.customField4.unshift('Add a new custom Field 4')
+        }
+        if (!this.customField5.includes('Add a new custom Field 5')){
+          this.customField5 = this.customField5.sort();
+          this.customField5.unshift('Add a new custom Field 5')
+        }
         if (this.importDetails && this.importDetails.pull_settings) {
           this.list = this.importDetails.pull_settings;
           this.isSameDataDateAsPullDate = this.list.list_data_date == null?true:false;
           this.sameDate = this.list.list_skip_date == null?true:false;
           this.sameSource = this.list.list_skip_source == null?true:false;
         }
+        this.is_show_custom_fields = Object.values(this.visibleCstomField).includes(true);
+        this.$store.dispatch('uxModule/hideLoader');
+
       },
       computed: {
         ...mapGetters({
@@ -302,6 +410,13 @@
             typeList: 'listModule/typeList',
             sourceList: 'listModule/sourceList',
             skipSourceList: 'listModule/skipSourceList',
+            //custom fields
+            customField1List: 'listModule/customField1List',
+            customField2List: 'listModule/customField2List',
+            customField3List: 'listModule/customField3List',
+            customField4List: 'listModule/customField4List',
+            customField5List: 'listModule/customField5List',
+            visibleCstomField: 'labelModule/visible_custom_fields',
         })
       },
       methods: {
@@ -412,9 +527,37 @@
                    this.showSettingsModal = true;
                    this.list.list_skip_source = '';
                    break
+                  case 'Add a new custom Field 1':
+                   this.settingSection = 'Custom Field 1';
+                   this.showSettingsModal = true;
+                   this.list.list_custom_field_1 = '';
+                   break
+                  case 'Add a new custom Field 2':
+                   this.settingSection = 'Custom Field 2';
+                   this.showSettingsModal = true;
+                   this.list.list_custom_field_2 = '';
+                   break
+                  case 'Add a new custom Field 3':
+                   this.settingSection = 'Custom Field 3';
+                   this.showSettingsModal = true;
+                   this.list.list_custom_field_3 = '';
+                   break
+                  case 'Add a new custom Field 4':
+                   this.settingSection = 'Custom Field 4';
+                   this.showSettingsModal = true;
+                   this.list.list_custom_field_4 = '';
+                   break
+                  case 'Add a new custom Field 5':
+                   this.settingSection = 'Custom Field 5';
+                   this.showSettingsModal = true;
+                   this.list.list_custom_field_5 = '';
+                   break
+
+                   
             }
         },
         add (response) {
+          try{
           switch (this.settingSection) {
             case "Market":
               if((this.market.indexOf(response)) === -1){
@@ -450,8 +593,47 @@
                 this.$store.dispatch('listModule/saveSkipSourceList', this.skipSource)
               }
               this.list.list_skip_source = response;
-              break
+              break;
+              case "Custom Field 1":
+              if(this.customField1.indexOf(response) === -1){
+                this.customField1.splice(this.customField1.length -1, 0, response);
+                this.$store.dispatch('listModule/saveCustomField1List', this.customField1)
+              }
+              this.list.list_custom_field_1 = response;
+              break;
+              case "Custom Field 2":
+              if(this.customField2.indexOf(response) === -1){
+                this.customField2.splice(this.customField2.length -1, 0, response);
+                this.$store.dispatch('listModule/saveCustomField2List', this.customField2)
+              }
+              this.list.list_custom_field_2 = response;
+              break;
+              case "Custom Field 3":
+              if(this.customField3.indexOf(response) === -1){
+                this.customField3.splice(this.customField3.length -1, 0, response);
+                this.$store.dispatch('listModule/saveCustomField3List', this.customField3)
+              }
+              this.list.list_custom_field_3 = response;
+              break;
+              case "Custom Field 4":
+              if(this.customField4.indexOf(response) === -1){
+                this.customField4.splice(this.customField4.length -1, 0, response);
+                this.$store.dispatch('listModule/saveCustomField4List', this.customField4)
+              }
+              this.list.list_custom_field_4 = response;
+              break;
+              case "Custom Field 5":
+              if(this.customField5.indexOf(response) === -1){
+                this.customField5.splice(this.customField5.length -1, 0, response);
+                this.$store.dispatch('listModule/saveCustomField5List', this.customField5)
+              }
+              this.list.list_custom_field_5 = response;
+              break;
           }
+        }catch(e){
+          console.log('error',e);
+          this.showSettingsModal = false;
+        }
           this.showSettingsModal = false;
         }
       }

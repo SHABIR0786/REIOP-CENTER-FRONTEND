@@ -35,6 +35,12 @@ const state = {
     allSkipSourceList:[],
     allSourceList:[],
     importPullList:[],
+    //custom fields
+    customField1List:[],
+    customField2List:[],
+    customField3List:[],
+    customField4List:[],
+    customField5List:[],
 }
 
 const mutations = {
@@ -44,6 +50,24 @@ const mutations = {
             e.list_total_subject = e.subjects_unique_count;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
+            //custom fields
+            if(e.list_custom_field_1){
+                if(state.fields.findIndex(({ key }) => key == "list_custom_field_1") == -1) {
+                    state.fields.push({key:"list_custom_field_1", label: "Custom Field 1", sortable: true});
+                }
+                if(state.fields.findIndex(({ key }) => key == "list_custom_field_2") == -1) {
+                    state.fields.push({key:"list_custom_field_2", label: "Custom Field 2", sortable: true});
+                }
+                if(state.fields.findIndex(({ key }) => key == "list_custom_field_3") == -1) {
+                    state.fields.push({key:"list_custom_field_3", label: "Custom Field 3", sortable: true});
+                }
+                if(state.fields.findIndex(({ key }) => key == "list_custom_field_4") == -1) {
+                    state.fields.push({key:"list_custom_field_4", label: "Custom Field 4", sortable: true});
+                }
+                if(state.fields.findIndex(({ key }) => key == "list_custom_field_5") == -1) {
+                    state.fields.push({key:"list_custom_field_5", label: "Custom Field 5", sortable: true});
+                }
+                }
         })
         state.lists = JSON.stringify(data);
         state.pageTo = payload.to;
@@ -108,6 +132,21 @@ const mutations = {
     },
     SET_SOURCE_LIST(state, payload) {
         state.sourceList = payload
+    },
+    SET_CUSTOM_FIELD_1_LIST(state, payload) {
+        state.customField1List = payload
+    },
+    SET_CUSTOM_FIELD_2_LIST(state, payload) {
+        state.customField2List = payload
+    },
+    SET_CUSTOM_FIELD_3_LIST(state, payload) {
+        state.customField3List = payload
+    },
+    SET_CUSTOM_FIELD_4_LIST(state, payload) {
+        state.customField4List = payload
+    },
+    SET_CUSTOM_FIELD_5_LIST(state, payload) {
+        state.customField5List = payload
     },
     ADD_SOURCE_LIST(state, payload) {
         
@@ -201,6 +240,12 @@ const mutations = {
         state.skipSourceList = [];
         state.total = 0;
         state.importPullList = [];
+        //custom fields
+        state.customField1List = [];
+        state.customField2List = [];
+        state.customField3List = [];
+        state.customField4List = [];
+        state.customField5List = [];
     },
 }
 
@@ -219,6 +264,21 @@ const actions = {
     },
     saveSkipSourceList({ commit }, payload) {
         commit('SET_SKIP_SOURCE_LIST', payload)
+    },
+    saveCustomField1List({ commit }, payload) {
+        commit('SET_CUSTOM_FIELD_1_LIST', payload)
+    },
+    saveCustomField2List({ commit }, payload) {
+        commit('SET_CUSTOM_FIELD_2_LIST', payload)
+    },
+    saveCustomField3List({ commit }, payload) {
+        commit('SET_CUSTOM_FIELD_3_LIST', payload)
+    },
+    saveCustomField4List({ commit }, payload) {
+        commit('SET_CUSTOM_FIELD_4_LIST', payload)
+    },
+    saveCustomField5List({ commit }, payload) {
+        commit('SET_CUSTOM_FIELD_5_LIST', payload)
     },
     saveSkipSourceChoose({ commit }, payload) {
         commit('SET_SKIP_SOURCE_CHOOSE', payload)
@@ -544,6 +604,12 @@ const getters = {
     typeList: state => state.typeList,
     sourceList: state => state.sourceList,
     skipSourceList: state => state.skipSourceList,
+    customField1List: state => state.customField1List,
+    customField2List: state => state.customField2List,
+    customField3List: state => state.customField3List,
+    customField4List: state => state.customField4List,
+    customField5List: state => state.customField5List,
+
     skipSourceListFromDB: ({ allSkipSourceList }) => {
         if (typeof allSkipSourceList === 'string') {
             return JSON.parse(allSkipSourceList);

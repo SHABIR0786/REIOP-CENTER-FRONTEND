@@ -7,7 +7,7 @@
             <b-row class="text-center">
                     <b-col cols="12">
                         <b-input-group prepend="Field" class="mb-2">
-                            <b-form-input v-model="label.field"></b-form-input>
+                            <b-form-input v-model="label.field" disabled></b-form-input>
                         </b-input-group>
                     </b-col>
                     <b-col cols="12">
@@ -18,15 +18,6 @@
                     <b-col cols="12">
                         <b-input-group prepend="Description" class="mb-2">
                             <b-form-input v-model="label.description"></b-form-input>
-                        </b-input-group>
-                    </b-col>
-                    <b-col cols="12">
-                        <b-input-group prepend="Section" class="mb-2">
-                            <b-form-select id="show-select"
-                                v-model="label.section"
-                                :options="sections"
-                                size="xs"
-                                class=""></b-form-select>
                         </b-input-group>
                     </b-col>
             </b-row>
@@ -60,16 +51,7 @@
                     label: '',
                     description: '',
                     visible: false,
-                    section: '',
                 },
-                sections:[
-                    {value:"subject",text:"Subject"},
-                    {value:"seller",text: "Seller"},
-                    {value:"phone", text: "Phone"},
-                    {value: "email", text: "Email"},
-                    {value: "golden_address", text: "Golden Address"},
-                    {value: "list", text: "List"}
-                    ],
             }
         },
         watch: {

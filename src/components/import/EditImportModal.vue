@@ -242,6 +242,46 @@
                         </b-input-group>
                       </b-col>
                     </b-row>
+                    <b-row v-if="editData.list_custom_field_1">
+                      <b-col cols="12">
+                        <b-input-group  prepend="Custom Field 1" class="mb-2">
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_1" :disabled="isReadOnly" :options="list_custom_field_1_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_1"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="editData.list_custom_field_2">
+                      <b-col cols="12">
+                        <b-input-group  prepend="Custom Field 2" class="mb-2">
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_2" :disabled="isReadOnly" :options="list_custom_field_2_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_2"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="editData.list_custom_field_3">
+                      <b-col cols="12">
+                        <b-input-group  prepend="Custom Field 3" class="mb-2">
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_3" :disabled="isReadOnly" :options="list_custom_field_3_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_3"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="editData.list_custom_field_4">
+                      <b-col cols="12">
+                        <b-input-group  prepend="Custom Field 4" class="mb-2">
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_4" :disabled="isReadOnly" :options="list_custom_field_4_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_4"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="editData.list_custom_field_5">
+                      <b-col cols="12">
+                        <b-input-group  prepend="Custom Field 5" class="mb-2">
+                          <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_5" :disabled="isReadOnly" :options="list_custom_field_5_array" required></b-form-select>
+                          <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_5"></b-form-input>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
                     <b-row>
                       <b-col cols="12">
                         <b-input-group  prepend="Skip Source" class="mb-2">
@@ -433,6 +473,14 @@ export default {
           list_group_array:[],
           list_type_array:[],
           allListItems:[],
+          //custom fields   
+          list_custom_field_1_array:[],
+          list_custom_field_2_array:[],
+          list_custom_field_3_array:[],
+          list_custom_field_4_array:[],
+          list_custom_field_5_array:[],
+
+
         }
     },
     
@@ -451,18 +499,42 @@ export default {
                 this.list_source_array.push(list.list_source);
                 this.list_skip_source_array.push(list.list_skip_source);
                 this.list_group_array.push(list.list_group);
-                this.list_type_array.push(list.list_type);    
+                this.list_type_array.push(list.list_type);
+                //custom fields   
+                this.list_custom_field_1_array.push(list.list_custom_field_1);
+                this.list_custom_field_2_array.push(list.list_custom_field_2);
+                this.list_custom_field_3_array.push(list.list_custom_field_3);
+                this.list_custom_field_4_array.push(list.list_custom_field_4);
+                this.list_custom_field_5_array.push(list.list_custom_field_5);
+
+
                 });
                 this.list_market_array = [...new Set(this.list_market_array)];
                 this.list_source_array = [...new Set(this.list_source_array)];
                 this.list_group_array = [...new Set(this.list_group_array)];
                 this.list_type_array = [...new Set(this.list_type_array)];
                 this.list_skip_source_array = [...new Set(this.list_skip_source_array)];
+                //custom fields
+                this.list_custom_field_1_array = [...new Set(this.list_custom_field_1_array)];
+                this.list_custom_field_2_array = [...new Set(this.list_custom_field_2_array)];
+                this.list_custom_field_3_array = [...new Set(this.list_custom_field_3_array)];
+                this.list_custom_field_4_array = [...new Set(this.list_custom_field_4_array)];
+                this.list_custom_field_5_array = [...new Set(this.list_custom_field_5_array)];
+
+
                 this.list_market_array = this.list_market_array.filter((a) => a);
                 this.list_skip_source_array = this.list_skip_source_array.filter((a) => a);
                 this.list_source_array = this.list_source_array.filter((a) => a);
                 this.list_group_array = this.list_group_array.filter((a) => a);
                 this.list_type_array = this.list_type_array.filter((a) => a);
+                //custom fields
+                this.list_custom_field_1_array = this.list_custom_field_1_array.filter((a) => a);
+                this.list_custom_field_2_array = this.list_custom_field_2_array.filter((a) => a);
+                this.list_custom_field_3_array = this.list_custom_field_3_array.filter((a) => a);
+                this.list_custom_field_4_array = this.list_custom_field_4_array.filter((a) => a);
+                this.list_custom_field_5_array = this.list_custom_field_5_array.filter((a) => a);
+
+
         },
       data: {
         deep: true,

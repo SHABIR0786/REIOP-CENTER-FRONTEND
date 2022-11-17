@@ -19,9 +19,9 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 .loader{
     z-index: 2000 !important;
-    position: absolute !important;
+    position: fixed !important;
 }
 </style>

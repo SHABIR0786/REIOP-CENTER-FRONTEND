@@ -9,11 +9,25 @@ const state = {
         {key: "actions", label: "Actions"}
     ],
     labels: [],
+    //custom fields
+    visible_custom_fields: {
+        list_custom_field_1: false,
+        list_custom_field_2: false,
+        list_custom_field_3: false,
+        list_custom_field_4: false,
+        list_custom_field_5: false,
+    },
+
 }
 
 const mutations = {
     SET_LABELS(state, payload) {
         state.labels = payload;
+    },
+    SET_ENABLE_LABELS(state, payload) {
+        payload.forEach(e => {
+            state.visible_custom_fields[e.field] = e.visible==1?true:false;
+          });
     },
     EDIT_LABEL(state, payload) {
         const findIndex = state.labels.findIndex(({ id }) => id === payload.id)
@@ -33,6 +47,13 @@ const actions = {
         return await api.get('/labels').then((response) => {
             if (response && response.labels) {
                 commit('SET_LABELS', response.labels);
+            }
+        });
+    },
+    async visibleCustomFields({ commit }) {
+        return await api.get('/visibleCustomFields').then((response) => {
+            if (response && response.labels) {
+                commit('SET_ENABLE_LABELS', response.labels);
             }
         });
     },
@@ -59,6 +80,7 @@ const actions = {
 const getters = {
     fields: ({ fields }) => fields,
     labels: ({ labels }) => labels,
+    visible_custom_fields: ({ visible_custom_fields }) => visible_custom_fields,
 }
 
 export default {
