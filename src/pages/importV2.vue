@@ -31,8 +31,7 @@
                     :fields="fields"
                     :items="filteredItems"
                     :per-page="perPage"
-                    :sticky-header="true"
-            >
+                    :sticky-header="true">
                 <template #table-busy>
                     <div class="text-center" my-2>
                         <b-spinner class="align-middle"></b-spinner>

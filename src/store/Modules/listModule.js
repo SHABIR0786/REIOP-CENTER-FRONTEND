@@ -378,7 +378,23 @@ const actions = {
         delete data.emails_count;
         delete data.run_month;
         delete data.run_year;
-        data.list_hash = data.list_market + '_' + data.list_type + '_' +  data.list_group + '_' + data.list_source
+        let listHash = '';
+        if(data.list_custom_field_1) {
+          listHash+='_'+data.list_custom_field_1;
+        }
+        if(data.list_custom_field_2) {
+          listHash+='_'+data.list_custom_field_2;
+        }
+        if(data.list_custom_field_3) {
+          listHash+='_'+data.list_custom_field_3;
+        }
+        if(data.list_custom_field_4) {
+          listHash+='_'+data.list_custom_field_4;
+        }
+        if(data.list_custom_field_5) {
+          listHash+='_'+data.list_custom_field_5;
+        }
+        data.list_hash = data.list_market + '_' + data.list_type + '_' +  data.list_group + '_' + data.list_source+listHash;
         return await api.put(`/lists/${data.id}`, {...data}).then((response) => {
             commit('EDIT_LIST', data)
             return response
