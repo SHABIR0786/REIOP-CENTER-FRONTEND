@@ -381,11 +381,8 @@ export default {
         },
         async currentModal() {
             this.$store.dispatch('uxModule/setLoading')
-            let seller = this.goldenAddress?.sellers?.[0];
-            if(seller) {
-            await this.$store.dispatch(`listModule/getSellerRunningList`, {id:seller.id});
-            await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:seller.id})
-            }
+            await this.$store.dispatch(`listModule/getGoldenRunningList`, {id:this.goldenAddress.id});
+            await this.$store.dispatch(`listModule/getGoldenRelatedList`, {id:this.goldenAddress.id});
             this.$store.dispatch('uxModule/hideLoader');
 
         },

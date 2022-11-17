@@ -345,17 +345,84 @@ const actions = {
     },
     async getSellerRelatedList({ commit }, data) {
         return await api.post(`/lists/sellerRelatedLists`, {...data}).then((response) => {
-            commit('SELLER_RELATED_LIST', response.sellerRelatedLists)
+            if(response.sellerRelatedLists.length > 0) {
+            commit('SELLER_RELATED_LIST', response.sellerRelatedLists);
+            } else {
+            commit('SELLER_RELATED_LIST', []);
+            }
             return response
         })
     },
     async getSellerRunningList({ commit }, data) {
         return await api.post(`/lists/sellerRunningLists`, {...data}).then((response) => {
-            commit('SELLER_RUNNING_LIST', response.sellerRunningLists)
+            if(response.sellerRunningLists.length > 0) {
+            commit('SELLER_RUNNING_LIST', response.sellerRunningLists);
+            } else {
+            commit('SELLER_RUNNING_LIST', []);
+            }
             return response
         })
     },
-
+    async getPhoneRelatedList({ commit }, data) {
+        return await api.post(`/lists/phoneRelatedLists`, {...data}).then((response) => {
+            if(response.phoneRelatedLists.length > 0) {
+                commit('SELLER_RELATED_LIST', response.phoneRelatedLists);
+            } else {
+                commit('SELLER_RELATED_LIST', [])
+            }
+            return response
+        })
+    },
+    async getPhoneRunningList({ commit }, data) {
+        return await api.post(`/lists/phoneRunningLists`, {...data}).then((response) => {
+            if(response.phoneRunningLists.length > 0) {
+                commit('SELLER_RUNNING_LIST', response.phoneRunningLists);
+            } else {
+                commit('SELLER_RUNNING_LIST', []);
+            }
+            return response
+        })
+    },
+    async getEmailRelatedList({ commit }, data) {
+        return await api.post(`/lists/emailRelatedLists`, {...data}).then((response) => {
+            if(response.emailRelatedLists.length > 0) {
+                commit('SELLER_RELATED_LIST', response.emailRelatedLists);
+            } else {
+                commit('SELLER_RELATED_LIST', [])
+            }
+            return response
+        })
+    },
+    async getEamilRunningList({ commit }, data) {
+        return await api.post(`/lists/emailRunningLists`, {...data}).then((response) => {
+            if(response.emailRunningLists.length > 0) {
+                commit('SELLER_RUNNING_LIST', response.emailRunningLists);
+            } else {
+                commit('SELLER_RUNNING_LIST', []);
+            }
+            return response
+        })
+    },
+    async getGoldenRelatedList({ commit }, data) {
+        return await api.post(`/lists/goldenRelatedLists`, {...data}).then((response) => {
+            if(response.goldenRelatedLists.length > 0) {
+                commit('SELLER_RELATED_LIST', response.goldenRelatedLists)
+            } else {
+                commit('SELLER_RELATED_LIST', [])
+            }
+            return response
+        })
+    },
+    async getGoldenRunningList({ commit }, data) {
+        return await api.post(`/lists/goldenRunningLists`, {...data}).then((response) => {
+            if(response.goldenRunningLists.length > 0) {
+            commit('SELLER_RUNNING_LIST', response.goldenRunningLists);
+            } else {
+            commit('SELLER_RUNNING_LIST', []);
+            }
+            return response
+        })
+    },
     async currentModal({ commit }, {data, page, perPage,list_id}) {
         return await api.get(`/lists/modal?listHash=${data}&page=${page}&perPage=${perPage}&list_id=${list_id}`, {...data}).then((response) => {
             commit('SHOW_TABS', response.tabData)
