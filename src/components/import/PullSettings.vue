@@ -493,7 +493,23 @@
 
           this.list.user_id = this.user.id;
           this.list.team_id = this.user.team_id;
-          this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source
+          let listHash = '';
+          if(this.list.list_custom_field_1) {
+            listHash+='_'+this.list.list_custom_field_1;
+          }
+          if(this.list.list_custom_field_2) {
+            listHash+='_'+this.list.list_custom_field_2;
+          }
+          if(this.list.list_custom_field_3) {
+            listHash+='_'+this.list.list_custom_field_3;
+          }
+          if(this.list.list_custom_field_4) {
+            listHash+='_'+this.list.list_custom_field_4;
+          }
+          if(this.list.list_custom_field_5) {
+            listHash+='_'+this.list.list_custom_field_5;
+          }
+          this.list.list_hash = this.list.list_market + '_' + this.list.list_type + '_' +  this.list.list_group + '_' + this.list.list_source+listHash;
           //this.$store.dispatch('listModule/addList', this.list)
           this.$emit('pullSettingsResponse', this.list);
         },

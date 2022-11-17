@@ -361,11 +361,8 @@ export default {
         },
         async currentModal(){
             this.$store.dispatch('uxModule/setLoading')
-            let seller = this.phoneNumber?.sellers?.[0];
-            if(seller) {
-            await this.$store.dispatch(`listModule/getSellerRunningList`, {id:seller.id})
-            // await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:seller.id})
-            }
+            await this.$store.dispatch(`listModule/getPhoneRunningList`, {id:this.phoneNumber.id})
+            await this.$store.dispatch(`listModule/getPhoneRelatedList`, {id:this.phoneNumber.id})
             this.$store.dispatch('uxModule/hideLoader')
 
         },

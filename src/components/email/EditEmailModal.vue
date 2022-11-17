@@ -354,14 +354,10 @@ export default {
             this.isReadOnly = true;
             this.$emit('save', this.email);
         },
-        async currentModal(){
-            this.$store.dispatch('uxModule/setLoading')
-
-          let seller = this.email?.sellers?.[0];
-          if(seller) {
-          await this.$store.dispatch(`listModule/getSellerRunningList`, {id:seller.id})
-          await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:seller.id})
-          }
+        async currentModal() {
+          this.$store.dispatch('uxModule/setLoading')
+          await this.$store.dispatch(`listModule/getEamilRunningList`, {id:this.email.id})
+          await this.$store.dispatch(`listModule/getEmailRelatedList`, {id:this.email.id})
           this.$store.dispatch('uxModule/hideLoader')
         },
         editSellerItem(item) {
