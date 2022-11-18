@@ -244,7 +244,7 @@
                     </b-row>
                     <b-row v-if="editData.list_custom_field_1">
                       <b-col cols="12">
-                        <b-input-group  prepend="Custom Field 1" class="mb-2">
+                        <b-input-group  :prepend="getCustomField('list_custom_field_1')" class="mb-2">
                           <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_1" :disabled="isReadOnly" :options="list_custom_field_1_array" required></b-form-select>
                           <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_1"></b-form-input>
                         </b-input-group>
@@ -252,7 +252,7 @@
                     </b-row>
                     <b-row v-if="editData.list_custom_field_2">
                       <b-col cols="12">
-                        <b-input-group  prepend="Custom Field 2" class="mb-2">
+                        <b-input-group  :prepend="getCustomField('list_custom_field_2')" class="mb-2">
                           <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_2" :disabled="isReadOnly" :options="list_custom_field_2_array" required></b-form-select>
                           <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_2"></b-form-input>
                         </b-input-group>
@@ -260,7 +260,7 @@
                     </b-row>
                     <b-row v-if="editData.list_custom_field_3">
                       <b-col cols="12">
-                        <b-input-group  prepend="Custom Field 3" class="mb-2">
+                        <b-input-group  :prepend="getCustomField('list_custom_field_3')" class="mb-2">
                           <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_3" :disabled="isReadOnly" :options="list_custom_field_3_array" required></b-form-select>
                           <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_3"></b-form-input>
                         </b-input-group>
@@ -268,7 +268,7 @@
                     </b-row>
                     <b-row v-if="editData.list_custom_field_4">
                       <b-col cols="12">
-                        <b-input-group  prepend="Custom Field 4" class="mb-2">
+                        <b-input-group  :prepend="getCustomField('list_custom_field_4')" class="mb-2">
                           <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_4" :disabled="isReadOnly" :options="list_custom_field_4_array" required></b-form-select>
                           <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_4"></b-form-input>
                         </b-input-group>
@@ -276,7 +276,7 @@
                     </b-row>
                     <b-row v-if="editData.list_custom_field_5">
                       <b-col cols="12">
-                        <b-input-group  prepend="Custom Field 5" class="mb-2">
+                        <b-input-group  :prepend="getCustomField('list_custom_field_5')" class="mb-2">
                           <b-form-select v-if="!isReadOnly" v-model="editData.list_custom_field_5" :disabled="isReadOnly" :options="list_custom_field_5_array" required></b-form-select>
                           <b-form-input v-if="isReadOnly" :disabled="isReadOnly"  v-model="editData.list_custom_field_5"></b-form-input>
                         </b-input-group>
@@ -361,6 +361,7 @@
 </template>
 <script>
 import DeleteModal from "@/components/deleteModal/DeleteModal";
+import {mapGetters} from "vuex";
 
 
 export default {
@@ -386,6 +387,11 @@ export default {
       DeleteModal,
     },
 
+    computed: {
+        ...mapGetters({
+            customFieldsArray: 'labelModule/customFieldsArray',
+        })
+      },
   methods: {
         close(){
           this.isReadOnly = true;
@@ -436,6 +442,18 @@ export default {
         let routeData = this.$router.resolve({path: route});
         window.open(routeData.href, '_blank');
       },
+      getCustomField(field) {
+          let index = this.customFieldsArray.findIndex(x=>x.field == field);
+          if(index != -1) {
+            if(this.customFieldsArray[index].label) {
+              return this.customFieldsArray[index].label;
+            } else {
+            return field;
+            }
+          } else {
+            return field;
+          }
+        },
     },
     data() {
         return {
@@ -485,7 +503,10 @@ export default {
     },
     
     watch: {
-        showModal() {
+        async showModal() {
+          if(this.showModal){
+            await this.$store.dispatch('labelModule/visibleCustomFields')
+          }
             this.showModalCopy = this.showModal;
                 this.list_market_array = [];
                 this.list_source_array = [];

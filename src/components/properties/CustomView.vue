@@ -31,6 +31,9 @@
                         <b-form-checkbox id="list_source" @change="mapCustomView('list_source','List Source')" v-model="template.list_source" name="list_source" value="accepted">
                             List Source
                         </b-form-checkbox>
+                        <b-form-checkbox v-for="field,index in relatedCustomField('list_custom_field_')" :key="index" :id="field.field" @change="mapCustomView(field.field,field.label)" v-model="template[field.field]" :name="field.field" value="accepted">
+                            {{checkCustomFieldLabel(field)}}
+                        </b-form-checkbox>
                     </b-collapse>
                 </div>
                 <div class="mt-1">
@@ -71,6 +74,9 @@
                         <b-form-checkbox id="total_sellers" @change="mapCustomView('total_sellers','Total Seller')" v-model="template.total_sellers" name="total_sellers" value="accepted">
                             Total Seller
                         </b-form-checkbox>
+                        <b-form-checkbox v-for="field,index in relatedCustomField('subject_custom_field_')" :key="index" :id="field.field" @change="mapCustomView(field.field,field.label)" v-model="template[field.field]" :name="field.field" value="accepted">
+                            {{checkCustomFieldLabel(field)}}
+                        </b-form-checkbox>
                         </b-collapse>
                 </div>
                 <div class="mt-1">
@@ -105,6 +111,9 @@
                         <b-form-checkbox id="seller_mailing_zip" @change="mapCustomView('seller_mailing_zip','Seller Mailing Zip')" v-model="template.seller_mailing_zip" name="seller_mailing_zip" value="accepted">
                             Seller Mailing Zip
                         </b-form-checkbox>
+                        <b-form-checkbox v-for="field,index in relatedCustomField('seller_custom_field_')" :key="index" :id="field.field" @change="mapCustomView(field.field,field.label)" v-model="template[field.field]" :name="field.field" value="accepted">
+                            {{checkCustomFieldLabel(field)}}
+                        </b-form-checkbox>
                     </b-collapse>
                 </div>
                 <div class="mt-1">
@@ -127,6 +136,9 @@
                         <b-form-checkbox id="phone_skip_source" @change="mapCustomView('phone_skip_source','Skip Source')" v-model="template.phone_skip_source" name="phone_skip_source" value="accepted">
                             Skip Source
                         </b-form-checkbox>
+                        <b-form-checkbox v-for="field,index in relatedCustomField('phone_custom_field_')" :key="index" :id="field.field" @change="mapCustomView(field.field,field.label)" v-model="template[field.field]" :name="field.field" value="accepted">
+                            {{checkCustomFieldLabel(field)}}
+                        </b-form-checkbox>
                     </b-collapse>
                 </div>
                 <div class="mt-1">
@@ -146,6 +158,9 @@
                         </b-form-checkbox>
                         <b-form-checkbox id="email_skip_source" @change="mapCustomView('email_skip_source','Skip Source')" v-model="template.email_skip_source" name="email_skip_source" value="accepted">
                             Skip Source
+                        </b-form-checkbox>
+                        <b-form-checkbox v-for="field,index in relatedCustomField('email_custom_field_')" :key="index" :id="field.field" @change="mapCustomView(field.field,field.label)" v-model="template[field.field]" :name="field.field" value="accepted">
+                            {{checkCustomFieldLabel(field)}}
                         </b-form-checkbox>
                     </b-collapse>
                 </div>
@@ -168,6 +183,9 @@
                         </b-form-checkbox>
                         <b-form-checkbox id="golden_address_zip" @change="mapCustomView('golden_address_zip','Golden Zip')" v-model="template.golden_address_zip" name="golden_address_zip" value="accepted">
                             Golden Zip
+                        </b-form-checkbox>
+                        <b-form-checkbox v-for="field,index in relatedCustomField('golden_address_custom_field_')" :key="index" :id="field.field" @change="mapCustomView(field.field,field.label)" v-model="template[field.field]" :name="field.field" value="accepted">
+                            {{checkCustomFieldLabel(field)}}
                         </b-form-checkbox>
                     </b-collapse>
                 </div>
@@ -236,6 +254,7 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
 import draggable from 'vuedraggable'
 export default {
     name: 'CustomView',
@@ -254,7 +273,13 @@ export default {
     components: {
         draggable,
     },
+    async created() {
+        await this.$store.dispatch('importModule/loadVisibleFields')
+    },
     computed: {
+        ...mapGetters({
+            customViewVisibleFields: 'importModule/customViewVisibleFields',
+        }),
         customTemplate: {
             get() {
                 let template = {};
@@ -351,6 +376,7 @@ export default {
     },
     methods: {
         mapCustomView(prop, title) {
+            if(!title){ title=prop;}
             if (this.template[prop] == 'accepted') {
                 this.TemplateMap.push({
                     prop: prop,
@@ -394,6 +420,16 @@ export default {
                 this.$emit('save', Object.assign({}, template), 'save');
             }
             this.resetData();
+        },
+        checkCustomFieldLabel(field) {
+            if(field.label) {
+              return field.label;
+            } else {
+            return field.field;
+            }
+        },
+        relatedCustomField(tempField){
+            return this.customViewVisibleFields.filter(({field,visible})=>field.includes(tempField)&&visible==1);            
         }
     }
 }

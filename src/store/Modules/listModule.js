@@ -55,25 +55,47 @@ const mutations = {
                 if(state.fields.findIndex(({ key }) => key == "list_custom_field_1") == -1) {
                     state.fields.push({key:"list_custom_field_1", label: "Custom Field 1", sortable: true});
                 }
+            }
+            if(e.list_custom_field_2){
                 if(state.fields.findIndex(({ key }) => key == "list_custom_field_2") == -1) {
                     state.fields.push({key:"list_custom_field_2", label: "Custom Field 2", sortable: true});
                 }
+            }
+            if(e.list_custom_field_3){
                 if(state.fields.findIndex(({ key }) => key == "list_custom_field_3") == -1) {
                     state.fields.push({key:"list_custom_field_3", label: "Custom Field 3", sortable: true});
                 }
+            }
+            if(e.list_custom_field_4){
                 if(state.fields.findIndex(({ key }) => key == "list_custom_field_4") == -1) {
                     state.fields.push({key:"list_custom_field_4", label: "Custom Field 4", sortable: true});
                 }
+            }
+            if(e.list_custom_field_5){
                 if(state.fields.findIndex(({ key }) => key == "list_custom_field_5") == -1) {
                     state.fields.push({key:"list_custom_field_5", label: "Custom Field 5", sortable: true});
                 }
-                }
+            }
         })
         state.lists = JSON.stringify(data);
         state.pageTo = payload.to;
         state.pageFrom = payload.from;
         state.total = payload.total;
     },
+    getCustomField(field,{rootState}) {
+        console.log('field',field,'rootState',rootState.labelModule);
+        
+        // let index = this.customFieldsArray.findIndex(x=>x.field == field);
+        // if(index != -1) {
+        //   if(this.customFieldsArray[index].label) {
+        //     return this.customFieldsArray[index].label;
+        //   } else {
+        //   return field;
+        //   }
+        // } else {
+        //   return field;
+        // }
+      },
     SET_IMPORT_PULL_LIST(state, payload) {
         const data = [...payload.data];
         state.importPullList = JSON.stringify(data);

@@ -176,6 +176,7 @@ export const getters = {
     schemas: ({ schemas }) => schemas,
     mappingTemplates: ({ mappingTemplates }) => mappingTemplates,
     mappingTemplate: ({ mappingTemplate }) => mappingTemplate,
+    customViewVisibleFields: ({ importVisibleFields }) => importVisibleFields,  
 }
 
 export default {
