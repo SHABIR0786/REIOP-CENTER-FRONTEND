@@ -58,6 +58,20 @@ const mutations = {
         state.pageFrom = payload.from;
         state.total = payload.total;
     },
+    getCustomField(field,{rootState}) {
+        console.log('field',field,'rootState',rootState.labelModule);
+        
+        // let index = this.customFieldsArray.findIndex(x=>x.field == field);
+        // if(index != -1) {
+        //   if(this.customFieldsArray[index].label) {
+        //     return this.customFieldsArray[index].label;
+        //   } else {
+        //   return field;
+        //   }
+        // } else {
+        //   return field;
+        // }
+      },
     SET_IMPORT_PULL_LIST(state, payload) {
         const data = [...payload.data];
         state.importPullList = JSON.stringify(data);
