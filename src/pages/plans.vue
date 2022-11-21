@@ -12,7 +12,6 @@
           </b-col>
         </b-row>
         <b-row class="mb-2">
-
           <b-col cols="6" offset-md="6">
             <b-input-group class="mt-1">
               <b-form-input v-model="search" debounce="1000" @keyup.enter="searchPlan()" placeholder="Search" title="Auto Search when User stop Typing"></b-form-input>

@@ -274,11 +274,11 @@
 
                    </b-tab>
                   <b-tab :title="(seller.subjects?seller.subjects.length:'') + ' Related Subjects'">
-                        <b-row>
+                        <!-- <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>
                             </b-col>
-                        </b-row>
+                        </b-row> -->
                         <b-table
                                 id="subject-table"
                                 small
@@ -315,11 +315,11 @@
                         </b-table>
                     </b-tab>
                     <b-tab :title="(seller.phones?seller.phones.length:'') + ' Related Phones'">
-                        <b-row>
+                        <!-- <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAddPhoneModal = true">Add New Phone Number</b-button>
                             </b-col>
-                        </b-row>
+                        </b-row> -->
                         <b-table
                                 id="phone-number-table"
                                 small
@@ -357,11 +357,11 @@
                         </b-table>
                     </b-tab>
                     <b-tab :title="(seller.emails?seller.emails.length:'') + ' Related Emails'">
-                        <b-row>
+                        <!-- <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAddEmailModal = true">Add New Email Address</b-button>
                             </b-col>
-                        </b-row>
+                        </b-row> -->
                         <b-table
                                 id="email-table"
                                 small
@@ -399,11 +399,11 @@
                         </b-table>
                     </b-tab>
                     <b-tab :title="(seller.golden_addresses?seller.golden_addresses.length:'') + ' Related Golden Addresses'">
-                        <b-row>
+                        <!-- <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAddAddressModal = true">Add New Golden Address</b-button>
                             </b-col>
-                        </b-row>
+                        </b-row> -->
                         <b-table
                                 id="phone-number-table"
                                 small

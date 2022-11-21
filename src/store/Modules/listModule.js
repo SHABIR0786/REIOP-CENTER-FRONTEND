@@ -44,31 +44,15 @@ const state = {
 }
 
 const mutations = {
-    SET_ALL_LISTS(state, payload) {
-        const data = [...payload.data]
-        data.forEach(e => {
-            e.list_total_subject = e.subjects_unique_count;
-            e.created_at = e.created_at.split('T')[0];
-            e.updated_at = e.updated_at.split('T')[0];
-            //custom fields
-            if(e.list_custom_field_1){
-                if(state.fields.findIndex(({ key }) => key == "list_custom_field_1") == -1) {
-                    state.fields.push({key:"list_custom_field_1", label: "Custom Field 1", sortable: true});
-                }
-                if(state.fields.findIndex(({ key }) => key == "list_custom_field_2") == -1) {
-                    state.fields.push({key:"list_custom_field_2", label: "Custom Field 2", sortable: true});
-                }
-                if(state.fields.findIndex(({ key }) => key == "list_custom_field_3") == -1) {
-                    state.fields.push({key:"list_custom_field_3", label: "Custom Field 3", sortable: true});
-                }
-                if(state.fields.findIndex(({ key }) => key == "list_custom_field_4") == -1) {
-                    state.fields.push({key:"list_custom_field_4", label: "Custom Field 4", sortable: true});
-                }
-                if(state.fields.findIndex(({ key }) => key == "list_custom_field_5") == -1) {
-                    state.fields.push({key:"list_custom_field_5", label: "Custom Field 5", sortable: true});
-                }
-                }
-        })
+   async SET_ALL_LISTS(state, payload) {
+        const data = [...payload.data];
+        let customFields = await setCustomListFields(data);
+        if(customFields.length > 0) {
+        let lastPullDateIndex = state.lists.findIndex(x=>x.key == "list_pull_date");
+        let numofItemstoRemove = lastPullDateIndex - 7;
+        state.lists.splice(7, numofItemstoRemove);
+        state.lists.splice(7,0, ...payload);
+        }
         state.lists = JSON.stringify(data);
         state.pageTo = payload.to;
         state.pageFrom = payload.from;
@@ -216,7 +200,7 @@ const mutations = {
         state.subjectRunningList = JSON.stringify(payload);
     },
     SUBJECT_RELATED_LIST(state, payload) {
-        // payload.forEach(e =>{
+        // payload.forEach(e => {
         //     delete e.subjects;
         // })
         state.subjectRelatedList = JSON.stringify(payload);
@@ -226,6 +210,15 @@ const mutations = {
     },
     SELLER_RELATED_LIST(state, payload) {
         state.sellerRelatedList = JSON.stringify(payload);
+    },
+    SET_CUSTOM_FIELDS(state, payload) {
+        let lastPullDateIndex = state.fields.findIndex(x=>x.key == "list_pull_date");
+        let listSourceIndex = state.fields.findIndex(x=>x.key == "list_source");
+        let numofItemstoRemove = lastPullDateIndex - listSourceIndex;
+        state.lists.splice(7, numofItemstoRemove);
+        if(payload.length > 0) {
+            state.lists.splice(7,0, ...payload);
+        }
     },
     just_test() {
     },
@@ -406,7 +399,6 @@ const actions = {
             return response
         })
     },
-
     async getSubjectRunningList({ commit }, data) {
         return await api.post(`/lists/subjectRunningLists`, {...data}).then((response) => {
             commit('SUBJECT_RUNNING_LIST', response.subjectRunningList)
@@ -414,15 +406,19 @@ const actions = {
         })
     },
     async getSubjectRelatedList({ commit }, data) {
-        return await api.post(`/lists/subjectRelatedLists`, {...data}).then((response) => {
-            commit('SUBJECT_RELATED_LIST', response.subjectRelatedLists)
+        return await api.post(`/lists/subjectRelatedLists`, {...data}).then(async (response) => {
+            commit('SUBJECT_RELATED_LIST', response.subjectRelatedLists);
+            let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+            commit('SET_CUSTOM_FIELDS',customfields);
             return response
         })
     },
     async getSellerRelatedList({ commit }, data) {
-        return await api.post(`/lists/sellerRelatedLists`, {...data}).then((response) => {
+        return await api.post(`/lists/sellerRelatedLists`, {...data}).then(async (response) => {
             if(response.sellerRelatedLists.length > 0) {
             commit('SELLER_RELATED_LIST', response.sellerRelatedLists);
+            let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+            commit('SET_CUSTOM_FIELDS',customfields);
             } else {
             commit('SELLER_RELATED_LIST', []);
             }
@@ -440,9 +436,11 @@ const actions = {
         })
     },
     async getPhoneRelatedList({ commit }, data) {
-        return await api.post(`/lists/phoneRelatedLists`, {...data}).then((response) => {
+        return await api.post(`/lists/phoneRelatedLists`, {...data}).then(async (response) => {
             if(response.phoneRelatedLists.length > 0) {
                 commit('SELLER_RELATED_LIST', response.phoneRelatedLists);
+                let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+                commit('SET_CUSTOM_FIELDS',customfields);
             } else {
                 commit('SELLER_RELATED_LIST', [])
             }
@@ -460,9 +458,11 @@ const actions = {
         })
     },
     async getEmailRelatedList({ commit }, data) {
-        return await api.post(`/lists/emailRelatedLists`, {...data}).then((response) => {
+        return await api.post(`/lists/emailRelatedLists`, {...data}).then(async (response) => {
             if(response.emailRelatedLists.length > 0) {
                 commit('SELLER_RELATED_LIST', response.emailRelatedLists);
+                let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+                commit('SET_CUSTOM_FIELDS',customfields);
             } else {
                 commit('SELLER_RELATED_LIST', [])
             }
@@ -480,9 +480,11 @@ const actions = {
         })
     },
     async getGoldenRelatedList({ commit }, data) {
-        return await api.post(`/lists/goldenRelatedLists`, {...data}).then((response) => {
+        return await api.post(`/lists/goldenRelatedLists`, {...data}).then(async (response) => {
             if(response.goldenRelatedLists.length > 0) {
-                commit('SELLER_RELATED_LIST', response.goldenRelatedLists)
+                commit('SELLER_RELATED_LIST', response.goldenRelatedLists);
+                let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+                commit('SET_CUSTOM_FIELDS', customfields);
             } else {
                 commit('SELLER_RELATED_LIST', [])
             }
@@ -676,4 +678,64 @@ export default {
     mutations,
     actions,
     getters
+}
+function getCustomField(field,labels) {
+    let index = labels.findIndex(x=>x.field == field);
+    if(index != -1) {
+      if(labels[index].label) {
+        return labels[index].label;
+      } else {
+      return field;
+      }
+    } else {
+      return field;
+    }
+}
+
+async function setCustomListFields(payload) {
+    const instance = this;
+    await api.get('/visibleCustomFields').then((response) => {
+            instance.labels = response.labels;
+    });
+    const data = payload.lists;
+    const fields = [];
+    data.forEach(e => {
+        //custom fields
+        if(e.list_custom_field_1) {
+            let index = fields.findIndex(({ key }) => key == "list_custom_field_1");
+            if( index == -1) {
+                let label = getCustomField('list_custom_field_1',instance.labels); 
+                fields.push({key:"list_custom_field_1", label: label, sortable: true});
+            }
+        }
+        if(e.list_custom_field_2) {
+            let index = fields.findIndex(({ key }) => key == "list_custom_field_2");
+            if(index == -1) {
+                let label = getCustomField('list_custom_field_2',instance.labels); 
+                fields.push({key:"list_custom_field_2", label: label, sortable: true});
+            }
+        }
+        if(e.list_custom_field_3) {
+            let index = fields.findIndex(({ key }) => key == "list_custom_field_3");
+            if(index == -1) {
+                let label = getCustomField('list_custom_field_3',instance.labels);
+                fields.push({key:"list_custom_field_3", label: label, sortable: true});
+            }
+        }
+        if(e.list_custom_field_4) {
+            let index = fields.findIndex(({ key }) => key == "list_custom_field_4");
+            if(index == -1) {
+                let label = getCustomField('list_custom_field_4',instance.labels); 
+                fields.push({key:"list_custom_field_4", label: label, sortable: true});
+            }
+        }
+        if(e.list_custom_field_5) {
+            let index = fields.findIndex(({ key }) => key == "list_custom_field_5");
+            if(index == -1) {
+                let label = getCustomField('list_custom_field_5',instance.labels); 
+                fields.push({key:"list_custom_field_5", label: label, sortable: true});
+            }
+        }
+    });
+    return fields;
 }

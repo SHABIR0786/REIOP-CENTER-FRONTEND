@@ -56,13 +56,13 @@
                         </b-row>
                     </b-col>
                     <b-col>
-                        <b-row>
+                        <!-- <b-row>
                             <b-col cols="12">
                                 <b-input-group prepend="User Name" class="mb-2">
                                     <b-form-input readonly v-model="email.user_name"></b-form-input>
                                 </b-input-group>
                             </b-col>
-                        </b-row>
+                        </b-row> -->
                     </b-col>
                 </b-row>
             </b-row>
@@ -232,11 +232,11 @@
                    </b-tab>
 
                     <b-tab :title="(email.sellers?email.sellers.length:'') + ' Related Sellers'">
-                        <b-col>
+                        <!-- <b-col>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
                             </b-col>
-                        </b-col>
+                        </b-col> -->
                         <b-table
                                 id="seller-table"
                                 small
@@ -275,11 +275,11 @@
                         </b-table>
                     </b-tab>
                     <b-tab :title="(email.subjects?email.subjects.length:'') + ' Related Subjects'">
-                        <b-row>
+                        <!-- <b-row>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" variant="primary" @click="showAssignSubjectModal = true">Assign Existing Subject</b-button>
                             </b-col>
-                        </b-row>
+                        </b-row> -->
                         <b-table
                                 id="subject-table"
                                 small

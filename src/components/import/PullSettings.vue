@@ -401,7 +401,6 @@
         }
         this.is_show_custom_fields = Object.values(this.visibleCustomField).includes(true);
         this.$store.dispatch('uxModule/hideLoader');
-
       },
       computed: {
         ...mapGetters({

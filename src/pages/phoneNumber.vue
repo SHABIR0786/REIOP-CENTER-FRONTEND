@@ -394,7 +394,7 @@ export default {
                             if(subjects.length == 0) {
                                 subjects.push(subject);
                             } else {
-                                if(subjects.findIndex(x=>x.id == subject.id) != -1) {
+                                if(subjects.findIndex(x=>x.id == subject.id) == -1) {
                                     subjects.push(subject);
                                 }
                             }
