@@ -422,7 +422,8 @@ export default {
             maxGoldenAddresses: 'propertyModule/maxGoldenAddresses',
             filteredItems: 'subjectModule/filteredSubject',
             templates: 'templatesModule/templates',
-            template: 'templatesModule/template'
+            template: 'templatesModule/template',
+            customViewVisibleFields: 'importModule/customViewVisibleFields',
         }),
         properties() {
             if (this.fieldsType == "samerows" || this.fieldsType == null) {
@@ -816,8 +817,16 @@ export default {
             this.showCustomModalView = false;
             let fields = [];
             if (this.fieldsType == null || this.fieldsType == "samerows") {
-                for (let key in this.customViewTemplate) {
+                for (let key in this.customViewTemplate) {                    
                     if (key !== 'name' && this.customViewTemplate[key] !== false) {
+                    let customField = this.customViewVisibleFields.find(x=>x.field == key);
+                    if(customField) {
+                            fields.push({
+                                key: customField.field,
+                                label: customField.label,
+                                sortable: false
+                            });
+                    } else {
                         if (key.includes("seller_")) {
                             let sellerFields = this.addSellerFields(key);
                             fields.push(...sellerFields);
@@ -835,6 +844,7 @@ export default {
                             fields.push(obj);
                         }
                     }
+                    }
                 }
                 fields.unshift({
                     key: "delete",
@@ -844,6 +854,7 @@ export default {
                     label: "Actions"
                 });
                 this.propertyFields = [...fields];
+                console.log(this.propertyFields);
             } else {
                 fields.unshift({
                     key: "delete",

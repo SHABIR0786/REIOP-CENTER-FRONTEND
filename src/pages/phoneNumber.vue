@@ -236,8 +236,22 @@ export default {
         if (this.$route.query.phone_id) {
             await this.$store.dispatch('phoneNumberModule/getPhoneNumber', this.$route.query.phone_id).then((response) => {
                     this.editedItem = this.selectedPhoneNumber;
-                    this.editedItem.sellers = [response.seller];
-                    this.editedItem.subjects = response.seller.subjects;
+                    this.editedItem.sellers = response.sellers;
+                    const subjects = [];
+                    response.sellers.forEach(function(seller) {
+                        if(seller.subjects) {
+                            seller.subjects.forEach(function(subject) {
+                                if(subjects.length == 0) {
+                                    subjects.push(subject);
+                                } else {
+                                    if(subjects.findIndex(x=>x.id == subject.id) == -1) {
+                                        subjects.push(subject);
+                                    }
+                                }
+                            })
+                        }
+                    });
+                    this.editedItem.subjects = subjects;
                     this.showModal = true
             });
         }
