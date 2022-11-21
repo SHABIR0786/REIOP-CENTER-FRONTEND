@@ -46,12 +46,12 @@ const state = {
 const mutations = {
    async SET_ALL_LISTS(state, payload) {
         const data = [...payload.data];
-        let customFields = await setCustomListFields(data);
+        let customFields = await setCustomListFields({lists:data});
         if(customFields.length > 0) {
-        let lastPullDateIndex = state.lists.findIndex(x=>x.key == "list_pull_date");
-        let numofItemstoRemove = lastPullDateIndex - 7;
-        state.lists.splice(7, numofItemstoRemove);
-        state.lists.splice(7,0, ...payload);
+        // let lastPullDateIndex = state.fields.findIndex(x=>x.key == "list_pull_date");
+        // let numofItemstoRemove = lastPullDateIndex - 7;
+        // state.fields.splice(7, numofItemstoRemove);
+        state.fields.splice(8,0, ...customFields);
         }
         state.lists = JSON.stringify(data);
         state.pageTo = payload.to;
@@ -226,12 +226,8 @@ const mutations = {
         state.sellerRelatedList = JSON.stringify(payload);
     },
     SET_CUSTOM_FIELDS(state, payload) {
-        let lastPullDateIndex = state.fields.findIndex(x=>x.key == "list_pull_date");
-        let listSourceIndex = state.fields.findIndex(x=>x.key == "list_source");
-        let numofItemstoRemove = lastPullDateIndex - listSourceIndex;
-        state.lists.splice(7, numofItemstoRemove);
         if(payload.length > 0) {
-            state.lists.splice(7,0, ...payload);
+            state.fields.splice(8,0, ...payload);
         }
     },
     just_test() {
@@ -431,7 +427,7 @@ const actions = {
         return await api.post(`/lists/sellerRelatedLists`, {...data}).then(async (response) => {
             if(response.sellerRelatedLists.length > 0) {
             commit('SELLER_RELATED_LIST', response.sellerRelatedLists);
-            let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+            let customfields = await setCustomListFields({lists:response.sellerRelatedLists});
             commit('SET_CUSTOM_FIELDS',customfields);
             } else {
             commit('SELLER_RELATED_LIST', []);
@@ -453,7 +449,7 @@ const actions = {
         return await api.post(`/lists/phoneRelatedLists`, {...data}).then(async (response) => {
             if(response.phoneRelatedLists.length > 0) {
                 commit('SELLER_RELATED_LIST', response.phoneRelatedLists);
-                let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+                let customfields = await setCustomListFields({lists:response.phoneRelatedLists});
                 commit('SET_CUSTOM_FIELDS',customfields);
             } else {
                 commit('SELLER_RELATED_LIST', [])
@@ -475,7 +471,7 @@ const actions = {
         return await api.post(`/lists/emailRelatedLists`, {...data}).then(async (response) => {
             if(response.emailRelatedLists.length > 0) {
                 commit('SELLER_RELATED_LIST', response.emailRelatedLists);
-                let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+                let customfields = await setCustomListFields({lists:response.emailRelatedLists});
                 commit('SET_CUSTOM_FIELDS',customfields);
             } else {
                 commit('SELLER_RELATED_LIST', [])
@@ -497,7 +493,7 @@ const actions = {
         return await api.post(`/lists/goldenRelatedLists`, {...data}).then(async (response) => {
             if(response.goldenRelatedLists.length > 0) {
                 commit('SELLER_RELATED_LIST', response.goldenRelatedLists);
-                let customfields = await setCustomListFields({lists:response.subjectRelatedLists});
+                let customfields = await setCustomListFields({lists:response.goldenRelatedLists});
                 commit('SET_CUSTOM_FIELDS', customfields);
             } else {
                 commit('SELLER_RELATED_LIST', [])
@@ -707,10 +703,9 @@ function getCustomField(field,labels) {
 }
 
 async function setCustomListFields(payload) {
-    const instance = this;
-    await api.get('/visibleCustomFields').then((response) => {
-            instance.labels = response.labels;
-    });
+    let response = await api.get('/visibleCustomFields');
+    console.log(response.labels);
+    let labels = response.labels;
     const data = payload.lists;
     const fields = [];
     data.forEach(e => {
@@ -718,35 +713,35 @@ async function setCustomListFields(payload) {
         if(e.list_custom_field_1) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_1");
             if( index == -1) {
-                let label = getCustomField('list_custom_field_1',instance.labels); 
+                let label = getCustomField('list_custom_field_1',labels); 
                 fields.push({key:"list_custom_field_1", label: label, sortable: true});
             }
         }
         if(e.list_custom_field_2) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_2");
             if(index == -1) {
-                let label = getCustomField('list_custom_field_2',instance.labels); 
+                let label = getCustomField('list_custom_field_2',labels); 
                 fields.push({key:"list_custom_field_2", label: label, sortable: true});
             }
         }
         if(e.list_custom_field_3) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_3");
             if(index == -1) {
-                let label = getCustomField('list_custom_field_3',instance.labels);
+                let label = getCustomField('list_custom_field_3',labels);
                 fields.push({key:"list_custom_field_3", label: label, sortable: true});
             }
         }
         if(e.list_custom_field_4) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_4");
             if(index == -1) {
-                let label = getCustomField('list_custom_field_4',instance.labels); 
+                let label = getCustomField('list_custom_field_4',labels); 
                 fields.push({key:"list_custom_field_4", label: label, sortable: true});
             }
         }
         if(e.list_custom_field_5) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_5");
             if(index == -1) {
-                let label = getCustomField('list_custom_field_5',instance.labels); 
+                let label = getCustomField('list_custom_field_5',labels); 
                 fields.push({key:"list_custom_field_5", label: label, sortable: true});
             }
         }
