@@ -11,6 +11,7 @@ const state = {
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],
     marketingChannels: [],
+    marketingChannelsForDropDown:[],
     total: 0,
 }
 
@@ -23,6 +24,9 @@ const mutations = {
         });
 
         state.marketingChannels = [...data]
+    },
+    SET_MARKET_CHANNELS_FOR_DROPDOWN(state, payload) {
+        state.marketingChannelsForDropDown = [...payload]
     },
     EDIT_MARKET_CHANNEL(state, payload) {
         const findIndex = state.marketingChannels.findIndex(({ id }) => id === payload.id)
@@ -56,6 +60,24 @@ const actions = {
 
             if(response && response.marketingChannels && response.marketingChannels.data) {
                 commit('SET_ALL_MARKET_CHANNELS', response.marketingChannels.data)
+            }else{
+                commit('SET_ALL_MARKET_CHANNELS', [])
+
+            }
+
+            return response
+        })
+    },
+    async marketingChannelsForDropDown({ commit, dispatch }) {
+        return await api.get(`/marketingChannelsForDropDown`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if(response && response.marketingChannels) {
+                commit('SET_MARKET_CHANNELS_FOR_DROPDOWN', response.marketingChannels)
+            }else{
+                commit('SET_MARKET_CHANNELS_FOR_DROPDOWN', [])
             }
 
             return response
@@ -106,7 +128,9 @@ const actions = {
 const getters = {
     fields: ({ fields }) => fields,
     marketingChannels: ({ marketingChannels }) => marketingChannels,
-    total: ({total}) => total
+    total: ({total}) => total,
+    marketingChannelsForDropDown: ({ marketingChannelsForDropDown }) => marketingChannelsForDropDown,
+
 }
 
 export default {
