@@ -208,7 +208,6 @@ export default {
       // if (this.$v.company.$anyError) {
       //   return;
       // }
-      // console.log('onsubmit',this.ModalData);
       
       this.$emit("updateTeamAccess", this.ModalData);
     },

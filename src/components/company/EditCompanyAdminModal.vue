@@ -102,10 +102,7 @@ export default {
                 });
                 return ;
 
-            }
-            
-            console.log('this.user', this.user);
-            
+            }            
            this. $emit('updateRole', this.user);
         },
     },

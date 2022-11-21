@@ -514,7 +514,6 @@ export default {
           item['company_id'] = this.company.id;
           this.edit_company_admin = item;
           this.showCompanyAdminModal = true;
-          console.log('item',item);
   
     },
     async updateCompanyAdmin (user) {
