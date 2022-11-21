@@ -71,36 +71,36 @@
                         <!-- custom fields -->
                         <b-row v-if="list.list_custom_field_1">
                           <b-col cols="12">
-                            <b-input-group  prepend="Custom Field 1" class="mb-2">
+                            <b-input-group  :prepend="getCustomField('list_custom_field_1')" class="mb-2">
                               <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_1"></b-form-input>
                             </b-input-group>
                           </b-col>
                         </b-row>
                         <b-row v-if="list.list_custom_field_2">
                           <b-col cols="12">
-                            <b-input-group  prepend="Custom Field 2" class="mb-2">
+                            <b-input-group  :prepend="getCustomField('list_custom_field_2')" class="mb-2">
                               <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_2"></b-form-input>
                             </b-input-group>
                           </b-col>
                         </b-row>
                         <b-row v-if="list.list_custom_field_3">
                           <b-col cols="12">
-                            <b-input-group  prepend="Custom Field 3" class="mb-2">
+                            <b-input-group  :prepend="getCustomField('list_custom_field_3')" class="mb-2">
                               <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_3"></b-form-input>
                             </b-input-group>
                           </b-col>
                         </b-row>
                         <b-row v-if="list.list_custom_field_4">
                           <b-col cols="12">
-                            <b-input-group  prepend="Custom Field 4" class="mb-2">
+                            <b-input-group  :prepend="getCustomField('list_custom_field_4')" class="mb-2">
                               <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_4"></b-form-input>
                             </b-input-group>
                           </b-col>
                         </b-row>
                         <b-row v-if="list.list_custom_field_5">
                           <b-col cols="12">
-                            <b-input-group  prepend="Custom Field 5" class="mb-2">
-                              <b-form-input :readonly="isReadOnly" v-model="list.list_custom_field_5"></b-form-input>
+                            <b-input-group  :prepend="getCustomField('list_custom_field_5')" class="mb-2">
+                              <b-form-input :readonly="isReadOnly"  v-model="list.list_custom_field_5"></b-form-input>
                             </b-input-group>
                           </b-col>
                         </b-row>
@@ -295,7 +295,19 @@ export default {
         const route = '/activity-v2?batch_id='+item.process_id;
         let routeData = this.$router.resolve({path: route});
         window.open(routeData.href, '_blank');
-      }
+      },
+      getCustomField(field) {
+          let index = this.customFieldsArray.findIndex(x=>x.field == field);
+          if(index != -1) {
+            if(this.customFieldsArray[index].label) {
+              return this.customFieldsArray[index].label;
+            } else {
+            return field;
+            }
+          } else {
+            return field;
+          }
+        },
     },
     data() {
         return {
@@ -364,7 +376,8 @@ export default {
       ...mapGetters({
         sellerFields: 'sellerModule/fields',
         tabData: 'listModule/tabData',
-        total: 'listModule/total'
+        total: 'listModule/total',
+        customFieldsArray: 'labelModule/customFieldsArray',
       }),
       rows() { return this.tabData.total ? this.tabData.total : 1 }
     },
@@ -375,6 +388,7 @@ export default {
         async showModal() {
         if(this.showModal){
             this.$store.dispatch('uxModule/setLoading')
+            await this.$store.dispatch('labelModule/visibleCustomFields')
             let result = await this.$store.dispatch('listModule/currentModal',{data:this.propsData.list_hash, page: 1, perPage:this.perPage, modalName:this.modalName, tableName:this.tableName, list_id: this.propsData.id});
             this.list = {...this.propsData,...result?.uniqueCounts}
             this.$store.dispatch('uxModule/hideLoader')
