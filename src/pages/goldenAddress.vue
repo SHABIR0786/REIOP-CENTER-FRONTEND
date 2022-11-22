@@ -251,8 +251,24 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
         }
         if (this.$route.query.goldenaddress_id) {
-            this.$store.dispatch('goldenAddressModule/getGoldenAddress', this.$route.query.goldenaddress_id).then(() => {
+            this.$store.dispatch('goldenAddressModule/getGoldenAddress', this.$route.query.goldenaddress_id).then((response) => {
                 this.editedItem = this.selectedGoldenAddress
+                this.editedItem.sellers = response.sellers;
+                    const subjects = [];
+                    response.sellers.forEach(function(seller) {
+                        if(seller.subjects) {
+                            seller.subjects.forEach(function(subject) {
+                                if(subjects.length == 0) {
+                                    subjects.push(subject);
+                                } else {
+                                    if(subjects.findIndex(x=>x.id == subject.id) == -1) {
+                                        subjects.push(subject);
+                                    }
+                                }
+                            })
+                        }
+                });
+              this.editedItem.subjects = subjects;
                 this.showModal = true
             });
         }

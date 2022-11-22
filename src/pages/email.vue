@@ -246,9 +246,25 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
         }
         if (this.$route.query.email_id) {
-            this.$store.dispatch('emailModule/getEmail', this.$route.query.email_id).then(() => {
-              this.editedItem = this.selectedEmail
-              this.showModal = true
+            this.$store.dispatch('emailModule/getEmail', this.$route.query.email_id).then((response) => {
+              this.editedItem = this.selectedEmail;
+              this.editedItem.sellers = response.sellers;
+                    const subjects = [];
+                    response.sellers.forEach(function(seller) {
+                        if(seller.subjects) {
+                            seller.subjects.forEach(function(subject) {
+                                if(subjects.length == 0) {
+                                    subjects.push(subject);
+                                } else {
+                                    if(subjects.findIndex(x=>x.id == subject.id) == -1) {
+                                        subjects.push(subject);
+                                    }
+                                }
+                            })
+                        }
+                });
+              this.editedItem.subjects = subjects;
+              this.showModal = true;
             });
         }
       this.filteredOrAllData = this.items;
@@ -330,7 +346,7 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
           }
         },
-        async filter(data,filterValue){
+        async filter(data,filterValue) {
           this.$store.dispatch('uxModule/setLoading')
           try {
          this.filtersName = data
