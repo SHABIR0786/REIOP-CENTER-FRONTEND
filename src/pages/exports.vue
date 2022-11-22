@@ -13,6 +13,9 @@
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="showRawData(data.item)"></b-icon>
             <b-icon class="mr-2 cursor-pointer" icon="download" variant="primary" @click="downloadFile(data.item)"></b-icon>
         </template>
+        <template v-slot:cell(status)="data">
+            {{statusText[data.value]}}
+        </template>
     </b-table>
     <b-row>
         <b-col class="d-flex align-items-center">
@@ -64,6 +67,7 @@ export default {
             sortDesc: true,
             exportItem: {},
             showModal: false,
+            statusText:['','In Progress','Completed','Failed'],
         }
     },
     computed: {

@@ -46,6 +46,17 @@
         },
         methods: {
             sendRequest () {
+                if(this.listField == null || this.listField==''){
+                    this.$bvToast.toast("Field is required", {
+                    title: "Required",
+                    variant: "warning",
+                    autoHideDelay: 5000,
+                    });
+                    return ;
+                }
+                let temp=this.listField.trim()
+                temp = temp.split(' ').join('_')
+                this.listField = temp;
                 this.$emit('save', this.listField);
                 this.listField = '';
             }

@@ -40,7 +40,7 @@
             id="textarea"
             class="mt-2"
             v-model="mapping.description"
-            placeholder="Template Description"
+            placeholder="Template Description (Optional)"
             rows="3"
             max-rows="6"
           ></b-form-textarea>
@@ -81,7 +81,9 @@ export default {
   },
   computed: {
     isDisable() {
-      return (((this.mapping.name == null || this.mapping.description == null) || (this.mapping.name == "" || this.mapping.description == "" )));
+      return (((this.mapping.name == null) || (this.mapping.name == "")));
+
+      // return (((this.mapping.name == null || this.mapping.description == null) || (this.mapping.name == "" || this.mapping.description == "" )));
     },
   },
   methods: {

@@ -87,6 +87,14 @@
                         </b-row>
                         <b-row class="mb-1 text-center">
                             <b-col cols="12">
+                                <b-input-group prepend="Status" class="mb-2">
+                                    <b-form-input readonly disabled :value="statusText[exportItem.status]"></b-form-input>
+                                </b-input-group>
+                            </b-col>
+                        </b-row>
+                        
+                        <b-row class="mb-1 text-center">
+                            <b-col cols="12">
                                 <b-input-group prepend="Marketing Start Date" class="mb-2">
                                     <b-form-input readonly v-model="exportItem.marketing_start_date"></b-form-input>
                                 </b-input-group>
@@ -171,7 +179,8 @@ export default {
             "",
             "To Market",
             "To SkipTrace",
-            "Miscellaneous Reason" ]
+            "Miscellaneous Reason" ],
+            statusText:['','In Progress','Completed','Failed'],
         }
     },
     mounted(){

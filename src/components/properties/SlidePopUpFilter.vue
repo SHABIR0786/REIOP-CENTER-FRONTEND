@@ -898,7 +898,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      MarketingChannels: "marketingChannelModule/marketingChannels",
+      marketingChannelsForDropDown: "marketingChannelModule/marketingChannelsForDropDown",
       lists: "listModule/lists",
       filters: "filterModule/filters",
       sourceList: "listModule/skipSourceList",
@@ -934,11 +934,11 @@ export default {
       filter.text = e.name;
       this.savedFilters.push(filter);
     });
-    await this.$store.dispatch("marketingChannelModule/getAllMarketChannels", {
+    await this.$store.dispatch("marketingChannelModule/marketingChannelsForDropDown", {
       page: 1,
       perPage: 20,
     });
-    this.MarketingChannels.forEach((e) => {
+    this.marketingChannelsForDropDown.forEach((e) => {
       const marketingChannel = {
         value: "",
         text: "",
