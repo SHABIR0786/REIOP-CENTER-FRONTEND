@@ -5,6 +5,7 @@ const state = {
         {key:"id",  label: "Id", sortable: true},
         {key:"export_type",  label: "Export Type", sortable: true},
         {key:"actions",  label: "Actions", sortable: false},
+        {key:"status",  label: "Status", sortable: false},
         {key:"exported_subjects",  label: "Exported Subjects", sortable: true},
         {key:"exported_sellers",  label: "Exported Sellers", sortable: true},
         {key:"exported_phones",  label: "Exported Phones", sortable: true},
