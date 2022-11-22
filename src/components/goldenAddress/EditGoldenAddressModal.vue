@@ -246,11 +246,11 @@
                     </b-table>
                    </b-tab>
                     <b-tab :title="(goldenAddress.sellers?goldenAddress.sellers.length:'') + ' Related Sellers'">
-                        <b-col>
+                        <!-- <b-col>
                             <b-col class="assign-btn">
                                 <b-button class="mb-2" @click="showAssignSellerModal = true" variant="primary">Assign Existing Seller</b-button>
                             </b-col>
-                        </b-col>
+                        </b-col> -->
                         <b-table
                                 id="seller-table"
                                 small
@@ -461,9 +461,9 @@ export default {
     },
     watch: {
       async showModal() {
-        try{
+        try {
             if(this.showModal){
-                this.$store.dispatch('uxModule/setLoading')
+            this.$store.dispatch('uxModule/setLoading')
             this.goldenAddress = { ...this.propsData }
             let response = await this.$store.dispatch('listModule/getSelectedList', this.goldenAddress.list_id);
             this.relatedList = [response.list];

@@ -253,9 +253,9 @@ export default {
         if (this.$route.query.goldenaddress_id) {
             this.$store.dispatch('goldenAddressModule/getGoldenAddress', this.$route.query.goldenaddress_id).then((response) => {
                 this.editedItem = this.selectedGoldenAddress
-                this.editedItem.sellers = response.sellers;
+                this.editedItem.sellers = response.goldenAddress.sellers;
                     const subjects = [];
-                    response.sellers.forEach(function(seller) {
+                    response.goldenAddress.sellers.forEach(function(seller) {
                         if(seller.subjects) {
                             seller.subjects.forEach(function(subject) {
                                 if(subjects.length == 0) {

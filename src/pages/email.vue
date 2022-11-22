@@ -248,9 +248,9 @@ export default {
         if (this.$route.query.email_id) {
             this.$store.dispatch('emailModule/getEmail', this.$route.query.email_id).then((response) => {
               this.editedItem = this.selectedEmail;
-              this.editedItem.sellers = response.sellers;
+              this.editedItem.sellers = response.email.sellers;
                     const subjects = [];
-                    response.sellers.forEach(function(seller) {
+                    response.email.sellers.forEach(function(seller) {
                         if(seller.subjects) {
                             seller.subjects.forEach(function(subject) {
                                 if(subjects.length == 0) {
