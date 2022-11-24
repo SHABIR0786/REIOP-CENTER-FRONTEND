@@ -503,7 +503,7 @@ export default {
             this.$emit('save', this.seller);
         },
         async currentModal() {
-          this.$store.dispatch('uxModule/setLoading')
+          this.$store.dispatch('uxModule/setLoading');
           await this.$store.dispatch(`listModule/getSellerRunningList`, {id:this.propsSeller.id})
           await this.$store.dispatch(`listModule/getSellerRelatedList`, {id:this.propsSeller.id})
           this.$store.dispatch('uxModule/hideLoader')
@@ -518,15 +518,55 @@ export default {
             this.$store.dispatch('phoneNumberModule/deletePhoneNumber', item.id)
         },
         editEmail(item) {
-            this.editedItem = { ...item }
-            this.showEditEmailModal = true;
+          const instance = this;
+          this.$store.dispatch('uxModule/setLoading');
+            this.$store.dispatch('emailModule/getEmail', item.id).then((response) => {
+              instance.editedItem = { ...item };
+              instance.editedItem.sellers = response.email.sellers;
+                    const subjects = [];
+                    response.email.sellers.forEach(function(seller) {
+                        if(seller.subjects) {
+                            seller.subjects.forEach(function(subject) {
+                                if(subjects.length == 0) {
+                                    subjects.push(subject);
+                                } else {
+                                    if(subjects.findIndex(x=>x.id == subject.id) == -1) {
+                                        subjects.push(subject);
+                                    }
+                                }
+                            })
+                        }
+              });
+              instance.editedItem.subjects = subjects;
+              instance.showEditEmailModal = true;
+              instance.$store.dispatch('uxModule/hideLoader');
+            });
         },
         deleteEmail(item) {
             this.$store.dispatch('emailModule/deleteEmail', item.id);
         },
         editGoldenAddress(item) {
-            this.editedItem = { ...item }
-            this.showGoldenAddressModal = true;
+          const instance = this;
+            instance.$store.dispatch('goldenAddressModule/getGoldenAddress', item.id).then((response) => {
+            instance.editedItem = { ...item };
+            instance.editedItem.sellers = response.goldenAddress.sellers;
+                const subjects = [];
+                response.goldenAddress.sellers.forEach(function(seller) {
+                    if(seller.subjects) {
+                        seller.subjects.forEach(function(subject) {
+                            if(subjects.length == 0) {
+                                subjects.push(subject);
+                            } else {
+                                if(subjects.findIndex(x=>x.id == subject.id) == -1) {
+                                    subjects.push(subject);
+                                }
+                            }
+                        })
+                    }
+                });
+              instance.editedItem.subjects = subjects;
+              instance.showGoldenAddressModal = true;
+            });
         },
         deleteGoldenAddress(item) {
             this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', item.id)
