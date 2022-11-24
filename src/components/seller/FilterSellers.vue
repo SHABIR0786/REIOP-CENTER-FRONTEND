@@ -48,9 +48,7 @@
                 :key="result.userId"
               >
                 <div class="card-body pb-0 pt-2" v-if="result.length > 0">
-                  <h5 class="card-title" v-if="title == 'Errors'">Error Type</h5>
-                  <h5 class="card-title" v-else-if="title=='Error'">Errors</h5>
-                  <h5 class="card-title" v-else>{{title}}</h5>
+                  <h5 class="card-title">{{getCustomField(title)}}</h5>
                   <b-button
                     class="btn btn-light filter align-items-center m-2"
                     v-for="filterName in result"
@@ -233,6 +231,34 @@
                         @click="addFilter(result, index)"
                         >{{ result }}</b-list-group-item
                       >
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab(field.field)" v-for="field in relatedCustomField('list_custom_field_')" :key="field.id">
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">{{checkCustomFieldLabel(field)}}</span>
+                  <span v-if="allFilters[field.field].length > 0" class="filter-count">{{ allFilters[field.field].length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters[field.field]"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSeller" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body :header=checkCustomFieldLabel(field)>
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
                     </b-list-group>
                   </b-card>
                 </div>
@@ -699,7 +725,12 @@ export default {
         TotalEmails:Array.from(Array(11).keys()),
         TotalGoldensAddresses:Array.from(Array(11).keys()),
         AttemptedSkipTraceSources:[],
-        HasSkipTraceData:["Yes","No"]
+        HasSkipTraceData:["Yes","No"],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
       },
       allFilters: {
         Market: [],
@@ -715,7 +746,12 @@ export default {
         TotalEmails:[],
         TotalGoldensAddresses:[],
         AttemptedSkipTraceSources:[],
-        HasSkipTraceData:[]
+        HasSkipTraceData:[],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
       },
       incomingList: {
         Market: [],
@@ -731,7 +767,12 @@ export default {
         TotalEmails:Array.from(Array(11).keys()),
         TotalGoldensAddresses:Array.from(Array(11).keys()),
         AttemptedSkipTraceSources:[],
-        HasSkipTraceData:["Yes","No"]
+        HasSkipTraceData:["Yes","No"],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
      
       },
       searchSeller: "",
@@ -744,7 +785,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      filterList: 'sellerModule/filterList'
+      filterList: 'sellerModule/filterList',
+      customViewVisibleFields: 'importModule/customViewVisibleFields',
     }),
     totalFilters() {
       let total = 0;
@@ -767,9 +809,17 @@ export default {
       if (
         this.showModal
       ) {
+        try{
+          this.$store.dispatch('uxModule/setLoading')
         this.seller = this.propsData;
+        await this.$store.dispatch('importModule/loadVisibleFields')
          let response = await this.$store.dispatch("sellerModule/SellerfilterList", {filter: this.allFilters, search: this.search});
          this.MapFilters(response);
+         this.$store.dispatch('uxModule/hideLoader')
+        } catch(error){
+          console.log(error);
+         this.$store.dispatch('uxModule/hideLoader')
+        }
       }
     },
     searchSeller: {
@@ -797,6 +847,8 @@ export default {
       this.activeTab = currentTub;
     },
     MapFilters(response) {
+      try{
+
         this.allData = {
         Market: [],
         Group: [],
@@ -811,7 +863,12 @@ export default {
         TotalEmails:Array.from(Array(11).keys()),
         TotalGoldensAddresses:Array.from(Array(11).keys()),
         AttemptedSkipTraceSources:[],
-        HasSkipTraceData:["Yes","No"]
+        HasSkipTraceData:["Yes","No"],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
       };
 
       if(response?.seller_errors_types?.length > 0) {
@@ -874,6 +931,19 @@ export default {
                 }
               }
             }
+            Object.keys(el).forEach((item)=>{
+              if(item.includes('list_custom_field_')){
+                if(!this.allData[item]){
+                  this.allData[item]= [];
+                }
+                if(!this.allFilters[item]){
+                  this.allFilters[item]= [];
+                }
+                if (el[item] && !this.allData[item].includes(el[item]) && !this.allFilters[item].includes(el[item])){
+                  this.allData[item].push(el[item])
+                }
+              }
+            })
           });
         for(let category in this.allData) {
         if(category != 'TotalSubjects' && category != 'TotalPhones' && category != 'TotalEmails' && category != 'TotalGoldensAddresses') {
@@ -897,9 +967,13 @@ export default {
         this.allData.TotalGoldensAddresses.shift();
         this.allData.HasSkipTraceData.shift();
         this.allData.AttemptedSkipTraceSources.shift();
+      } catch(error){
+          console.log(error);
+      }
     },
 
   async  addFilter(item, index) {
+    this.$store.dispatch('uxModule/setLoading')
       if (this.searchSeller) {
         this.allFilters[this.activeTab].push(item);
         this.filtered = this.filtered.filter((e) => e !== item);
@@ -912,6 +986,7 @@ export default {
       }
         let response = await this.$store.dispatch("sellerModule/SellerfilterList", {filter: this.allFilters, search: this.search});
         this.MapFilters(response);
+        this.$store.dispatch('uxModule/hideLoader')
     },
   async  resetFilter(item, index) {
       if (this.activeTab === "allFilters") {
@@ -974,7 +1049,12 @@ export default {
           TotalEmails:[],
           TotalGoldensAddresses: [],
           AttemptedSkipTraceSources:[],
-          HasSkipTraceData:[]
+          HasSkipTraceData:[],
+          list_custom_field_1:[],
+          list_custom_field_2:[],
+          list_custom_field_3:[],
+          list_custom_field_4:[],
+          list_custom_field_5:[],
         };
       }
       for (let category in this.allData) {
@@ -1013,7 +1093,12 @@ export default {
         TotalEmails:[],
         TotalGoldensAddresses:[],
         AttemptedSkipTraceSources:[],
-        HasSkipTraceData:[]
+        HasSkipTraceData:[],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
       };
       this.allFilters = {
         Market: [],
@@ -1029,7 +1114,12 @@ export default {
         TotalEmails:[],
         TotalGoldensAddresses:[],
         AttemptedSkipTraceSources:[],
-        HasSkipTraceData:[]
+        HasSkipTraceData:[],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
       };
       } else {
         if(this.filtersAlreadyApplied) {
@@ -1082,6 +1172,33 @@ export default {
         localStorage.setItem("seller-filters-count", filterValue);
       }
       this.$emit("finish-process");
+    },
+    relatedCustomField(tempField){
+      return this.customViewVisibleFields.filter(({field,visible})=>field.includes(tempField)&&visible==1);            
+    },
+    checkCustomFieldLabel(field) {
+      if(field.label) {
+        return field.label;
+      } else {
+      return field.field;
+      }
+    },
+    getCustomField(field) {
+      let index = this.customViewVisibleFields.findIndex(x=>x.field == field);
+      if(index != -1) {
+        if(this.customViewVisibleFields[index].label) {
+          return this.customViewVisibleFields[index].label;
+        } else {
+        return field;
+        }
+      } else {
+        if(field == 'Errors'){
+          return "Error Type";
+        }else if(field == 'Error'){
+          return "Errors";
+        }
+        return field;
+      }
     },
   },
 };

@@ -29,10 +29,7 @@
                   v-for="(result,title) in allFilters"
                   :key="result.userId">
                 <div class="card-body pb-0 pt-2" v-if="result.length > 0">
-                  <h5 class="card-title" v-if="title == 'Errors'">Error Type</h5>
-                  <h5 class="card-title" v-else-if="title=='Error'">Errors</h5>
-                  <h5 class="card-title" v-else>{{title}}</h5>
-
+                  <h5 class="card-title">{{getCustomField(title)}}</h5>
                   <b-button
                       class="btn btn-light filter align-items-center m-2"
                       v-for="filterName in result"
@@ -144,6 +141,34 @@
                     <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
                   </b-row>
                   <b-card no-body :header=this.activeTab>
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab(field.field)" v-for="field in relatedCustomField('list_custom_field_')" :key="field.id">
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">{{checkCustomFieldLabel(field)}}</span>
+                  <span v-if="allFilters[field.field].length > 0" class="filter-count">{{ allFilters[field.field].length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters[field.field]"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body :header=checkCustomFieldLabel(field)>
                     <b-list-group flush>
                       <b-list-group-item
                           class="flex-column align-items-start list-group-item-light"
@@ -370,7 +395,12 @@ export default {
         Error:[],
         RunDate:[],
         TotalSellers:['1','2','3','4','5','6','7','8','9','10'],
-        ListStack:['1','2','3','4','5','6','7','8','9','10']
+        ListStack:['1','2','3','4','5','6','7','8','9','10'],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
       },
       allFilters: {
         Market:[],
@@ -381,7 +411,13 @@ export default {
         Error:[],
         RunDate:[],
         TotalSellers:[],
-        ListStack:[]
+        ListStack:[],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
+
       },
       incomingList: {
         Market:[],
@@ -392,7 +428,12 @@ export default {
         Error:[],
         RunDate:[],
         TotalSellers:['1','2','3','4','5','6','7','8','9','10'],
-        ListStack:['1','2','3','4','5','6','7','8','9','10']
+        ListStack:['1','2','3','4','5','6','7','8','9','10'],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
       },
       searchSubject: '',
       activeTab: 'allFilters',
@@ -404,7 +445,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      filterList: 'subjectModule/filterList'
+      filterList: 'subjectModule/filterList',
+      customViewVisibleFields: 'importModule/customViewVisibleFields',
     }),
     totalFilters(){
       let total = 0
@@ -425,9 +467,17 @@ export default {
   watch: {
     async showModal() {
       if (this.showModal) {
+        try{
+          this.$store.dispatch('uxModule/setLoading')
           this.subject = this.propsData;
+          await this.$store.dispatch('importModule/loadVisibleFields')
          let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
-         this.MapFilters(response);
+         await this.MapFilters(response);
+         this.$store.dispatch('uxModule/hideLoader')
+        } catch(error){
+          console.log(error);
+         this.$store.dispatch('uxModule/hideLoader')
+        }
       }
     },
     searchSubject: {
@@ -453,6 +503,8 @@ export default {
       this.activeTab = currentTub;
     },
     MapFilters(response) {
+      try{
+
         this.allData = {
             Market:[],
             Group:[],
@@ -462,7 +514,12 @@ export default {
             Error:[],
             RunDate:[],
             ListStack:['1','2','3','4','5','6','7','8','9','10'],
-            TotalSellers:['1','2','3','4','5','6','7','8','9','10']
+            TotalSellers:['1','2','3','4','5','6','7','8','9','10'],
+            list_custom_field_1:[],
+            list_custom_field_2:[],
+            list_custom_field_3:[],
+            list_custom_field_4:[],
+            list_custom_field_5:[],
           };
 
       if(response?.subject_error_type?.length > 0) {
@@ -505,6 +562,19 @@ export default {
                 }
               }
             }
+            Object.keys(el).forEach((item)=>{
+              if(item.includes('list_custom_field_')){
+                if(!this.allData[item]){
+                  this.allData[item]= [];
+                }
+                if(!this.allFilters[item]){
+                  this.allFilters[item]= [];
+                }
+                if (el[item] && !this.allData[item].includes(el[item]) && !this.allFilters[item].includes(el[item])){
+                  this.allData[item].push(el[item])
+                }
+              }
+            })
           });
 
         for(let category in this.allData){
@@ -521,9 +591,13 @@ export default {
             });
       }
         this.allData.Error.shift();
+      } catch(error){
+          console.log(error);
+      }
 
     },
   async addFilter (item, index) {
+    this.$store.dispatch('uxModule/setLoading')
       if (this.searchSubject){
         this.allFilters[this.activeTab].push(item);
         this.filtered = this.filtered.filter(e => e !== item);
@@ -534,6 +608,7 @@ export default {
       }
          let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: Object.assign({},this.allFilters), search: this.search});
          this.MapFilters(response);
+         this.$store.dispatch('uxModule/hideLoader')
     },
    async resetFilter (item,index) {
       if (this.activeTab === 'allFilters') {
@@ -575,7 +650,12 @@ export default {
           Error:[],
           RunDate:[],
           TotalSellers:[],
-          ListStack:[]
+          ListStack:[],
+          list_custom_field_1:[],
+          list_custom_field_2:[],
+          list_custom_field_3:[],
+          list_custom_field_4:[],
+          list_custom_field_5:[],
         }
       }
       for(let category in this.allData) {
@@ -608,7 +688,12 @@ export default {
           Error:[],
           RunDate:[],
           TotalSellers:[],
-          ListStack:[]
+          ListStack:[],
+          list_custom_field_1:[],
+          list_custom_field_2:[],
+          list_custom_field_3:[],
+          list_custom_field_4:[],
+          list_custom_field_5:[],
         }
 
         this.allFilters = {
@@ -620,7 +705,12 @@ export default {
           Error:[],
           RunDate:[],
           TotalSellers:[],
-          ListStack:[]
+          ListStack:[],
+          list_custom_field_1:[],
+          list_custom_field_2:[],
+          list_custom_field_3:[],
+          list_custom_field_4:[],
+          list_custom_field_5:[],
         }
       } else {
         if(this.filtersAlreadyApplied) {
@@ -664,6 +754,34 @@ export default {
       }
       this.$emit('finish-process')
     },
+    relatedCustomField(tempField){
+      return this.customViewVisibleFields.filter(({field,visible})=>field.includes(tempField)&&visible==1);            
+    },
+    checkCustomFieldLabel(field) {
+      if(field.label) {
+        return field.label;
+      } else {
+      return field.field;
+      }
+    },
+    getCustomField(field) {
+      let index = this.customViewVisibleFields.findIndex(x=>x.field == field);
+      if(index != -1) {
+        if(this.customViewVisibleFields[index].label) {
+          return this.customViewVisibleFields[index].label;
+        } else {
+        return field;
+        }
+      } else {
+        if(field == 'Errors'){
+          return "Error Type";
+        }else if(field == 'Error'){
+          return "Errors";
+        }
+        return field;
+      }
+    },
+    
   },
 }
 </script>

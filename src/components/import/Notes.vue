@@ -6,7 +6,7 @@
             <h3>Step 4: Add Notes for this import</h3>
         </div>
         <div class="info-text">
-            <p>Description of step for user: To be filled out later.</p>
+            <!-- <p>Description of step for user: To be filled out later.</p> -->
         </div>
         <hr>
         <b-container fluid>

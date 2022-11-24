@@ -22,7 +22,7 @@
                         <p v-if="!isCollapsed">{{item.title}}</p>
                     </router-link>
                 </li>
-                <li v-b-toggle.collapse-1 @click="changeCollapseStatus()" v-if="authUser.role != 'user'">
+                <li v-b-toggle.collapse-1 @click="changeCollapseStatus()" v-if="!adminMode">
                     <router-link :to="''">
                     <span :title="'Data'">
                         <b-icon :icon="'clipboard-data'"></b-icon>

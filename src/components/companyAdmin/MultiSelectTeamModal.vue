@@ -208,6 +208,14 @@ export default {
       // if (this.$v.company.$anyError) {
       //   return;
       // }
+      if(this.ModalData.userTeamIds.length==0){
+        this.$bvToast.toast("Please Select AtLeast One Team!", {
+          title: "Validate",
+          variant: "warning",
+          autoHideDelay: 5000,
+        });
+        return ;
+      }
       
       this.$emit("updateTeamAccess", this.ModalData);
     },

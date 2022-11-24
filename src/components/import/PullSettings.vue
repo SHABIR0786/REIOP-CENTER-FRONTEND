@@ -6,7 +6,7 @@
             <h3>Step 3: {{importDetails.upload_type === 'appended' ? 'Single Pull With Appended Data' : 'Single Pull List Settings'}}</h3>
         </div>
         <div class="info-text">
-            <p>Description of step for user: To be filled out later.</p>
+            <!-- <p>Description of step for user: To be filled out later.</p> -->
         </div>
         <hr>
         <b-container fluid>

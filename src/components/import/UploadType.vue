@@ -6,7 +6,7 @@
             <h3>Step 2: New Upload Type</h3>
         </div>
         <div class="info-text">
-            <p>Description of step for user: To be filled out later.</p>
+            <!-- <p>Description of step for user: To be filled out later.</p> -->
         </div>
         <hr>
         <b-row class="text-center">

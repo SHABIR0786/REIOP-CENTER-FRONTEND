@@ -444,7 +444,7 @@ export default {
             this.$store.dispatch('uxModule/setLoading')
             await this.$store.dispatch('companyAdminModule/updateTeamAccess', {...user}).then((response) => {
                 if(response.success) {
-                    this.$bvToast.toast("Team Access Updated Successfully", {
+                    this.$bvToast.toast("Member With Team Access Updated Successfully", {
                     title: "Message",
                     variant: "success",
                     autoHideDelay: 5000,

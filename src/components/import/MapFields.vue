@@ -6,7 +6,7 @@
           <h3>Step {{importDetails.skip_variant === 'validate' ? 3 : 4}}: Map Fields</h3>
       </div>
       <div class="info-text">
-          <p>Description of step for user: To be filled out later.</p>
+          <!-- <p>Description of step for user: To be filled out later.</p> -->
       </div>
       <hr>
       <import  :upload_type="upload_type" :list_settings="list_settings" :skip_variant="this.skip_variant" :skip_data="this.skipData" :importDetails="importDetails" class="w-100 import-map"></import>
