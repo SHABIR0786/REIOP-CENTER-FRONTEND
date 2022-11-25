@@ -1,0 +1,23 @@
+name: Build Container for Staging & Push to Dockerhub
+
+on:
+  push:
+    branches:
+      - 'dev'
+
+jobs:
+  build-and-deploy-frontend:
+    name: Build and Deploy Frontend
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v1
+      with:
+         username: "shabirabdulmajeed"
+         password: "shabIR@123"
+         repository: shabirabdulmajeed/reiopcenter-frontend
+         dockerfile: REIOPCENTER-VUE-FRONT-END/Dockerfile
+         tags: latest
