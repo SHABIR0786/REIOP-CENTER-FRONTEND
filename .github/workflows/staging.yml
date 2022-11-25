@@ -19,5 +19,5 @@ jobs:
          username: shabirabdulmajeed
          password: shabIR@123
          repository: shabirabdulmajeed/reiopcenter-frontend
-         dockerfile: REIOPCENTER-VUE-FRONT-END/Dockerfile
+         dockerfile: REIOPCENTER--VUE-RONT-END/Dockerfile
          tags: latest
