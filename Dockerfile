@@ -7,7 +7,7 @@ RUN npm install -g http-server
 WORKDIR /REIOPCENTER-VUE-FRONTEND-APP
 
 # copy both 'package.json' and 'package-lock.json' (if available)
-COPY REIOPCENTER--VUE-RONT-END/package*.json ./
+COPY package*.json ./
 
 # install project dependencies
 RUN npm install
