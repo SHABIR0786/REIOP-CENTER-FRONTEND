@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:14-alpine
 
 # install simple http server for serving static content
 RUN npm install -g http-server
@@ -10,7 +10,7 @@ WORKDIR /REIOPCENTER-VUE-FRONTEND-APP
 COPY package*.json ./
 
 # install project dependencies
-RUN npm ci
+RUN npm install
 
 # copy project files and folders to the current working directory (i.e. 'app' folder)
 COPY . .
