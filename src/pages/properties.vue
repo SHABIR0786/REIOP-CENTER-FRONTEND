@@ -425,7 +425,10 @@ export default {
                 "Market": [],
                 "Group": [],
                 "Type": [],
-                "Source": []
+                "Source": [],
+                HasSkipTraceData: [],
+                SkipSources:[],
+                CompanyOwned:[],
             },
             sortBy: 'id',
             sortDesc: false,
@@ -449,6 +452,7 @@ export default {
             templates: 'templatesModule/templates',
             template: 'templatesModule/template',
             customViewVisibleFields: 'importModule/customViewVisibleFields',
+            customFieldsArray: 'labelModule/customFieldsArray',
         }),
         properties() {
             if (this.fieldsType == "samerows" || this.fieldsType == null) {
@@ -488,6 +492,7 @@ export default {
     },
     async created() {
         this.$store.dispatch('uxModule/setLoading')
+        await this.$store.dispatch('labelModule/visibleCustomFields')
         this.totals = await this.$store.dispatch('propertyModule/getTotals', {
             filter: this.filtersName
         })
@@ -844,7 +849,7 @@ export default {
             if (this.fieldsType == null || this.fieldsType == "samerows") {
                 for (let key in this.customViewTemplate) {                    
                     if (key !== 'name' && this.customViewTemplate[key] !== false) {
-                    let customField = this.customViewVisibleFields.find(x=>x.field == key);
+                    let customField = this.customFieldsArray.find(x=>x.field == key);
                     if(customField) {
                             fields.push({
                                 key: customField.field,
@@ -879,7 +884,6 @@ export default {
                     label: "Actions"
                 });
                 this.propertyFields = [...fields];
-                console.log(this.propertyFields);
             } else {
                 fields.unshift({
                     key: "delete",
