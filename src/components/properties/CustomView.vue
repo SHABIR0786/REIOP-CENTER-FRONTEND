@@ -418,6 +418,7 @@ export default {
             } else {
                 template.name = this.template.name;
                 this.$emit('save', Object.assign({}, template), 'save');
+                this.$emit('show', this.customTemplate, this.fieldsType,true);
             }
             this.resetData();
         },

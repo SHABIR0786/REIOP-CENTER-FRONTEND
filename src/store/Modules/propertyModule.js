@@ -200,27 +200,27 @@ const mutations = {
                                 let phone = seller.phones[x];
                                 // Seller Phones
                                 seperatedRowSubject['phone_id'] = phone.id;
-                                seperatedRowSubject['seller_phone_number'] = phone.phone_number;
-                                seperatedRowSubject['seller_phone_type'] = phone.phone_type;
-                                seperatedRowSubject['seller_phone_validity'] = phone.phone_validity;
-                                seperatedRowSubject['seller_phone_skip_source'] = phone.phone_skip_source;
+                                seperatedRowSubject['phone_number'] = phone.phone_number;
+                                seperatedRowSubject['phone_type'] = phone.phone_type;
+                                seperatedRowSubject['phone_validity'] = phone.phone_validity;
+                                seperatedRowSubject['phone_skip_source'] = phone.phone_skip_source;
                             }
                             if (seller.emails && seller.emails[x]) {
                                 let email = seller.emails[x];
                                 // Seller Emails
                                 seperatedRowSubject['email_id'] = email.id;
-                                seperatedRowSubject['seller_email_address'] = email.email_address;
-                                seperatedRowSubject['seller_email_validity'] = email.email_validity;
-                                seperatedRowSubject['seller_email_skip_source'] = email.email_skip_source;
+                                seperatedRowSubject['email_address'] = email.email_address;
+                                seperatedRowSubject['email_validity'] = email.email_validity;
+                                seperatedRowSubject['email_skip_source'] = email.email_skip_source;
                             }
                             if (seller.golden_addresses && seller.golden_addresses[x]) {
                                 let golden = seller.golden_addresses[x];
                                 // Seller Golden Addresses
                                 seperatedRowSubject['golden_id'] = golden.id;
-                                seperatedRowSubject['seller_golden_address_address'] = golden.golden_address_address;
-                                seperatedRowSubject['seller_golden_address_city'] = golden.golden_address_city;
-                                seperatedRowSubject['seller_golden_address_state'] = golden.golden_address_state;
-                                seperatedRowSubject['seller_golden_address_zip'] = golden.golden_address_zip;
+                                seperatedRowSubject['address_address'] = golden.golden_address_address;
+                                seperatedRowSubject['golden_address_city'] = golden.golden_address_city;
+                                seperatedRowSubject['golden_address_state'] = golden.golden_address_state;
+                                seperatedRowSubject['golden_address_zip'] = golden.golden_address_zip;
                             }
                             state.seperatedRowSubjects.push(JSON.parse(JSON.stringify(seperatedRowSubject)));
                         }
