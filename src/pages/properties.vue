@@ -10,11 +10,26 @@
             <div>{{totals.goldenAddressesCount}} Golden Addresses</div>
         </div>
     </div>
-    <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></slide-pop-up-filter>
+    <!-- <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></slide-pop-up-filter> -->
     <hr>
     <div>
-        <b-row class="text-end mb-3">
-            <b-col cols="12" class="d-flex justify-content-end">
+        <b-row class=" mb-3">
+            <b-col cols="6" class="d-flex align-items-center">
+                <b-button variant="primary" class="filter d-flex align-items-center mr-2" v-b-tooltip.hover title="Properties Filter" @click="showNewFilterPropertiesModal = true">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                </b-button>
+                <b-button variant="primary" class="filter d-flex align-items-center mr-2" v-b-tooltip.hover title="Export" @click="showNewExportPropertiesModal = true">
+                    <b-icon class="download" icon="download" aria-hidden="true"></b-icon>
+                </b-button>
+                <!-- <b-button v-if="totalFilters > 0" variant="outline-primary" @click="clearAllFilters()" class="filter d-flex float-right r-0 align-items-right mr-2">
+                    <b-icon icon="x" aria-hidden="true"></b-icon> Clear All
+                </b-button>
+                <span v-if="totalFilters > 0" class="filter-count filter-top">{{ totalFilters }}</span>
+                <b-input-group class="mb-2 save-filter-dropdown">
+                    <b-form-select class="select-template w-100" @change="applyFilter" v-model="selectedFilter" :options="savedFilters"></b-form-select>
+                </b-input-group> -->
+            </b-col>
+            <b-col cols="6" class="d-flex justify-content-end">
                 <b-input-group class="col-6 d-flex align-items-center">
                     <b-input-group-append v-if="isPropertySearched">
                         <b-button @click="clearsearch" variant="outline-primary">
@@ -144,6 +159,8 @@
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
     <custom-view :customViews="templatesToExport" :changeTemplate="changeTemplate" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
+    <new-filter-properties :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewFilterPropertiesModal" @cancel="showNewFilterPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></new-filter-properties>
+    <export-properties-modal :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewExportPropertiesModal" @cancel="showNewExportPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></export-properties-modal>
 </div>
 </template>
 
@@ -158,7 +175,11 @@ import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 import AddSubjectModal from "../components/subject/AddSubjectModal";
 import CustomView from "../components/properties/CustomView";
-import SlidePopUpFilter from "../components/properties/SlidePopUpFilter";
+// import SlidePopUpFilter from "../components/properties/SlidePopUpFilter";
+import NewFilterProperties from "../components/properties/NewFilterProperties";
+import ExportPropertiesModal from "../components/properties/ExportPropertiesModal";
+
+
 
 export default {
     name: "Properties",
@@ -168,7 +189,9 @@ export default {
         DeleteModal,
         AddSubjectModal,
         CustomView,
-        SlidePopUpFilter
+        // SlidePopUpFilter,
+        NewFilterProperties,
+        ExportPropertiesModal
     },
     data() {
         return {
@@ -384,6 +407,8 @@ export default {
             searchProperty: '',
             showAddModal: false,
             showCustomModalView: false,
+            showNewFilterPropertiesModal: false,
+            showNewExportPropertiesModal: false,
             changeTemplate: false,
             showFilterPropertiesModal: false,
             showFileType: false,

@@ -248,6 +248,7 @@ const getters = {
         return [];
     },
     total: ({total}) => total,
+    goldenAddress: ({goldenAddress}) => goldenAddress,
     filteredGoldenAddressesCount: ({filteredGoldenAddressesCount}) => filteredGoldenAddressesCount,
     filterList: ({filterList}) => filterList,
     filtersCountTable: ({filtersCountTable}) => filtersCountTable,

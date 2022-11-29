@@ -12,9 +12,10 @@
         <b-form-file
             v-model="uploadedFile"
             @change="previewFile"
-            placeholder="Choose or drop a xlsx or csv file"
+            placeholder="Choose or drop a CSV file"
             drop-placeholder="Drop file here"
-            accept=".xls, .xlsx, .csv"
+            accept=".csv"
+            type="file"
             variant="primary"
             class="mt-2"></b-form-file>
       </b-col>
@@ -513,6 +514,15 @@ export default {
       }
     },
     previewFile(e) {
+      let file = e.target.files[0];
+      if (file.type != "text/csv"){
+        this.$bvToast.toast("Please Upload only CSV file.", {
+            title: "Validate",
+            variant: 'warning',
+            autoHideDelay: 5000,
+        });
+        return ;
+      }
       this.$store.dispatch('uxModule/setLoading')
       this.mappedItems = []
       this.selectedMappingTemplate = null;

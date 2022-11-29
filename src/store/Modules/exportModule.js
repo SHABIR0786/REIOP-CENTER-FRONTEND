@@ -4,6 +4,7 @@ const state = {
     fields: [
         {key:"id",  label: "Id", sortable: true},
         {key:"export_type",  label: "Export Type", sortable: true},
+        {key:"export_detail",  label: "Export Details", sortable: true},
         {key:"actions",  label: "Actions", sortable: false},
         {key:"status",  label: "Status", sortable: false},
         {key:"exported_subjects",  label: "Exported Subjects", sortable: true},
@@ -33,6 +34,11 @@ const mutations = {
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
             e.export_type = state.exportTypes[e.export_type];
+            if(e.export_type=="To Market"){
+                e['export_detail'] = e.marketing_channel;
+            }else if(e.export_type=="To SkipTrace"){
+                e['export_detail'] = e.skip_source;
+            }else{e['export_detail'] = ''}
         })
         state.items = data;
         state.totalItems = payload.total;
@@ -44,6 +50,11 @@ const mutations = {
             e.updated_at = e.updated_at.split('T')[0];
             e.user = e?.user?.name;
             e.export_type = state.exportTypes[e.export_type];
+            if(e.export_type=="To Market"){
+                e['export_detail'] = e.marketing_channel;
+            }else if(e.export_type=="To SkipTrace"){
+                e['export_detail'] = e.skip_source;
+            }else{e['export_detail'] = ''}
         })
         state.exports = data;
         state.totalexports = payload.total;

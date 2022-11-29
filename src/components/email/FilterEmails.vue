@@ -706,7 +706,6 @@ export default {
       // })
       this.$emit('finish-process')
     },
-  },
   relatedCustomField(tempField){
       return this.customViewVisibleFields.filter(({field,visible})=>field.includes(tempField)&&visible==1);            
     },
@@ -734,6 +733,7 @@ export default {
         return field;
       }
     },
+  },
 }
 </script>
 

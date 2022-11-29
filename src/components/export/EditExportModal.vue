@@ -1,5 +1,5 @@
 <template>
-    <b-modal size="huge" v-model="showModal" centered no-close-on-backdrop>
+    <b-modal size="huge" v-model="showModal" centered no-close-on-backdrop scrollable>
         <template #modal-header>
             <div class="w-100">
                 Export
@@ -33,13 +33,7 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
-                        <b-row class="mb-1 text-center">
-                            <b-col cols="12">
-                                <b-input-group prepend="Marketing Channel" class="mb-2">
-                                    <b-form-input readonly v-model="exportItem.marketing_channel_name"></b-form-input>
-                                </b-input-group>
-                            </b-col>
-                        </b-row>
+                        
                         <b-row class="mb-1 text-center">
                             <b-col cols="12">
                                 <b-input-group prepend="Exported Subjects" class="mb-2">
@@ -82,6 +76,13 @@
                                 <b-input-group prepend="Export Type" class="mb-2">
                                     <b-form-input v-if="isNaN(exportItem.export_type)" readonly v-model="exportItem.export_type"></b-form-input>
                                     <b-form-input v-if="!isNaN(exportItem.export_type)" readonly :value="this.exportTypes[exportItem.export_type]"></b-form-input>
+                                </b-input-group>
+                            </b-col>
+                        </b-row>
+                        <b-row class="mb-1 text-center" v-if="exportItem.export_type=='To Market'">
+                            <b-col cols="12">
+                                <b-input-group prepend="Marketing Channel" class="mb-2">
+                                    <b-form-input readonly v-model="exportItem.marketing_channel"></b-form-input>
                                 </b-input-group>
                             </b-col>
                         </b-row>

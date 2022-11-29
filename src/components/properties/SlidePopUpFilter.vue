@@ -770,7 +770,7 @@ export default {
       TotalEmailsCount: null,
       TotalPhonesCount: null,
       TotalGoldenAddressesCount: null,
-      listStack: null,
+      ListStack: null,
       SubjectsCondition: null,
       SellersCondition: null,
       PhonesCondition: null,
@@ -1235,6 +1235,7 @@ export default {
       this.isTypeDropDown = false;
     },
     resetFilter(filtertype, param) {
+      try{
       this.allFilters[filtertype].splice(
         this.allFilters[filtertype].findIndex((x) => x == param),
         1
@@ -1250,6 +1251,10 @@ export default {
         this.selectedAll[filtertype] = "not_accepted";
       }
       // this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
+    }catch(error){
+      console.log('error',error);
+      
+    }
     },
     addFilter(FilterType, param) {
       if (this.allFilters[FilterType].findIndex((x) => x == param) == -1) {
@@ -1298,6 +1303,8 @@ export default {
     clearAllFilters() {
       // Unselect all the filters checkboxes.
       const Instance = this;
+      console.log('this.allFilters',this.allFilters);
+
       Object.keys(this.allFilters).forEach(function(key) {
         Instance.allFilters[key].forEach(function(param) {
           if (document.querySelector("#" + param.replace(/\s/gm, ""))) {
@@ -1311,6 +1318,8 @@ export default {
       });
 
       // Set the filters to initial state
+      console.log('this.allFilters',this.allFilters);
+      
       this.allFilters = {
         Market: [],
         Group: [],
@@ -1319,6 +1328,8 @@ export default {
         Errors: [],
         RunDate: [],
       };
+      console.log('this.allFilters',this.allFilters);
+
       this.$emit(
         "filterProperties",
         JSON.parse(JSON.stringify(this.allFilters))

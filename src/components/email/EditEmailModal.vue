@@ -206,7 +206,7 @@
                         sort-icon-left
                         hover
                         :busy="isBusy"
-                        :fields="exportFields"
+                        :fields="exportTableFields"
                         :items="exportItems"
                         responsive
                         :per-page="0"
@@ -407,6 +407,7 @@ export default {
             isReadOnly: true,
             showAssignSellerModal: false,
             sellerTableFields: null,
+            exportTableFields: null,
             subjectFields: [
                 {key:"id", label: "Id", sortable: true},
                 {key: "actions", stickyColumn: true, label: "Actions"},
@@ -440,7 +441,8 @@ export default {
     mounted() {
 
         this.sellerTableFields = this.sellerFields.filter(s=>this.sellerTableSkipFields.indexOf(s.key) == -1);
-        this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'total_running_lists' && s.key !== 'list_total_individual_list' )
+        this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'total_running_lists' && s.key !== 'list_total_individual_list' && s.key !== 'subjects_unique_count');
+        this.exportTableFields = this.exportFields.filter(s => s.key !== 'status');
 
     },
     watch: {

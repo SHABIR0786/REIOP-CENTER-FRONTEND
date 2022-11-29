@@ -531,7 +531,6 @@
           this.$emit('goBack', 'PullSettings');
         },
         addNewField(event) {
-          console.log(event);
              switch (event) {
                 case 'Add a new Market':
                     this.settingSection = 'Market';

@@ -247,7 +247,7 @@
                         sort-icon-left
                         hover
                         :busy="isBusy"
-                        :fields="exportFields"
+                        :fields="exportTableFields"
                         :items="exportItems"
                         responsive
                         :per-page="0"
@@ -518,55 +518,63 @@ export default {
             this.$store.dispatch('phoneNumberModule/deletePhoneNumber', item.id)
         },
         editEmail(item) {
-          const instance = this;
-          this.$store.dispatch('uxModule/setLoading');
-            this.$store.dispatch('emailModule/getEmail', item.id).then((response) => {
-              instance.editedItem = { ...item };
-              instance.editedItem.sellers = response.email.sellers;
-                    const subjects = [];
-                    response.email.sellers.forEach(function(seller) {
-                        if(seller.subjects) {
-                            seller.subjects.forEach(function(subject) {
-                                if(subjects.length == 0) {
-                                    subjects.push(subject);
-                                } else {
-                                    if(subjects.findIndex(x=>x.id == subject.id) == -1) {
-                                        subjects.push(subject);
-                                    }
-                                }
-                            })
-                        }
-              });
-              instance.editedItem.subjects = subjects;
-              instance.showEditEmailModal = true;
-              instance.$store.dispatch('uxModule/hideLoader');
-            });
+            const route = '/emails?email_id=' + item.id;
+          this.editedItem = { ...item }
+          let routeData = this.$router.resolve({path: route});
+          window.open(routeData.href, '_blank');
+        //   const instance = this;
+        //   this.$store.dispatch('uxModule/setLoading');
+        //     this.$store.dispatch('emailModule/getEmail', item.id).then((response) => {
+        //       instance.editedItem = { ...item };
+        //       instance.editedItem.sellers = response.email.sellers;
+        //             const subjects = [];
+        //             response.email.sellers.forEach(function(seller) {
+        //                 if(seller.subjects) {
+        //                     seller.subjects.forEach(function(subject) {
+        //                         if(subjects.length == 0) {
+        //                             subjects.push(subject);
+        //                         } else {
+        //                             if(subjects.findIndex(x=>x.id == subject.id) == -1) {
+        //                                 subjects.push(subject);
+        //                             }
+        //                         }
+        //                     })
+        //                 }
+        //       });
+        //       instance.editedItem.subjects = subjects;
+        //       instance.showEditEmailModal = true;
+        //       instance.$store.dispatch('uxModule/hideLoader');
+        //     });
         },
         deleteEmail(item) {
             this.$store.dispatch('emailModule/deleteEmail', item.id);
         },
         editGoldenAddress(item) {
-          const instance = this;
-            instance.$store.dispatch('goldenAddressModule/getGoldenAddress', item.id).then((response) => {
-            instance.editedItem = { ...item };
-            instance.editedItem.sellers = response.goldenAddress.sellers;
-                const subjects = [];
-                response.goldenAddress.sellers.forEach(function(seller) {
-                    if(seller.subjects) {
-                        seller.subjects.forEach(function(subject) {
-                            if(subjects.length == 0) {
-                                subjects.push(subject);
-                            } else {
-                                if(subjects.findIndex(x=>x.id == subject.id) == -1) {
-                                    subjects.push(subject);
-                                }
-                            }
-                        })
-                    }
-                });
-              instance.editedItem.subjects = subjects;
-              instance.showGoldenAddressModal = true;
-            });
+            const route = '/golden-addresses?goldenaddress_id=' + item.id;
+          this.editedItem = { ...item }
+          let routeData = this.$router.resolve({path: route});
+          window.open(routeData.href, '_blank');
+        //   const instance = this;
+        //     instance.$store.dispatch('goldenAddressModule/getGoldenAddress', item.id).then((response) => {
+        //     instance.editedItem = { ...item };
+        //     instance.editedItem.sellers = response.goldenAddress.sellers;
+        //         const subjects = [];
+        //         response.goldenAddress.sellers.forEach(function(seller) {
+        //             if(seller.subjects) {
+        //                 seller.subjects.forEach(function(subject) {
+        //                     if(subjects.length == 0) {
+        //                         subjects.push(subject);
+        //                     } else {
+        //                         if(subjects.findIndex(x=>x.id == subject.id) == -1) {
+        //                             subjects.push(subject);
+        //                         }
+        //                     }
+        //                 })
+        //             }
+        //         });
+        //       instance.editedItem.subjects = subjects;
+        //       instance.showGoldenAddressModal = true;
+        //     });
         },
         deleteGoldenAddress(item) {
             this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', item.id)
@@ -623,6 +631,7 @@ export default {
             },
             isReadOnly: true,
             listFieldsFiltered: null,
+            exportTableFields: null,
             isBusy: false,
             phoneTableFields: null,
             emailTableFields: null,
@@ -697,7 +706,8 @@ export default {
         }),
     },
     mounted () {
-        this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'total_running_lists' && s.key !== 'list_total_individual_list' )
+        this.listFieldsFiltered = this.listFields.filter(s => s.key !== 'list_total_subject' && s.key !== 'total_running_lists' && s.key !== 'list_total_individual_list' && s.key !== 'subjects_unique_count');
+        this.exportTableFields = this.exportFields.filter(s => s.key !== 'status');
     },
     watch: {
         async showModal() {

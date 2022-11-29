@@ -279,7 +279,7 @@
                   <b-button
                       class="btn btn-light filter align-items-center m-2"
                       v-for="(result,index) in allFilters.TotalSellers"
-                      :key="result"  @click="resetFilter(result,index)">{{result}}
+                      :key="result+index"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
                     <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
@@ -307,7 +307,7 @@
                   <b-button
                       class="btn btn-light filter align-items-center m-2"
                       v-for="(result,index) in allFilters.ListStack"
-                      :key="result"  @click="resetFilter(result,index)">{{result}}
+                      :key="result+index"  @click="resetFilter(result,index)">{{result}}
                     <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
                   <b-row class="m-2 mb-3">
                     <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
@@ -394,8 +394,8 @@ export default {
         Errors:[],
         Error:[],
         RunDate:[],
-        TotalSellers:['1','2','3','4','5','6','7','8','9','10'],
-        ListStack:['1','2','3','4','5','6','7','8','9','10'],
+        TotalSellers:Array.from(Array(11).keys()),
+        ListStack:Array.from(Array(11).keys()),
         list_custom_field_1:[],
         list_custom_field_2:[],
         list_custom_field_3:[],
@@ -427,8 +427,8 @@ export default {
         Errors:[],
         Error:[],
         RunDate:[],
-        TotalSellers:['1','2','3','4','5','6','7','8','9','10'],
-        ListStack:['1','2','3','4','5','6','7','8','9','10'],
+        TotalSellers:Array.from(Array(11).keys()),
+        ListStack:Array.from(Array(11).keys()),
         list_custom_field_1:[],
         list_custom_field_2:[],
         list_custom_field_3:[],
@@ -513,8 +513,8 @@ export default {
             Errors:[],
             Error:[],
             RunDate:[],
-            ListStack:['1','2','3','4','5','6','7','8','9','10'],
-            TotalSellers:['1','2','3','4','5','6','7','8','9','10'],
+            ListStack:Array.from(Array(11).keys()),
+            TotalSellers:Array.from(Array(11).keys()),
             list_custom_field_1:[],
             list_custom_field_2:[],
             list_custom_field_3:[],
@@ -578,7 +578,9 @@ export default {
           });
 
         for(let category in this.allData){
-          this.allData[category].sort((a, b) => a.localeCompare(b))
+          if(category != 'TotalSellers' && category != 'ListStack') {
+            this.allData[category].sort((a, b) => a.localeCompare(b));
+          }
         }
       }
 
@@ -626,7 +628,9 @@ export default {
         }
       }
       for(let category in this.allData){
-        this.allData[category].sort((a, b) => a.localeCompare(b))
+        if(category != 'TotalSellers' && category != 'ListStack') {
+          this.allData[category].sort((a, b) => a.localeCompare(b));
+        }
       }
          let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
          this.MapFilters(response);
@@ -659,7 +663,9 @@ export default {
         }
       }
       for(let category in this.allData) {
-        this.allData[category].sort((a, b) => a.localeCompare(b))
+        if(category != 'TotalSellers' && category != 'ListStack') {
+          this.allData[category].sort((a, b) => a.localeCompare(b));
+        }
       }
 
       let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: Object.assign({},this.allFilters), search:this.search});

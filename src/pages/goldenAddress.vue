@@ -247,9 +247,7 @@ export default {
                 sortDesc: this.sortDesc
             })
             this.$store.dispatch('uxModule/hideLoader')
-        } catch (error) {
-            this.$store.dispatch('uxModule/hideLoader')
-        }
+        
         if (this.$route.query.goldenaddress_id) {
             this.$store.dispatch('goldenAddressModule/getGoldenAddress', this.$route.query.goldenaddress_id).then((response) => {
                 this.editedItem = this.selectedGoldenAddress
@@ -276,6 +274,9 @@ export default {
         this.itemsCount = this.total;
         await this.$store.dispatch("filterModule/getAllFilters", 'goldens');
         await this.$store.dispatch("goldenAddressModule/filtersOnTable", 'goldens');
+    } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+    }
 
     },
     methods: {
