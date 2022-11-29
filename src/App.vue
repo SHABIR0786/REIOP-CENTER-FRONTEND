@@ -86,6 +86,7 @@ export default {
 <style>
 .nav-bar {
     height: 56px;
+    border:5px solid red;
 }
 
 .modal .modal-huge {

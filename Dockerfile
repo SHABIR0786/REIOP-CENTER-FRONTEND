@@ -4,7 +4,7 @@ FROM node:14-alpine
 RUN npm install -g http-server
 
 # make the 'app' folder the current working directory
-WORKDIR /REIOPCENTER-VUE-FRONTEND-APP
+WORKDIR /app
 
 # copy both 'package.json' and 'package-lock.json' (if available)
 COPY package*.json ./
