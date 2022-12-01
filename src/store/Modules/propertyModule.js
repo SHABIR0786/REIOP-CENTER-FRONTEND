@@ -94,17 +94,36 @@ const mutations = {
                 let list_custom_field_5 = [];
 
                 e.lists.forEach(list => {
-                    if (list.list_market) list_market.push(list.list_market);
-                    if (list.list_group) list_group.push(list.list_group);
-                    if (list.list_type) list_type.push(list.list_type);
-                    if (list.list_source) list_source.push(list.list_source);
+                    if (list.list_market && (list_market.findIndex(x=>x == list.list_market) == -1)) {
+                        list_market.push(list.list_market);
+                    } 
+                    if (list.list_group && (list_group.findIndex(x=>x == list.list_group) == -1)) {
+                        list_group.push(list.list_group);
+                    }
+                    
+                    if (list.list_type && (list_type.findIndex(x=>x == list.list_type) == -1)) {
+                        list_type.push(list.list_type);
+                    }
+                    if (list.list_source && (list_source.findIndex(x=>x == list.list_source) == -1)) {
+                        list_source.push(list.list_source);
+                    } 
 
                     //list Custom Fields
-                    if (list.list_custom_field_1) list_custom_field_1.push(list.list_custom_field_1);
-                    if (list.list_custom_field_2) list_custom_field_2.push(list.list_custom_field_2);
-                    if (list.list_custom_field_3) list_custom_field_3.push(list.list_custom_field_3);
-                    if (list.list_custom_field_4) list_custom_field_4.push(list.list_custom_field_4);
-                    if (list.list_custom_field_5) list_custom_field_5.push(list.list_custom_field_5);
+                    if (list.list_custom_field_1 && (list_custom_field_1.findIndex(x=>x == list.list_custom_field_1) == -1)) {
+                        list_custom_field_1.push(list.list_custom_field_1);
+                    } 
+                    if (list.list_custom_field_2 && (list_custom_field_2.findIndex(x=>x == list.list_custom_field_2) == -1)) {
+                        list_custom_field_2.push(list.list_custom_field_2);
+                    } 
+                    if (list.list_custom_field_3 && (list_custom_field_3.findIndex(x=>x == list.list_custom_field_3) == -1)) {
+                        list_custom_field_3.push(list.list_custom_field_3);
+                    }
+                    if (list.list_custom_field_4 && (list_custom_field_4.findIndex(x=>x == list.list_custom_field_4) == -1)) {
+                        list_custom_field_4.push(list.list_custom_field_4);
+                    } 
+                    if (list.list_custom_field_5 && (list_custom_field_5.findIndex(x=>x == list.list_custom_field_5) == -1)) {
+                        list_custom_field_5.push(list.list_custom_field_5);
+                    } 
                 });
 
                 e.list_market = list_market.join(', ');

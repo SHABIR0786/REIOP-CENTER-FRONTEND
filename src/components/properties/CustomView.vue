@@ -301,15 +301,30 @@ export default {
             this.email_collapse_icon = false
             this.golden_address_collapse_icon = false;
             this.running_list_collapse_icon = false;
-            if(this.changeTemplate){                
+            if(this.changeTemplate) {                
                 this.resetData();
                 this.template = this.getTemplate;
                 Object.entries(this.template).forEach(([key]) => {
+                    this.template[key] = "accepted";
+                    let title = "";
+                    if(key.includes('custom')) {
+                    let customFieldLabel = this.relatedCustomField(key);
+                        if(customFieldLabel.length > 0) {
+                          title = this.checkCustomFieldLabel(customFieldLabel[0]);
+                        } 
+                    } else {
+                        let arr = key.split("_");
+                        for (var i = 0; i < arr.length; i++) {
+                            arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
+                        }
+                        title = arr.join(" ");
+                    }
                     // console.log(key , this.template[key]); // key
                     this.TemplateMap.push({
                         prop: key,
-                        title: key,
+                        title: title,
                     });
+
                 });
             }
         },
