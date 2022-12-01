@@ -579,8 +579,8 @@ export default {
         this.allFilters[this.activeTab].push(item);
         this.allData[this.activeTab].splice(index, 1)
       }
-      let response = await this.$store.dispatch("phoneNumberModule/phoneFilterList", {filter: this.allFilters, search: this.search});
-      this.MapFilters(response);
+      // let response = await this.$store.dispatch("phoneNumberModule/phoneFilterList", {filter: this.allFilters, search: this.search});
+      // this.MapFilters(response);
       this.$store.dispatch('uxModule/hideLoader')
     },
    async resetFilter (item,index) {
