@@ -504,7 +504,23 @@ export default {
                 filter: this.filtersName,
                 custom: ''
             })
-            await this.$store.dispatch("templatesModule/getAllTemplates")
+            await this.$store.dispatch("templatesModule/getAllTemplates");
+            if (this.templates) {
+                this.templates.forEach(e => {
+                    const template = {
+                        value: '',
+                        text: '',
+                    }
+                    template.value = e.id;
+                    template.text = e.name;
+                    this.templatesToExport.push(template);
+                })
+            }
+            this.propertyFields = [...this.fields];
+            this.propertyFields.unshift({
+                key: "delete",
+                label: ""
+            });
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
@@ -849,7 +865,7 @@ export default {
             if (this.fieldsType == null || this.fieldsType == "samerows") {
                 for (let key in this.customViewTemplate) {                    
                     if (key !== 'name' && this.customViewTemplate[key] !== false) {
-                    let customField = this.customFieldsArray.find(x=>x.field == key);
+                    let customField = this.customViewVisibleFields.find(x=>(x.field == key && x.field.includes("custom") && x.visible ==1));
                     if(customField) {
                             fields.push({
                                 key: customField.field,
@@ -1003,7 +1019,7 @@ export default {
             await this.$store.dispatch("templatesModule/getTemplate", {
                 id: event
             });
-            this.showCustomView(this.template);
+            this.showCustomView(this.template,"samerows",false);
             if(event!=null){
                 this.changeTemplate= true;
             }else{
@@ -1033,22 +1049,22 @@ export default {
         }
     },
     mounted() {
-        if (this.templates) {
-            this.templates.forEach(e => {
-                const template = {
-                    value: '',
-                    text: '',
-                }
-                template.value = e.id;
-                template.text = e.name;
-                this.templatesToExport.push(template);
-            })
-        }
-        this.propertyFields = [...this.fields];
-        this.propertyFields.unshift({
-            key: "delete",
-            label: ""
-        });
+        // if (this.templates) {
+        //     this.templates.forEach(e => {
+        //         const template = {
+        //             value: '',
+        //             text: '',
+        //         }
+        //         template.value = e.id;
+        //         template.text = e.name;
+        //         this.templatesToExport.push(template);
+        //     })
+        // }
+        // this.propertyFields = [...this.fields];
+        // this.propertyFields.unshift({
+        //     key: "delete",
+        //     label: ""
+        // });
     },
     watch: {
         total: {

@@ -35,7 +35,7 @@ const mutations = {
             e.updated_at = e.updated_at.split('T')[0];
             e.export_type = state.exportTypes[e.export_type];
             if(e.export_type=="To Market"){
-                e['export_detail'] = e.marketing_channel;
+                e['export_detail'] = e.marketing_channel?.marketing_channel_name;
             }else if(e.export_type=="To SkipTrace"){
                 e['export_detail'] = e.skip_source;
             }else{e['export_detail'] = ''}
@@ -51,7 +51,7 @@ const mutations = {
             e.user = e?.user?.name;
             e.export_type = state.exportTypes[e.export_type];
             if(e.export_type=="To Market"){
-                e['export_detail'] = e.marketing_channel;
+                e['export_detail'] = e.marketing_channel?.marketing_channel_name;
             }else if(e.export_type=="To SkipTrace"){
                 e['export_detail'] = e.skip_source;
             }else{e['export_detail'] = ''}

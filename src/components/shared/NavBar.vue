@@ -20,7 +20,7 @@
       v-model="team.id"
       class=" mr-3 bg-transparent text-white border-0 cursor-pointer"
     >
-        <b-form-select-option class="text-dark" :value="null" >Select Company - Team </b-form-select-option>
+        <b-form-select-option class="text-dark" :value="null" disabled>Select Company - Team </b-form-select-option>
         <b-form-select-option class="text-dark" :value="team.id" v-for="team,index in user.teams" :key="index">{{team.company.name }} - {{team.name}}</b-form-select-option>
     </b-form-select>
 

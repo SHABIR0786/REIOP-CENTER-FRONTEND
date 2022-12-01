@@ -70,6 +70,8 @@ const state = {
 
 const mutations = {
     SET_ALL_SUBJECTS(state, payload) {
+        try{
+        
         state.sameRowSubjects = [];
         state.seperatedRowSubjects = [];
         const data = JSON.parse(JSON.stringify([...payload.data]));
@@ -84,20 +86,84 @@ const mutations = {
                 let list_type = [];
                 let list_source = [];
 
+                //list Custom Fields
+                let list_custom_field_1 = [];
+                let list_custom_field_2 = [];
+                let list_custom_field_3 = [];
+                let list_custom_field_4 = [];
+                let list_custom_field_5 = [];
+
                 e.lists.forEach(list => {
                     if (list.list_market) list_market.push(list.list_market);
                     if (list.list_group) list_group.push(list.list_group);
                     if (list.list_type) list_type.push(list.list_type);
                     if (list.list_source) list_source.push(list.list_source);
+
+                    //list Custom Fields
+                    if (list.list_custom_field_1) list_custom_field_1.push(list.list_custom_field_1);
+                    if (list.list_custom_field_2) list_custom_field_2.push(list.list_custom_field_2);
+                    if (list.list_custom_field_3) list_custom_field_3.push(list.list_custom_field_3);
+                    if (list.list_custom_field_4) list_custom_field_4.push(list.list_custom_field_4);
+                    if (list.list_custom_field_5) list_custom_field_5.push(list.list_custom_field_5);
                 });
 
                 e.list_market = list_market.join(', ');
                 e.list_group = list_group.join(', ');
                 e.list_type = list_type.join(', ');
                 e.list_source = list_source.join(', ');
+
+                e.list_custom_field_1 = list_custom_field_1.join(', ');
+                e.list_custom_field_2 = list_custom_field_2.join(', ');
+                e.list_custom_field_3 = list_custom_field_3.join(', ');
+                e.list_custom_field_4 = list_custom_field_4.join(', ');
+                e.list_custom_field_5 = list_custom_field_5.join(', ');
             }
 
             if (e.sellers) {
+                    // Seller Custom Fields
+                    let seller_custom_field_1 = [];
+                    let seller_custom_field_2 = [];
+                    let seller_custom_field_3 = [];
+                    let seller_custom_field_4 = [];
+                    let seller_custom_field_5 = [];
+                    let seller_custom_field_6 = [];
+                    let seller_custom_field_7 = [];
+                    let seller_custom_field_8 = [];
+                    let seller_custom_field_9 = [];
+                    let seller_custom_field_10 = [];
+                    let seller_custom_field_11 = [];
+                    let seller_custom_field_12 = [];
+                    let seller_custom_field_13 = [];
+                    let seller_custom_field_14 = [];
+                    let seller_custom_field_15 = [];
+                    let seller_custom_field_16 = [];
+                    let seller_custom_field_17 = [];
+                    let seller_custom_field_18 = [];
+                    let seller_custom_field_19 = [];
+                    let seller_custom_field_20 = [];
+
+
+                    // Seller Phone Custom Fields
+
+                    let phone_custom_field_1 = [];
+                    let phone_custom_field_2 = [];
+                    let phone_custom_field_3 = [];
+                    let phone_custom_field_4 = [];
+                    let phone_custom_field_5 = [];
+
+
+                    let email_custom_field_1 = [];
+                    let email_custom_field_2 = [];
+                    let email_custom_field_3 = [];
+                    let email_custom_field_4 = [];
+                    let email_custom_field_5 = [];
+
+                    let golden_address_custom_field_1 = [];
+                    let golden_address_custom_field_2 = [];
+                    let golden_address_custom_field_3 = [];
+                    let golden_address_custom_field_4 = [];
+                    let golden_address_custom_field_5 = [];
+
                 e.sellers.forEach((seller, index) => {
                     let sellerCount = index + 1;
                     e[sellerCount + '_seller_full_name'] = seller.seller_full_name;
@@ -108,6 +174,32 @@ const mutations = {
                     e[sellerCount + '_seller_mailing_state'] = seller.seller_mailing_state;
                     e[sellerCount + '_seller_mailing_city'] = seller.seller_mailing_city;
                     e[sellerCount + '_seller_mailing_zip'] = seller.seller_mailing_zip;
+                    
+
+                    // Seller Custom Fields
+
+                    if (seller.seller_custom_field_1) seller_custom_field_1.push(seller.seller_custom_field_1);
+                    if (seller.seller_custom_field_2) seller_custom_field_2.push(seller.seller_custom_field_2);
+                    if (seller.seller_custom_field_3) seller_custom_field_3.push(seller.seller_custom_field_3);
+                    if (seller.seller_custom_field_4) seller_custom_field_4.push(seller.seller_custom_field_4);
+                    if (seller.seller_custom_field_5) seller_custom_field_5.push(seller.seller_custom_field_5);
+                    if (seller.seller_custom_field_6) seller_custom_field_6.push(seller.seller_custom_field_6);
+                    if (seller.seller_custom_field_7) seller_custom_field_7.push(seller.seller_custom_field_7);
+                    if (seller.seller_custom_field_8) seller_custom_field_8.push(seller.seller_custom_field_8);
+                    if (seller.seller_custom_field_9) seller_custom_field_9.push(seller.seller_custom_field_9);
+                    if (seller.seller_custom_field_10) seller_custom_field_10.push(seller.seller_custom_field_10);
+                    if (seller.seller_custom_field_11) seller_custom_field_11.push(seller.seller_custom_field_11);
+                    if (seller.seller_custom_field_12) seller_custom_field_12.push(seller.seller_custom_field_12);
+                    if (seller.seller_custom_field_13) seller_custom_field_13.push(seller.seller_custom_field_13);
+                    if (seller.seller_custom_field_14) seller_custom_field_14.push(seller.seller_custom_field_14);
+                    if (seller.seller_custom_field_15) seller_custom_field_15.push(seller.seller_custom_field_15);
+                    if (seller.seller_custom_field_16) seller_custom_field_16.push(seller.seller_custom_field_16);
+                    if (seller.seller_custom_field_17) seller_custom_field_17.push(seller.seller_custom_field_17);
+                    if (seller.seller_custom_field_18) seller_custom_field_18.push(seller.seller_custom_field_18);
+                    if (seller.seller_custom_field_19) seller_custom_field_19.push(seller.seller_custom_field_19);
+                    if (seller.seller_custom_field_20) seller_custom_field_20.push(seller.seller_custom_field_20);
+
+                    
 
                     // Seller Phones
                     seller.phones.forEach((phone, phoneIndex) => {
@@ -116,6 +208,16 @@ const mutations = {
                         e['seller_' + sellerCount + '_phone_' + phoneCount + '_phone_type'] = phone.phone_type;
                         e['seller_' + sellerCount + '_phone_' + phoneCount + '_phone_validity'] = phone.phone_validity;
                         e['seller_' + sellerCount + '_phone_' + phoneCount + '_phone_skip_source'] = phone.phone_skip_source;
+
+                        // Seller Phone Custom Fields
+
+                        if (phone.phone_custom_field_1) phone_custom_field_1.push(phone.phone_custom_field_1);
+                        if (phone.phone_custom_field_2) phone_custom_field_2.push(phone.phone_custom_field_2);
+                        if (phone.phone_custom_field_3) phone_custom_field_3.push(phone.phone_custom_field_3);
+                        if (phone.phone_custom_field_4) phone_custom_field_4.push(phone.phone_custom_field_4);
+                        if (phone.phone_custom_field_5) phone_custom_field_5.push(phone.phone_custom_field_5);
+
+
                     });
 
                     // Seller Emails
@@ -124,6 +226,13 @@ const mutations = {
                         e['seller_' + sellerCount + '_email_' + emailCount + '_email_address'] = email.email_address;
                         e['seller_' + sellerCount + '_email_' + emailCount + '_email_validity'] = email.email_validity;
                         e['seller_' + sellerCount + '_email_' + emailCount + '_email_skip_source'] = email.email_skip_source;
+
+                        if (email.email_custom_field_1) email_custom_field_1.push(email.email_custom_field_1);
+                        if (email.email_custom_field_2) email_custom_field_2.push(email.email_custom_field_2);
+                        if (email.email_custom_field_3) email_custom_field_3.push(email.email_custom_field_3);
+                        if (email.email_custom_field_4) email_custom_field_4.push(email.email_custom_field_4);
+                        if (email.email_custom_field_5) email_custom_field_5.push(email.email_custom_field_5);
+
                     });
 
                     // Seller Golden Addresses
@@ -133,6 +242,13 @@ const mutations = {
                         e['seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_city'] = golden.golden_address_city;
                         e['seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_state'] = golden.golden_address_state;
                         e['seller_' + sellerCount + '_golden_' + goldenCount + '_golden_address_zip'] = golden.golden_address_zip;
+
+                        if (golden.golden_address_custom_field_1) golden_address_custom_field_1.push(golden.golden_address_custom_field_1);
+                        if (golden.golden_address_custom_field_2) golden_address_custom_field_2.push(golden.golden_address_custom_field_2);
+                        if (golden.golden_address_custom_field_3) golden_address_custom_field_3.push(golden.golden_address_custom_field_3);
+                        if (golden.golden_address_custom_field_4) golden_address_custom_field_4.push(golden.golden_address_custom_field_4);
+                        if (golden.golden_address_custom_field_5) golden_address_custom_field_5.push(golden.golden_address_custom_field_5);
+
                     });
 
                     // get Max counts for Phones, Emails and Golden addresses
@@ -148,6 +264,58 @@ const mutations = {
                         state.maxGoldenAddresses = seller.golden_addresses.length;
                     }
                 });
+
+                    // Seller Custom Fields
+                e.seller_custom_field_1 = seller_custom_field_1.join(', ');
+                e.seller_custom_field_2 = seller_custom_field_2.join(', ');
+                e.seller_custom_field_3 = seller_custom_field_3.join(', ');
+                e.seller_custom_field_4 = seller_custom_field_4.join(', ');
+                e.seller_custom_field_5 = seller_custom_field_5.join(', ');
+                e.seller_custom_field_6 = seller_custom_field_6.join(', ');
+                e.seller_custom_field_7 = seller_custom_field_7.join(', ');
+                e.seller_custom_field_8 = seller_custom_field_8.join(', ');
+                e.seller_custom_field_9 = seller_custom_field_9.join(', ');
+                e.seller_custom_field_10 = seller_custom_field_10.join(', ');
+                e.seller_custom_field_11 = seller_custom_field_11.join(', ');
+                e.seller_custom_field_12 = seller_custom_field_12.join(', ');
+                e.seller_custom_field_13 = seller_custom_field_13.join(', ');
+                e.seller_custom_field_14 = seller_custom_field_14.join(', ');
+                e.seller_custom_field_15 = seller_custom_field_15.join(', ');
+                e.seller_custom_field_16 = seller_custom_field_16.join(', ');
+                e.seller_custom_field_17 = seller_custom_field_17.join(', ');
+                e.seller_custom_field_18 = seller_custom_field_18.join(', ');
+                e.seller_custom_field_19 = seller_custom_field_19.join(', ');
+                e.seller_custom_field_20 = seller_custom_field_20.join(', ');
+
+
+
+                // Seller Phone Custom Fields
+                e.phone_custom_field_1 = phone_custom_field_1.join(', ');
+                e.phone_custom_field_2 = phone_custom_field_2.join(', ');
+                e.phone_custom_field_3 = phone_custom_field_3.join(', ');
+                e.phone_custom_field_4 = phone_custom_field_4.join(', ');
+                e.phone_custom_field_5 = phone_custom_field_5.join(', ');
+
+                // Seller Email Custom Fields
+                e.email_custom_field_1 = email_custom_field_1.join(', ');
+                e.email_custom_field_2 = email_custom_field_2.join(', ');
+                e.email_custom_field_3 = email_custom_field_3.join(', ');
+                e.email_custom_field_4 = email_custom_field_4.join(', ');
+                e.email_custom_field_5 = email_custom_field_5.join(', ');
+
+                // Seller golden_address Custom Fields
+                e.golden_address_custom_field_1 = golden_address_custom_field_1.join(', ');
+                e.golden_address_custom_field_2 = golden_address_custom_field_2.join(', ');
+                e.golden_address_custom_field_3 = golden_address_custom_field_3.join(', ');
+                e.golden_address_custom_field_4 = golden_address_custom_field_4.join(', ');
+                e.golden_address_custom_field_5 = golden_address_custom_field_5.join(', ');
+
+                
+
+
+
+
+
             }
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
@@ -252,6 +420,10 @@ const mutations = {
             }
         });
         state.total = payload.total;
+    }catch(error){
+        console.log('error',error);
+        
+    }
     },
     ADD_EXPORT(state, payload) {
         console.log(state, payload);

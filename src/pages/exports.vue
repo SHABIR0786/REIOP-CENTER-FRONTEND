@@ -13,6 +13,9 @@
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="showRawData(data.item)"></b-icon>
             <b-icon class="mr-2 cursor-pointer" icon="download" variant="primary" @click="downloadFile(data.item)"></b-icon>
         </template>
+        <template v-slot:cell(export_detail)="data">
+            {{data.value}}
+        </template>
         <template v-slot:cell(status)="data">
             {{statusText[data.value]}}
         </template>

@@ -27,7 +27,7 @@
                             Save
                     </b-button>
                   <b-button
-                      v-if="isReadOnly === true"
+                      v-if="showStatus(editData) == 'Completed' && isReadOnly === true"
                       variant="primary"
                       size="md"
                       class="ml-3"

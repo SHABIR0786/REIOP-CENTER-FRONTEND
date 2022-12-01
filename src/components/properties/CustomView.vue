@@ -279,6 +279,7 @@ export default {
     computed: {
         ...mapGetters({
             customViewVisibleFields: 'importModule/customViewVisibleFields',
+            getTemplate: 'templatesModule/template',
         }),
         customTemplate: {
             get() {
@@ -302,6 +303,14 @@ export default {
             this.running_list_collapse_icon = false;
             if(this.changeTemplate){                
                 this.resetData();
+                this.template = this.getTemplate;
+                Object.entries(this.template).forEach(([key]) => {
+                    // console.log(key , this.template[key]); // key
+                    this.TemplateMap.push({
+                        prop: key,
+                        title: key,
+                    });
+                });
             }
         },
     },
