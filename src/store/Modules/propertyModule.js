@@ -47,7 +47,6 @@ const state = {
         { key: "subject_type", label: "Subject Type", sortable: true },
         { key: "subject_age", label: "Subject Age", sortable: true },
 
-
         // Custom Fields
         // {key: "subject_last_marked_date", label: "Last Marketed Date", sortable: true},
         // {key: "subject_last_exported_date", label: "Last Exported Date", sortable: true},
@@ -62,19 +61,16 @@ const state = {
         { key: "list_market", label: "Markets", sortable: true, visible: false },
         { key: "list_group", label: "Group", sortable: true },
         { key: "list_type", label: "Type", sortable: true },
-        { key: "list_source", label: "Source", sortable: true },
-
-
+        { key: "list_source", label: "Source", sortable: true }
     ],
 }
 
 const mutations = {
     SET_ALL_SUBJECTS(state, payload) {
-        try{
-        
+        try {
         state.sameRowSubjects = [];
         state.seperatedRowSubjects = [];
-        const data = JSON.parse(JSON.stringify([...payload.data]));
+        const data = JSON.parse(JSON.stringify([...payload.subjects.data]));
         state.maxSellers = 0;
         state.maxPhones = 0;
         state.maxEmails = 0;
@@ -348,7 +344,7 @@ const mutations = {
         
 
         // Mapping date for seperate row subjects.
-        const seperatedRowSubjects = JSON.parse(JSON.stringify([...payload.data]));
+        const seperatedRowSubjects = JSON.parse(JSON.stringify([...payload.subjects.data]));
         seperatedRowSubjects.forEach(e => {
             if (e.sellers) {
                 let seperatedRowSubject = JSON.parse(JSON.stringify({ ...e }));
@@ -381,7 +377,7 @@ const mutations = {
                     seperatedRowSubject['seller_mailing_city'] = seller.seller_mailing_city;
                     seperatedRowSubject['seller_mailing_zip'] = seller.seller_mailing_zip;
                     let maxCount = Math.max(seller.phones.length, seller.emails.length, seller.golden_addresses.length);
-                    if (maxCount > 0) {
+                    if (payload.hasPhoneorEmailorGolden && maxCount > 0) {
                         for (let x = 0; x < maxCount; x++) {
                             if (seller.phones && seller.phones[x]) {
                                 let phone = seller.phones[x];
@@ -438,7 +434,7 @@ const mutations = {
                 state.seperatedRowSubjects.push(JSON.parse(JSON.stringify(seperatedRowSubject)));
             }
         });
-        state.total = payload.total;
+        state.total = payload.subjects.total;
     }catch(error){
         console.log('error',error);
         
@@ -515,20 +511,27 @@ const actions = {
             }
 
             if (response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', response.subjects)
+                commit('SET_ALL_SUBJECTS', {subjects: response.subjects,hasPhoneorEmailorGolden:false})
             }
 
             return response
         })
     },
     async getAllSubjectsV2({ commit, dispatch }, data) {
+        let hasPhoneorEmailorGolden = false;
+        let customView = Object.keys(data.custom);
+        customView.forEach(function(item) {
+            if(item.includes('phone') || item.includes('email') || item.includes('golden')) {
+                hasPhoneorEmailorGolden = true;
+            }
+        });
         return await api.post(`/subjectsV2`, { ...data }).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, { root: true })
             }
 
             if (response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', response.subjects)
+                commit('SET_ALL_SUBJECTS', {subjects: response.subjects, hasPhoneorEmailorGolden:hasPhoneorEmailorGolden})
                 // commit('GET_TOTAL', response.subjects.total)
             }
             return response
@@ -541,7 +544,7 @@ const actions = {
             }
 
             if (response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', response.subjects)
+                commit('SET_ALL_SUBJECTS', {subjects: response.subjects,hasPhoneorEmailorGolden:false})
             }
 
             return response
