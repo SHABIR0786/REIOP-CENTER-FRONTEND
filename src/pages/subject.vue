@@ -3,9 +3,6 @@
     <h3>Subjects</h3>
     <div>
         <b-row>
-            <!-- <b-col cols="4" class="d-flex">
-                <h3>Subjects</h3>
-            </b-col> -->
             <b-col cols="8" class="d-flex">
                 <div class="info total">
                     <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -18,11 +15,6 @@
                     <div>Added This Month</div>
                 </div>
             </b-col>
-            <!-- <b-col cols="4" class="d-flex justify-content-end">
-                <b-button variant="primary" class="add-seller" @click="addItem()">
-                    <b-icon icon="plus" aria-hidden="true"></b-icon> Add Subject
-                </b-button>
-            </b-col> -->
         </b-row>
         <hr>
         <b-row class="mb-3">

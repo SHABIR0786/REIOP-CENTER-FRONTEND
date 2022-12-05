@@ -376,8 +376,9 @@ const mutations = {
                     seperatedRowSubject['seller_mailing_state'] = seller.seller_mailing_state;
                     seperatedRowSubject['seller_mailing_city'] = seller.seller_mailing_city;
                     seperatedRowSubject['seller_mailing_zip'] = seller.seller_mailing_zip;
-                    let maxCount = Math.max(seller.phones.length, seller.emails.length, seller.golden_addresses.length);
-                    if (payload.hasPhoneorEmailorGolden && maxCount > 0) {
+
+                    let maxCount = Math.max((payload.customViewHasPhone?seller.phones.length:0), (payload.customViewHasEmail?seller.emails.length:0), (payload.customViewHasGolden?seller.golden_addresses.length:0));
+                    if ((payload.customViewHasPhone || payload.customViewHasEmail || payload.customViewHasGolden ) && maxCount > 0) {
                         for (let x = 0; x < maxCount; x++) {
                             if (seller.phones && seller.phones[x]) {
                                 let phone = seller.phones[x];
@@ -511,27 +512,38 @@ const actions = {
             }
 
             if (response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', {subjects: response.subjects,hasPhoneorEmailorGolden:false})
+                commit('SET_ALL_SUBJECTS', {subjects: response.subjects,customViewHasPhone:false, customViewHasEmail:false, customViewHasGolden: false})
             }
 
             return response
         })
     },
     async getAllSubjectsV2({ commit, dispatch }, data) {
-        let hasPhoneorEmailorGolden = false;
+        let customViewHasPhone = false;
+        let customViewHasEmail = false;
+        let customViewHasGolden = false;
+
+        if(data.custom) {
         let customView = Object.keys(data.custom);
         customView.forEach(function(item) {
-            if(item.includes('phone') || item.includes('email') || item.includes('golden')) {
-                hasPhoneorEmailorGolden = true;
+            if(item.includes('phone')) {
+                customViewHasPhone = true;
+            }
+            if(item.includes('email')) {
+                customViewHasEmail = true;
+            } 
+            if(item.includes('golden')) {
+                customViewHasGolden = true;
             }
         });
+    }
         return await api.post(`/subjectsV2`, { ...data }).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, { root: true })
             }
 
             if (response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', {subjects: response.subjects, hasPhoneorEmailorGolden:hasPhoneorEmailorGolden})
+                commit('SET_ALL_SUBJECTS', {subjects: response.subjects, customViewHasPhone:customViewHasPhone, customViewHasEmail:customViewHasEmail, customViewHasGolden: customViewHasGolden  })
                 // commit('GET_TOTAL', response.subjects.total)
             }
             return response
@@ -544,7 +556,7 @@ const actions = {
             }
 
             if (response && response.subjects && response.subjects.data) {
-                commit('SET_ALL_SUBJECTS', {subjects: response.subjects,hasPhoneorEmailorGolden:false})
+                commit('SET_ALL_SUBJECTS', {subjects: response.subjects,customViewHasPhone:false, customViewHasEmail:false, customViewHasGolden: false })
             }
 
             return response
