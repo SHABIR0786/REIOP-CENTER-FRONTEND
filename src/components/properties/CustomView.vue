@@ -444,7 +444,7 @@ export default {
                 this.$emit('save', Object.assign({}, template), 'save');
                 this.$emit('show', this.customTemplate, this.fieldsType,true);
             }
-            this.resetData();
+
         },
         checkCustomFieldLabel(field) {
             if(field.label) {

@@ -1,9 +1,9 @@
 <template>
 <div :class="`list-page wide-content`">
     <h3>Exports</h3>
-    <div>
+    <!-- <div>
         <hr>
-    </div>
+    </div> -->
     <b-table id="user-table" lg sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="items" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
             <template #head(actions)="scope">
             <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>

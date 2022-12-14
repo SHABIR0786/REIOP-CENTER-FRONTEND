@@ -15,7 +15,7 @@
                         <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
                     </b-col>
                     <b-col cols="4">
-                        <b-form-input v-model="searchImport" placeholder="Search"></b-form-input>
+                        <b-form-input v-model="searchImport" debounce="1000" placeholder="Search"></b-form-input>
                   </b-col>
                 </b-row>
             </div>
@@ -234,17 +234,18 @@ export default {
         }
       },
       async showImports() {
-        this.$store.dispatch('uxModule/setLoading')
-        await this.$store.dispatch('importV2Module/getTotal')
-        await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
-        this.filteredItems = this.items;
-        const Instance = this;
-        this.filteredItems.forEach((item) => {
-        Instance.calculatePercentage(item);
-        });
         try {
-            this.$store.dispatch('uxModule/hideLoader')
+          this.$store.dispatch('uxModule/setLoading')
+          await this.$store.dispatch('importV2Module/getTotal')
+          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
+          this.filteredItems = this.items;
+          const Instance = this;
+          this.filteredItems.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
+          console.log(error);
             this.$store.dispatch('uxModule/hideLoader')
         }
         if(this.$route.query.batch_id) {
@@ -252,17 +253,19 @@ export default {
         }
       },
       async handlePageClick(){
-        this.$store.dispatch('uxModule/setLoading')
-        
-        if(this.$refs.table){
-            this.$refs.table.refresh();
+        try {
+          this.$store.dispatch('uxModule/setLoading')
+          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
+          this.filteredItems = this.items;
+          const Instance = this;
+          this.filteredItems.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          console.log(error);
+          this.$store.dispatch('uxModule/hideLoader')
         }
-        await this.showImports()
-        // await this.$store.dispatch("importV2Module/getAllProcesses", {page: pageNumber, perPage: this.perPage});
-        if(this.$refs.table){
-            this.$refs.table.refresh();
-          }
-        this.$store.dispatch('uxModule/hideLoader');
       },
          
       cancelEdit(){
@@ -670,13 +673,23 @@ export default {
   watch: {
     searchImport: {
       handler: async function () {
+        try{
         this.$store.dispatch('uxModule/setLoading')
         await this.$store.dispatch('importV2Module/searchImpots', {
           page: this.currentPage,
           perPage: this.perPage,
           search: this.searchImport
-        })
-        this.$store.dispatch('uxModule/hideLoader');
+        });
+        this.filteredItems = this.items;
+          const Instance = this;
+          this.filteredItems.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          console.log(error);
+            this.$store.dispatch('uxModule/hideLoader')
+        }
       }
     },
     async showImportFirstPage(v) {
