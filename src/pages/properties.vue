@@ -1172,7 +1172,7 @@ table th {
     text-align: center;
     display: inline-block;
     padding-top: 10px;
-    width: 167px;
+    min-width: 167px;
     padding-bottom: 10px;
     margin-left: 10px;
     cursor: pointer;

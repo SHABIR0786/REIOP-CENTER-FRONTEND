@@ -180,11 +180,11 @@
                 excluded: false,
               },
               list_option: [],
-              list_name_option: [{ value: null, text: 'N/A' }],
-              list_group_option: [{ value: null, text: 'N/A' }],
-              list_source_option: [{ value: null, text: 'N/A' }],
-              list_type_option: [{ value: null, text: 'N/A' }],
-              list_market_option: [{ value: null, text: 'N/A' }],
+              list_name_option: [{ value: null, text: 'Unknown' }],
+              list_group_option: [{ value: null, text: 'Unknown' }],
+              list_source_option: [{ value: null, text: 'Unknown' }],
+              list_type_option: [{ value: null, text: 'Unknown' }],
+              list_market_option: [{ value: null, text: 'Unknown' }],
               submarket_options: [],
               perPage: 20,
               condition: '',
@@ -257,11 +257,11 @@
             }
           },
           handleListOptions() {
-            this.list_name_option = [{ value: null, text: 'N/A' }];
-            this.list_group_option = [{ value: null, text: 'N/A' }];
-            this.list_source_option = [{ value: null, text: 'N/A' }];
-            this.list_type_option = [{ value: null, text: 'N/A' }];
-            this.list_market_option = [{ value: null, text: 'N/A' }];
+            this.list_name_option = [{ value: null, text: 'Unknown' }];
+            this.list_group_option = [{ value: null, text: 'Unknown' }];
+            this.list_source_option = [{ value: null, text: 'Unknown' }];
+            this.list_type_option = [{ value: null, text: 'Unknown' }];
+            this.list_market_option = [{ value: null, text: 'Unknown' }];
             this.lists.forEach(e => {
               this.list_name_option.push({value: e.id, text: e.list_hash});
               this.list_group_option.push({ value: e.list_group, text: e.list_group });

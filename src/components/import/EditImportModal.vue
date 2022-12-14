@@ -408,19 +408,19 @@ export default {
       },
         editImport() {
             this.isReadOnly = false;
-            if(this.editData.list_skip_source == 'N/A'){
+            if(this.editData.list_skip_source == 'Unknown'){
               this.editData.list_skip_source = '';
             }
-            if(this.editData.list_source == 'N/A'){
+            if(this.editData.list_source == 'Unknown'){
               this.editData.list_source = '';
             }
         },
         edit() {
             this.isReadOnly = true;
-            if(!this.editData.list_skip_source == 'N/A'){
+            if(!this.editData.list_skip_source == 'Unknown'){
               this.editData.list_skip_source = '';
             }
-            if(!this.editData.list_source == 'N/A'){
+            if(!this.editData.list_source == 'Unknown'){
               this.editData.list_source = '';
             }
             this.$emit('save', this.editData);
@@ -562,11 +562,11 @@ export default {
         handler() {
           this.editData = {...this.data}
           console.log(this.editData);
-          if(!this.editData.list_skip_source){
-            this.editData.list_skip_source = 'N/A';
+          if(!this.editData.list_skip_source) {
+            this.editData.list_skip_source = 'Unknown';
           }
-          if(!this.editData.list_source){
-            this.editData.list_source = 'N/A';
+          if(!this.editData.list_source) {
+            this.editData.list_source = 'Unknown';
           }
           if(this.editData.notes == "undefined"){
             this.editData.notes = '';
