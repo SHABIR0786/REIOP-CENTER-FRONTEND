@@ -210,13 +210,20 @@
         GoldenAddressesCondition: null,
         skipSource: null,
         allData: {
-          Market: [],
-          Group: [],
-          Type: [],
-          Source: [],
-          HasSkipTraceData: ["Yes", "No"],
-          SkipSources:[],
-          CompanyOwned:["Yes","No"],
+          Market:[],
+          Group:[],
+          Type:[],
+          Source:[],
+          Errors:[],
+          Error:[],
+          RunDate:[],
+          TotalSellers:[],
+          ListStack:[],
+          list_custom_field_1:[],
+          list_custom_field_2:[],
+          list_custom_field_3:[],
+          list_custom_field_4:[],
+          list_custom_field_5:[],
         },
         allFilters: {
           Market: [],
@@ -246,12 +253,6 @@
         isTypeDropDown: false,
         isSourceDropDown: false,
         stepNumber: 1,
-        savedFilters: [
-          {
-            value: null,
-            text: "Select Filter",
-          },
-        ],
         savedMarkets: [
           {
             value: 1,
@@ -356,16 +357,6 @@
       },
     },
     async created() {
-      await this.$store.dispatch("filterModule/getAllFilters", "properties");
-      this.filters.forEach((e) => {
-        const filter = {
-          value: "",
-          text: "",
-        };
-        filter.value = e.id;
-        filter.text = e.name;
-        this.savedFilters.push(filter);
-      });
       await this.$store.dispatch("marketingChannelModule/marketingChannelsForDropDown", {
         page: 1,
         perPage: 20,
@@ -471,14 +462,6 @@
       skip_date: function() {
         this.checkNextStep();
       },
-  
-      isShowSlidePopUp: function() {
-        if (this.isShowSlidePopUp) {
-          setTimeout(() => {
-            document.querySelector('.slidepopup.show').style.height =  (document.querySelector('.side-menu').clientHeight - 100 - document.querySelector('.properties-header').clientHeight) + 'px';
-          }, 1000);
-        }
-      },
     },
     methods: {
       BackStep(number) {
@@ -563,7 +546,6 @@
           autoHideDelay: 5000,
           appendToast: true,
         });
-        console.log(response);
   
         this.isExporting = false;
         const instance = this;
@@ -613,12 +595,6 @@
           }
         }
       },
-      showMarketDropdown() {
-        this.isShowMarketDropDown = !this.isShowMarketDropDown;
-      },
-      showSkipSourceDropdown() {
-        this.isSkipSourceDropDown = !this.isSkipSourceDropDown;
-      },
       changeExportType() {
         if (this.export_type == 3) {
           this.stepNumber = 3;
@@ -626,156 +602,6 @@
           this.stepNumber = 2;
         }
       },
-      changeFilter() {
-        var filter = this.filters.find((x) => x.id == this.selectedFilter);
-        console.log('filter',filter);
-        
-        this.allFilters = JSON.parse(filter.configuration);
-        let tempArrayNames = ['Market','Group','Type','Source','HasSkipTraceData','SkipSources','CompanyOwned'];
-        tempArrayNames.forEach((item)=>{
-            if(!this.allFilters[item]){
-                this.allFilters[item] = [];
-            }
-        });
-
-        
-        this.$emit(
-          "filterProperties",
-          JSON.parse(JSON.stringify(this.allFilters))
-        );
-      },
-      triggerSaveFilter(filterName) {
-        this.showSaveFilterModal = false;
-        const data = {
-          name: filterName || "Filter",
-          type: "properties",
-          configuration: JSON.stringify(this.allFilters),
-        };
-        this.$store.dispatch("filterModule/createFilter", data);
-      },
-      triggerUpdateFilter(id) {
-        this.showSaveFilterModal = false;
-        const data = {
-          id: id,
-          configuration: JSON.stringify(this.allFilters),
-        };
-        this.$store.dispatch("filterModule/editFilter", data);
-      },
-      showGroupDropDown() {
-        this.isGroupDropDown = !this.isGroupDropDown;
-        this.isTypeDropDown = false;
-        this.isSourceDropDown = false;
-      },
-      showTypeDropDown() {
-        this.isTypeDropDown = !this.isTypeDropDown;
-        this.isGroupDropDown = false;
-        this.isSourceDropDown = false;
-      },
-      showSourceDropDown() {
-        this.isSourceDropDown = !this.isSourceDropDown;
-        this.isGroupDropDown = false;
-        this.isTypeDropDown = false;
-      },
-      resetFilter(filtertype, param) {
-        try{
-        this.allFilters[filtertype].splice(
-          this.allFilters[filtertype].findIndex((x) => x == param),
-          1
-        );
-        if (document.querySelector("#" + param.replace(/\s/gm, ""))) {
-          document.querySelector("#" + param.replace(/\s/gm, "")).checked = false;
-        }
-        if (
-          this.allFilters[filtertype].length == this.allData[filtertype].length
-        ) {
-          this.selectedAll[filtertype] = "accepted";
-        } else {
-          this.selectedAll[filtertype] = "not_accepted";
-        }
-        // this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
-        }catch(error){
-            console.log('error',error);
-            
-        }
-      },
-      addFilter(FilterType, param) {
-        if (this.allFilters[FilterType].findIndex((x) => x == param) == -1) {
-          this.allFilters[FilterType].push(param);
-        } else {
-          this.allFilters[FilterType].splice(
-            this.allFilters[FilterType].findIndex((x) => x == param),
-            1
-          );
-        }
-  
-        if (
-          this.allFilters[FilterType].length == this.allData[FilterType].length
-        ) {
-          this.selectedAll[FilterType] = "accepted";
-        } else {
-          this.selectedAll[FilterType] = "not_accepted";
-        }
-        // this.$emit('filterProperties', JSON.parse(JSON.stringify(this.allFilters)));
-      },
-      selectAllMarket(FilterType, isAccepted) {
-        if (isAccepted == "accepted") {
-          this.allFilters[FilterType] = [...this.allData[FilterType]];
-          this.allData[FilterType].forEach(function(elem) {
-            if (document.querySelector("#" + elem.replace(/\s/gm, ""))) {
-              document.querySelector(
-                "#" + elem.replace(/\s/gm, "")
-              ).checked = true;
-            }
-          });
-        } else {
-          this.allFilters[FilterType] = [];
-          this.allData[FilterType].forEach(function(elem) {
-            if (document.querySelector("#" + elem.replace(/\s/gm, ""))) {
-              document.querySelector(
-                "#" + elem.replace(/\s/gm, "")
-              ).checked = false;
-            }
-          });
-        }
-        // this.$emit(
-        //   "filterProperties",
-        //   JSON.parse(JSON.stringify(this.allFilters))
-        // );
-      },
-      applyFilters(){
-        this.$emit(
-          "filterProperties",
-          JSON.parse(JSON.stringify(this.allFilters))
-        );
-
-      },
-      async clearAllFilters() {
-            // Unselect all the filters checkboxes.
-            const Instance = this;
-            Object.keys(this.allFilters).forEach(function(key) {
-            Instance.allFilters[key].forEach(function(param) {
-                if (document.querySelector("#" + param.replace(/\s/gm, ""))) {
-                document.querySelector(
-                    "#" + param.replace(/\s/gm, "")
-                ).checked = false;
-                }
-            });
-            // Set false to selectedAll
-            Instance.selectedAll[key] = false;
-            });
-    
-            // Set the filters to initial state
-            this.allFilters = {
-                Market: [],
-                Group: [],
-                Type: [],
-                Source: [],
-                HasSkipTraceData: [],
-                SkipSources:[],
-                CompanyOwned:[]
-            };
-      },
-    
     },
     async mounted() {
       const Instance = this;
@@ -798,7 +624,7 @@
           }
         }
       });
-    },
+    }
   };
   </script>
   
