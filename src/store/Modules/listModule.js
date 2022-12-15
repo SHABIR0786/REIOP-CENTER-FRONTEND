@@ -51,6 +51,9 @@ const mutations = {
         // let lastPullDateIndex = state.fields.findIndex(x=>x.key == "list_pull_date");
         // let numofItemstoRemove = lastPullDateIndex - 7;
         // state.fields.splice(7, numofItemstoRemove);
+        state.fields = state.fields.filter((item) => {
+            return !item.key.includes("list_custom_field_");
+            })
         state.fields.splice(8,0, ...customFields);
         }
         state.lists = JSON.stringify(data);
@@ -744,5 +747,12 @@ async function setCustomListFields(payload) {
             }
         }
     });
+    fields.sort(function(a, b) {
+        var keyA = a.key,
+            keyB =b.key;
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+    });    
     return fields;
 }
