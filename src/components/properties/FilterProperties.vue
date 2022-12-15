@@ -1,294 +1,819 @@
 <template>
-    <b-modal size="xl" v-model="showModal" scrollable no-close-on-backdrop>
-        <template #modal-header>
-            <div class="w-100">
-                ADD FILTER
-            </div>
-            <div>
-                <b-icon @click="$emit('cancel')" class="close-icon" icon="x"></b-icon>
-            </div>
-        </template>
-        <b-container fluid class="container-row">
-            <b-row>
-                <b-row class="w-100">
-                    <b-col cols="4">
-                        <h5>List</h5>
-                        <b-form-radio v-model="selected" name="some-radios" value="true">Included</b-form-radio>
-                        <div class="d-flex align-items-center mt-4">
-                            <p class="mr-1">List Id</p>
-                            <b-form-select class="select" v-model="filter.list_id" :options="list_name_option"></b-form-select>
-                        </div>
-                        <div class="d-flex align-items-center mt-2">
-                            <p class="mr-1">List Group:</p>
-                            <b-form-select class="select" @change="detectListSelectChange('list_group')"  v-model="filter.list_group" :options="list_group_option"></b-form-select>
-                        </div>
-                        <div class="d-flex align-items-center mt-2">
-                            <p class="mr-1">List Source:</p>
-                            <b-form-select class="select" @change="detectListSelectChange('list_source')"  v-model="filter.list_source" :options="list_source_option"></b-form-select>
-                        </div>
-                    </b-col>
-                    <b-col cols="4" class="d-flex flex-column justify-content-center">
-                        <div class="d-flex align-items-center mt-2">
-                            <p class="mr-1">List Type:</p>
-                            <b-form-select class="select" @change="detectListSelectChange('list_type')" v-model="filter.list_type" :options="list_type_option"></b-form-select>
-                        </div>
-                    </b-col>
-                    <b-col cols="4">
-                        <h5>Running List</h5>
-                        <b-form-radio v-model="running_list.included" name="some-radios" value="true">Included</b-form-radio>
-                        <b-form-select class="mt-4"  v-model="selected" :options="list_option"></b-form-select>
-                        <b-form-radio v-model="running_list.included" class="mt-4" name="some-radios" value="true">Excluded</b-form-radio>
-                        <b-form-select class="mt-4"  v-model="selected" :options="list_option"></b-form-select>
-                    </b-col>
-                </b-row>
-                <b-row class="w-100">
-                    <b-col cols="4">
-                        <b-form-radio v-model="selected" disabled class="mt-4" name="some-radios" value="true">Excluded</b-form-radio>
-                        <div class="d-flex align-items-center mt-4">
-                            <p class="mr-1">List Dept:</p>
-                            <b-form-select disabled class="select" v-model="selected" :options="list_option"></b-form-select>
-                        </div>
-                        <div class="d-flex align-items-center mt-2">
-                            <p class="mr-1">List Group:</p>
-                            <b-form-select disabled class="select" v-model="selected" :options="list_option"></b-form-select>
-                        </div>
-                        <div class="d-flex align-items-center mt-2">
-                            <p class="mr-1">List Source:</p>
-                            <b-form-select disabled class="select"  v-model="selected" :options="list_option"></b-form-select>
-                        </div>
-                    </b-col>
-                    <b-col cols="4" class="d-flex flex-column justify-content-center">
-                        <div class="d-flex align-items-center mt-2">
-                            <p class="mr-1">List Type:</p>
-                            <b-form-select disabled class="select"  v-model="selected" :options="list_option"></b-form-select>
-                        </div>
-                    </b-col>
-                </b-row>
-                <b-row class="w-100 mt-5">
-                    <b-col>
-                        <p>Market</p>
-                        <b-form-select @change="detectListSelectChange('list_market')" v-model="filter.list_market" :options="list_market_option"></b-form-select>
-                    </b-col>
-                    <b-col>
-                        <p>SubMarket</p>
-                        <b-form-select disabled v-model="filter.submarket" :options="submarket_options"></b-form-select>
-                    </b-col>
-                    <b-col>
-                        <p>Subject County</p>
-                        <b-form-select disabled v-model="selected" :options="list_option"></b-form-select>
-                    </b-col>
-                </b-row>
-                <b-row class="w-100">
-                    <b-col>
-                        <div class="mt-4">
-                            <div class="d-flex justify-content-end">
-                                <b-button class="d-flex align-items-center" v-b-toggle.collapse-1 variant="outline-primary">
-                                    <b-icon icon="plus" aria-hidden="true"></b-icon>Add Conditional Filtering</b-button>
-                            </div>
-                            <b-collapse id="collapse-1"  class="mt-2">
-                                <b-row>
-                                    <b-col class="d-flex mb-2">
-                                        <b-form-radio v-model="selectedConditionalCheckbox" class="mr-2" name="some-radios" value="And">And</b-form-radio>
-                                        <b-form-radio disabled v-model="selectedConditionalCheckbox" name="some-radios" value="Or">Or</b-form-radio>
-                                    </b-col>
-                                </b-row>
-
-                                <b-card>
-                                    <b-row>
-                                        <b-col cols="11">
-                                            <div v-for="item in conditionalFilter" :key="item.index">
-                                                <conditional-filter
-                                                    @deleteConditionalFilter="deleteConditionalFilter"
-                                                    @triggerConditionalFilter="triggerConditionalFilter"
-                                                    :index="item.index" :is_single="filterCount > 1" class="mb-2"
-                                                ></conditional-filter>
-                                            </div>
-                                        </b-col>
-                                        <b-col class="d-flex align-items-end">
-                                            <div class="add-btn d-flex justify-content-center align-items-center" @click="addFilter()">
-                                                <b-icon icon="plus"></b-icon>
-                                            </div>
-                                        </b-col>
-                                    </b-row>
-                                </b-card>
-                            </b-collapse>
-                        </div>
-                    </b-col>
-                </b-row>
-            </b-row>
-        </b-container>
-        <template #modal-footer>
-            <div class="w-100">
-                <b-row>
-                    <b-col cols="12" class="d-flex justify-content-end">
-                        <b-button variant="outline-primary" @click="resetFilter()" class="filter d-flex align-items-center mr-2">
-                            <b-icon icon="x" aria-hidden="true"></b-icon> Reset</b-button>
-                        <b-button variant="primary" @click="$emit('save', filter)" class="filter d-flex align-items-center">
-                            <b-icon icon="filter" aria-hidden="true"></b-icon>Apply Filter</b-button>
-                    </b-col>
-                </b-row>
-            </div>
-        </template>
-    </b-modal>
+  <b-modal size="xl" v-model="showModal" scrollable no-close-on-backdrop>
+    <template #modal-header>
+      <div class="w-100">
+        ADD FILTER
+      </div>
+      <div>
+        <b-icon @click="closeFilterModal" class="close-icon" icon="x"></b-icon>
+      </div>
+    </template>
+    <b-container fluid class="container-row">
+      <div>
+        <b-card  no-body>
+          <b-tabs class="filter-category" pills card vertical>
+            <b-tab class="h-100" @click="tab('allFilters')">
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Applied Filters</span>
+                  <span v-if="totalFilters > 0" class="filter-count">{{ totalFilters }}</span>
+                </div>
+              </template>
+              <b-button  v-if="totalFilters > 0" variant="outline-primary" @click="clearAllFilters(allFilters)" class="filter d-flex float-right r-0 align-items-right mr-2">
+                <b-icon icon="x" aria-hidden="true"></b-icon> Clear All </b-button>
+              <div v-else class="d-flex flex-column justify-content-center text-center h-100" >
+                <h3>No filters applied</h3>
+                <span>Choose some filters on the left to narrow down the results in your view.</span>
+              </div>
+              <b-card-text
+                  v-for="(result,title) in allFilters"
+                  :key="result.userId">
+                <div class="card-body pb-0 pt-2" v-if="result.length > 0">
+                  <h5 class="card-title">{{getCustomField(title)}}</h5>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="filterName in result"
+                      :key="filterName.userId"  @click="resetFilter(filterName,title)">{{filterName}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon>
+                  </b-button>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('Market')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Market</span>
+                  <span v-if="allFilters.Market.length > 0" class="filter-count">{{ allFilters.Market.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.Market"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body :header=this.activeTab>
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('Group')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Group</span>
+                  <span v-if="allFilters.Group.length > 0" class="filter-count">{{ allFilters.Group.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.Group"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body :header=this.activeTab>
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('Type')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Type</span>
+                  <span v-if="allFilters.Type.length > 0" class="filter-count">{{ allFilters.Type.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.Type"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body :header=this.activeTab>
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('Source')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">List Source</span>
+                  <span v-if="allFilters.Source.length > 0" class="filter-count">{{ allFilters.Source.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.Source"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body :header=this.activeTab>
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab(field.field)" v-for="field in relatedCustomField('list_custom_field_')" :key="field.id">
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">{{checkCustomFieldLabel(field)}}</span>
+                  <span v-if="allFilters[field.field].length > 0" class="filter-count">{{ allFilters[field.field].length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters[field.field]"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body :header=checkCustomFieldLabel(field)>
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+              <b-tab @click="tab('Error')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Errors </span>
+                  <span v-if="allFilters.Error.length > 0" class="filter-count">{{ allFilters.Error.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.Error"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-card no-body>
+                  <template #header>
+                    <span v-if="activeTab == 'Error'">Errors</span>
+                  </template>
+                  
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('Errors')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Error Type</span>
+                  <span v-if="allFilters.Errors.length > 0" class="filter-count">{{ allFilters.Errors.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.Errors"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body >
+                  <template #header>
+                    <span v-if="activeTab =='Errors'">Error Type</span>
+                  </template>
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light"
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('RunDate')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Run Month / Year</span>
+                  <span v-if="allFilters.RunDate.length > 0" class="filter-count">{{ allFilters.RunDate.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.RunDate"
+                      :key="result.userId"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="Run Month / Year">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result.userId" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('TotalSellers')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">Total Sellers</span>
+                  <span v-if="allFilters.TotalSellers.length > 0" class="filter-count">{{ allFilters.TotalSellers.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.TotalSellers"
+                      :key="result+index"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="TotalSellers">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+            <b-tab @click="tab('ListStack')" >
+              <template  v-slot:title>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="">List Stack</span>
+                  <span v-if="allFilters.ListStack.length > 0" class="filter-count">{{ allFilters.ListStack.length }}</span>
+                </div>
+              </template>
+              <b-card-text>
+                <div>
+                  <b-button
+                      class="btn btn-light filter align-items-center m-2"
+                      v-for="(result,index) in allFilters.ListStack"
+                      :key="result+index"  @click="resetFilter(result,index)">{{result}}
+                    <b-icon icon="x" aria-hidden="true"></b-icon></b-button>
+                  <b-row class="m-2 mb-3">
+                    <b-form-input v-model="searchSubject" placeholder="Search"></b-form-input>
+                  </b-row>
+                  <b-card no-body header="ListStack">
+                    <b-list-group flush>
+                      <b-list-group-item
+                          class="flex-column align-items-start list-group-item-light "
+                          v-for="(result,index) in filteredOrAllData"
+                          :key="result" @click="addFilter(result,index)">{{result}}</b-list-group-item>
+                    </b-list-group>
+                  </b-card>
+                </div>
+              </b-card-text>
+            </b-tab>
+          </b-tabs>
+        </b-card>
+      </div>
+    </b-container>
+    <template #modal-footer>
+      <div class="w-100 d-flex justify-content-start">
+        <b-row class="w-100">
+          <b-col cols="6">
+          <b-button variant="primary" @click="showManageFiltersModas()" class="filter d-flex align-items-center mr-3">
+            Manage Saved Filters</b-button>
+          </b-col>
+          <b-col cols="6" class="d-flex justify-content-end">
+          <b-button :disabled="totalFilters == 0" variant="primary" @click="saveFilter()" class="filter d-flex align-items-center mr-3">
+            Save Filter</b-button>
+            <b-button variant="primary" @click="applyFilters(allFilters)" class="filter d-flex align-items-center">
+              <b-icon icon="filter" aria-hidden="true"></b-icon>Apply Filter</b-button>
+          </b-col>
+        </b-row>
+      </div>
+    </template>
+    <save-filter-modal
+      :showModal="showSaveFilterModal"
+      @cancel="showSaveFilterModal = false"
+      :allFilters="allFilters"
+      type="subjects"
+    ></save-filter-modal>
+      <manage-filter-modal
+      :showModal="showManageFilterModal"
+      @cancel="showManageFilterModal = false"
+      :allFilters="allFilters"
+      type="subjects"
+    ></manage-filter-modal>
+  </b-modal>
 </template>
 <script>
-    import {mapGetters} from "vuex";
-    import ConditionalFilter from "./ConditionalFilter";
+import {mapGetters} from "vuex";
+import SaveFilterModal from "./../filters/saveFilterModal";
+import ManageFilterModal from "./../filters/ManageFilterModal";
 
-    export default {
-        name: 'FilterProperties',
-        components: {
-            ConditionalFilter
-        },
-        props: {
-            showModal: {
-                type: Boolean
-            },
-        },
-        mounted() {
-          this.$store.dispatch("listModule/getAllLists", {page: 1, perPage: this.perPage});
-          if (this.lists) {
-            this.handleListOptions();
-          }
-        },
-        data() {
-          return {
-              selected: false,
-              selectedConditionalCheckbox: false,
-              firstSelectedFilter: '',
-              firstSelectedFilterValue: '',
-              filter: {
-                list_market: null,
-                list_group: null,
-                list_source: null,
-                list_type: null,
-                list_id: null,
-                subject_address: null,
-                subject_address_line2: null,
-                subject_city: null,
-                subject_state: null,
-                subject_zip: null,
-                subject_county: null,
-                subject_age: null,
-                subject_type: null,
-                seller_first_name: null,
-                seller_last_name: null,
-                seller_mailing_address: null
-              },
-              running_list: {
-                included: false,
-                excluded: false,
-              },
-              list_option: [],
-              list_name_option: [{ value: null, text: 'Unknown' }],
-              list_group_option: [{ value: null, text: 'Unknown' }],
-              list_source_option: [{ value: null, text: 'Unknown' }],
-              list_type_option: [{ value: null, text: 'Unknown' }],
-              list_market_option: [{ value: null, text: 'Unknown' }],
-              submarket_options: [],
-              perPage: 20,
-              condition: '',
-              conditionalFilter: [
-                  {index: 1}
-              ],
-              filterCount: 1,
-              optionsArray: ['list_group', 'list_source', 'list_type', 'list_market']
-          }
-        },
-        computed: {
-            ...mapGetters({
-                lists: 'listModule/lists',
-            }),
-        },
-        watch: {
-            showModal() {
-                this.subject = {...this.propsData}
-            }
-        },
-        methods: {
-          addFilter () {
-              this.filterCount++;
-              const filter = {
-                  index: 0,
-              }
-              filter.index = this.filterCount;
-              this.conditionalFilter.push(filter);
-          },
-          deleteConditionalFilter(response) {
-              const indexOfFilter = this.conditionalFilter.findIndex(element => element.index === response);
-              this.conditionalFilter.splice(indexOfFilter, 1);
-              this.filterCount--;
-          },
-          triggerConditionalFilter(response) {
-            if (response && response.key && response.value) {
-              // TODO the only available option is "contains"
-              this.filter[response.key] = response.value;
-            }
-          },
-          resetFilter () {
-            this.filter.list_market = null;
-            this.filter.list_group = null;
-            this.filter.list_source = null;
-            this.filter.list_type = null;
-            this.filter.list_id = null;
-            this.running_list.included = false;
-            this.running_list.excluded = false;
+export default {
+  name: 'FilterSubjects',
+    components: {
+      SaveFilterModal,
+      ManageFilterModal
+    },
+  props: {
+    showModal: {
+      type: Boolean
+    },
+    propsData: {
+      type: Array,
+      default: null,
+    },
+    search: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      showSaveFilterModal: false,
+      showManageFilterModal: false,
+      lists: [],
+      allData: {
+        Market:[],
+        Group:[],
+        Type:[],
+        Source:[],
+        Errors:[],
+        Error:[],
+        RunDate:[],
+        TotalSellers:Array.from(Array(11).keys()),
+        ListStack:Array.from(Array(11).keys()),
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
+      },
+      allFilters: {
+        Market:[],
+        Group:[],
+        Type:[],
+        Source:[],
+        Errors:[],
+        Error:[],
+        RunDate:[],
+        TotalSellers:[],
+        ListStack:[],
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
 
-            this.handleListOptions();
-            this.firstSelectedFilter = '';
-          },
-          detectListSelectChange(filter) {
-            if (this.firstSelectedFilter === '' || (this.firstSelectedFilter === filter && this.firstSelectedFilterValue !== this.filter[filter])) {
-              const filteredList = this.lists.filter(list => list[filter] === this.filter[filter]);
-              this.optionsArray.forEach(item => {
-                if(item !== filter) {
-                    this[item + '_option'].length = [];
+      },
+      incomingList: {
+        Market:[],
+        Group:[],
+        Type:[],
+        Source:[],
+        Errors:[],
+        Error:[],
+        RunDate:[],
+        TotalSellers:Array.from(Array(11).keys()),
+        ListStack:Array.from(Array(11).keys()),
+        list_custom_field_1:[],
+        list_custom_field_2:[],
+        list_custom_field_3:[],
+        list_custom_field_4:[],
+        list_custom_field_5:[],
+      },
+      searchSubject: '',
+      activeTab: 'allFilters',
+      filtered:[],
+      perPage: 20,
+      appliedFilters: false,
+      filtersAlreadyApplied: null,
+    }
+  },
+  computed: {
+    ...mapGetters({
+      filterList: 'subjectModule/filterList',
+      customViewVisibleFields: 'importModule/customViewVisibleFields',
+    }),
+    totalFilters(){
+      let total = 0
+      for (let item in this.allFilters) {
+        total += this.allFilters[item].length
+      }
+      this.$emit('filtersCount', total)
+      return total;
+    },
+    filteredOrAllData(){
+      if (this.searchSubject){
+        return this.filtered
+      }else{
+        return  this.allData[this.activeTab]
+      }
+    }
+  },
+  watch: {
+    async showModal() {
+      if (this.showModal) {
+        try{
+          this.$store.dispatch('uxModule/setLoading')
+          this.subject = this.propsData;
+          await this.$store.dispatch('importModule/loadVisibleFields')
+         let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
+         await this.MapFilters(response);
+         this.$store.dispatch('uxModule/hideLoader')
+        } catch(error){
+          console.log(error);
+         this.$store.dispatch('uxModule/hideLoader')
+        }
+      }
+    },
+    searchSubject: {
+      handler: function () {
+        var categoryTab = this.activeTab
+        this.filtered = this.allData[categoryTab].filter(name => name.toLowerCase().includes(this.searchSubject.toLowerCase()));
+      }
+    },
+    propsData: {
+      handler: function() {
+          this.updateDataChanges()
+      }
+    },
+  },
+  methods: {
+    showManageFiltersModas() {
+      this.showManageFilterModal = true;
+    },
+    saveFilter() {
+      this.showSaveFilterModal = true;
+    },
+    tab(currentTub){
+      this.activeTab = currentTub;
+    },
+    MapFilters(response) {
+      try{
+
+        this.allData = {
+            Market:[],
+            Group:[],
+            Type:[],
+            Source:[],
+            Errors:[],
+            Error:[],
+            RunDate:[],
+            ListStack:Array.from(Array(11).keys()),
+            TotalSellers:Array.from(Array(11).keys()),
+            list_custom_field_1:[],
+            list_custom_field_2:[],
+            list_custom_field_3:[],
+            list_custom_field_4:[],
+            list_custom_field_5:[],
+          };
+
+      if(response?.subject_error_type?.length > 0) {
+        response.subject_error_type.forEach(el=>{
+          // console.log(el);
+          if (el && !this.allData.Errors.includes(el)  && !this.allFilters.Errors.includes(el)) {
+          this.allData.Errors.push(el);
+        }
+        });
+      }
+      if(response?.subject_error?.length > 0) {
+        response.subject_error.forEach(el=>{
+          // console.log(el);
+          if (el && !this.allData.Error.includes(el)  && !this.allFilters.Error.includes(el)) {
+          this.allData.Error.push(el);
+        }
+        });
+      }
+      if(response?.lists?.length > 0) {
+      response.lists.forEach(el => {
+            if (el.list_market && !this.allData.Market.includes(el.list_market) && !this.allFilters.Market.includes(el.list_market)){
+              this.allData.Market.push(el.list_market)
+            }
+            if (el.list_group && !this.allData.Group.includes(el.list_group) && !this.allFilters.Group.includes(el.list_group)){
+              this.allData.Group.push(el.list_group)
+            }
+            if (el.list_type && !this.allData.Type.includes(el.list_type) && !this.allFilters.Type.includes(el.list_type)){
+              this.allData.Type.push(el.list_type)
+            }
+            if (el.list_source && !this.allData.Source.includes(el.list_source) && !this.allFilters.Source.includes(el.list_source)){
+              this.allData.Source.push(el.list_source)
+            }
+            if (el.list_run_year &&  el.list_run_month){
+              let runYear = el.list_run_year.split(",")
+              let runMonth = el.list_run_month.split(",")
+              for(let i = 0; i < runYear.length; i++){
+               let  run_date = runMonth[i]+'/'+runYear[i];
+                if (!this.allData.RunDate.includes(run_date) && !this.allFilters.RunDate.includes(run_date)){
+                  this.allData.RunDate.push(run_date)
                 }
-              })
-              filteredList.forEach(e => {
-                 this.optionsArray.forEach(item => {
-                     if(item !== filter) {
-                         this[item + '_option'].push({ value: e[item], text: e[item] })
-                     }
-                 })
-              });
-              this.firstSelectedFilter = filter;
-              this.firstSelectedFilterValue = this.filter[filter];
+              }
             }
-          },
-          handleListOptions() {
-            this.list_name_option = [{ value: null, text: 'Unknown' }];
-            this.list_group_option = [{ value: null, text: 'Unknown' }];
-            this.list_source_option = [{ value: null, text: 'Unknown' }];
-            this.list_type_option = [{ value: null, text: 'Unknown' }];
-            this.list_market_option = [{ value: null, text: 'Unknown' }];
-            this.lists.forEach(e => {
-              this.list_name_option.push({value: e.id, text: e.list_hash});
-              this.list_group_option.push({ value: e.list_group, text: e.list_group });
-              this.list_source_option.push({ value: e.list_source, text: e.list_source });
-              this.list_type_option.push({ value: e.list_type, text: e.list_type });
-              this.list_market_option.push({ value: e.list_market, text: e.list_market });
-            });
+            Object.keys(el).forEach((item)=>{
+              if(item.includes('list_custom_field_')){
+                if(!this.allData[item]){
+                  this.allData[item]= [];
+                }
+                if(!this.allFilters[item]){
+                  this.allFilters[item]= [];
+                }
+                if (el[item] && !this.allData[item].includes(el[item]) && !this.allFilters[item].includes(el[item])){
+                  this.allData[item].push(el[item])
+                }
+              }
+            })
+          });
+
+        for(let category in this.allData){
+          if(category != 'TotalSellers' && category != 'ListStack') {
+            this.allData[category].sort((a, b) => a.localeCompare(b));
           }
         }
-    }
+      }
+
+      if(response?.lists?.length > 0) {
+          let AllFilters = Object.keys(this.allData);
+            AllFilters.forEach(item=> {
+              if(this.allFilters[item].findIndex(x=>x == 'Blank') == -1) {
+                this.allData[item].unshift("Blank");
+              }
+            });
+      }
+        this.allData.Error.shift();
+      } catch(error){
+          console.log(error);
+      }
+
+    },
+  async addFilter (item, index) {
+    this.$store.dispatch('uxModule/setLoading')
+      if (this.searchSubject){
+        this.allFilters[this.activeTab].push(item);
+        this.filtered = this.filtered.filter(e => e !== item);
+        this.allData[this.activeTab] = this.allData[this.activeTab].filter(e => e !== item)
+      }else{
+        this.allFilters[this.activeTab].push(item);
+        this.allData[this.activeTab].splice(index, 1)
+      }
+        //  let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: Object.assign({},this.allFilters), search: this.search});
+        //  this.MapFilters(response);
+         this.$store.dispatch('uxModule/hideLoader')
+    },
+   async resetFilter (item,index) {
+      if (this.activeTab === 'allFilters') {
+        this.allData[index].push(item);
+        this.allFilters[index] = this.allFilters[index].filter(e => e !== item);
+      }else{
+        if (this.searchSubject){
+          this.allData[this.activeTab].push(item);
+          this.filtered.push(item);
+          this.filtered = this.filtered.filter(name => name.toLowerCase().includes(this.searchSubject.toLowerCase()));
+          this.allFilters[this.activeTab].splice(index, 1);
+        }else{
+          this.allData[this.activeTab].push(item);
+          this.allFilters[this.activeTab].splice(index, 1);
+        }
+      }
+      for(let category in this.allData){
+        if(category != 'TotalSellers' && category != 'ListStack') {
+          this.allData[category].sort((a, b) => a.localeCompare(b));
+        }
+      }
+         let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
+         this.MapFilters(response);
+
+    },
+    async clearAllFilters(allFilters = this.allFilters) {
+      if (typeof allFilters === 'object'){
+        allFilters.Market.forEach(e => {this.allData.Market.push(e)});
+        allFilters.Group.forEach(e => {this.allData.Group.push(e)});
+        allFilters.Type.forEach(e => {this.allData.Type.push(e)});
+        allFilters.Source.forEach(e => {this.allData.Source.push(e)});
+        allFilters.Errors.forEach(e => {this.allData.Errors.push(e)});
+        allFilters.Error.forEach(e => {this.allData.Error.push(e)});
+        allFilters.RunDate.forEach(e => {this.allData.RunDate.push(e)});
+        this.allFilters= {
+          Market:[],
+          Group:[],
+          Type:[],
+          Source:[],
+          Errors:[],
+          Error:[],
+          RunDate:[],
+          TotalSellers:[],
+          ListStack:[],
+          list_custom_field_1:[],
+          list_custom_field_2:[],
+          list_custom_field_3:[],
+          list_custom_field_4:[],
+          list_custom_field_5:[],
+        }
+      }
+      for(let category in this.allData) {
+        if(category != 'TotalSellers' && category != 'ListStack') {
+          this.allData[category].sort((a, b) => a.localeCompare(b));
+        }
+      }
+
+      let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: Object.assign({},this.allFilters), search:this.search});
+      this.MapFilters(response);
+    },
+    applyFilters(filters){
+      this.filtersAlreadyApplied = JSON.parse(JSON.stringify(filters));
+      let filterValue = 0;
+      for (let i in filters){
+        filterValue += filters[i].length
+      }
+      if (filterValue){
+        this.appliedFilters = true;
+        this.activeTab = 'allFilters';
+      }
+      console.log(filters);
+      console.log(filterValue);
+      this.$emit('filterProperties', JSON.parse(JSON.stringify(filters)));
+    },
+    closeFilterModal(){
+      if(!this.appliedFilters) {
+        this.allData = {
+          Market:[],
+          Group:[],
+          Type:[],
+          Source:[],
+          Errors:[],
+          Error:[],
+          RunDate:[],
+          TotalSellers:[],
+          ListStack:[],
+          list_custom_field_1:[],
+          list_custom_field_2:[],
+          list_custom_field_3:[],
+          list_custom_field_4:[],
+          list_custom_field_5:[],
+        }
+
+        this.allFilters = {
+          Market:[],
+          Group:[],
+          Type:[],
+          Source:[],
+          Errors:[],
+          Error:[],
+          RunDate:[],
+          TotalSellers:[],
+          ListStack:[],
+          list_custom_field_1:[],
+          list_custom_field_2:[],
+          list_custom_field_3:[],
+          list_custom_field_4:[],
+          list_custom_field_5:[],
+        }
+      } else {
+        if(this.filtersAlreadyApplied) {
+          this.allFilters = JSON.parse(JSON.stringify(this.filtersAlreadyApplied));
+        }
+      }
+      this.$emit('cancel')
+    },
+    async updateDataChanges() {
+      this.subjectData = this.propsData
+      this.subjectData.forEach(el => {
+          this.incomingList.Errors.push(el.subject_error_type)
+      })
+
+      if(localStorage.getItem('subject-applied-filters')) {
+        let lastFilters = JSON.parse(localStorage.getItem('subject-applied-filters'))
+        for(let category in lastFilters){
+          this.allFilters[category] = lastFilters[category].filter(value => this.incomingList[category].includes(value));
+        }
+        let filterValue = 0;
+        for (let i in this.allFilters){
+          filterValue += this.allFilters[i].length
+        }
+        localStorage.removeItem('subject-applied-filters')
+        localStorage.setItem('subject-applied-filters', JSON.stringify(this.allFilters))
+        localStorage.setItem('subject-filters-count', filterValue)
+      }
+
+      if(localStorage.getItem('subject-data-after-filtering')) {
+        let lastAllData = JSON.parse(localStorage.getItem('subject-data-after-filtering'))
+        for(let category in lastAllData){
+          this.allData[category] = lastAllData[category].filter(value => this.incomingList[category].includes(value));
+        }
+        let filterValue = 0;
+        for (let i in this.allFilters) {
+          filterValue += this.allFilters[i].length
+        }
+        localStorage.removeItem('subject-data-after-filtering')
+        localStorage.setItem('subject-data-after-filtering',JSON.stringify(this.allData))
+        localStorage.setItem('subject-filters-count', filterValue)
+      }
+      this.$emit('finish-process')
+    },
+    relatedCustomField(tempField){
+      return this.customViewVisibleFields.filter(({field,visible})=>field.includes(tempField)&&visible==1);            
+    },
+    checkCustomFieldLabel(field) {
+      if(field.label) {
+        return field.label;
+      } else {
+      return field.field;
+      }
+    },
+    getCustomField(field) {
+      let index = this.customViewVisibleFields.findIndex(x=>x.field == field);
+      if(index != -1) {
+        if(this.customViewVisibleFields[index].label) {
+          return this.customViewVisibleFields[index].label;
+        } else {
+        return field;
+        }
+      } else {
+        if(field == 'Errors'){
+          return "Error Type";
+        }else if(field == 'Error'){
+          return "Errors";
+        }
+        return field;
+      }
+    },
+    
+  },
+}
 </script>
 
 <style scoped>
-    p {
-        margin-bottom: 0;
-    }
-
-    .select {
-        width: 70% !important;
-    }
-    .add-btn {
-        height: 20px;
-        width: 20px;
-        border-radius: 50%;
-        background-color: #008583;
-        color: white;
-        cursor: pointer;
-        margin-bottom: 18px;
-    }
+  .filter-count{
+    border-radius: 50%;
+    background-color: #808080a6;
+    color: #ffffff;
+    font-size: 13px;
+    text-align: center;
+    width: 20px;
+    height: 20px;
+  }
+  .filter-category >>> .nav-pills{
+    padding: 0;
+  }
+  .filter-category >>> .col-auto{
+    width: 20%!important;
+  }
+  .filter-category >>> .active{
+    border-radius: unset;
+  }
+  .filter-category >>> .list-group-item{
+    cursor: pointer;
+  }
 </style>

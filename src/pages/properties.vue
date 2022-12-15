@@ -10,7 +10,6 @@
             <div>{{totals.goldenAddressesCount}} Golden Addresses</div>
         </div>
     </div>
-    <!-- <slide-pop-up-filter :search="searchProperty" :selectedItems="bulkDeleteItems" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></slide-pop-up-filter> -->
     <hr>
     <div>
         <b-row class=" mb-3">
@@ -155,12 +154,14 @@
             <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         </b-col>
     </b-row>
-    <new-filter-properties :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewFilterPropertiesModal" @cancel="showNewFilterPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></new-filter-properties>
+    <div v-if="componentMounted">
+    <filter-properties :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewFilterPropertiesModal" @cancel="showNewFilterPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></filter-properties>
     <export-properties-modal :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewExportPropertiesModal" @cancel="showNewExportPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></export-properties-modal>
     <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
-    <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
+    <!-- <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal> -->
     <custom-view :customViews="templatesToExport" :changeTemplate="changeTemplate" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
+    </div>
 </div>
 </template>
 
@@ -173,13 +174,10 @@ import {
 } from "bootstrap-vue"
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
-import AddSubjectModal from "../components/subject/AddSubjectModal";
+// import AddSubjectModal from "../components/subject/AddSubjectModal";
 import CustomView from "../components/properties/CustomView";
-// import SlidePopUpFilter from "../components/properties/SlidePopUpFilter";
-import NewFilterProperties from "../components/properties/NewFilterProperties";
+import FilterProperties from "../components/properties/FilterProperties";
 import ExportPropertiesModal from "../components/properties/ExportPropertiesModal";
-
-
 
 export default {
     name: "Properties",
@@ -187,14 +185,14 @@ export default {
         BIcon,
         EditSubjectModal,
         DeleteModal,
-        AddSubjectModal,
+        // AddSubjectModal,
         CustomView,
-        // SlidePopUpFilter,
-        NewFilterProperties,
+        FilterProperties,
         ExportPropertiesModal
     },
     data() {
         return {
+            componentMounted: false,
             allFields: [
                 //Subject
                 {
@@ -499,7 +497,6 @@ export default {
     },
     async created() {
         this.$store.dispatch('uxModule/setLoading')
-        await this.$store.dispatch('labelModule/visibleCustomFields')
         this.totals = await this.$store.dispatch('propertyModule/getTotals', {
             filter: this.filtersName
         })
@@ -511,6 +508,16 @@ export default {
                 filter: this.filtersName,
                 custom: ''
             })
+            this.propertyFields = [...this.fields];
+            this.propertyFields.unshift({
+                key: "delete",
+                label: ""
+            });
+            this.$store.dispatch('uxModule/hideLoader');
+            this.componentMounted = true;
+            // Fetching the visible custom fields
+            await this.$store.dispatch('labelModule/visibleCustomFields');
+            // Load the Temaplates for get all templates
             await this.$store.dispatch("templatesModule/getAllTemplates");
             if (this.templates) {
                 this.templates.forEach(e => {
@@ -523,12 +530,6 @@ export default {
                     this.templatesToExport.push(template);
                 })
             }
-            this.propertyFields = [...this.fields];
-            this.propertyFields.unshift({
-                key: "delete",
-                label: ""
-            });
-            this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
@@ -1054,24 +1055,6 @@ export default {
                 });
             }
         }
-    },
-    mounted() {
-        // if (this.templates) {
-        //     this.templates.forEach(e => {
-        //         const template = {
-        //             value: '',
-        //             text: '',
-        //         }
-        //         template.value = e.id;
-        //         template.text = e.name;
-        //         this.templatesToExport.push(template);
-        //     })
-        // }
-        // this.propertyFields = [...this.fields];
-        // this.propertyFields.unshift({
-        //     key: "delete",
-        //     label: ""
-        // });
     },
     watch: {
         total: {

@@ -71,7 +71,6 @@
         <template #head(checkbox)="scope">
             <div class="text-nowrap" style="width: 30px;">{{scope.label}}</div>
         </template>
-        <!-- :checked="ModalData.userTeamIds.includes(data.item.id)" -->
         <template v-slot:cell(checkbox)="data">
             <b-form-checkbox :value='data.item.id' v-model='ModalData.userTeamIds'></b-form-checkbox>
         </template>
@@ -108,17 +107,12 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-// import { BIcon } from "bootstrap-vue";
-// import { required } from "vuelidate/lib/validators";
 import { mapGetters } from "vuex";
 
 
 export default {
   mixins: [validationMixin],
   name: "MultiSelectTeamModal",
-  components: {
-    // BIcon,
-  },
   props: {
     showModal: {
       type: Boolean,
@@ -162,7 +156,6 @@ export default {
                 }
             ],
 
-      // Teams:[],
       search_team: "",
       isBusy: false,
       ModalData: {
@@ -170,7 +163,6 @@ export default {
       team_fields: [
       {key:"checkbox", label: "Select"},
         {key:"id", label: "Id", sortable: true},
-        // {key: "actions", label: "Actions"},
         {key: "team_name", label: "Team Name", sortable: true},
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"updated_at", label: "Updated Date", sortable: true},
@@ -179,35 +171,12 @@ export default {
     bulkSelectItems:[],
     };
   },
-  // validations: {
-  //   company: {
-  //     name: {
-  //       required,
-  //     },
-  //     plan: {
-  //       required,
-  //     },
-  //   },
-  // },
   methods: {
-    // validateState(name) {
-    //   const { $dirty, $error } = this.$v.company[name];
-    //   return $dirty ? !$error : null;
-    // },
-
-
-
-    
-
     reset() {
       this.ModalData = {};
       this.teamitems = [];
     },
     onSubmit() {
-      // this.$v.company.$touch();
-      // if (this.$v.company.$anyError) {
-      //   return;
-      // }
       if(this.ModalData.userTeamIds.length==0){
         this.$bvToast.toast("Please Select AtLeast One Team!", {
           title: "Validate",
@@ -245,14 +214,9 @@ export default {
         }
         this.teamitems = this.ModalData.teams;
       }catch(error){
-        console.log('error',error);
-        
-      }
-
-        
+        console.log('error',error); 
+      }   
     },
-    
-
   },
 
   watch: {
@@ -263,16 +227,10 @@ export default {
           this.ModalData = Object.assign({}, { ...this.propsData });
           this.teamitems = this.ModalData?.teams?this.ModalData.teams:[];
           this.bulkSelectItems = this.ModalData.teamIds;
-          // await this.$store.dispatch('companyModule/getCompany', this.temp_company.id).then(() => {
-          //       this.teamitems = this.ModalData?.teams?this.ModalData.teams:[];
-          // })
-
           this.$store.dispatch("uxModule/hideLoader");
-
         }
       } catch (error) {
         this.$store.dispatch("uxModule/hideLoader");
-
         console.log(error);
       }
     },

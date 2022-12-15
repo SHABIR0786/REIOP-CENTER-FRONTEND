@@ -7,7 +7,6 @@
       <b-row v-if="user_exist">
                 <b-col cols="6">
                         <b-input-group prepend="Email" class="mb-2" id="email" label="Email" label-for="email" title="Find User">
-                          <!-- @blur="FindEmail(user_check.email)" -->
                             <b-form-input :state="validateUserCheck('email')" @keyup.enter="FindEmail(user_check.email)"  type="email" v-model="$v.user_check.email.$model" aria-describedby="email" required :readonly="show_save_button" placeholder="Enter Email & Find User"></b-form-input>
                             <b-input-group-append>
                                 <b-input-group-text role="button"  @click="FindEmail(user_check.email)" title="Find User">
@@ -121,7 +120,6 @@
         <template #head(checkbox)="scope">
             <div class="text-nowrap" style="width: 30px;">{{scope.label}}</div>
         </template>
-        <!-- :checked="ModalData.userTeamIds.includes(data.item.id)" -->
         <template v-slot:cell(checkbox)="data">
             <b-form-checkbox :value='data.item.id' v-model='ModalData.userTeamIds'></b-form-checkbox>
         </template>
@@ -351,17 +349,14 @@ export default {
                 if (this.$v.user_check.$anyError) {
                     return;
                 }
-                // this.$store.dispatch('uxModule/setLoading');
                 this.please_wait = true;
                 let response = await this.$store.dispatch('userModule/userExist', email);
                 if(response.success){
-                    // this.$store.dispatch('uxModule/hideLoader')
                     this.$bvToast.toast("User Found", {
                         title: "Message",
                         variant: 'success',
                         autoHideDelay: 5000,
                     });
-                    // this.$emit('add', this.user_check);
                     this.user_exist = true;
                 }else{
                     this.$bvToast.toast(response.message, {
@@ -373,13 +368,12 @@ export default {
                     this.user.email = this.user_check.email;
                     this.user.role = this.user_check.role;
                    
-                    // this.$store.dispatch('uxModule/hideLoader')
                 }
                 this.show_save_button = true;
                 this.please_wait = false;
 
             }catch(e) {
-                // this.$store.dispatch('uxModule/hideLoader')
+                this.$store.dispatch('uxModule/hideLoader')
                 console.log('error',e);
             }
             
