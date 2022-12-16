@@ -711,35 +711,35 @@ async function setCustomListFields(payload) {
     const fields = [];
     data.forEach(e => {
         //custom fields
-        if(e.list_custom_field_1) {
+        if(e.list_custom_field_1 || !e.list_custom_field_1) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_1");
             if( index == -1) {
                 let label = getCustomField('list_custom_field_1',labels); 
                 fields.push({key:"list_custom_field_1", label: label, sortable: true});
             }
         }
-        if(e.list_custom_field_2) {
+        if(e.list_custom_field_2 || !e.list_custom_field_2) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_2");
             if(index == -1) {
                 let label = getCustomField('list_custom_field_2',labels); 
                 fields.push({key:"list_custom_field_2", label: label, sortable: true});
             }
         }
-        if(e.list_custom_field_3) {
+        if(e.list_custom_field_3 || !e.list_custom_field_3) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_3");
             if(index == -1) {
                 let label = getCustomField('list_custom_field_3',labels);
                 fields.push({key:"list_custom_field_3", label: label, sortable: true});
             }
         }
-        if(e.list_custom_field_4) {
+        if(e.list_custom_field_4 || !e.list_custom_field_4) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_4");
             if(index == -1) {
                 let label = getCustomField('list_custom_field_4',labels); 
                 fields.push({key:"list_custom_field_4", label: label, sortable: true});
             }
         }
-        if(e.list_custom_field_5) {
+        if(e.list_custom_field_5 || !e.list_custom_field_5) {
             let index = fields.findIndex(({ key }) => key == "list_custom_field_5");
             if(index == -1) {
                 let label = getCustomField('list_custom_field_5',labels); 
