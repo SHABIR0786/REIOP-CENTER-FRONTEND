@@ -66,7 +66,7 @@
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                 </template>
                 <template v-slot:cell(actions)="data">
-                    <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)" v-if=" authUser.role == 1"></b-icon>
+                    <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)" v-if="authUser.role == 1 || showStatus(data.item) == 'Completed'"></b-icon>
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                     <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
                 </template>
