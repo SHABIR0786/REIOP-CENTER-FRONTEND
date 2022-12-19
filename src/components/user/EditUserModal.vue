@@ -48,20 +48,14 @@
             <template #head(show_details)="scope">
                 <div class="text-nowrap" style="width: 100px;">{{scope.label}}</div>
             </template>
-            <template #head(name)="scope">
-                <div class="text-nowrap" style="width: 250px;">{{scope.label}}</div>
-            </template>
-
               <template v-slot:cell(id)="data">
                 <div v-b-tooltip.hover :title="data.item.id">
                   <p class="user-email">{{ data.item.id }}</p>
                 </div>
               </template>
-              <template v-slot:cell(name)="data">
-                  <div v-b-tooltip.hover :title="data.item.name">
+              <template v-slot:cell(name)="data" >
                     <b-icon  icon="box-arrow-up-right" variant="primary" class="mr-2 cursor-pointer" role="button" title="Company View" @click="editCompany(data.item)" ></b-icon>
-                  {{ data.item.name }}
-                </div>
+                  <span v-b-tooltip.hover :title="data.item.name">{{ data.item.name }}</span>
               </template>
 
               <template #cell(show_details)="row">
