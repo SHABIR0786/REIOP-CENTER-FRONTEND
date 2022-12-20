@@ -573,6 +573,7 @@
             });
           }
         );
+        this.$emit('cancel');
       },
       checkNextStep() {
         if (this.export_type != null) {
