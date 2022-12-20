@@ -388,7 +388,13 @@ const mutations = {
                                 seperatedRowSubject['phone_type'] = phone.phone_type;
                                 seperatedRowSubject['phone_validity'] = phone.phone_validity;
                                 seperatedRowSubject['phone_skip_source'] = phone.phone_skip_source;
-                            }
+                            } else {
+                                seperatedRowSubject['phone_id'] = "";
+                                seperatedRowSubject['phone_number'] = "";
+                                seperatedRowSubject['phone_type'] = "";
+                                seperatedRowSubject['phone_validity'] = "";
+                                seperatedRowSubject['phone_skip_source'] = "";  
+                            } 
                             if (seller.emails && seller.emails[x]) {
                                 let email = seller.emails[x];
                                 // Seller Emails
@@ -396,15 +402,26 @@ const mutations = {
                                 seperatedRowSubject['email_address'] = email.email_address;
                                 seperatedRowSubject['email_validity'] = email.email_validity;
                                 seperatedRowSubject['email_skip_source'] = email.email_skip_source;
+                            } else {
+                                seperatedRowSubject['email_id'] = "";
+                                seperatedRowSubject['email_address'] = "";
+                                seperatedRowSubject['email_validity'] = "";
+                                seperatedRowSubject['email_skip_source'] = "";
                             }
                             if (seller.golden_addresses && seller.golden_addresses[x]) {
                                 let golden = seller.golden_addresses[x];
                                 // Seller Golden Addresses
                                 seperatedRowSubject['golden_id'] = golden.id;
-                                seperatedRowSubject['address_address'] = golden.golden_address_address;
+                                seperatedRowSubject['golden_address_address'] = golden.golden_address_address;
                                 seperatedRowSubject['golden_address_city'] = golden.golden_address_city;
                                 seperatedRowSubject['golden_address_state'] = golden.golden_address_state;
                                 seperatedRowSubject['golden_address_zip'] = golden.golden_address_zip;
+                            } else {
+                                seperatedRowSubject['golden_id'] = "";
+                                seperatedRowSubject['golden_address_address'] = "";
+                                seperatedRowSubject['golden_address_city'] = "";
+                                seperatedRowSubject['golden_address_state'] = "";
+                                seperatedRowSubject['golden_address_zip'] = "";
                             }
                             state.seperatedRowSubjects.push(JSON.parse(JSON.stringify(seperatedRowSubject)));
                         }
