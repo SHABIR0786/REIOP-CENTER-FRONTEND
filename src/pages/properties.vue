@@ -499,6 +499,7 @@ export default {
         this.totals = await this.$store.dispatch('propertyModule/getTotals', {
             filter: this.filtersName
         });
+        console.log(this.totals);
     },
     async created() {
         this.$store.dispatch('uxModule/setLoading')
@@ -1073,6 +1074,7 @@ export default {
         totals: {
             handler: function () {
                 this.exportCount = this.totals.subjectsCount;
+                console.log(this.exportCount);
             }
         },
         currentPage: {
