@@ -12,7 +12,7 @@
       <div>
         <b-card  no-body>
           <b-tabs class="filter-category" pills card vertical>
-            <b-tab class="h-100" @click="tab('allFilters')">
+            <b-tab class="h-100" @click="tab('allFilters')" :active="activeTab=='allFilters'">
               <template  v-slot:title>
                 <div class="d-flex justify-content-between align-items-center">
                   <span class="">Applied Filters</span>
@@ -464,20 +464,23 @@ export default {
       }
     }
   },
+  async mounted() {
+    try{
+      this.$store.dispatch('uxModule/setLoading')
+      this.subject = this.propsData;
+      await this.$store.dispatch('importModule/loadVisibleFields')
+      let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
+      await this.MapFilters(response);
+      this.$store.dispatch('uxModule/hideLoader')
+    } catch(error){
+      console.log(error);
+      this.$store.dispatch('uxModule/hideLoader')
+    }
+  },
   watch: {
     async showModal() {
       if (this.showModal) {
-        try{
-          this.$store.dispatch('uxModule/setLoading')
-          this.subject = this.propsData;
-          await this.$store.dispatch('importModule/loadVisibleFields')
-         let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
-         await this.MapFilters(response);
-         this.$store.dispatch('uxModule/hideLoader')
-        } catch(error){
-          console.log(error);
-         this.$store.dispatch('uxModule/hideLoader')
-        }
+        this.activeTab = 'allFilters';
       }
     },
     searchSubject: {
@@ -632,8 +635,8 @@ export default {
           this.allData[category].sort((a, b) => a.localeCompare(b));
         }
       }
-         let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
-         this.MapFilters(response);
+        //  let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
+        //  this.MapFilters(response);
 
     },
     async clearAllFilters(allFilters = this.allFilters) {
@@ -681,50 +684,48 @@ export default {
         this.appliedFilters = true;
         this.activeTab = 'allFilters';
       }
-      console.log(filters);
-      console.log(filterValue);
       this.$emit('filterProperties', JSON.parse(JSON.stringify(filters)));
     },
     closeFilterModal(){
-      if(!this.appliedFilters) {
-        this.allData = {
-          Market:[],
-          Group:[],
-          Type:[],
-          Source:[],
-          Errors:[],
-          Error:[],
-          RunDate:[],
-          TotalSellers:[],
-          ListStack:[],
-          list_custom_field_1:[],
-          list_custom_field_2:[],
-          list_custom_field_3:[],
-          list_custom_field_4:[],
-          list_custom_field_5:[],
-        }
+      // if(!this.appliedFilters) {
+      //   this.allData = {
+      //     Market:[],
+      //     Group:[],
+      //     Type:[],
+      //     Source:[],
+      //     Errors:[],
+      //     Error:[],
+      //     RunDate:[],
+      //     TotalSellers:[],
+      //     ListStack:[],
+      //     list_custom_field_1:[],
+      //     list_custom_field_2:[],
+      //     list_custom_field_3:[],
+      //     list_custom_field_4:[],
+      //     list_custom_field_5:[],
+      //   }
 
-        this.allFilters = {
-          Market:[],
-          Group:[],
-          Type:[],
-          Source:[],
-          Errors:[],
-          Error:[],
-          RunDate:[],
-          TotalSellers:[],
-          ListStack:[],
-          list_custom_field_1:[],
-          list_custom_field_2:[],
-          list_custom_field_3:[],
-          list_custom_field_4:[],
-          list_custom_field_5:[],
-        }
-      } else {
-        if(this.filtersAlreadyApplied) {
-          this.allFilters = JSON.parse(JSON.stringify(this.filtersAlreadyApplied));
-        }
-      }
+      //   this.allFilters = {
+      //     Market:[],
+      //     Group:[],
+      //     Type:[],
+      //     Source:[],
+      //     Errors:[],
+      //     Error:[],
+      //     RunDate:[],
+      //     TotalSellers:[],
+      //     ListStack:[],
+      //     list_custom_field_1:[],
+      //     list_custom_field_2:[],
+      //     list_custom_field_3:[],
+      //     list_custom_field_4:[],
+      //     list_custom_field_5:[],
+      //   }
+      // } else {        
+      //   if(this.filtersAlreadyApplied) {
+      //     this.allFilters = JSON.parse(JSON.stringify(this.filtersAlreadyApplied));
+      //   }
+      // }
       this.$emit('cancel')
     },
     async updateDataChanges() {

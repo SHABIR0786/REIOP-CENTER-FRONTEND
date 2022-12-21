@@ -29,7 +29,19 @@
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
                 </b-col>
                 <b-col cols="4">
-                    <b-form-input v-model="searchList" debounce="1000" placeholder="Search"></b-form-input>
+                    <b-input-group class="">
+                    <b-form-input v-model="searchList" placeholder="Search" title="Search List" v-b-tooltip.hover @keyup.enter="searchListFunction()"></b-form-input>
+
+                    <b-input-group-append>
+                        <b-input-group-text role="button"  @click="searchListFunction()" v-b-tooltip.hover title="Search (press Enter key)">
+                            <b-spinner v-if="isBusy" small variant="primary" class="my-auto ml-2"></b-spinner>
+                            <b-icon  v-else icon="search" variant="primary" ></b-icon> 
+                        </b-input-group-text>
+                        <b-input-group-text role="button" v-b-tooltip.hover title="Clear Search" v-if="searchList.length>0">
+                            <b-icon   @click="searchList='';searchListFunction()" small icon="x-circle" class=""></b-icon>
+                        </b-input-group-text>
+                    </b-input-group-append>
+                </b-input-group>
                 </b-col>
             </b-row>
         </div>
@@ -52,12 +64,6 @@
             :current-page="currentPage"
             :sticky-header="true"
         >
-            <template #table-busy>
-                <div class="text-center" my-2>
-                    <b-spinner class="align-middle"></b-spinner>
-                    <strong>Loading...</strong>
-                </div>
-            </template>
             <template #head(delete)="scope">
                 <div class="text-nowrap" style="width: 30px;">{{scope.label}}</div>
             </template>
@@ -236,7 +242,9 @@ export default {
     methods: {
         async getList(){
             this.$store.dispatch('uxModule/setLoading');
+            this.isBusy = true;
             await this.$store.dispatch('listModule/searchLists', {page: this.currentPage, perPage: this.perPage, search: this.searchList});
+            this.isBusy = false;
             this.$store.dispatch('uxModule/hideLoader');
         },
         async handlePageClick(){
@@ -285,7 +293,11 @@ export default {
                     this.bulkDeleteItems.push(e.id);
                 });
             }
-        }
+        },
+        searchListFunction(){
+            this.currentPage = 1;
+            this.getList();
+        },
     },
     watch: {
         currentPage: {
@@ -300,9 +312,12 @@ export default {
         },
         searchList: {
             handler: function () {
+                if(this.searchList==''){
                 this.currentPage = 1;
                 this.getList();
                 // this.$store.dispatch('listModule/searchLists', {page: this.currentPage, perPage: this.perPage, search: this.searchList});
+            }
+
             }
         }
     }

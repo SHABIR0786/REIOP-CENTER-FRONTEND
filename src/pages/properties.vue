@@ -633,6 +633,8 @@ export default {
         async filterProperties(filtersName) {
             this.$store.dispatch('uxModule/setLoading')
             try {
+                this.showNewFilterPropertiesModal = false;
+                this.currentPage = 1;
                 this.filtersName = filtersName;
                 await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
                     page: this.currentPage,

@@ -621,8 +621,9 @@ export default {
       if (table === 'golden') {
         table = 'golden_address'
       }
+      // && this.RealUploadedFields.includes(this.mappedItems[index].fromField)
 
-       if (!this.uploadedFields.includes(this.mappedItems[index].fromField) && this.RealUploadedFields.includes(this.mappedItems[index].fromField)) {
+       if (!this.uploadedFields.includes(this.mappedItems[index].fromField)) {
       this.uploadedFields.push(this.mappedItems[index].fromField)  
         }
 

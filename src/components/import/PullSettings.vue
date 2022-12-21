@@ -281,10 +281,12 @@
         }
       },
       async mounted() {
+      try{
         this.$store.dispatch('uxModule/setLoading')
         await this.$store.dispatch('labelModule/visibleCustomFields')
        let response = await this.$store.dispatch('listModule/getImportPullLists', {page: this.currentPage, perPage: this.perPage});
-       this.lists = response?.lists?.data;
+       // Remove Pagination from Backend to get all data for dropdown
+       this.lists = response?.lists;
       if (this.marketList.length > 0) {
           this.market = this.marketList
         }
@@ -401,6 +403,10 @@
         }
         this.is_show_custom_fields = Object.values(this.visibleCustomField).includes(true);
         this.$store.dispatch('uxModule/hideLoader');
+      } catch (error) {
+        console.log(error);
+        this.$store.dispatch('uxModule/hideLoader');
+      }
       },
       computed: {
         ...mapGetters({

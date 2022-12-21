@@ -243,7 +243,7 @@ export default {
             },
             searchInFiltered: {},
             sortBy: 'id',
-            sortDesc: false,
+            sortDesc: true,
             isSearched: false,
             savedFilters: [{
                 value: null,

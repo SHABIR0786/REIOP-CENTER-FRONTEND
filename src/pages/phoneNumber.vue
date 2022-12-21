@@ -202,7 +202,7 @@ export default {
                 text: "Save Filters"
             }],
             sortBy: 'id',
-            sortDesc: false,
+            sortDesc: true,
             isPhoneSearched: false
         }
     },

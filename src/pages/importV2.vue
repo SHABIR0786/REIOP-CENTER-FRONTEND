@@ -15,7 +15,19 @@
                         <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
                     </b-col>
                     <b-col cols="4">
-                        <b-form-input v-model="searchImport" debounce="1000" placeholder="Search"></b-form-input>
+                      <b-input-group class="">
+                    <b-form-input v-model="searchImport" placeholder="Search" title="Search Imports" v-b-tooltip.hover @keyup.enter="searchImportFunction()"></b-form-input>
+
+                    <b-input-group-append>
+                        <b-input-group-text role="button"  @click="searchImportFunction()" v-b-tooltip.hover title="Search (press Enter key)">
+                            <b-spinner v-if="isBusy" small variant="primary" class="my-auto ml-2"></b-spinner>
+                            <b-icon  v-else icon="search" variant="primary" ></b-icon> 
+                        </b-input-group-text>
+                        <b-input-group-text role="button" v-b-tooltip.hover title="Clear Search" v-if="searchImport.length>0">
+                            <b-icon   @click="searchImport='';searchImportFunction()" small icon="x-circle" class=""></b-icon>
+                        </b-input-group-text>
+                    </b-input-group-append>
+                </b-input-group>
                   </b-col>
                 </b-row>
             </div>
@@ -32,12 +44,6 @@
                     :items="filteredItems"
                     :per-page="perPage"
                     :sticky-header="true">
-                <template #table-busy>
-                    <div class="text-center" my-2>
-                        <b-spinner class="align-middle"></b-spinner>
-                        <strong>Loading...</strong>
-                    </div>
-                </template>
               <template #head(file_name)="scope">
                     <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
                 </template>
@@ -60,7 +66,7 @@
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                 </template>
                 <template v-slot:cell(actions)="data">
-                    <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)" v-if="showStatus(data.item) == 'Completed'"></b-icon>
+                    <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)" v-if="authUser.role == 1 || showStatus(data.item) == 'Completed'"></b-icon>
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                     <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
                 </template>
@@ -237,7 +243,7 @@ export default {
         try {
           this.$store.dispatch('uxModule/setLoading')
           await this.$store.dispatch('importV2Module/getTotal')
-          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
+          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage,search: this.searchImport})
           this.filteredItems = this.items;
           const Instance = this;
           this.filteredItems.forEach((item) => {
@@ -255,7 +261,7 @@ export default {
       async handlePageClick(){
         try {
           this.$store.dispatch('uxModule/setLoading')
-          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage})
+          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage,search: this.searchImport})
           this.filteredItems = this.items;
           const Instance = this;
           this.filteredItems.forEach((item) => {
@@ -646,6 +652,31 @@ export default {
            this.$store.dispatch('uxModule/hideLoader');
         }
       },
+      async searchImportFunction(){
+        try{
+        this.$store.dispatch('uxModule/setLoading')
+        this.isBusy = true;
+        this.currentPage = 1;
+        await this.$store.dispatch('importV2Module/searchImpots', {
+          page: this.currentPage,
+          perPage: this.perPage,
+          search: this.searchImport
+        });
+          this.filteredItems = this.items;
+          const Instance = this;
+          this.filteredItems.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.$store.dispatch('uxModule/hideLoader')
+          this.isBusy = false;
+
+        } catch (error) {
+          console.log(error);
+          this.$store.dispatch('uxModule/hideLoader')
+          this.isBusy = false;
+
+        }
+      }
     },
     beforeDestroy() {
       if(this.intervalId) {
@@ -673,22 +704,8 @@ export default {
   watch: {
     searchImport: {
       handler: async function () {
-        try{
-        this.$store.dispatch('uxModule/setLoading')
-        await this.$store.dispatch('importV2Module/searchImpots', {
-          page: this.currentPage,
-          perPage: this.perPage,
-          search: this.searchImport
-        });
-        this.filteredItems = this.items;
-          const Instance = this;
-          this.filteredItems.forEach((item) => {
-          Instance.calculatePercentage(item);
-          });
-          this.$store.dispatch('uxModule/hideLoader')
-        } catch (error) {
-          console.log(error);
-            this.$store.dispatch('uxModule/hideLoader')
+        if(this.searchImport==''){
+          this.searchImportFunction();
         }
       }
     },
