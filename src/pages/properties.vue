@@ -436,7 +436,7 @@ export default {
                 list_custom_field_5:[]
             },
             sortBy: 'id',
-            sortDesc: false,
+            sortDesc: true,
             isPropertySearched: false,
             customViewTemplate: null,
             exportCount: 0,
@@ -506,7 +506,9 @@ export default {
                 page: 1,
                 perPage: this.perPage,
                 filter: this.filtersName,
-                custom: ''
+                custom: '',
+                sortBy: this.sortBy,
+                sortDesc: this.sortDesc,
             })
             this.propertyFields = [...this.fields];
             this.propertyFields.unshift({
@@ -864,6 +866,8 @@ export default {
                 perPage: this.perPage,
                 search: this.searchProperty,
                 filter: this.filtersName,
+                sortBy: this.sortBy,
+                sortDesc: this.sortDesc,
                 custom: this.customViewTemplate
             });
             if (fieldsType) {
@@ -1021,6 +1025,8 @@ export default {
                 page: 1,
                 perPage: this.perPage,
                 filter: this.filter,
+                sortBy: this.sortBy,
+                sortDesc: this.sortDesc,
                 custom: this.customViewTemplate
             })
         },
@@ -1045,6 +1051,8 @@ export default {
                     page: this.currentPage,
                     perPage: this.perPage,
                     search: this.searchProperty,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 })
             )
@@ -1072,6 +1080,8 @@ export default {
                     perPage: this.perPage,
                     search: this.searchProperty,
                     filter: this.filtersName,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 })
                 if (this.customViewTemplate) {
@@ -1088,6 +1098,8 @@ export default {
                     perPage: this.perPage,
                     search: this.searchProperty,
                     filter: this.filtersName,
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 })
                 if (this.customViewTemplate) {
