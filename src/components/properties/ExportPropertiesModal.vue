@@ -450,6 +450,7 @@
             text: "Export all " + this.totalSubjects,
           }
         );
+        console.log(this.SelectExportAmount);
       },
       marketing_start_date: function() {
         this.checkNextStep();

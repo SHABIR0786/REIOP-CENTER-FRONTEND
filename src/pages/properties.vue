@@ -495,12 +495,15 @@ export default {
             return this.total ? this.total : 1
         }
     },
-    async created() {
-        this.$store.dispatch('uxModule/setLoading')
+    async mounted() {
         this.totals = await this.$store.dispatch('propertyModule/getTotals', {
             filter: this.filtersName
-        })
-        this.exportCount = this.totals.subjectsCount;
+        });
+    },
+    async created() {
+        this.$store.dispatch('uxModule/setLoading')
+
+        // this.exportCount = this.totals.subjectsCount;
         try {
             await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
                 page: 1,
@@ -1067,9 +1070,9 @@ export default {
         }
     },
     watch: {
-        total: {
+        totals: {
             handler: function () {
-                this.exportCount = this.total;
+                this.exportCount = this.totals.subjectsCount;
             }
         },
         currentPage: {
