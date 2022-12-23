@@ -95,8 +95,8 @@ const mutations = {
 }
 
 const actions = {
-    async getAllProcesses({ commit, dispatch }, {page, perPage,search=''}) {
-        return await api.get(`/batches?page=${page}&perPage=${perPage}&search=${search}`).then((response) => {
+    async getAllProcesses({ commit, dispatch }, {page, perPage,search='',sortBy='', sortDesc=''}) {
+        return await api.get(`/batches?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

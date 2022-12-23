@@ -43,6 +43,7 @@
                     :fields="fields"
                     :items="filteredItems"
                     :per-page="perPage"
+                    @sort-changed="sortingChanged"
                     :sticky-header="true">
               <template #head(file_name)="scope">
                     <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
@@ -301,6 +302,25 @@ export default {
       //   }, 25000);
       // }
       },
+      async sortingChanged(ctx) {        
+            this.sortBy = ctx.sortBy;
+            this.sortDesc = ctx.sortDesc;
+            try {
+            this.currentPage = 1;
+          this.$store.dispatch('uxModule/setLoading')
+          await this.$store.dispatch('importV2Module/getTotal')
+          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage,search: this.searchImport,sortBy: this.sortBy,sortDesc: this.sortDesc})
+          this.filteredItems = this.items;
+          const Instance = this;
+          this.filteredItems.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          console.log(error);
+            this.$store.dispatch('uxModule/hideLoader')
+        }
+        },
      async editItem(item) {
         this.$store.dispatch('uxModule/setLoading')
         let response = await this.$store.dispatch('importV2Module/showEditModal', {...item})
