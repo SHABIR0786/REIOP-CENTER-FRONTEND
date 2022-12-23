@@ -44,6 +44,7 @@
                     :items="filteredItems"
                     :per-page="perPage"
                     @sort-changed="sortingChanged"
+                    no-local-sorting
                     :sticky-header="true">
               <template #head(file_name)="scope">
                     <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
@@ -305,6 +306,9 @@ export default {
       async sortingChanged(ctx) {        
             this.sortBy = ctx.sortBy;
             this.sortDesc = ctx.sortDesc;
+            if(ctx.sortBy=='percentage'){
+              this.sortBy = 'percent';
+            }
             try {
             this.currentPage = 1;
           this.$store.dispatch('uxModule/setLoading')
