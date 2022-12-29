@@ -1,15 +1,136 @@
 <template>
     <div :class="`list-page wide-content`">
-        <div v-if="showImportTable">
-            <h3>Previous Imports</h3>
-            <div>
-                <b-row>
+      <b-row>
                     <b-col class="d-flex justify-content-end">
                         <b-button variant="primary" class="add-seller" @click="step_1 = true, showImportTable = false">
                             <b-icon icon="plus" aria-hidden="true"></b-icon> Start A New Import</b-button>
                     </b-col>
                 </b-row>
-                <hr>
+      <b-tabs pills class="loading_zone_tabs">
+        <b-tab title="Loading Zone" :active="tab == 'loadingZone'">
+          <hr>
+
+        <h3>Loading Zone <small>(Task In-prgress)</small></h3>
+            <div>
+                <b-row class="mb-3">
+                    <b-col cols="8" class="d-flex align-items-center">
+                        <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                    </b-col>
+                    <b-col cols="4">
+                      <b-input-group class="">
+                    <b-form-input v-model="searchImport" placeholder="Search" title="Search Imports" v-b-tooltip.hover @keyup.enter="searchImportFunction()"></b-form-input>
+
+                    <b-input-group-append>
+                        <b-input-group-text role="button"  @click="searchImportFunction()" v-b-tooltip.hover title="Search (press Enter key)">
+                            <b-spinner v-if="isBusy" small variant="primary" class="my-auto ml-2"></b-spinner>
+                            <b-icon  v-else icon="search" variant="primary" ></b-icon> 
+                        </b-input-group-text>
+                        <b-input-group-text role="button" v-b-tooltip.hover title="Clear Search" v-if="searchImport.length>0">
+                            <b-icon   @click="searchImport='';searchImportFunction()" small icon="x-circle" class=""></b-icon>
+                        </b-input-group-text>
+                    </b-input-group-append>
+                </b-input-group>
+                  </b-col>
+                </b-row>
+            </div>
+            <b-table
+                    id="list-table"
+                    small
+                    ref="table"
+                    striped
+                    sort-icon-left
+                    hover
+                    responsive
+                    :busy="isBusy"
+                    :fields="fieldsLoadingZone"
+                    :items="filteredItems"
+                    :per-page="perPage"
+                    @sort-changed="sortingChanged"
+                    no-local-sorting
+                    :sticky-header="true">
+              <template #head(file_name)="scope">
+                    <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+                </template>
+                <template #head(actions)="scope">
+                    <div class="text-nowrap" style="width: 70px;">{{scope.label}}</div>
+                </template>
+                <template #head(error_number)="scope">
+                    <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                </template>
+                <template #head(total_row_number)="scope">
+                    <div class="text-nowrap" style="width: 80px;">{{scope.label}}</div>
+                </template>
+                <template #head(status)="scope">
+                    <div class="text-nowrap" style="width: fit-content;">{{scope.label}}</div>
+                </template>
+              <template #head(percentage)="scope">
+                    <div class="text-nowrap" style="width: 90px;">{{scope.label}}</div>
+                </template>
+                <template #head()="scope">
+                    <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
+                </template>
+                <template v-slot:cell(actions)="data">
+                    <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)" v-if="authUser.role == 1 || showStatus(data.item) == 'Completed'"></b-icon>
+                    <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
+                    <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
+                </template>
+                <template v-slot:cell(status)="data">
+                    <div >
+                      <p>{{showStatus(data.item)}}</p>
+                    </div>
+                </template>
+                <template v-slot:cell(percentage)="data">
+                    <div :title="data.item.id" class="text-center">
+                        <p class="user-email">{{data.item.percentage}}%</p>
+                    </div>
+                </template>
+                
+                <template v-slot:cell(import_type)="data">
+                  <div v-b-tooltip.hover :title="data.item.import_type">{{ data.item.import_type }}</div>
+                </template>
+                <template v-slot:cell(file_name)="data">
+                <div v-b-tooltip.hover :title="data.item.file_name">{{ data.item.file_name }}</div>
+                </template>
+                <template v-slot:cell(created_records)="data">
+                  <div v-b-tooltip.hover :title="data.item.created_records">{{ data.item.created_records }}</div>
+                </template>
+                <template v-slot:cell(id)="data">
+                  <div v-b-tooltip.hover :title="data.item.id">{{ data.item.id }}</div>
+                </template>
+
+            </b-table>
+            <b-row>
+                <b-col class="d-flex align-items-center">
+                    <b-form-group
+                            label="Show"
+                            label-for="show-select"
+                            label-cols-sm="6"
+                            label-cols-md="4"
+                            label-cols-lg="3"
+                            label-size="xs"
+                            class="mb-0"
+                    >
+                        <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
+                    </b-form-group>
+                </b-col>
+                <b-col v-if="total > 0" class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing {{pageFrom}} to {{pageTo}} of {{total}} entries</p>
+                </b-col>
+                <b-col v-else class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing 0 entries of 0</p>
+                </b-col>
+                <b-col class="d-flex justify-content-end">
+                    <b-pagination class="mb-0" @input="handlePageClick" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
+                </b-col>
+            </b-row>
+        </b-tab>
+        <b-tab title="Previous Imports" @click="showImportTable=true" :active="tab == 'previousImports'">
+          <hr>
+
+          <div v-if="showImportTable">
+            <h3>Previous Imports</h3>
+            <div>
+
                 <b-row class="mb-3">
                     <b-col cols="8" class="d-flex align-items-center">
                         <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
@@ -121,10 +242,12 @@
                     <b-pagination class="mb-0" @input="handlePageClick" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
                 </b-col>
             </b-row>
-            <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
-        </div>
+          </div>
+        </b-tab>
+      </b-tabs>
+          <import-downloads :showModal ="showImportModal" :propsData="download_data" @cancel="showImportModal=false" @modalResponse="modalResponse"></import-downloads>
           <edit-import-modal v-if="!isReload" :data="editData" :lists="lists" :showModal="showModal"  @cancel="cancelEdit" @save="save"></edit-import-modal>
-          <import-type v-if="step_1" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
+          <import-type v-if="step_1" @cancel="showImportTable=true;step_1=false" @importResponse="importTypeResponse" :importDetails="importDetails"></import-type>
           <upload-type v-if="step_2" @uploadResponse="uploadTypeResponse" :importDetails="importDetails" @goBack="goBack"></upload-type>
           <skip-variant v-if="step_2_skip" :importDetails="importDetails" @skipResponse="setSkipOption" @goBack="goBack"></skip-variant>
           <pull-settings v-if="step_3" :lists="lists" :importDetails="importDetails" @pullSettingsResponse="pullSettingsResponse" @goBack="goBack"></pull-settings>
@@ -198,7 +321,8 @@ export default {
         statusBackValidity:false,
         intervalId:null,
         filteredItems: [],
-        previousStepArr: []
+        previousStepArr: [],
+        tab:'previousImports',
       }
     },
     async created () {
@@ -219,7 +343,8 @@ export default {
           lists: 'listModule/lists',
           total: 'importV2Module/total',
           editData: 'importV2Module/editData',
-          showImportFirstPage: 'importV2Module/showImportFirstPage'
+          showImportFirstPage: 'importV2Module/showImportFirstPage',
+          fieldsLoadingZone: 'importV2Module/fieldsLoadingZone',
       }),
       rows() { return this.total ? this.total : 0 },
       getPreviousStep() {
@@ -762,5 +887,18 @@ export default {
     table th {
       vertical-align: inherit !important;
       height: 64px;
+    }
+    .loading_zone_tabs .nav-pills {
+    background:#ffffff !important;
+    }
+    .loading_zone_tabs .nav-pills li {
+      width:20% !important;
+      background:#a2c4c9;
+    }
+    .loading_zone_tabs .nav-pills li a{
+      padding: auto !important;
+    }
+    .add-seller{
+      position:absolute;
     }
 </style>

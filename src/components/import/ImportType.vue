@@ -32,7 +32,12 @@
         <b-row>
             <b-col cols="12" class="next-btn">
                 <b-button
-                        class="data-type"
+                    class="data-type float-left"
+                    @click="$emit('cancel')"
+                > Close Import
+                </b-button>
+                <b-button
+                        class="data-type float-right"
                         variant="primary"
                         @click="setImportType()"
                         :disabled="!import_type.length"
@@ -97,7 +102,7 @@
         margin-bottom: 0 !important;
         font-weight: bold;
     }
-    .next-btn {
+    /* .next-btn {
         text-align: right;
-    }
+    } */
 </style>

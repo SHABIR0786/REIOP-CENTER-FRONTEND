@@ -13,6 +13,15 @@ const state = {
         {key:"created_at", label: "Created Date", sortable: true},
         {key:"id", label: "Process ID", sortable: true},
     ],
+    fieldsLoadingZone: [
+        {key:"file_name", label: "File Name", sortable: true},
+        {key:"import_type", label: "Import Type", sortable: true},
+        {key:"actions", stickyColumn: true, label: "Actions"},
+        {key:"status", label: "Status", },
+        {key:"total_row_number", label: "Total Lines", sortable: true},
+        {key:"created_at", label: "Created Date", sortable: true},
+        {key:"id", label: "Process ID", sortable: true},
+    ],
     imports: [],
     total: 0,
     editData: {},
@@ -192,7 +201,8 @@ const getters = {
     editData: ({ editData }) => editData,
     isSkipValidation: (state) => state.isSkipValidation,
     uploadProgress: ({uploadProgress}) => uploadProgress,
-    showImportFirstPage: ({ showImportFirstPage }) => showImportFirstPage
+    showImportFirstPage: ({ showImportFirstPage }) => showImportFirstPage,
+    fieldsLoadingZone: ({ fieldsLoadingZone }) => fieldsLoadingZone,
 }
 
 export default {
