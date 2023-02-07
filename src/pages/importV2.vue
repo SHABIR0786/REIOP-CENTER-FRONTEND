@@ -2,11 +2,11 @@
     <div :class="`list-page wide-content`">
       <b-row>
                     <b-col class="d-flex justify-content-end">
-                        <b-button variant="primary" class="add-seller" @click="step_1 = true, showImportTable = false">
+                        <b-button variant="primary" class="add-seller" @click="step_1 = true, showImportTable = false" v-if="showImportTable">
                             <b-icon icon="plus" aria-hidden="true"></b-icon> Start A New Import</b-button>
                     </b-col>
                 </b-row>
-      <b-tabs pills class="loading_zone_tabs">
+      <b-tabs pills class="loading_zone_tabs" v-if="showImportTable">
         <b-tab title="Loading Zone" :active="tab == 'loadingZone'">
           <hr>
 
@@ -124,10 +124,10 @@
                 </b-col>
             </b-row>
         </b-tab>
-        <b-tab title="Previous Imports" @click="showImportTable=true" :active="tab == 'previousImports'">
+        <b-tab title="Previous Imports" :active="tab == 'previousImports'">
           <hr>
 
-          <div v-if="showImportTable">
+          <div>
             <h3>Previous Imports</h3>
             <div>
 
