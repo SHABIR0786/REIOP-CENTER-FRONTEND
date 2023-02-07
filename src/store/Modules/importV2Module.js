@@ -23,6 +23,7 @@ const state = {
         {key:"id", label: "Process ID", sortable: true},
     ],
     imports: [],
+    pendingJobs: [],
     total: 0,
     editData: {},
     isSkipValidation: false,
@@ -30,6 +31,9 @@ const state = {
     showImportFirstPage: false,
     pageTo:0,
     pageFrom:0,
+    pending_pageTo:0,
+    pending_pageFrom:0,
+    pending_total: 0,
 }
 
 const mutations = {
@@ -60,6 +64,34 @@ const mutations = {
         state.pageFrom = payload.from;
         state.total = payload.total;
         state.imports = [...readyData]
+    },
+    SET_ALL_PENDING_JOBS(state, payload) {
+        const readyData = [];
+        payload.data.forEach(e => {
+            const process = {}
+            const date = e.created_at;
+            process.id = e.id;
+            process.process_id = e.process_id
+            process.error_number = e.error_number;
+            process.total_row_number = e.total_row_number;
+            process.total_jobs = e.total_jobs;
+            process.pending_jobs = e.pending_jobs;
+            process.failed_jobs = e.failed_jobs;
+            process.is_processing = e.pending_jobs;
+            process.is_processed = e.total_jobs - e.pending_jobs;
+            process.file_name = e.file_name;
+            process.user_id = e.user_id;
+            process.status = e.status;
+            process.user_name = e.user_name;
+            process.import_type = e.import_type;
+            process.extension = e.extension;
+            process.created_at = new Date(date * 1000).toLocaleString();
+            readyData.push(process);
+        })
+        state.pending_pageTo = payload.to;
+        state.pending_pageFrom = payload.from;
+        state.pending_total = payload.total;
+        state.pendingJobs = [...readyData]
     },
     GET_TOTAL(state, payload) {
         state.total = payload;
@@ -111,6 +143,18 @@ const actions = {
             }
             if (response && response.batch) {
                 commit('SET_ALL_PROCESSES', response.batch)
+            }
+            return response
+        })
+    },
+    
+    async pendingJobBatches({ commit, dispatch }, {page, perPage,search='',sortBy='', sortDesc=''}) {
+        return await api.get(`/pendingJobBatches?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+            if (response && response.batch) {
+                commit('SET_ALL_PENDING_JOBS', response.batch)
             }
             return response
         })
@@ -203,6 +247,10 @@ const getters = {
     uploadProgress: ({uploadProgress}) => uploadProgress,
     showImportFirstPage: ({ showImportFirstPage }) => showImportFirstPage,
     fieldsLoadingZone: ({ fieldsLoadingZone }) => fieldsLoadingZone,
+    pendingJobs: ({ pendingJobs }) => pendingJobs,
+    pending_total: ({pending_total}) => pending_total,
+    pending_pageTo: ({pending_pageTo}) => pending_pageTo,
+    pending_pageFrom: ({pending_pageFrom}) => pending_pageFrom,
 }
 
 export default {

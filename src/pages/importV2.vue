@@ -18,15 +18,15 @@
                     </b-col>
                     <b-col cols="4">
                       <b-input-group class="">
-                    <b-form-input v-model="searchImport" placeholder="Search" title="Search Imports" v-b-tooltip.hover @keyup.enter="searchImportFunction()"></b-form-input>
+                    <b-form-input v-model="searchPendingImport" placeholder="Search" title="Search Imports" v-b-tooltip.hover @keyup.enter="searchPendingImportFunction()"></b-form-input>
 
                     <b-input-group-append>
-                        <b-input-group-text role="button"  @click="searchImportFunction()" v-b-tooltip.hover title="Search (press Enter key)">
+                        <b-input-group-text role="button"  @click="searchPendingImportFunction()" v-b-tooltip.hover title="Search (press Enter key)">
                             <b-spinner v-if="isBusy" small variant="primary" class="my-auto ml-2"></b-spinner>
                             <b-icon  v-else icon="search" variant="primary" ></b-icon> 
                         </b-input-group-text>
-                        <b-input-group-text role="button" v-b-tooltip.hover title="Clear Search" v-if="searchImport.length>0">
-                            <b-icon   @click="searchImport='';searchImportFunction()" small icon="x-circle" class=""></b-icon>
+                        <b-input-group-text role="button" v-b-tooltip.hover title="Clear Search" v-if="searchPendingImport.length>0">
+                            <b-icon   @click="searchPendingImport='';searchPendingImportFunction()" small icon="x-circle" class=""></b-icon>
                         </b-input-group-text>
                     </b-input-group-append>
                 </b-input-group>
@@ -43,9 +43,9 @@
                     responsive
                     :busy="isBusy"
                     :fields="fieldsLoadingZone"
-                    :items="filteredItems"
-                    :per-page="perPage"
-                    @sort-changed="sortingChanged"
+                    :items="filteredItemsPending"
+                    :per-page="pending_perPage"
+                    @sort-changed="sortingChangedPending"
                     no-local-sorting
                     :sticky-header="true">
               <template #head(file_name)="scope">
@@ -103,24 +103,24 @@
                 <b-col class="d-flex align-items-center">
                     <b-form-group
                             label="Show"
-                            label-for="show-select"
+                            label-for="show-select2"
                             label-cols-sm="6"
                             label-cols-md="4"
                             label-cols-lg="3"
                             label-size="xs"
                             class="mb-0"
                     >
-                        <b-form-select id="show-select" v-model="perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
+                        <b-form-select id="show-select2" v-model="pending_perPage" :options="pageOptions" size="xs" class="ml-3"></b-form-select>
                     </b-form-group>
                 </b-col>
-                <b-col v-if="total > 0" class="d-flex align-items-center justify-content-center">
-                    <p class="mb-0">Showing {{pageFrom}} to {{pageTo}} of {{total}} entries</p>
+                <b-col v-if="pending_total > 0" class="d-flex align-items-center justify-content-center">
+                    <p class="mb-0">Showing {{pending_pageFrom}} to {{pending_pageTo}} of {{pending_total}} entries</p>
                 </b-col>
                 <b-col v-else class="d-flex align-items-center justify-content-center">
                     <p class="mb-0">Showing 0 entries of 0</p>
                 </b-col>
                 <b-col class="d-flex justify-content-end">
-                    <b-pagination class="mb-0" @input="handlePageClick" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="import-table"></b-pagination>
+                    <b-pagination class="mb-0" @input="handlePendingPageClick" v-model="pending_currentPage" :total-rows="pending_rows" :per-page="pending_perPage" aria-controls="import-table"></b-pagination>
                 </b-col>
             </b-row>
         </b-tab>
@@ -293,8 +293,10 @@ export default {
     data () {
       return {
         searchImport: '',
+        searchPendingImport: '',
         pageOptions: [10, 20, 50],
         perPage: 20,
+        pending_perPage: 20,
         isBusy: false,
         showImportModal: false,
         importDetails: {},
@@ -306,6 +308,7 @@ export default {
         step_4: false,
         step_5: false,
         currentPage: 1,
+        pending_currentPage: 1,
         download_type: '',
         showImportTable: true,
         download_data: {},
@@ -321,6 +324,7 @@ export default {
         statusBackValidity:false,
         intervalId:null,
         filteredItems: [],
+        filteredItemsPending: [],
         previousStepArr: [],
         tab:'previousImports',
       }
@@ -338,8 +342,13 @@ export default {
           isCollapsed: 'uxModule/isCollapsed',
           fields: 'importV2Module/fields',
           items: 'importV2Module/imports',
+          pendingJobs: 'importV2Module/pendingJobs',
+
           pageTo: 'importV2Module/pageTo',
           pageFrom: 'importV2Module/pageFrom',
+          pending_pageTo: 'importV2Module/pending_pageTo',
+          pending_pageFrom: 'importV2Module/pending_pageFrom',
+          pending_total: 'importV2Module/pending_total',
           lists: 'listModule/lists',
           total: 'importV2Module/total',
           editData: 'importV2Module/editData',
@@ -347,6 +356,8 @@ export default {
           fieldsLoadingZone: 'importV2Module/fieldsLoadingZone',
       }),
       rows() { return this.total ? this.total : 0 },
+      pending_rows() { return this.pending_total ? this.pending_total : 0 },
+
       getPreviousStep() {
         return this.previousStepArr[this.previousStepArr.length - 1];
       },
@@ -371,9 +382,15 @@ export default {
           this.$store.dispatch('uxModule/setLoading')
           await this.$store.dispatch('importV2Module/getTotal')
           await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage,search: this.searchImport})
+          await this.$store.dispatch("importV2Module/pendingJobBatches", {page: this.pending_currentPage, perPage: this.pending_perPage,search: ''})
+
           this.filteredItems = this.items;
+          this.filteredItemsPending = this.pendingJobs;
           const Instance = this;
           this.filteredItems.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.filteredItemsPending.forEach((item) => {
           Instance.calculatePercentage(item);
           });
           this.$store.dispatch('uxModule/hideLoader')
@@ -392,6 +409,21 @@ export default {
           this.filteredItems = this.items;
           const Instance = this;
           this.filteredItems.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          console.log(error);
+          this.$store.dispatch('uxModule/hideLoader')
+        }
+      },
+      async handlePendingPageClick(){
+        try {
+          this.$store.dispatch('uxModule/setLoading')
+          await this.$store.dispatch("importV2Module/pendingJobBatches", {page: this.pending_currentPage, perPage: this.pending_perPage,search: ''})
+          this.filteredItemsPending = this.pendingJobs;
+          const Instance = this;
+          this.filteredItemsPending.forEach((item) => {
           Instance.calculatePercentage(item);
           });
           this.$store.dispatch('uxModule/hideLoader')
@@ -449,6 +481,28 @@ export default {
           console.log(error);
             this.$store.dispatch('uxModule/hideLoader')
         }
+        },
+        async sortingChangedPending(ctx) {        
+            this.sortBy = ctx.sortBy;
+            this.sortDesc = ctx.sortDesc;
+            if(ctx.sortBy=='percentage'){
+              this.sortBy = 'percent';
+            }
+        //     try {
+        //     this.currentPage = 1;
+        //   this.$store.dispatch('uxModule/setLoading')
+        //   await this.$store.dispatch('importV2Module/getTotal')
+        //   await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage,search: this.searchImport,sortBy: this.sortBy,sortDesc: this.sortDesc})
+        //   this.filteredItems = this.items;
+        //   const Instance = this;
+        //   this.filteredItems.forEach((item) => {
+        //   Instance.calculatePercentage(item);
+        //   });
+        //   this.$store.dispatch('uxModule/hideLoader')
+        // } catch (error) {
+        //   console.log(error);
+        //     this.$store.dispatch('uxModule/hideLoader')
+        // }
         },
      async editItem(item) {
         this.$store.dispatch('uxModule/setLoading')
@@ -825,6 +879,31 @@ export default {
           this.isBusy = false;
 
         }
+      },
+      async searchPendingImportFunction(){
+        try{
+        // this.$store.dispatch('uxModule/setLoading')
+        // this.isBusy = true;
+        // this.currentPage = 1;
+        // await this.$store.dispatch('importV2Module/searchImpots', {
+        //   page: this.currentPage,
+        //   perPage: this.perPage,
+        //   search: this.searchImport
+        // });
+        //   this.filteredItems = this.items;
+        //   const Instance = this;
+        //   this.filteredItems.forEach((item) => {
+        //   Instance.calculatePercentage(item);
+        //   });
+        //   this.$store.dispatch('uxModule/hideLoader')
+        //   this.isBusy = false;
+
+        } catch (error) {
+          console.log(error);
+          this.$store.dispatch('uxModule/hideLoader')
+          this.isBusy = false;
+
+        }
       }
     },
     beforeDestroy() {
@@ -878,6 +957,12 @@ export default {
         handler: function () {
             this.currentPage = 1;
             this.handlePageClick()
+        }
+    },
+    pending_perPage: {
+        handler: function () {
+            this.pending_currentPage = 1;
+            this.handlePendingPageClick()
         }
     },
   }
