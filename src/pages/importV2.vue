@@ -10,7 +10,7 @@
         <b-tab title="Loading Zone" :active="tab == 'loadingZone'">
           <hr>
 
-        <h3>Loading Zone <small>(Task In-prgress)</small></h3>
+        <h3>Loading Zone</h3>
             <div>
                 <b-row class="mb-3">
                     <b-col cols="8" class="d-flex align-items-center">
@@ -70,13 +70,13 @@
                     <div class="text-nowrap" style="width: 150px;">{{ scope.label }}</div>
                 </template>
                 <template v-slot:cell(actions)="data">
-                    <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)" v-if="authUser.role == 1 || showStatus(data.item) == 'Completed'"></b-icon>
+                    <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)" v-if="authUser.role == 1 || showPendingStatus(data.item) == 'Completed'"></b-icon>
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                     <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
                 </template>
                 <template v-slot:cell(status)="data">
                     <div >
-                      <p>{{showStatus(data.item)}}</p>
+                      <p>{{showPendingStatus(data.item)}}</p>
                     </div>
                 </template>
                 <template v-slot:cell(percentage)="data">
@@ -373,6 +373,15 @@ export default {
           return "Completed";
         } else if(item.pending_jobs != 0 && item.failed_jobs == 0){
           return "In Progress";
+        }else if(item.failed_jobs != 0){
+          return "Failed";
+        }
+      },
+      showPendingStatus(item) {
+        if(item.pending_jobs == 0 && item.failed_jobs == 0) {
+          return "Completed";
+        } else if(item.pending_jobs != 0 && item.failed_jobs == 0){
+          return "Pending";
         }else if(item.failed_jobs != 0){
           return "Failed";
         }
