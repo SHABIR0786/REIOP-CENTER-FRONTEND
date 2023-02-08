@@ -49,7 +49,7 @@
                     no-local-sorting
                     :sticky-header="true">
               <template #head(file_name)="scope">
-                    <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+                    <div class="text-nowrap file_name_full" style="width: 150px;">{{scope.label}}</div>
                 </template>
                 <template #head(actions)="scope">
                     <div class="text-nowrap" style="width: 70px;">{{scope.label}}</div>
@@ -89,7 +89,7 @@
                   <div v-b-tooltip.hover :title="data.item.import_type">{{ data.item.import_type }}</div>
                 </template>
                 <template v-slot:cell(file_name)="data">
-                <div v-b-tooltip.hover :title="data.item.file_name">{{ data.item.file_name }}</div>
+                <div v-b-tooltip.hover :title="data.item.file_name" class="file_name_full">{{ data.item.file_name }}</div>
                 </template>
                 <template v-slot:cell(created_records)="data">
                   <div v-b-tooltip.hover :title="data.item.created_records">{{ data.item.created_records }}</div>
@@ -168,7 +168,7 @@
                     no-local-sorting
                     :sticky-header="true">
               <template #head(file_name)="scope">
-                    <div class="text-nowrap" style="width: 150px;">{{scope.label}}</div>
+                    <div class="text-nowrap file_name_full" style="width: 150px;">{{scope.label}}</div>
                 </template>
                 <template #head(actions)="scope">
                     <div class="text-nowrap" style="width: 70px;">{{scope.label}}</div>
@@ -208,7 +208,7 @@
                   <div v-b-tooltip.hover :title="data.item.import_type">{{ data.item.import_type }}</div>
                 </template>
                 <template v-slot:cell(file_name)="data">
-                <div v-b-tooltip.hover :title="data.item.file_name">{{ data.item.file_name }}</div>
+                <div v-b-tooltip.hover :title="data.item.file_name" class="file_name_full">{{ data.item.file_name }}</div>
                 </template>
                 <template v-slot:cell(created_records)="data">
                   <div v-b-tooltip.hover :title="data.item.created_records">{{ data.item.created_records }}</div>
@@ -429,7 +429,7 @@ export default {
       async handlePendingPageClick(){
         try {
           this.$store.dispatch('uxModule/setLoading')
-          await this.$store.dispatch("importV2Module/pendingJobBatches", {page: this.pending_currentPage, perPage: this.pending_perPage,search: ''})
+          await this.$store.dispatch("importV2Module/pendingJobBatches", {page: this.pending_currentPage, perPage: this.pending_perPage,search: this.searchPendingImport})
           this.filteredItemsPending = this.pendingJobs;
           const Instance = this;
           this.filteredItemsPending.forEach((item) => {
@@ -497,21 +497,20 @@ export default {
             if(ctx.sortBy=='percentage'){
               this.sortBy = 'percent';
             }
-        //     try {
-        //     this.currentPage = 1;
-        //   this.$store.dispatch('uxModule/setLoading')
-        //   await this.$store.dispatch('importV2Module/getTotal')
-        //   await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage,search: this.searchImport,sortBy: this.sortBy,sortDesc: this.sortDesc})
-        //   this.filteredItems = this.items;
-        //   const Instance = this;
-        //   this.filteredItems.forEach((item) => {
-        //   Instance.calculatePercentage(item);
-        //   });
-        //   this.$store.dispatch('uxModule/hideLoader')
-        // } catch (error) {
-        //   console.log(error);
-        //     this.$store.dispatch('uxModule/hideLoader')
-        // }
+            try {
+            this.pending_currentPage = 1;
+          this.$store.dispatch('uxModule/setLoading')
+          await this.$store.dispatch("importV2Module/pendingJobBatches", {page: this.pending_currentPage, perPage: this.pending_perPage,search: this.searchPendingImport,sortBy: this.sortBy,sortDesc: this.sortDesc})
+          this.filteredItemsPending = this.pendingJobs;
+          const Instance = this;
+          this.filteredItemsPending.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.$store.dispatch('uxModule/hideLoader')
+        } catch (error) {
+          console.log(error);
+            this.$store.dispatch('uxModule/hideLoader')
+        }
         },
      async editItem(item) {
         this.$store.dispatch('uxModule/setLoading')
@@ -891,21 +890,22 @@ export default {
       },
       async searchPendingImportFunction(){
         try{
-        // this.$store.dispatch('uxModule/setLoading')
-        // this.isBusy = true;
-        // this.currentPage = 1;
-        // await this.$store.dispatch('importV2Module/searchImpots', {
-        //   page: this.currentPage,
-        //   perPage: this.perPage,
-        //   search: this.searchImport
-        // });
-        //   this.filteredItems = this.items;
-        //   const Instance = this;
-        //   this.filteredItems.forEach((item) => {
-        //   Instance.calculatePercentage(item);
-        //   });
-        //   this.$store.dispatch('uxModule/hideLoader')
-        //   this.isBusy = false;
+        this.$store.dispatch('uxModule/setLoading')
+        this.isBusy = true;
+        this.pending_currentPage = 1;
+        await this.$store.dispatch('importV2Module/searchPendingJobs', {
+          page: this.pending_currentPage,
+          perPage: this.pending_perPage,
+          search: this.searchPendingImport
+        });
+        
+          this.filteredItemsPending = this.pendingJobs;
+          const Instance = this;
+          this.filteredItemsPending.forEach((item) => {
+          Instance.calculatePercentage(item);
+          });
+          this.$store.dispatch('uxModule/hideLoader')
+          this.isBusy = false;
 
         } catch (error) {
           console.log(error);
@@ -994,5 +994,8 @@ export default {
     }
     .add-seller{
       position:absolute;
+    }
+    .file_name_full{
+      max-width: none !important;
     }
 </style>
