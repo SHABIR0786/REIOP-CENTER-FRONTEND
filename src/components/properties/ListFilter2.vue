@@ -809,6 +809,8 @@
     },
     methods: {
         removeListFilter(result,index){
+            console.log('index',index);
+            
             this.ListFilters[result.name]={rule:null,option:null,name:result.name,statement:'And'}
         },
       showManageFiltersModas() {
