@@ -14,7 +14,10 @@
     <div>
         <b-row class=" mb-3">
             <b-col cols="6" class="d-flex align-items-center">
-                <b-button variant="primary" class="filter d-flex align-items-center mr-2" v-b-tooltip.hover title="Properties Filter" @click="showNewFilterPropertiesModal = true">
+                <!-- <b-button variant="primary" class="filter d-flex align-items-center mr-2" v-b-tooltip.hover title="Properties Filter" @click="showNewFilterPropertiesModal = true">
+                    <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
+                </b-button> -->
+                <b-button variant="primary" class="filter d-flex align-items-center mr-2" v-b-tooltip.hover title="Lsit Filter" @click="showListFilterModal = true">
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
                 </b-button>
                 <b-button variant="primary" class="filter d-flex align-items-center mr-2" v-b-tooltip.hover title="Export" @click="showNewExportPropertiesModal = true">
@@ -161,6 +164,8 @@
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <!-- <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal> -->
     <custom-view :customViews="templatesToExport" :changeTemplate="changeTemplate" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
+    <list-filter :showModal="showListFilterModal" @cancel="showListFilterModal=false" :search="searchProperty" :selectedItems="bulkDeleteItems"  :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></list-filter>
+
     </div>
 </div>
 </template>
@@ -178,6 +183,7 @@ import EditSubjectModal from "../components/subject/EditSubjectModal";
 import CustomView from "../components/properties/CustomView";
 import FilterProperties from "../components/properties/FilterProperties";
 import ExportPropertiesModal from "../components/properties/ExportPropertiesModal";
+import ListFilter from "../components/properties/ListFilter2";
 
 export default {
     name: "Properties",
@@ -188,7 +194,9 @@ export default {
         // AddSubjectModal,
         CustomView,
         FilterProperties,
-        ExportPropertiesModal
+        ExportPropertiesModal,
+        ListFilter
+
     },
     data() {
         return {
@@ -440,6 +448,7 @@ export default {
             isPropertySearched: false,
             customViewTemplate: null,
             exportCount: 0,
+            showListFilterModal: false,
         }
     },
     computed: {
@@ -640,6 +649,8 @@ export default {
             this.$store.dispatch('uxModule/setLoading')
             try {
                 this.showNewFilterPropertiesModal = false;
+                this.showListFilterModal = false;
+                
                 this.currentPage = 1;
                 this.filtersName = filtersName;
                 await this.$store.dispatch("propertyModule/getAllSubjectsV2", {

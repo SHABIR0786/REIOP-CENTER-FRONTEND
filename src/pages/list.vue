@@ -26,9 +26,7 @@
             <hr>
             <b-row class="mb-3">
                 <b-col cols="8" class="d-flex align-items-center">
-                    <b-button variant="primary" class="filter d-flex align-items-center mr-2" v-b-tooltip.hover title="Lsit Filter" @click="showListFilterModal = true">
                     <b-icon class="filter-icon" icon="filter" aria-hidden="true"></b-icon>
-                </b-button>
                 </b-col>
                 <b-col cols="4">
                     <b-input-group class="">
@@ -172,8 +170,6 @@
         <add-list-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-list-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <edit-list-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-list-modal>
-        <list-filter :showModal="showListFilterModal" @cancel="showListFilterModal=false"></list-filter>
-
     </div>
 </template>
 <script>
@@ -182,7 +178,6 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import AddListModal from "../components/list/AddListModal"
 import EditListModal from "../components/list/EditListModal";
-import ListFilter from "../components/list/ListFilter";
 
 export default {
     name: "List",
@@ -190,8 +185,7 @@ export default {
         BIcon,
         AddListModal,
         DeleteModal,
-        EditListModal,
-        ListFilter
+        EditListModal
     },
     data () {
         return {
@@ -209,8 +203,6 @@ export default {
             bulkDeleteItems: [],
             allSelected: false,
             totalAllTime: 0,
-            showListFilterModal: false,
-
         }
     },
     computed: {
