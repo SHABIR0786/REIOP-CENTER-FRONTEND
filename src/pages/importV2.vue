@@ -922,6 +922,7 @@ export default {
     },
     mounted() {
           const instance = this;
+          console.log(this.authUser.id);
           window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
             console.log(e);
             let is_processing = e.batch.pending_jobs;
