@@ -62,7 +62,7 @@ Sentry.init({
   integrations: [
     new BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-      tracingOrigins: ["localhost:8081", "http://reiopcenter.com.s3-website-us-east-1.amazonaws.com", /^\//],
+      tracingOrigins: ["localhost:8081", "http://reiopcenter.com.s3-website-us-east-1.amazonaws.com","http://app.reiopcenter.com", /^\//],
     }),
   ],
   // Set tracesSampleRate to 1.0 to capture 100%

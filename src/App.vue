@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import AWS from 'aws-sdk';
 import SideBar from "@/components/shared/SideBar";
 import NavBar from "@/components/shared/NavBar";
 import Loader from "@/components/shared/Loader";
@@ -39,6 +40,37 @@ export default {
         }
     },
     created() {
+            AWS.config.apiVersions = {
+            sns: '2010-03-31',
+            // other service API versions
+            };
+            AWS.config.region = 'us-east-1';
+            AWS.config.credentials = {
+                accessKeyId: 'AKIA2FOP2IWZEOJGAH5B',
+                secretAccessKey: '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',
+            }
+            var sns = new AWS.SNS();
+            var params = {
+            Protocol: 'http', /* required */
+            TopicArn: 'arn:aws:sns:us-east-1:698904888754:importprogress', /* required */
+            Endpoint: 'http://35.168.201.49/',
+            ReturnSubscriptionArn: false
+            };
+            sns.subscribe(params, function(err, data) {
+                console.log(data);
+            // if (err) console.log(err, err.stack); // an error occurred
+            // else     console.log(data);           // successful response
+            });
+            //             var paramss = {
+            //                   SubscriptionArn: 'arn:aws:sns:us-east-1:698904888754:importprogress' /* required */};
+            // sns.getSubscriptionAttributes(paramss, function(err, data) {
+            //   if (err) console.log(err, err.stack); // an error occurred
+            //   else     console.log(data);           // successful response
+            // });
+
+
+
+
         if (localStorage.getItem('accessToken') && localStorage.getItem('authUser')) {
             this.$store.commit('loginModule/SIGN_IN', {
                 vm: this,
