@@ -9,6 +9,7 @@ import vSelect from 'vue-select';
 import * as Sentry from "@sentry/vue";
 window.io = require('socket.io-client');
 import Echo from "laravel-echo";
+import Pusher from 'pusher-js';
 
 import { BrowserTracing } from "@sentry/tracing";
 import 'bootstrap/dist/css/bootstrap.css'
@@ -41,21 +42,24 @@ if (token) {
 Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
 Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Headers'] = '*'
-
+            window.Pusher = Pusher;
             const headers = {
               Authorization: "Bearer " + token,
             };
-
-            window.Echo = new Echo({
-              broadcaster: "pusher",
-              authEndpoint : 'https://3.229.169.118/api/broadcasting/auth',
-              key: "38e8644d0a17d0032c7e",
-              cluster: "us2",
-              auth: {
-                headers: headers
+ 
+            const options = {
+                broadcaster: 'pusher',
+                key: '38e8644d0a17d0032c7e',
+                cluster: "us2",
+                authEndpoint : 'https://3.229.169.118/api/broadcasting/auth',
+                auth: {
+                  headers: headers
+              }
             }
+            window.Echo = new Echo({
+              ...options,
+              client: new Pusher(options.key, options),
           });
-
 
 Sentry.init({
   Vue,
