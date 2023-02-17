@@ -51,7 +51,7 @@ Vue.prototype.$http.defaults.headers.common['Access-Control-Allow-Headers'] = '*
                 broadcaster: 'pusher',
                 key: '38e8644d0a17d0032c7e',
                 cluster: "us2",
-                authEndpoint : 'https://3.229.169.118/api/broadcasting/auth',
+                authEndpoint : 'https://54t5svqzni.execute-api.us-east-1.amazonaws.com/api/broadcasting/auth',
                 auth: {
                   headers: headers
               }

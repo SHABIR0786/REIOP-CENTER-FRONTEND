@@ -655,6 +655,8 @@ export default {
       }else {
         this.listPullSettings = this.list_settings
       }
+      localStorage.setItem('mapping', JSON.stringify(mapping));
+      localStorage.setItem('mappedItems',JSON.stringify(this.mappedItems));
       let response = await this.$store.dispatch('importModule/uploadExcelDataV2', {
         file: this.file,
         mappedItems: mapping,

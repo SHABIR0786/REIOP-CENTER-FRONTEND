@@ -36,7 +36,7 @@
             <b-table
                     id="list-table"
                     small
-                    ref="table"
+                    ref="tableloandingzone"
                     striped
                     sort-icon-left
                     hover
@@ -922,20 +922,23 @@ export default {
     },
     mounted() {
           const instance = this;
-          console.log(this.authUser.id);
           window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
-            console.log(e);
             let is_processing = e.batch.pending_jobs;
             let is_processed = e.batch.total_jobs - e.batch.pending_jobs;
             let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
-            let index = instance.filteredItems.findIndex(x=>x.process_id == e.batch.process_id);
+            let index = instance.filteredItemsPending.findIndex(x=>x.process_id == e.batch.process_id);
             if(index != -1) {
-            instance.filteredItems[index].percentage =  progresspercentage;
-            instance.filteredItems[index].error_number =  e.batch.error_number;
-            instance.filteredItems[index].total_row_number =  e.batch.total_row_number;
+            instance.filteredItemsPending[index].percentage =  progresspercentage;
+            instance.filteredItemsPending[index].error_number =  e.batch.error_number;
+            instance.filteredItemsPending[index].total_row_number =  e.batch.total_row_number;
+            if(progresspercentage == 100) {
+            instance.filteredItems.unshift(instance.filteredItemsPending[index]);
+            instance.filteredItemsPending.splice(index,1); 
+            }
             }
              if(instance.$refs.table){
               instance.$refs.table.refresh();
+              instance.$refs.tableloandingzone.refresh();
               }
       });
     },
