@@ -318,6 +318,17 @@ const actions = {
             return response
         })
     },
+    async resumePendingJob({ commit, dispatch }, batch) {
+        return await api.post(`/resumeJob`,{...batch}).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+            if (response && response.batch) {
+                commit('SET_ALL_PENDING_JOBS', response.batch)
+            }
+            return response
+        })
+    },
     async getSourceListFromDB({ commit }) {
         return await api.get(`/lists/source`).then((response) => {
             if (response ) {

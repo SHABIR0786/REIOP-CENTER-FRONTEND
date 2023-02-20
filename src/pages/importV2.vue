@@ -71,6 +71,7 @@
                 </template>
                 <template v-slot:cell(actions)="data">
                     <b-icon class="mr-2 cursor-pointer" icon="arrow-counterclockwise" variant="primary" @click="rollback(data.item)" v-if="authUser.role == 1 || showPendingStatus(data.item) == 'Completed'"></b-icon>
+                    <b-icon class="mr-2 cursor-pointer" icon="play-fill" variant="primary" @click="resumeJob(data.item)" v-if="authUser.role == 1 || showPendingStatus(data.item) == 'Completed'"></b-icon>
                     <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
                     <b-icon class="cursor-pointer" variant="primary" icon="cloud-download-fill" @click="importModal(data.item)"></b-icon>
                 </template>
@@ -363,6 +364,9 @@ export default {
       },
     },
     methods: {
+     async resumeJob(item) {
+         await this.$store.dispatch('listModule/resumePendingJob', {batchId:item.id});
+      },
       async getList(){
         this.$store.dispatch('uxModule/setLoading')
         await this.$store.dispatch('listModule/getAllLists', {page: this.currentPage, perPage: this.perPage});
@@ -380,8 +384,10 @@ export default {
       showPendingStatus(item) {
         if(item.pending_jobs == 0 && item.failed_jobs == 0) {
           return "Completed";
-        } else if(item.pending_jobs != 0 && item.failed_jobs == 0){
+        } else if(item.pending_jobs == item.total_jobs) {
           return "Pending";
+        } else if(item.pending_jobs != 0 && item.failed_jobs == 0){
+          return "In Progress";
         }else if(item.failed_jobs != 0){
           return "Failed";
         }
@@ -400,7 +406,7 @@ export default {
           Instance.calculatePercentage(item);
           });
           this.filteredItemsPending.forEach((item) => {
-          Instance.calculatePercentage(item);
+          Instance.calculatePendingPercentage(item);
           });
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -433,7 +439,7 @@ export default {
           this.filteredItemsPending = this.pendingJobs;
           const Instance = this;
           this.filteredItemsPending.forEach((item) => {
-          Instance.calculatePercentage(item);
+          Instance.calculatePendingPercentage(item);
           });
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -445,29 +451,15 @@ export default {
       cancelEdit(){
         this.showModal = false;
       },
+      calculatePendingPercentage(item) {
+      let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);
+      let index = this.filteredItemsPending.findIndex(x=>x.id == item.id);
+      this.filteredItemsPending[index].percentage =  percentage;
+      },
       calculatePercentage(item) {
       let percentage = Math.round((item.is_processed / (item.is_processed + item.is_processing)) * 100);
       let index = this.filteredItems.findIndex(x=>x.id == item.id);
       this.filteredItems[index].percentage =  percentage;
-      // if(percentage != 100) {
-      //  this.intervalId = setInterval(async () => {
-      //       var progress = await this.$store.dispatch("importV2Module/showBatch", item.id);
-      //       if(progress.batch) {
-      //       progress = progress.batch;
-      //       let is_processed =  progress.total_jobs - progress.pending_jobs;
-      //       let is_processing = progress.pending_jobs;
-      //       let progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
-      //       let index = this.filteredItems.findIndex(x=>x.id == item.id);
-      //       this.filteredItems[index].percentage = progresspercentage;
-      //       if(this.$refs.table){
-      //         this.$refs.table.refresh();
-      //       }
-      //       if(progresspercentage == 100) {
-      //        clearInterval(this.intervalId);
-      //       }
-      //       }
-      //   }, 25000);
-      // }
       },
       async sortingChanged(ctx) {        
             this.sortBy = ctx.sortBy;
@@ -504,7 +496,7 @@ export default {
           this.filteredItemsPending = this.pendingJobs;
           const Instance = this;
           this.filteredItemsPending.forEach((item) => {
-          Instance.calculatePercentage(item);
+          Instance.calculatePendingPercentage(item);
           });
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
@@ -902,7 +894,7 @@ export default {
           this.filteredItemsPending = this.pendingJobs;
           const Instance = this;
           this.filteredItemsPending.forEach((item) => {
-          Instance.calculatePercentage(item);
+          Instance.calculatePendingPercentage(item);
           });
           this.$store.dispatch('uxModule/hideLoader')
           this.isBusy = false;
