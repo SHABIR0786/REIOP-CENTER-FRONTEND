@@ -583,8 +583,14 @@ export default {
           });
             let is_processed =  this.editData.total_jobs - this.editData.pending_jobs;
             let is_processing = this.editData.pending_jobs;
-            this.progresspercentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
-          
+            let percentage = Math.round((is_processed / (is_processed + is_processing)) * 100);
+            if(percentage > 100) {
+            this.progresspercentage = 100;
+            } else {
+            this.progresspercentage = percentage;
+
+            }
+
         }
       }
     },

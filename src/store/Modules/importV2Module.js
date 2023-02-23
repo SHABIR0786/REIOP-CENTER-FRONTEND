@@ -148,7 +148,18 @@ const actions = {
             return response
         })
     },
-    
+    async checkallImports({ commit, dispatch}) {
+        return await api.get(`/checkimportActivity`).then((response) => {
+            console.log(response);
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+            if (response && response.batch) {
+                commit('test', response)
+            }
+            return response
+        })
+    },
     async pendingJobBatches({ commit, dispatch }, {page, perPage,search='',sortBy='', sortDesc=''}) {
         return await api.get(`/pendingJobBatches?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {

@@ -9,7 +9,6 @@
       <b-tabs pills class="loading_zone_tabs" v-if="showImportTable">
         <b-tab title="Loading Zone" :active="tab == 'loadingZone'">
           <hr>
-
         <h3>Loading Zone</h3>
             <div>
                 <b-row class="mb-3">
@@ -77,7 +76,7 @@
                 </template>
                 <template v-slot:cell(status)="data">
                     <div >
-                      <p>{{showPendingStatus(data.item)}}</p>
+                      <p>{{data.item.status?data.item.status:showPendingStatus(data.item)}}</p>
                     </div>
                 </template>
                 <template v-slot:cell(percentage)="data">
@@ -196,7 +195,7 @@
                 </template>
                 <template v-slot:cell(status)="data">
                     <div >
-                      <p>{{showStatus(data.item)}}</p>
+                      <p>{{data.item.status?data.item.status:showStatus(data.item)}}</p>
                     </div>
                 </template>
                 <template v-slot:cell(percentage)="data">
@@ -912,7 +911,11 @@ export default {
         clearInterval(this.intervalId);
       }
     },
-    mounted() {
+    async mounted() {
+      setInterval(async () => {
+        await this.$store.dispatch('importV2Module/checkallImports');
+      }, 1000 * 60 * 10);
+          
           const instance = this;
           window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
             let is_processing = e.batch.pending_jobs;
