@@ -1171,7 +1171,7 @@ export default {
         );
         localStorage.setItem("seller-filters-count", filterValue);
       }
-      this.$emit("finish-process");
+      // this.$emit("finish-process");
     },
     relatedCustomField(tempField){
       return this.customViewVisibleFields.filter(({field,visible})=>field.includes(tempField)&&visible==1);            

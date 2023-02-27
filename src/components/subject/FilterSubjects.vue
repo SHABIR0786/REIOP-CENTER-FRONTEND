@@ -488,7 +488,7 @@ export default {
     },
     propsData: {
       handler: function() {
-          this.updateDataChanges()
+          this.updateDataChanges();
       }
     },
   },
@@ -758,7 +758,7 @@ export default {
         localStorage.setItem('subject-data-after-filtering',JSON.stringify(this.allData))
         localStorage.setItem('subject-filters-count', filterValue)
       }
-      this.$emit('finish-process')
+      // this.$emit('finish-process')
     },
     relatedCustomField(tempField){
       return this.customViewVisibleFields.filter(({field,visible})=>field.includes(tempField)&&visible==1);            

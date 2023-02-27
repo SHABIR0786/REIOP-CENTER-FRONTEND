@@ -46,14 +46,13 @@ const mutations = {
     SET_ALL_SUBJECTS(state, payload) {
         const data = [...payload.data]
         data.forEach(e => {
-            e.list_stack = e.lists.length;
             e.created_at = e.created_at.split('T')[0];
             e.updated_at = e.updated_at.split('T')[0];
-            e.lists.forEach(el =>{
-                el.created_at = el.created_at.split('T')[0];
-                el.updated_at = el.updated_at.split('T')[0];
-                el.user_name  = e.user_name
-            })
+            // e.lists.forEach(el =>{
+            //     el.created_at = el.created_at.split('T')[0];
+            //     el.updated_at = el.updated_at.split('T')[0];
+            //     el.user_name  = e.user_name
+            // })
         })
         state.subjects = JSON.stringify(data);
         state.total = payload.total;
@@ -116,6 +115,7 @@ const mutations = {
 const actions = {
     async getAllSubjects({ commit, dispatch }, {page, perPage, search, sortBy, sortDesc}) {
         return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
+            console.log(response);
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }

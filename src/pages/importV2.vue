@@ -912,9 +912,9 @@ export default {
       }
     },
     async mounted() {
-      setInterval(async () => {
-        await this.$store.dispatch('importV2Module/checkallImports');
-      }, 1000 * 60 * 10);
+      // setInterval(async () => {
+      //   await this.$store.dispatch('importV2Module/checkallImports');
+      // }, 1000 * 60 * 10);
           
           const instance = this;
           window.Echo.private(`importprogress.${this.authUser.id}`).listen("UpdateImportProgress", (e) => {
