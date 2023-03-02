@@ -646,18 +646,46 @@ export default {
             }
         },
         async filterProperties(filtersName) {
+            console.log(filtersName);
+            // this.$store.dispatch('uxModule/setLoading')
+            // try {
+            //     this.showNewFilterPropertiesModal = false;
+            //     this.showListFilterModal = false;
+                
+            //     this.currentPage = 1;
+            //     this.filtersName = filtersName;
+            //     await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+            //         page: this.currentPage,
+            //         perPage: this.perPage,
+            //         search: this.searchProperty,
+            //         filter: filtersName,
+            //         sortBy: this.sortBy,
+            //         sortDesc: this.sortDesc,
+            //         custom: this.customViewTemplate
+            //     });
+            //     this.totals = await this.$store.dispatch('propertyModule/getTotals', {
+            //         filter: this.filtersName,
+            //         search: this.searchProperty
+            //     });
+            //     if (this.customViewTemplate) {
+            //         this.showCustomView();
+            //     }
+            //     this.$store.dispatch('uxModule/hideLoader')
+            // } catch (error) {
+            //     this.$store.dispatch('uxModule/hideLoader')
+            // }
+            
             this.$store.dispatch('uxModule/setLoading')
             try {
                 this.showNewFilterPropertiesModal = false;
                 this.showListFilterModal = false;
-                
                 this.currentPage = 1;
-                this.filtersName = filtersName;
-                await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+                // this.filtersName = filtersName;
+                await this.$store.dispatch("propertyModule/filterProperties", {
                     page: this.currentPage,
                     perPage: this.perPage,
                     search: this.searchProperty,
-                    filter: filtersName,
+                    filter: JSON.stringify(filtersName),
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
@@ -673,7 +701,6 @@ export default {
             } catch (error) {
                 this.$store.dispatch('uxModule/hideLoader')
             }
-
         },
         editItem(item) {
             this.showModal = true

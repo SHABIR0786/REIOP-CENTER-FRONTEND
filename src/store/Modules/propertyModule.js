@@ -566,6 +566,37 @@ const actions = {
             return response
         })
     },
+    async filterProperties({ commit, dispatch }, data) {
+        let customViewHasPhone = false;
+        let customViewHasEmail = false;
+        let customViewHasGolden = false;
+
+        if(data.custom) {
+        let customView = Object.keys(data.custom);
+        customView.forEach(function(item) {
+            if(item.includes('phone')) {
+                customViewHasPhone = true;
+            }
+            if(item.includes('email')) {
+                customViewHasEmail = true;
+            } 
+            if(item.includes('golden')) {
+                customViewHasGolden = true;
+            }
+        });
+    }
+        return await api.post(`/properties/filter`, { ...data }).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, { root: true })
+            }
+
+            if (response && response.subjects && response.subjects.data) {
+                commit('SET_ALL_SUBJECTS', {subjects: response.subjects, customViewHasPhone:customViewHasPhone, customViewHasEmail:customViewHasEmail, customViewHasGolden: customViewHasGolden  })
+                // commit('GET_TOTAL', response.subjects.total)
+            }
+            return response
+        })
+    },
     async searchSubjects({ commit, dispatch }, { page, perPage, search, sortBy, sortDesc }) {
         return await api.get(`/subjects?page=${page}&perPage=${perPage}&search=${search}&sortBy=${sortBy}&sortDesc=${sortDesc}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
