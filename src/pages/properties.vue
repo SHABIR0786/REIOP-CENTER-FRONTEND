@@ -646,7 +646,7 @@ export default {
             }
         },
         async filterProperties(filtersName) {
-            console.log(filtersName);
+            // console.log(filtersName);
             // this.$store.dispatch('uxModule/setLoading')
             // try {
             //     this.showNewFilterPropertiesModal = false;
@@ -690,6 +690,7 @@ export default {
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 });
+                this.$store.dispatch('uxModule/hideLoader')
                 this.totals = await this.$store.dispatch('propertyModule/getTotals', {
                     filter: this.filtersName,
                     search: this.searchProperty
@@ -697,7 +698,6 @@ export default {
                 if (this.customViewTemplate) {
                     this.showCustomView();
                 }
-                this.$store.dispatch('uxModule/hideLoader')
             } catch (error) {
                 this.$store.dispatch('uxModule/hideLoader')
             }
