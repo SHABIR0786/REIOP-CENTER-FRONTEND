@@ -594,6 +594,9 @@ const actions = {
                 commit('SET_ALL_SUBJECTS', {subjects: response.subjects, customViewHasPhone:customViewHasPhone, customViewHasEmail:customViewHasEmail, customViewHasGolden: customViewHasGolden  })
                 // commit('GET_TOTAL', response.subjects.total)
             }
+            if(response.totals) {
+                commit('GET_TOTALS', response.totals);
+            }
             return response
         })
     },
@@ -638,14 +641,6 @@ const actions = {
         return await api.get(`/totals/subjects`).then((response) => {
             if (response && response.count > -1) {
                 commit('GET_TOTAL', response.count);
-            }
-            return response
-        })
-    },
-    async getTotals({ commit }, data) {
-        return await api.post(`/properties/getTotals`, { ...data }).then((response) => {
-            if (response) {
-                commit('GET_TOTALS', response);
             }
             return response
         })

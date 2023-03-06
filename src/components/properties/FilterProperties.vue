@@ -466,15 +466,12 @@ export default {
   },
   async mounted() {
     try{
-      this.$store.dispatch('uxModule/setLoading')
       this.subject = this.propsData;
       await this.$store.dispatch('importModule/loadVisibleFields')
       let response = await this.$store.dispatch("subjectModule/SubjectfilterList", {filter: this.allFilters, search: this.search});
       await this.MapFilters(response);
-      this.$store.dispatch('uxModule/hideLoader')
     } catch(error){
       console.log(error);
-      this.$store.dispatch('uxModule/hideLoader')
     }
   },
   watch: {

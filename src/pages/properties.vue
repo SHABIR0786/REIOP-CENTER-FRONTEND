@@ -162,7 +162,6 @@
     <export-properties-modal :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewExportPropertiesModal" @cancel="showNewExportPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></export-properties-modal>
     <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
-    <!-- <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal> -->
     <custom-view :customViews="templatesToExport" :changeTemplate="changeTemplate" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
     <list-filter :showModal="showListFilterModal" @cancel="showListFilterModal=false" :search="searchProperty" :selectedItems="bulkDeleteItems"  :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></list-filter>
 
@@ -196,7 +195,6 @@ export default {
         FilterProperties,
         ExportPropertiesModal,
         ListFilter
-
     },
     data() {
         return {
@@ -222,7 +220,6 @@ export default {
                     label: "List Stack",
                     sortable: true
                 },
-
                 {
                     key: "subject_address",
                     stickyColumn: true,
@@ -426,23 +423,7 @@ export default {
             bulkDeleteItems: [],
             allSelected: false,
             propertyFields: [],
-            totals: {},
-            filtersName: {
-                Market:[],
-                Group:[],
-                Type:[],
-                Source:[],
-                Errors:[],
-                Error:[],
-                RunDate:[],
-                TotalSellers:[],
-                ListStack:[],
-                list_custom_field_1:[],
-                list_custom_field_2:[],
-                list_custom_field_3:[],
-                list_custom_field_4:[],
-                list_custom_field_5:[]
-            },
+            filtersName: null,
             sortBy: 'id',
             sortDesc: true,
             isPropertySearched: false,
@@ -458,6 +439,7 @@ export default {
             items: 'propertyModule/sameRowSubjects',
             seperatedRowSubjects: 'propertyModule/seperatedRowSubjects',
             total: 'propertyModule/total',
+            totals: 'propertyModule/totals',
             maxSellers: 'propertyModule/maxSellers',
             maxPhones: 'propertyModule/maxPhones',
             maxEmails: 'propertyModule/maxEmails',
@@ -484,13 +466,6 @@ export default {
                 return this.fields;
             }
         },
-        filtersCount() {
-            let total = 0
-            for (let item in this.filtersName) {
-                total += this.filtersName[item].length
-            }
-            return total;
-        },
         getCustomView() {
             if (this.customViewTemplate) {
                 let customViewTemplate = JSON.parse(JSON.stringify(this.customViewTemplate));
@@ -504,18 +479,10 @@ export default {
             return this.total ? this.total : 1
         }
     },
-    async mounted() {
-        this.totals = await this.$store.dispatch('propertyModule/getTotals', {
-            filter: this.filtersName
-        });
-        console.log(this.totals);
-    },
     async created() {
         this.$store.dispatch('uxModule/setLoading')
-
-        // this.exportCount = this.totals.subjectsCount;
         try {
-            await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+            await this.$store.dispatch("propertyModule/filterProperties", {
                 page: 1,
                 perPage: this.perPage,
                 filter: this.filtersName,
@@ -553,53 +520,29 @@ export default {
         async sortingChanged(ctx) {
             this.sortBy = ctx.sortBy;
             this.sortDesc = ctx.sortDesc;
-            if (this.filtersCount > 0) {
-                await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+                await this.$store.dispatch('propertyModule/filterProperties', {
                     page: this.currentPage,
                     perPage: this.perPage,
                     search: this.searchProperty,
-                    filter: this.filtersName,
+                    filter: JSON.stringify(this.filtersName),
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
-                });
-            } else {
-                await this.$store.dispatch('propertyModule/searchSubjects', {
-                    page: this.currentPage,
-                    perPage: this.perPage,
-                    search: this.searchProperty,
-                    sortBy: this.sortBy,
-                    sortDesc: this.sortDesc
-                });
-            }
+                })
         },
         async clearsearch() {
             this.searchProperty = '';
             this.$store.dispatch('uxModule/setLoading')
             try {
-                if (this.filtersCount > 0) {
-                    await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchProperty,
-                        filter: this.filtersName,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc,
-                        custom: this.customViewTemplate
-                    });
-                } else {
-                    this.$store.dispatch('propertyModule/searchSubjects', {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchProperty,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    });
-                }
-                this.totals = await this.$store.dispatch('propertyModule/getTotals', {
-                    filter: this.filtersName,
-                    search: this.searchProperty
-                });
+                await this.$store.dispatch('propertyModule/filterProperties', {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchProperty,
+                    filter: JSON.stringify(this.filtersName),
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc,
+                    custom: this.customViewTemplate
+                })
                 this.isPropertySearched = false;
                 this.$store.dispatch('uxModule/hideLoader')
             } catch (error) {
@@ -609,29 +552,15 @@ export default {
         async search() {
             this.$store.dispatch('uxModule/setLoading')
             try {
-                if (this.filtersCount > 0) {
-                    await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchProperty,
-                        filter: this.filtersName,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc,
-                        custom: this.customViewTemplate
-                    });
-                } else {
-                    this.$store.dispatch('propertyModule/searchSubjects', {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchProperty,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    });
-                }
-                this.totals = await this.$store.dispatch('propertyModule/getTotals', {
-                    filter: this.filtersName,
-                    search: this.searchProperty
-                });
+                await this.$store.dispatch('propertyModule/filterProperties', {
+                    page: this.currentPage,
+                    perPage: this.perPage,
+                    search: this.searchProperty,
+                    filter: JSON.stringify(this.filtersName),
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc,
+                    custom: this.customViewTemplate
+                })
                 if (this.customViewTemplate) {
                     this.showCustomView();
                 }
@@ -646,41 +575,12 @@ export default {
             }
         },
         async filterProperties(filtersName) {
-            // console.log(filtersName);
-            // this.$store.dispatch('uxModule/setLoading')
-            // try {
-            //     this.showNewFilterPropertiesModal = false;
-            //     this.showListFilterModal = false;
-                
-            //     this.currentPage = 1;
-            //     this.filtersName = filtersName;
-            //     await this.$store.dispatch("propertyModule/getAllSubjectsV2", {
-            //         page: this.currentPage,
-            //         perPage: this.perPage,
-            //         search: this.searchProperty,
-            //         filter: filtersName,
-            //         sortBy: this.sortBy,
-            //         sortDesc: this.sortDesc,
-            //         custom: this.customViewTemplate
-            //     });
-            //     this.totals = await this.$store.dispatch('propertyModule/getTotals', {
-            //         filter: this.filtersName,
-            //         search: this.searchProperty
-            //     });
-            //     if (this.customViewTemplate) {
-            //         this.showCustomView();
-            //     }
-            //     this.$store.dispatch('uxModule/hideLoader')
-            // } catch (error) {
-            //     this.$store.dispatch('uxModule/hideLoader')
-            // }
-            
             this.$store.dispatch('uxModule/setLoading')
             try {
                 this.showNewFilterPropertiesModal = false;
                 this.showListFilterModal = false;
                 this.currentPage = 1;
-                // this.filtersName = filtersName;
+                this.filtersName = filtersName;
                 await this.$store.dispatch("propertyModule/filterProperties", {
                     page: this.currentPage,
                     perPage: this.perPage,
@@ -691,10 +591,6 @@ export default {
                     custom: this.customViewTemplate
                 });
                 this.$store.dispatch('uxModule/hideLoader')
-                this.totals = await this.$store.dispatch('propertyModule/getTotals', {
-                    filter: this.filtersName,
-                    search: this.searchProperty
-                });
                 if (this.customViewTemplate) {
                     this.showCustomView();
                 }
@@ -900,22 +796,21 @@ export default {
                     this.selectedTemplate= null;
                     this.changeTemplate= false;
                 }
-
             }
-            this.$store.dispatch('uxModule/setLoading');
-            await this.$store.dispatch('propertyModule/getAllSubjectsV2', {
-                page: this.currentPage,
-                perPage: this.perPage,
-                search: this.searchProperty,
-                filter: this.filtersName,
-                sortBy: this.sortBy,
-                sortDesc: this.sortDesc,
-                custom: this.customViewTemplate
-            });
+            // this.$store.dispatch('uxModule/setLoading');
+            // await this.$store.dispatch('propertyModule/filterProperties', {
+            //     page: this.currentPage,
+            //     perPage: this.perPage,
+            //     search: this.searchProperty,
+            //     filter: this.filtersName,
+            //     sortBy: this.sortBy,
+            //     sortDesc: this.sortDesc,
+            //     custom: this.customViewTemplate
+            // });
             if (fieldsType) {
                 this.fieldsType = fieldsType;
             }
-            this.$store.dispatch('uxModule/hideLoader');
+            // this.$store.dispatch('uxModule/hideLoader');
             this.showCustomModalView = false;
             let fields = [];
             if (this.fieldsType == null || this.fieldsType == "samerows") {
@@ -1063,7 +958,7 @@ export default {
                     }
                 })
             }
-            this.$store.dispatch("propertyModule/getAllSubjectsV2", {
+            this.$store.dispatch("propertyModule/filterProperties", {
                 page: 1,
                 perPage: this.perPage,
                 filter: this.filter,
@@ -1089,7 +984,7 @@ export default {
         },
         bulkDelete() {
             this.$store.dispatch('propertyModule/deleteMultipleSubjects', this.bulkDeleteItems).then(
-                this.$store.dispatch('propertyModule/getAllSubjectsV2', {
+                this.$store.dispatch('propertyModule/filterProperties', {
                     page: this.currentPage,
                     perPage: this.perPage,
                     search: this.searchProperty,
@@ -1112,21 +1007,20 @@ export default {
         totals: {
             handler: function () {
                 this.exportCount = this.totals.subjectsCount;
-                console.log(this.exportCount);
             }
         },
         currentPage: {
             handler: async function () {
                 this.$store.dispatch('uxModule/setLoading')
-                await this.$store.dispatch('propertyModule/getAllSubjectsV2', {
+                await this.$store.dispatch('propertyModule/filterProperties', {
                     page: this.currentPage,
                     perPage: this.perPage,
                     search: this.searchProperty,
-                    filter: this.filtersName,
+                    filter: JSON.stringify(this.filtersName),
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
-                })
+                });
                 if (this.customViewTemplate) {
                     this.showCustomView();
                 }
@@ -1136,21 +1030,22 @@ export default {
         perPage: {
             handler: async function () {
                 this.$store.dispatch('uxModule/setLoading')
-                await this.$store.dispatch('propertyModule/getAllSubjectsV2', {
-                    page: 1,
+                this.$store.dispatch('uxModule/setLoading')
+                await this.$store.dispatch('propertyModule/filterProperties', {
+                    page: this.currentPage,
                     perPage: this.perPage,
                     search: this.searchProperty,
-                    filter: this.filtersName,
+                    filter: JSON.stringify(this.filtersName),
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
-                })
+                });
                 if (this.customViewTemplate) {
                     this.showCustomView();
                 }
                 this.$store.dispatch('uxModule/hideLoader')
             }
-        },
+        }
 
     }
 }
