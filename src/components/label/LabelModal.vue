@@ -16,6 +16,13 @@
                         </b-input-group>
                     </b-col>
                     <b-col cols="12">
+                        <b-input-group prepend="Type" class="mb-2">
+                             <b-form-select v-model="label.type" aria-describedby="role-id" :options="labelTypes" required>
+                            </b-form-select>
+                        </b-input-group>
+
+                    </b-col>
+                    <b-col cols="12">
                         <b-input-group prepend="Description" class="mb-2">
                             <b-form-input v-model="label.description"></b-form-input>
                         </b-input-group>
@@ -52,6 +59,7 @@
                     description: '',
                     visible: false,
                 },
+                labelTypes: ["String","Number","Date","Boolean","Options"],
                 readyonly: false,
                 readonlyfields: [
                     "list_type",

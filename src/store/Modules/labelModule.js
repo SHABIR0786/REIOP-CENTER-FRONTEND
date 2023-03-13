@@ -4,6 +4,7 @@ const state = {
     fields: [
         {key: "field", label: "Field", sortable: true},
         {key: "label", label: "Custom Fields", sortable: true},
+        {key: "type", label: "Type", sortable: true},
         {key: "description", label: "Description", sortable: true},
         {key: "visible", label: "Visible", sortable: true},
         {key: "actions", label: "Actions"}

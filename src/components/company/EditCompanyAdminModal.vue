@@ -17,9 +17,8 @@
                             <b-form-input type="email" :value="user.email" disabled readonly></b-form-input>
                         </b-input-group>
                     </b-col>
-
                     <b-col cols="12">
-                        <b-input-group prepend="Company Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                        <b-input-group prepend="Company Role" id="role-id" label="" label-for="role-id" class="mb-2">
                             <b-form-select v-model="user.company_role" aria-describedby="role-id" :options="company_permission" required>
                             </b-form-select>
                         </b-input-group>

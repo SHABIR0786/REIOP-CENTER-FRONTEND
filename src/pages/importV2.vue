@@ -927,6 +927,7 @@ export default {
             instance.filteredItemsPending[index].error_number =  e.batch.error_number;
             instance.filteredItemsPending[index].total_row_number =  e.batch.total_row_number;
             if(progresspercentage == 100) {
+            instance.filteredItemsPending[index].status = 'Completed';
             instance.filteredItems.unshift(instance.filteredItemsPending[index]);
             instance.filteredItemsPending.splice(index,1); 
             }

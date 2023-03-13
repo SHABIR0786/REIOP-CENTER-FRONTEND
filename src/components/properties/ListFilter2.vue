@@ -386,31 +386,55 @@
               v-model="additionalFilter"
             ></b-form-select>
           </b-col>
-          <b-col v-if="additionalFilter.type == 'string'" cols="12" lg="3" md="12" class="mb-3">
+          <b-col v-if="additionalFilter.type == 'String'" cols="12" lg="3" md="12" class="mb-3">
             <b-form-select
               class="w-auto"
               :options="stringRules"
               v-model="additionalFilterRule"
             ></b-form-select>
           </b-col>
-          <b-col v-if="additionalFilter.type == 'datetime'" cols="12" lg="3" md="12" class="mb-3">
+          <b-col v-if="additionalFilter.type == 'Date'" cols="12" lg="3" md="12" class="mb-3">
             <b-form-select
               class="w-auto"
               :options="dateTimeRules"
               v-model="additionalFilterRule"
             ></b-form-select>
           </b-col>
-          <b-col v-if="additionalFilter.type == 'string'" cols="12" lg="3" md="12" class="mb-3">
+          <b-col v-if="additionalFilter.type == 'String'" cols="12" lg="3" md="12" class="mb-3">
             <b-form-input
             class="w-auto"
             v-model="additionalFilterValue"
             ></b-form-input>
           </b-col>
-          <b-col v-if="additionalFilter.type == 'datetime'" cols="12" lg="3" md="12" class="mb-3">
+          <b-col v-if="additionalFilter.type == 'Date'" cols="12" lg="3" md="12" class="mb-3">
             <b-form-datepicker
             class="w-auto"
             v-model="additionalFilterValue"
             ></b-form-datepicker>
+          </b-col>
+            <b-col v-if="additionalFilter.type == 'Options'" cols="12" lg="3" md="12" class="mb-3">
+            <b-form-select
+              class="w-auto"
+              :options="IncludesExcludes"
+              v-model="additionalFilterRule"
+            ></b-form-select>
+          </b-col>
+          <b-col v-if="additionalFilter.type == 'Options'" cols="12" lg="3" md="12" class="mb-3">
+            <b-form-select
+              class="w-auto"
+              :options="additionalFilterOptions"
+              v-model="additionalFilterValue"
+            ></b-form-select>
+          </b-col>
+          <b-col v-if="additionalFilter.type == 'Number'" cols="12" lg="6" md="12" class="mb-3">
+          <p>Input number statements in the format of a single number (Ex: 1),
+          range (Ex: 1-4), or extended range (Ex: 3+ or 3-).</p>
+                  <b-form-input
+                  id="list_stack"
+                  required
+                  v-model="additionalFilterValue"
+                  v-b-tooltip.hover
+                ></b-form-input>
           </b-col>
           <b-col cols="12" lg="2" md="12" class="mb-3">
             <b-button  variant="primary"
@@ -552,146 +576,6 @@ export default {
       ],
       chooseAdditionalFilters: [
         { value: null, text: "Choose Additional Filters", disabled: true },
-        {
-          value: { type: "string", text: "Subject Address", column: "subject_address" },
-          text: "Subject Address",
-        },
-        {
-          value: { type: "string", text: "Subject City",  column: "subject_city" },
-          text: "Subject City",
-        },
-        {
-          value: { type: "string", text: "Subject State", column: "subject_state" },
-          text: "Subject State",
-        },
-        {
-          value: { type: "string", text: "Subject Zip", column: "subject_zip" },
-          text: "Subject Zip",
-        },
-        {
-          value: { type: "string", text: "Subject Full Address", column: "subject_full_address" },
-          text: "Subject Full Address",
-        },
-        {
-          value: { type: "string",  text: "Subject County", column: "subject_county" },
-          text: "Subject County",
-        },
-        {
-          value: { type: "string", text: "Subject Market", column: "subject_Market" },
-          text: "Subject Market",
-        },
-        {
-          value: { type: "string", text: "Subject Age", column: "subject_age" },
-          text: "Subject Age",
-        },
-        {
-          value: { type: "string", text: "Subject Type", column: "subject_type" },
-          text: "Subject Type",
-        },
-        {
-          value: { type: "string", text: "Subject Address Line 2", column: "subject_address_line_2" },
-          text: "Subject Address Line 2",
-        },
-        {
-          value: {type: "datetime", text: "Subject Pull Date", column: "subject_pull_date"} ,
-          text: "Subject Pull Date",
-        },
-        {
-          value: {type: "datetime", text: "Subject Last Marketed Date", column: "subject_last_marketed_date"} ,
-          text: "Subject Last Marketed Date",
-        },
-        {
-          value: {type: "datetime", text: "Subject Last Exported Date", column: "subject_last_exported_date"} ,
-          text: "Subject Last Exported Date",
-        },
-        {
-          value: {type: "datetime", text: "Subject Subject Skip Trace Date", column: "subject_skip_trace_date"} ,
-          text: "Subject Subject Skip Trace Date",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 1", column: "subject_custom_field_1" },
-          text: "Subject Custom Field 1",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 2", column: "subject_custom_field_2" },
-          text: "Subject Custom Field 2",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 3", column: "subject_custom_field_3" },
-          text: "Subject Custom Field 3",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 4", column: "subject_custom_field_4" },
-          text: "Subject Custom Field 4",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 5", column: "subject_custom_field_5" },
-          text: "Subject Custom Field 5",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 6", column: "subject_custom_field_6" },
-          text: "Subject Custom Field 6",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 7", column: "subject_custom_field_7" },
-          text: "Subject Custom Field 7",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 8", column: "subject_custom_field_8" },
-          text: "Subject Custom Field 8",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 9", column: "subject_custom_field_9" },
-          text: "Subject Custom Field 9",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 10", column: "subject_custom_field_10" },
-          text: "Subject Custom Field 10",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 11", column: "subject_custom_field_11" },
-          text: "Subject Custom Field 11",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 12", column: "subject_custom_field_12" },
-          text: "Subject Custom Field 12",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 13", column: "subject_custom_field_13" },
-          text: "Subject Custom Field 13",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 14", column: "subject_custom_field_14" },
-          text: "Subject Custom Field 14",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 15", column: "subject_custom_field_15" },
-          text: "Subject Custom Field 15",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 16", column: "subject_custom_field_16" },
-          text: "Subject Custom Field 16",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 17", column: "subject_custom_field_17" },
-          text: "Subject Custom Field 17",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 18", column: "subject_custom_field_18" },
-          text: "Subject Custom Field 18",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 19", column: "subject_custom_field_19" },
-          text: "Subject Custom Field 19",
-        },
-        {
-          value: { type: "string", text: "Subject Custom Field 20", column: "subject_custom_field_20" },
-          text: "Subject Custom Field 20",
-        },
-        {
-          value: { type: "string", column: "subject_error" },
-          text: "Subject Error",
-        },
       ],
       additionalFilters:[],
       chooseListFilters: {
@@ -729,6 +613,8 @@ export default {
     ...mapGetters({
       filterList: "subjectModule/filterList",
       customViewVisibleFields: "importModule/customViewVisibleFields",
+      additionalFilterFieldsTypes: "importModule/additionalFilterFieldsTypes",
+      additionalFilterOptions: "propertyModule/additionalFilterOptions"
     }),
     totalFilters() {
       let total = 0;
@@ -755,6 +641,12 @@ export default {
     try {
       this.subject = this.propsData;
       await this.$store.dispatch("importModule/loadVisibleFields");
+      const instance = this;
+      this.customViewVisibleFields.forEach(function(item) {
+      const defaultField = instance.additionalFilterFieldsTypes.find(x=>x.column == item.field);
+      let type = item.type?item.type:defaultField.type;      
+      instance.chooseAdditionalFilters.push({text:item.label,value:{type:type, text: item.label,column: item.field}});
+      });
       let response = await this.$store.dispatch(
         "subjectModule/SubjectfilterList",
         { filter: this.allFilters, search: this.search }
@@ -771,6 +663,14 @@ export default {
       }
     },
     additionalFilter() {
+      console.log(this.additionalFilter);
+      if(this.additionalFilter.type == "Options") {
+        this.$store.dispatch('uxModule/setLoading')
+        // get options of additional field..
+        this.$store.dispatch("propertyModule/additionalFilterOptions", {field:this.additionalFilter.column});
+        this.$store.dispatch('uxModule/hideLoader')
+
+      }
       this.additionalFilterRule = null;
       this.additionalFilterValue = null;
     },
@@ -869,7 +769,11 @@ export default {
       }
     },
     addFilter() {
+      if(this.additionalFilter.type == "Number") {
+      this.additionalFilters.push({ rule: "Number", value: this.additionalFilterValue, statement: "And", name: this.additionalFilter.column });
+      } else {
       this.additionalFilters.push({ rule: this.additionalFilterRule, value: this.additionalFilterValue, statement: "And", name: this.additionalFilter.column });
+      }
       this.additionalFilterValue = "";
       this.additionalFilterRule = "";
     },

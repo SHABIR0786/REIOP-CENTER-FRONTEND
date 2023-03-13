@@ -9,9 +9,9 @@
         <b-container fluid>
             <b-row class="text-center">
                 <b-col class="d-flex justify-content-end flex-column align-items-center">
-                    <b-button variant="primary" class="add-seller" @click="$emit('modalResponse', 'original')">Download Original File</b-button>
+                    <b-button variant="primary" @click="$emit('modalResponse', 'original')">Download Original File</b-button>
                     or
-                    <b-button variant="primary" class="add-seller" @click="$emit('modalResponse', 'error')">Download Errors File</b-button>
+                    <b-button variant="primary" @click="$emit('modalResponse', 'error')">Download Errors File</b-button>
                 </b-col>
             </b-row>
         </b-container>

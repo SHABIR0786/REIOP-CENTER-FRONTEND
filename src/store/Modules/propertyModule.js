@@ -8,7 +8,6 @@ const defaultFields = [
     { key: "actions", label: "Actions" },
     { key: "total_sellers", label: "Total Sellers", sortable: false },
     { key: "list_stack", label: "List Stack", sortable: false },
-
     { key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true, visible: false },
     // {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
     { key: "subject_city", label: "Subject City", sortable: true, visible: false },
@@ -24,6 +23,7 @@ const state = {
         ...defaultFields
     ],
     sameRowSubjects: [],
+    additionalFilterOptions:[],
     seperatedRowSubjects: [],
     total: 0,
     maxSellers: 0,
@@ -36,7 +36,6 @@ const state = {
         { key: "actions", label: "Actions" },
         { key: "total_sellers", label: "Total Sellers", sortable: true },
         { key: "list_stack", label: "List Stack", sortable: true },
-
         { key: "subject_address", stickyColumn: true, label: "Subject Address", sortable: true, visible: false },
         // {key: "subject_address_line2", label: "Subject Address Line 2", sortable: true},
         { key: "subject_city", label: "Subject City", sortable: true, visible: false },
@@ -66,6 +65,13 @@ const state = {
 }
 
 const mutations = {
+    SET_ADDITIONAL_FILTERS_OPTIONS(state, payload) {
+        try {
+            state.additionalFilterOptions = payload;
+        } catch(err) {
+            console.log(err);
+        }
+    },
     SET_ALL_SUBJECTS(state, payload) {
         try {
         state.sameRowSubjects = [];
@@ -659,6 +665,11 @@ const actions = {
     async deleteVuexStore({ commit }) {
         commit('VUEX_STORE');
     },
+    async additionalFilterOptions({ commit }, data) {
+        return await api.post('/additionalFilterOptions', {...data}).then(async (response) => {
+            commit('SET_ADDITIONAL_FILTERS_OPTIONS', response.options);
+        });
+    }
 }
 
 const getters = {
@@ -667,7 +678,6 @@ const getters = {
         if (typeof sameRowSubjects === 'string') {
             return JSON.parse(sameRowSubjects);
         }
-
         return [];
     },
     seperatedRowSubjects: ({ seperatedRowSubjects }) => seperatedRowSubjects,
@@ -677,7 +687,8 @@ const getters = {
     maxPhones: ({ maxPhones }) => maxPhones,
     maxEmails: ({ maxEmails }) => maxEmails,
     maxGoldenAddresses: ({ maxGoldenAddresses }) => maxGoldenAddresses,
-    template: ({ template }) => template
+    template: ({ template }) => template,
+    additionalFilterOptions: ({ additionalFilterOptions }) => additionalFilterOptions,
 }
 
 export default {
