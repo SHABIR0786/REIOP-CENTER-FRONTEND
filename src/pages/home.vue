@@ -5,7 +5,7 @@
                 <home-card :item="item" v-if="item.isVisible"></home-card>
             </b-col>
         </b-row>
-            <b-col md="2">
+            <b-col md="2"  v-if="authUser && authUser.role == 1">
                 <b-button @click="showCheckImportModal()">Check Imports</b-button>
             </b-col>
         <CheckImportsModal :showModal="showModal"  @cancel="showModal=false"></CheckImportsModal>
@@ -28,6 +28,7 @@ export default {
             cards: 'homeModule/cards',
             isCollapsed: 'uxModule/isCollapsed',
             adminMode: 'loginModule/getAdminMode',
+            authUser: 'loginModule/getAuthUser',
         })
     },
     data() {
