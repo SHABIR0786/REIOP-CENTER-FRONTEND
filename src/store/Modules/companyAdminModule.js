@@ -20,11 +20,9 @@ const state = {
     ],
     teams: [],
     users: [],
-
     companyTeams: [],
     total_team: 0,
     total_users: 0,
-
     existTeam: [],
     team:{},
     company:{},
@@ -143,7 +141,7 @@ const actions = {
             return response
         })
     },
-    async getAllTeams({ commit, dispatch }, {page, perPage,user_id}) {
+    async getTeams({ commit, dispatch }, {page, perPage,user_id}) {
         return await api.get(`/companyAdminTeams?page=${page}&perPage=${perPage}&user_id=${user_id}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})

@@ -13,6 +13,7 @@ const state = {
         {key:"updated_at", label: "Updated Date", sortable: true},
     ],
     teams: [],
+    allTeams: [],
     companyTeams: [],
     total: 0,
     existTeam: [],
@@ -26,7 +27,7 @@ const state = {
 }
 
 const mutations = {
-    SET_ALL_TEAMS(state, payload) {
+    SET_TEAMS(state, payload) {
         const data = [...payload]
         data.forEach(e => {
             e.created_at = e.created_at.split('T')[0];
@@ -34,6 +35,14 @@ const mutations = {
             e.total_users = e.users.length;
         })
         state.teams = [...data]
+    },
+    SET_ALL_TEAMS(state, payload) {
+        const data = [...payload]
+        data.forEach(e => {
+            e.text = e.name;
+            e.value = e.id;
+        })
+        state.allTeams = [...data]
     },
     SET_COMPANY_TEAMS(state, payload) {
         const data = [...payload]
@@ -89,14 +98,27 @@ const mutations = {
 }
 
 const actions = {
-    async getAllTeams({ commit, dispatch }, {page, perPage}) {
+    async getTeams({ commit, dispatch }, {page, perPage}) {
         return await api.get(`/teams?page=${page}&perPage=${perPage}`).then((response) => {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, {root: true})
             }
 
             if(response && response.teams && response.teams.data) {
-                commit('SET_ALL_TEAMS', response.teams.data)
+                commit('SET_TEAMS', response.teams.data)
+            }
+
+            return response
+        })
+    },
+    async getAllTeams({ commit, dispatch }) {
+        return await api.get(`/allTeams`).then((response) => {
+            if (response && response.status === 401) {
+                dispatch('loginModule/logout', null, {root: true})
+            }
+
+            if(response && response.teams) {
+                commit('SET_ALL_TEAMS', response.teams)
             }
 
             return response
@@ -122,7 +144,7 @@ const actions = {
             }
 
             if(response && response.teams && response.teams.data) {
-                commit('SET_ALL_TEAMS', response.teams.data)
+                commit('SET_TEAMS', response.teams.data)
             }
             return response
         })
@@ -207,6 +229,7 @@ const actions = {
 const getters = {
     fields: ({ fields }) => fields,
     teams: ({ teams }) => teams,
+    allTeams: ({ allTeams }) => allTeams,
     companyTeams: ({ companyTeams }) => companyTeams,
     total: ({total}) => total,
     existTeam: ({existTeam}) => existTeam,

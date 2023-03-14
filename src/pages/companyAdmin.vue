@@ -480,7 +480,7 @@ export default {
               this.showUserExistModal = true;
             }
           })
-          this.$store.dispatch("companyAdminModule/getAllTeams", {page: 1, perPage: this.perPage})
+          this.$store.dispatch("companyAdminModule/getTeams", {page: 1, perPage: this.perPage})
     },
     async switchCompanyAdmin(company=null){
       try {

@@ -176,7 +176,7 @@ export default {
           })
       }
 
-      await this.$store.dispatch("teamModule/getAllTeams", {page: 1, perPage: this.perPage})
+      await this.$store.dispatch("teamModule/getTeams", {page: 1, perPage: this.perPage})
       this.$store.dispatch('uxModule/hideLoader')
     } catch (error) {
       this.$store.dispatch('uxModule/hideLoader')
@@ -214,7 +214,7 @@ export default {
               this.showUserExistModal = true;
             }
           })
-          this.$store.dispatch("teamModule/getAllTeams", {page: 1, perPage: this.perPage})
+          this.$store.dispatch("teamModule/getTeams", {page: 1, perPage: this.perPage})
     },
     deleteItem(item){
       // this.$bvToast.toast("Team Delete Functionality is in progress! Because of table relationships", {
@@ -295,12 +295,12 @@ export default {
   watch: {
     currentPage: {
       handler: function() {
-        this.$store.dispatch('teamModule/getAllTeams', {page: this.currentPage, perPage: this.perPage, search: this.search})
+        this.$store.dispatch('teamModule/getTeams', {page: this.currentPage, perPage: this.perPage, search: this.search})
       }
     },
     perPage: {
       handler: function () {
-        this.$store.dispatch('teamModule/getAllTeams', {page: 1, perPage: this.perPage, search: this.search})
+        this.$store.dispatch('teamModule/getTeams', {page: 1, perPage: this.perPage, search: this.search})
       }
     },
     search() {

@@ -308,7 +308,7 @@ export default {
         this.$store.dispatch('companyModule/getTotal')
 
         try {
-        //     await this.$store.dispatch("teamModule/getAllTeams", {
+        //     await this.$store.dispatch("teamModule/getTeams", {
         //         page: 1,
         //         perPage: this.perPage
         //     })

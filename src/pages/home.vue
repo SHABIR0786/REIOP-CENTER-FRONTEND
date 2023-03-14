@@ -5,17 +5,23 @@
                 <home-card :item="item" v-if="item.isVisible"></home-card>
             </b-col>
         </b-row>
+            <b-col md="2">
+                <b-button @click="showCheckImportModal()">Check Imports</b-button>
+            </b-col>
+        <CheckImportsModal :showModal="showModal"  @cancel="showModal=false"></CheckImportsModal>
     </b-container>
 </template>
 
 <script>
 import { mapGetters } from "vuex"
 import HomeCard from "@/components/home/HomeCard"
+import CheckImportsModal from "@/components/home/CheckImportsModal.vue";
 
 export default {
     name: "Home",
     components: {
-        "home-card": HomeCard
+        "home-card": HomeCard,
+        CheckImportsModal,
     },
     computed: {
         ...mapGetters({
@@ -23,6 +29,16 @@ export default {
             isCollapsed: 'uxModule/isCollapsed',
             adminMode: 'loginModule/getAdminMode',
         })
+    },
+    data() {
+        return {
+            showModal: false,
+        }
+    },
+    methods:{
+        showCheckImportModal() {
+            this.showModal = true;
+        }
     },
     async created () {
         try {

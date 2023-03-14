@@ -4,7 +4,7 @@
             <router-link :to="item.path" class="d-flex">
                 <b-badge class="circle" :variant="item.variant">
                     <b-icon :icon="item.icon"></b-icon>
-                </b-badge>
+                </b-badge>  
                 <div>
                     <h4>{{item.counter}}</h4>
                     <p class="detail">{{item.text}}</p>
@@ -19,13 +19,17 @@ import { BIcon } from "bootstrap-vue"
 
 export default {
     name: "HomeCard",
+    components:{
+    "b-icon": BIcon,
+    },
     props: {
         item: {
             type: Object
         }
     },
-    components: {
-        "b-icon": BIcon,
-    },
+    data() {
+        return {
+        }
+    }
 }
 </script>
