@@ -643,9 +643,12 @@ export default {
       await this.$store.dispatch("importModule/loadVisibleFields");
       const instance = this;
       this.customViewVisibleFields.forEach(function(item) {
+        console.log(item);
       const defaultField = instance.additionalFilterFieldsTypes.find(x=>x.column == item.field);
+      if(item.type || defaultField) {
       let type = item.type?item.type:defaultField.type;      
       instance.chooseAdditionalFilters.push({text:item.label,value:{type:type, text: item.label,column: item.field}});
+      }
       });
       let response = await this.$store.dispatch(
         "subjectModule/SubjectfilterList",

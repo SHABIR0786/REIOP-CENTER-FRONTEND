@@ -126,6 +126,7 @@ export const state = {
     {column:"phone_error_type",type:"Options"},
     //Email Fields
     {column:"email_address",type:"String"},
+    {column:"email_validity",type:"String"},
     {column:"email_skip_source",type:"String"},
     {column:"email_skip_date",type:"Date"},
     {column:"email_pull_date",type:"Date"},
