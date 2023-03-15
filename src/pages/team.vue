@@ -85,7 +85,8 @@
         <template v-slot:cell(actions)="data">
           <b-icon class="mr-2 cursor-pointer" icon="person-plus" variant="info" title="Add Member" @click="editItem_Add(data.item)"></b-icon>
           <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" title="Edit Team" @click="editItem(data.item)"></b-icon>
-          <b-icon class="cursor-pointer" variant="danger" icon="trash" title="Delete Team" @click="deleteItem(data.item)"></b-icon>
+          <b-icon class="mr-2 cursor-pointer" variant="danger" icon="trash" title="Delete Team" @click="deleteItem(data.item)"></b-icon>
+          <b-icon class="cursor-pointer" variant="primary" icon="files" title="Copy Settings" @click="copySettingsModal(data.item)"></b-icon>
         </template>
       </b-table>
       <b-row>
@@ -111,6 +112,7 @@
       </b-row>
     </div>
     <add-team-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-team-modal>
+    <copy-settings-modal :showModal="showCopySettingsModal" @cancel="showCopySettingsModal=false"></copy-settings-modal>
     <edit-team-modal :showModal="showEditModal" :showEditAddModal="showEdit_AddModal" :propsData="editedItem" @cancel="showEditModal=false;showEdit_AddModal=false" @save="save" @delete="showDeleteModal = true;showEditModal=false"></edit-team-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" header="Delete Team" title="Are you sure? you want to delete this Team with all of its data"></delete-modal>
     <confirm-modal :showModal="showUserExistModal"   @modalResponse="userExist">
@@ -123,6 +125,7 @@
 import {BIcon} from "bootstrap-vue";
 import {mapGetters} from "vuex";
 import AddTeamModal from "../components/teams/AddTeamModal";
+import CopySettingsModal from "../components/teams/CopySettingsModal";
 import EditTeamModal from "../components/teams/EditTeamModal";
 import DeleteModal from "../components/deleteModal/DeleteModal";
 import ConfirmModal from "@/components/slotModal/SlotModal";
@@ -135,6 +138,7 @@ export default {
     EditTeamModal,
     DeleteModal,
     ConfirmModal,
+    CopySettingsModal
   },
   data () {
     return {
@@ -148,6 +152,7 @@ export default {
       pageOptions: [10, 20, 50],
       search: '',
       showAddModal: false,
+      showCopySettingsModal: false,
       showEditModal: false,
       showEdit_AddModal: false,
       loading: false,
@@ -183,6 +188,10 @@ export default {
     }
   },
   methods: {
+    copySettingsModal(item) {
+      console.log(item);
+      this.showCopySettingsModal = true;
+    },
     userExist () {
       this.showUserExistModal = false;
       this.showAddModal = true;
@@ -267,7 +276,6 @@ export default {
             autoHideDelay: 5000,
         });
     }
-
     },
     async searchTeam() {
         this.loading = true;

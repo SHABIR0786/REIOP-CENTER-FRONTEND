@@ -44,6 +44,18 @@
                     </b-col>
         </b-row>
         </b-container>
+        <template #modal-footer>
+            <div class="w-100">
+                <b-button
+                        variant="primary"
+                        size="sm"
+                        class="float-right"
+                        @click="$emit('cancel')"
+                >
+                    Cancel
+                </b-button>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
@@ -77,9 +89,11 @@ import HomeCard from "@/components/home/HomeCard"
         },
         watch: {
             showModal:async function() {
+            if(this.showModal && !this.teams) {
             this.$store.dispatch('uxModule/setLoading');
             await this.$store.dispatch("teamModule/getAllTeams");
             this.$store.dispatch('uxModule/hideLoader');
+            }
             }
         },
         methods:{
