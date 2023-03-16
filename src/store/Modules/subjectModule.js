@@ -16,8 +16,6 @@ const state = {
         {key: "subject_market", label: "Market", sortable: true},
         {key: "subject_type", label: "Subject Type", sortable: true},
         {key: "subject_age", label: "Subject Age", sortable: true},
-
-
         // Custom Fields
         {key: "subject_last_marketed_date", label: "Last Marketed Date", sortable: true},
         {key: "subject_last_exported_date", label: "Last Exported Date", sortable: true},

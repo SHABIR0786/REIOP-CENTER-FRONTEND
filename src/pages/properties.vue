@@ -430,6 +430,13 @@ export default {
             customViewTemplate: null,
             exportCount: 0,
             showListFilterModal: false,
+            totals: {
+              subjectsCount: 0,
+              sellersCount: 0,
+              phonesCount: 0,
+              emailsCount: 0,
+              goldenAddressesCount: 0
+            }
         }
     },
     computed: {
@@ -439,7 +446,7 @@ export default {
             items: 'propertyModule/sameRowSubjects',
             seperatedRowSubjects: 'propertyModule/seperatedRowSubjects',
             total: 'propertyModule/total',
-            totals: 'propertyModule/totals',
+            totalsCount: 'propertyModule/totals',
             maxSellers: 'propertyModule/maxSellers',
             maxPhones: 'propertyModule/maxPhones',
             maxEmails: 'propertyModule/maxEmails',
@@ -489,6 +496,10 @@ export default {
                 custom: '',
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc,
+            });
+            await this.$store.dispatch("propertyModule/getTotalsCount", {
+                filter: this.filtersName,
+                custom: '',
             })
             this.propertyFields = [...this.fields];
             this.propertyFields.unshift({
@@ -543,6 +554,10 @@ export default {
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 })
+                await this.$store.dispatch("propertyModule/getTotalsCount", {
+                filter: JSON.stringify(this.filtersName),
+                custom: '',
+                });
                 this.isPropertySearched = false;
                 this.$store.dispatch('uxModule/hideLoader')
             } catch (error) {
@@ -560,7 +575,11 @@ export default {
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
-                })
+                });
+                await this.$store.dispatch("propertyModule/getTotalsCount", {
+                    filter: JSON.stringify(this.filtersName),
+                    custom: '',
+                });
                 if (this.customViewTemplate) {
                     this.showCustomView();
                 }
@@ -589,6 +608,10 @@ export default {
                     sortBy: this.sortBy,
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
+                });
+                await this.$store.dispatch("propertyModule/getTotalsCount", {
+                filter: JSON.stringify(this.filtersName),
+                custom: '',
                 });
                 this.$store.dispatch('uxModule/hideLoader')
                 if (this.customViewTemplate) {
@@ -946,7 +969,7 @@ export default {
             this.showCustomView(template, template.fields_type);
 
         },
-        triggerFilter(filter) {
+       async triggerFilter(filter) {
             this.filter = {};
             this.showFilterPropertiesModal = false;
 
@@ -961,11 +984,15 @@ export default {
             this.$store.dispatch("propertyModule/filterProperties", {
                 page: 1,
                 perPage: this.perPage,
-                filter: this.filter,
+                filter: JSON.stringify(this.filtersName),
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc,
                 custom: this.customViewTemplate
-            })
+            });
+             await this.$store.dispatch("propertyModule/getTotalsCount", {
+                filter: JSON.stringify(this.filtersName),
+                custom: '',
+            });
         },
         async getTemplate(event) {
             this.$store.dispatch('uxModule/setLoading');
@@ -1004,9 +1031,10 @@ export default {
         }
     },
     watch: {
-        totals: {
+        totalsCount: {
             handler: function () {
                 this.exportCount = this.totals.subjectsCount;
+                this.totals = this.totalsCount;
             }
         },
         currentPage: {

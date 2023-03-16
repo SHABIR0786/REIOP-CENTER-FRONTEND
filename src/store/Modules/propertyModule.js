@@ -567,7 +567,6 @@ const actions = {
 
             if (response && response.subjects && response.subjects.data) {
                 commit('SET_ALL_SUBJECTS', {subjects: response.subjects, customViewHasPhone:customViewHasPhone, customViewHasEmail:customViewHasEmail, customViewHasGolden: customViewHasGolden  })
-                // commit('GET_TOTAL', response.subjects.total)
             }
             return response
         })
@@ -595,13 +594,23 @@ const actions = {
             if (response && response.response && response.response.status === 401) {
                 dispatch('loginModule/logout', null, { root: true })
             }
-
             if (response && response.subjects && response.subjects.data) {
                 commit('SET_ALL_SUBJECTS', {subjects: response.subjects, customViewHasPhone:customViewHasPhone, customViewHasEmail:customViewHasEmail, customViewHasGolden: customViewHasGolden  })
                 // commit('GET_TOTAL', response.subjects.total)
             }
-            if(response.totals) {
-                commit('GET_TOTALS', response.totals);
+            if(response) {
+                commit('GET_TOTALS', response);
+            }
+            return response
+        })
+    },
+    async getTotalsCount({ commit, dispatch }, data) {
+        return await api.post(`/properties/getTotals`, { ...data }).then((response) => {
+            if (response && response.response && response.response.status === 401) {
+                dispatch('loginModule/logout', null, { root: true })
+            }
+            if(response) {
+                commit('GET_TOTALS', response);
             }
             return response
         })
