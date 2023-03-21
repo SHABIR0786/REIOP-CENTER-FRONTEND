@@ -423,7 +423,7 @@
           template_id: this.template_id,
           filter: this.selectedFilter,
           fileType: "csv",
-          filters: this.filtersName,
+          filters: JSON.stringify(this.filtersName),
           search: this.search,
           sortBy: this.sortBy,
           sortDesc: this.sortDesc,
