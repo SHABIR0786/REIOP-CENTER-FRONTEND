@@ -643,7 +643,6 @@ export default {
       await this.$store.dispatch("importModule/loadVisibleFields");
       const instance = this;
       this.customViewVisibleFields.forEach(function(item) {
-        console.log(item);
       const defaultField = instance.additionalFilterFieldsTypes.find(x=>x.column == item.field);
       if(item.type || defaultField) {
       let type = item.type?item.type:defaultField.type;      
@@ -666,7 +665,6 @@ export default {
       }
     },
     additionalFilter() {
-      console.log(this.additionalFilter);
       if(this.additionalFilter.type == "Options") {
         this.$store.dispatch('uxModule/setLoading')
         // get options of additional field..
@@ -683,7 +681,6 @@ export default {
       if(this.ListFilters.findIndex(x=>x.name == filterName.name && x.rule == filterName.rule && x.option == filterName.option) == -1){
           this.ListFilters.push(JSON.parse(JSON.stringify(filterName)));
       }
-      console.log(this.ListFilters); 
     },
     removeListFilter(index) {
       this.ListFilters.splice(index,1);

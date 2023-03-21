@@ -106,7 +106,6 @@
         watch: {
             showModal() {
                 this.label = {...this.propsData}
-                console.log(this.label);
                 if(this.readonlyfields.includes(this.label.field)) {
                     this.readyonly  = true;
                 } else {

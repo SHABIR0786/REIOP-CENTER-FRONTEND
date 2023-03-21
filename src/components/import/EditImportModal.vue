@@ -561,7 +561,6 @@ export default {
         deep: true,
         handler() {
           this.editData = {...this.data}
-          console.log(this.editData);
           if(!this.editData.list_skip_source) {
             this.editData.list_skip_source = 'Unknown';
           }

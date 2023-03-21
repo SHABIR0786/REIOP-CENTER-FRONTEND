@@ -159,7 +159,7 @@
     </b-row>
     <div v-if="componentMounted">
     <filter-properties :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewFilterPropertiesModal" @cancel="showNewFilterPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></filter-properties>
-    <export-properties-modal :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewExportPropertiesModal" @cancel="showNewExportPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></export-properties-modal>
+    <export-properties-modal :filtersName="filtersName" :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewExportPropertiesModal" @cancel="showNewExportPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></export-properties-modal>
     <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <custom-view :customViews="templatesToExport" :changeTemplate="changeTemplate" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
@@ -173,9 +173,7 @@
 import {
     mapGetters
 } from "vuex"
-import {
-    BIcon
-} from "bootstrap-vue"
+import { BIcon } from "bootstrap-vue"
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 // import AddSubjectModal from "../components/subject/AddSubjectModal";
@@ -1033,8 +1031,10 @@ export default {
     watch: {
         totalsCount: {
             handler: function () {
-                this.exportCount = this.totals.subjectsCount;
+                if(this.totalsCount.subjectsCount) {
+                this.exportCount = this.totalsCount.subjectsCount;
                 this.totals = this.totalsCount;
+                }
             }
         },
         currentPage: {

@@ -154,6 +154,9 @@
       custom_view: {
         type: [Array, Object],
       },
+      filtersName: {
+        type: [Object]
+      },
       fields_type: {
         type: String,
       },
@@ -172,12 +175,12 @@
       sortDesc: {
         type: Boolean,
       },
-      totals: {
-        type: Number,
-      },
       showModal: {
         type: Boolean
       },
+      totals: {
+        type: [Number, String]
+      }
     },
     components: {
     },
@@ -193,79 +196,14 @@
         notes: null,
         marketing_period: null,
         export_amount: null,
-        skipSourceType: null,
-        skipSourceTypes: ["Includes", "Excludes"],
-        conditions: ['Equal To','Greater Than','Less Than'],
-        listStackCount: null,
-        TotalSubjectsCount: null,
-        TotalSellersCount: null,
-        TotalEmailsCount: null,
-        TotalPhonesCount: null,
-        TotalGoldenAddressesCount: null,
-        ListStack: null,
-        SubjectsCondition: null,
-        SellersCondition: null,
-        PhonesCondition: null,
-        EmailsCondition: null,
-        GoldenAddressesCondition: null,
         skipSource: null,
-        allData: {
-          Market:[],
-          Group:[],
-          Type:[],
-          Source:[],
-          Errors:[],
-          Error:[],
-          RunDate:[],
-          TotalSellers:[],
-          ListStack:[],
-          list_custom_field_1:[],
-          list_custom_field_2:[],
-          list_custom_field_3:[],
-          list_custom_field_4:[],
-          list_custom_field_5:[],
-        },
-        allFilters: {
-          Market:[],
-          Group:[],
-          Type:[],
-          Source:[],
-          Errors:[],
-          Error:[],
-          RunDate:[],
-          TotalSellers:[],
-          ListStack:[],
-          list_custom_field_1:[],
-          list_custom_field_2:[],
-          list_custom_field_3:[],
-          list_custom_field_4:[],
-          list_custom_field_5:[],
-        },
-        selectedAll: {
-          Market: false,
-          Group: false,
-          Type: false,
-          Source: false,
-          SkipSource:false,
-        },
         savedMarketingChannels: [
           {
             value: null,
             text: "Select Marketing Channel",
           },
         ],
-        isShowMarketDropDown: false,
-        isSkipSourceDropDown: false,
-        isGroupDropDown: false,
-        isTypeDropDown: false,
-        isSourceDropDown: false,
         stepNumber: 1,
-        savedMarkets: [
-          {
-            value: 1,
-            text: "ABC",
-          },
-        ],
         ExportTypes: [
           {
             value: null,
@@ -322,10 +260,7 @@
           },
         ],
         selectedFilter: null,
-        isShowSlidePopUp: false,
-        showSaveFilterModal: false,
         SelectExportAmount: [],
-        isListLoading: true,
         isExporting: false,
         totalSubjects: 0,
       };
@@ -333,22 +268,10 @@
     computed: {
       ...mapGetters({
         marketingChannelsForDropDown: "marketingChannelModule/marketingChannelsForDropDown",
-        lists: "listModule/lists",
         filters: "filterModule/filters",
         sourceList: "listModule/skipSourceList",
         skipSourceListFromDB: "listModule/skipSourceListFromDB",
       }),
-      totalFilters() {
-        let total = 0;
-        for (let item in this.allFilters) {
-          total += this.allFilters[item].length;
-        }
-        this.$emit("filtersCount", total);
-        return total;
-      },
-      MarketFilterCount() {
-        return this.allFilters.Market.length > 0;
-      },
       isExportDisabled() {
         if (this.export_amount == null || this.isExporting) {
           return true;
@@ -362,6 +285,7 @@
         page: 1,
         perPage: 20,
       });
+      console.log(this.totals);
       this.marketingChannelsForDropDown.forEach((e) => {
         const marketingChannel = {
           value: "",
@@ -371,44 +295,10 @@
         marketingChannel.text = e.marketing_channel_name;
         this.savedMarketingChannels.push(marketingChannel);
       });
-      await this.$store.dispatch("listModule/getAllLists", {
-        page: 1,
-        perPage: this.perPage,
-      });
-      this.lists.forEach((el) => {
-        if (
-          el.list_market &&
-          !this.allData.Market.includes(el.list_market) &&
-          !this.allFilters.Market.includes(el.list_market)
-        ) {
-          this.allData.Market.push(el.list_market);
-        }
-        if (
-          el.list_group &&
-          !this.allData.Group.includes(el.list_group) &&
-          !this.allFilters.Group.includes(el.list_group)
-        ) {
-          this.allData.Group.push(el.list_group);
-        }
-        if (
-          el.list_type &&
-          !this.allData.Type.includes(el.list_type) &&
-          !this.allFilters.Type.includes(el.list_type)
-        ) {
-          this.allData.Type.push(el.list_type);
-        }
-        if (
-          el.list_source &&
-          !this.allData.Source.includes(el.list_source) &&
-          !this.allFilters.Source.includes(el.list_source)
-        ) {
-          this.allData.Source.push(el.list_source);
-        }
-      });
-      this.isListLoading = false;
     },
     watch: {
-      totals: function() {
+      totals: {
+        handler: function() {
         this.totalSubjects = this.totals;
         this.SelectExportAmount = [];
         let exportV_3 = Math.round(this.totalSubjects / 5); //Round the number {(Total in view / 5)}
@@ -450,7 +340,9 @@
             text: "Export all " + this.totalSubjects,
           }
         );
-        console.log(this.SelectExportAmount);
+        },
+        immediate: true,
+        deep: true
       },
       marketing_start_date: function() {
         this.checkNextStep();
@@ -531,7 +423,7 @@
           template_id: this.template_id,
           filter: this.selectedFilter,
           fileType: "csv",
-          filters: this.allFilters,
+          filters: this.filtersName,
           search: this.search,
           sortBy: this.sortBy,
           sortDesc: this.sortDesc,
