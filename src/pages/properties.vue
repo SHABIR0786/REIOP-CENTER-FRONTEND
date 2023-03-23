@@ -495,6 +495,10 @@ export default {
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc,
             });
+            this.exportCount = this.total;
+            this.totals.subjectsCount  = this.total;
+            this.componentMounted = true;
+            this.$store.dispatch('uxModule/hideLoader');
             await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: this.filtersName,
                 custom: '',
@@ -504,8 +508,6 @@ export default {
                 key: "delete",
                 label: ""
             });
-            this.$store.dispatch('uxModule/hideLoader');
-            this.componentMounted = true;
             // Fetching the visible custom fields
             await this.$store.dispatch('labelModule/visibleCustomFields');
             // Load the Temaplates for get all templates
