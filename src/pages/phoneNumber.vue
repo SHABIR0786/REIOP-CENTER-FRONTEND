@@ -59,7 +59,7 @@
             <b-icon icon="trash" aria-hidden="true"></b-icon>Delete Selected
         </b-button>
     </div>
-    <b-table id="phone-number-table" small striped hover sort-icon-left no-local-sorting :busy="isBusy" :fields="fields" :items="filteredOrAllData" @sort-changed="sortingChanged" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-table id="phone-number-table" small striped hover sort-icon-left no-local-sorting :busy="isBusy" :fields="phoneNumberFields" :items="filteredOrAllData" @sort-changed="sortingChanged" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template #table-busy>
             <div class="text-center" my-2>
                 <b-spinner class="align-middle"></b-spinner>
@@ -171,6 +171,7 @@ export default {
         return {
             isBusy: false,
             showModal: false,
+            phoneNumberFields: [],
             selectedFilter: null,
             isFinishedFilterPhoneNumbers: false,
             perPage: 20,
@@ -216,7 +217,8 @@ export default {
             filteredPhoneNumber: 'phoneNumberModule/filteredPhoneNumber',
             filteredPhoneNumbersCount: 'phoneNumberModule/filteredPhoneNumbersCount',
             filtersCountTable: 'phoneNumberModule/filtersCountTable',
-            selectedPhoneNumber: 'phoneNumberModule/phoneNumber'
+            selectedPhoneNumber: 'phoneNumberModule/phoneNumber',
+            sectionLabels: 'labelModule/sectionLabels'
         }),
         rows() {
             return this.total ? this.total : 1
@@ -226,6 +228,16 @@ export default {
         // this.$store.dispatch('phoneNumberModule/getTotal')
         try {
             this.$store.dispatch('uxModule/setLoading')
+            // Fetching the visible custom fields
+            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'phone'});
+            this.phoneNumberFields  = [...this.fields];
+            const subjectAgeIndex = this.phoneNumberFields.findIndex(x=>x.key == "phone_skip_source");
+            const instance = this;
+            if(this.sectionLabels) {
+                this.sectionLabels.forEach(function(item,index) {
+                    instance.phoneNumberFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
+                });
+            }
             await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {
                 page: 1,
                 perPage: this.perPage,

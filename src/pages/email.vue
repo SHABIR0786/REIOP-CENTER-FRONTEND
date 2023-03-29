@@ -66,7 +66,7 @@
             sort-icon-left
             no-local-sorting
             :busy="isBusy"
-            :fields="fields"
+            :fields="emailFields"
             :items="filteredOrAllData"
             @sort-changed="sortingChanged"
             responsive
@@ -188,6 +188,7 @@ export default {
         return {
             isBusy: false,
             selectedFilter: null,
+            emailFields: [],
             showModal: false,
             isFinishedFilterEmails: false,
             totalFilters:0,
@@ -234,12 +235,23 @@ export default {
             filteredItems: 'emailModule/filteredEmail',
             filtersCountTable: 'emailModule/filtersCountTable',
             filteredEmailsCount:'emailModule/filteredEmailsCount',
+            sectionLabels: 'labelModule/sectionLabels'
         }),
         rows() { return this.total ? this.total : 1 }
     },
     async created () {
         try {
           this.$store.dispatch('uxModule/setLoading')
+            // Fetching the visible custom fields
+            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'email'});
+            this.emailFields  = [...this.fields];
+            const subjectAgeIndex = this.emailFields.findIndex(x=>x.key == "email_skip_source");
+            const instance = this;
+            if(this.sectionLabels) {
+                this.sectionLabels.forEach(function(item,index) {
+                    instance.emailFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
+                });
+            }
             await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
           this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {

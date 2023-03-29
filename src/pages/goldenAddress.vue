@@ -59,7 +59,7 @@
             <b-icon icon="trash" aria-hidden="true"></b-icon>Delete Selected
         </b-button>
     </div>
-    <b-table id="golden-address-table" small striped hover sort-icon-left no-local-sorting :busy="isBusy" :fields="fields" :items="filteredOrAllData" @sort-changed="sortingChanged" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-table id="golden-address-table" small striped hover sort-icon-left no-local-sorting :busy="isBusy" :fields="goldenAddressFields" :items="filteredOrAllData" @sort-changed="sortingChanged" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template #table-busy>
             <div class="text-center" my-2>
                 <b-spinner class="align-middle"></b-spinner>
@@ -185,6 +185,7 @@ export default {
         return {
             isBusy: false,
             showModal: false,
+            goldenAddressFields: [],
             selectedFilter: null,
             showFilterPropertiesModal: false,
             isFinishedFilterGoldenAddresses: false,
@@ -229,8 +230,8 @@ export default {
             filteredItems: 'goldenAddressModule/filteredGoldenAddress',
             filtersCountTable: 'goldenAddressModule/filtersCountTable',
             filteredGoldenAddressesCount: 'goldenAddressModule/filteredGoldenAddressesCount',
-            selectedGoldenAddress: 'goldenAddressModule/goldenAddress'
-
+            selectedGoldenAddress: 'goldenAddressModule/goldenAddress',
+            sectionLabels: 'labelModule/sectionLabels'
         }),
         rows() {
             return this.total ? this.total : 1
@@ -239,6 +240,16 @@ export default {
     async created() {
         try {
             this.$store.dispatch('uxModule/setLoading')
+            // Fetching the visible custom fields
+            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'golden_address'});
+            this.goldenAddressFields  = [...this.fields];
+            const subjectAgeIndex = this.goldenAddressFields.findIndex(x=>x.key == "golden_address_zip");
+            const instance = this;
+            if(this.sectionLabels) {
+                this.sectionLabels.forEach(function(item,index) {
+                    instance.goldenAddressFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
+                });
+            }
             await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {
                 page: 1,
                 perPage: this.perPage,

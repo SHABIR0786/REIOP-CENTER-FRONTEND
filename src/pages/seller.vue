@@ -56,7 +56,7 @@
             <b-icon icon="trash" aria-hidden="true"></b-icon>Delete Selected
         </b-button>
     </div>
-    <b-table id="seller-table" small striped sort-icon-left no-local-sorting hover :busy="isBusy" :fields="fields" :items="filteredOrAllData" @sort-changed="sortingChanged" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-table id="seller-table" small striped sort-icon-left no-local-sorting hover :busy="isBusy" :fields="sellerFields" :items="filteredOrAllData" @sort-changed="sortingChanged" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template #table-busy>
             <div class="text-center" my-2>
                 <b-spinner class="align-middle"></b-spinner>
@@ -213,6 +213,7 @@ export default {
     data() {
         return {
             isBusy: false,
+            sellerFields: [],
             selectedFilter: null,
             totalFilters: 0,
             isFinishedFilterSellers: false,
@@ -265,6 +266,7 @@ export default {
             filteredItems: 'sellerModule/filteredSeller',
             filtersCountTable: 'sellerModule/filtersCountTable',
             filteredSellersCount: 'sellerModule/filteredSellersCount',
+            sectionLabels: 'labelModule/sectionLabels',
         }),
         rows() {
             return this.total ? this.total : 1
@@ -273,6 +275,16 @@ export default {
     async created() {
         try {
             this.$store.dispatch('uxModule/setLoading')
+            // Fetching the visible custom fields
+            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'seller'});
+            this.sellerFields  = [...this.fields];
+            const subjectAgeIndex = this.sellerFields.findIndex(x=>x.key == "seller_company_owned");
+            const instance = this;
+            if(this.sectionLabels) {
+                this.sectionLabels.forEach(function(item,index) {
+                    instance.sellerFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
+                });
+            }
             await this.$store.dispatch("sellerModule/getAllSellers", {
                 page: 1,
                 perPage: this.perPage,

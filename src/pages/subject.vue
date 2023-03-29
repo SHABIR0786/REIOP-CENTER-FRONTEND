@@ -56,7 +56,7 @@
             <b-icon icon="trash" aria-hidden="true"></b-icon>Delete Selected
         </b-button>
     </div>
-    <b-table id="subject-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="fields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
+    <b-table id="subject-table" small sort-icon-left no-local-sorting striped hover :busy="isBusy" :fields="subjectFields" @sort-changed="sortingChanged" :items="filteredOrAllData" responsive :per-page="0" :current-page="currentPage" :sticky-header="true">
         <template #table-busy>
             <div class="text-center" my-2>
                 <b-spinner class="align-middle"></b-spinner>
@@ -215,6 +215,7 @@ export default {
         return {
             isBusy: false,
             selectedFilter: null,
+            subjectFields: [],
             showModal: false,
             showFiltersOnTable: [],
             perPage: 20,
@@ -261,6 +262,7 @@ export default {
             filteredSubjectsCount: 'subjectModule/filteredSubjectsCount',
             filtersCountTable: 'subjectModule/filtersCountTable',
             total: 'subjectModule/total',
+            sectionLabels: 'labelModule/sectionLabels',
             selectedSubject: 'subjectModule/subject'
         }),
         rows() {
@@ -271,14 +273,25 @@ export default {
     async created() {
         // this.$store.dispatch('subjectModule/getTotal')
         try {
-            this.$store.dispatch('uxModule/setLoading')
+            this.$store.dispatch('uxModule/setLoading');
+            // Fetching the visible custom fields
+            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'subject'});
+            this.subjectFields  = [...this.fields];
+            const subjectAgeIndex = this.subjectFields.findIndex(x=>x.key == "subject_age");
+            const instance = this;
+            if(this.sectionLabels) {
+                this.sectionLabels.forEach(function(item,index) {
+                    instance.subjectFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
+                });
+            }
             await this.$store.dispatch("subjectModule/getAllSubjects", {
                 page: 1,
                 perPage: this.perPage,
                 search: this.searchSubject,
                 sortBy: this.sortBy,
                 sortDesc: this.sortDesc
-            })
+            });
+
             this.$store.dispatch('uxModule/hideLoader')
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
