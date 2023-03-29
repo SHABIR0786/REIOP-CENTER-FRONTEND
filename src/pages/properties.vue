@@ -3,11 +3,11 @@
     <div class="properties-header">
         <h3>Properties</h3>
         <div class="boxes">
-            <div>{{totals.subjectsCount}} Subjects</div>
-            <div>{{totals.sellersCount}} Sellers</div>
-            <div>{{totals.phonesCount}} Phones</div>
-            <div>{{totals.emailsCount}} Emails</div>
-            <div>{{totals.goldenAddressesCount}} Golden Addresses</div>
+            <div> {{totals.subjectsCount}} Subjects</div>
+            <div><b-spinner v-if="loadingTotals" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> <span v-if="!loadingTotals">{{totals.sellersCount}}</span> Sellers</div>
+            <div><b-spinner v-if="loadingTotals" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> <span v-if="!loadingTotals">{{totals.phonesCount}}</span> Phones</div>
+            <div><b-spinner v-if="loadingTotals" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> <span v-if="!loadingTotals">{{totals.emailsCount}}</span> Emails</div>
+            <div><b-spinner v-if="loadingTotals" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> <span v-if="!loadingTotals">{{totals.goldenAddressesCount}}</span> Golden Addresses</div>
         </div>
     </div>
     <hr>
@@ -53,7 +53,11 @@
                 </b-col>
                 <p class="pr-3 pt-1">or</p>
                 <b-col cols="4 p-0">
-                    <b-form-select class="select-template w-100 float-right" v-model="selectedTemplate" @change="getTemplate($event)" :options="templatesToExport"></b-form-select>
+                    <b-form-select class="select-template w-100 float-right" v-model="selectedTemplate" @change="getTemplate($event)" :disabled="isTemplateLoading" :options="templatesToExport">
+                        <div v-if="isTemplateLoading" class="spinner">
+                            <b-spinner label="Loading..." type="border" small></b-spinner>
+                        </div>
+                    </b-form-select>
                 </b-col>
             </div>
         </b-row>
@@ -196,6 +200,8 @@ export default {
     },
     data() {
         return {
+            loadingTotals: true,
+            isTemplateLoading: true,
             componentMounted: false,
             allFields: [
                 //Subject
@@ -487,6 +493,7 @@ export default {
     async created() {
         this.$store.dispatch('uxModule/setLoading')
         try {
+            this.loadingTotals = true;
             await this.$store.dispatch("propertyModule/filterProperties", {
                 page: 1,
                 perPage: this.perPage,
@@ -497,12 +504,15 @@ export default {
             });
             this.exportCount = this.total;
             this.totals.subjectsCount  = this.total;
-            this.componentMounted = true;
+            this.componentMounted = true;   
             this.$store.dispatch('uxModule/hideLoader');
+            this.loadingTotals = true;
+            this.isTemplateLoading = true;
             await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: this.filtersName,
                 custom: '',
-            })
+            });
+            this.loadingTotals = false;
             this.propertyFields = [...this.fields];
             this.propertyFields.unshift({
                 key: "delete",
@@ -523,6 +533,7 @@ export default {
                     this.templatesToExport.push(template);
                 })
             }
+            this.isTemplateLoading = false;
         } catch (error) {
             this.$store.dispatch('uxModule/hideLoader')
         }
@@ -554,10 +565,12 @@ export default {
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 })
+                this.loadingTotals = true;
                 await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
                 });
+                this.loadingTotals = false;
                 this.isPropertySearched = false;
                 this.$store.dispatch('uxModule/hideLoader')
             } catch (error) {
@@ -576,10 +589,12 @@ export default {
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 });
+                this.loadingTotals = true;
                 await this.$store.dispatch("propertyModule/getTotalsCount", {
                     filter: JSON.stringify(this.filtersName),
                     custom: '',
                 });
+                this.loadingTotals = false;
                 if (this.customViewTemplate) {
                     this.showCustomView();
                 }
@@ -609,10 +624,12 @@ export default {
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 });
+                this.loadingTotals = true;
                 await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
                 });
+                this.loadingTotals = false;
                 this.$store.dispatch('uxModule/hideLoader')
                 if (this.customViewTemplate) {
                     this.showCustomView();
@@ -989,10 +1006,12 @@ export default {
                 sortDesc: this.sortDesc,
                 custom: this.customViewTemplate
             });
+            this.loadingTotals = true;
              await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
             });
+            this.loadingTotals = false;
         },
         async getTemplate(event) {
             this.$store.dispatch('uxModule/setLoading');

@@ -714,6 +714,7 @@ export default {
             if(this.showModal){
                 this.$store.dispatch('uxModule/setLoading');
                 this.seller = {...this.propsSeller}
+                
                 await this.$store.dispatch(`exportModule/getExports`, {'module': 'sellers', id: this.propsSeller.id});
                 await this.currentModal();
                 this.$store.dispatch('uxModule/hideLoader');
