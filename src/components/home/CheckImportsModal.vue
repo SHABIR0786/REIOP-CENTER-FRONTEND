@@ -89,7 +89,7 @@ import HomeCard from "@/components/home/HomeCard"
         },
         watch: {
             showModal:async function() {
-            if(this.showModal && !this.teams) {
+            if(this.showModal) {
             this.$store.dispatch('uxModule/setLoading');
             await this.$store.dispatch("teamModule/getAllTeams");
             this.$store.dispatch('uxModule/hideLoader');
