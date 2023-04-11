@@ -674,7 +674,7 @@ export default {
     applyFilters(filters){
       this.filtersAlreadyApplied = JSON.parse(JSON.stringify(filters));
       let filterValue = 0;
-      for (let i in filters){
+      for (let i in filters) {
         filterValue += filters[i].length
       }
       if (filterValue){

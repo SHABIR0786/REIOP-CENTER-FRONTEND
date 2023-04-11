@@ -156,7 +156,7 @@ import {
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditPhoneNumberModal from "../components/phoneNumber/EditPhoneNumberModal"
 import AddPhoneNumberModal from "../components/phoneNumber/AddPhoneNumberModal";
-import FilterPhoneNumbers from "../components/phoneNumber/FilterPhoneNumbers";
+import FilterPhoneNumbers from "../components/phoneNumber/NewFilterPhoneNumbers";
 
 export default {
     name: "PhoneNumber",
@@ -218,7 +218,7 @@ export default {
             filteredPhoneNumbersCount: 'phoneNumberModule/filteredPhoneNumbersCount',
             filtersCountTable: 'phoneNumberModule/filtersCountTable',
             selectedPhoneNumber: 'phoneNumberModule/phoneNumber',
-            sectionLabels: 'labelModule/sectionLabels'
+            customSectionLabels: 'labelModule/customSectionLabels'
         }),
         rows() {
             return this.total ? this.total : 1
@@ -229,12 +229,12 @@ export default {
         try {
             this.$store.dispatch('uxModule/setLoading')
             // Fetching the visible custom fields
-            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'phone'});
+            await this.$store.dispatch('labelModule/sectionVisibleCustomFields',{section:'phone'});
             this.phoneNumberFields  = [...this.fields];
             const subjectAgeIndex = this.phoneNumberFields.findIndex(x=>x.key == "phone_skip_source");
             const instance = this;
-            if(this.sectionLabels) {
-                this.sectionLabels.forEach(function(item,index) {
+            if(this.customSectionLabels) {
+                this.customSectionLabels.forEach(function(item,index) {
                     instance.phoneNumberFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
                 });
             }

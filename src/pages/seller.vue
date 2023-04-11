@@ -185,6 +185,7 @@
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-seller-modal :showModal="showAddModal" @cancel="showAddModal=false" @save="add"></add-seller-modal>
     <filter-sellers ref="filterSellers" :search="searchSeller" @filter="filter" @finish-process="isFinishedFilterSellers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-sellers>
+
 </div>
 </template>
 
@@ -199,7 +200,7 @@ import {
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditSellerModal from "../components/seller/EditSellerModal"
 import AddSellerModal from "../components/seller/AddSellerModal";
-import FilterSellers from "../components/seller/FilterSellers";
+import FilterSellers from "../components/seller/NewFilterSellers";
 
 export default {
     name: "Seller",
@@ -266,7 +267,7 @@ export default {
             filteredItems: 'sellerModule/filteredSeller',
             filtersCountTable: 'sellerModule/filtersCountTable',
             filteredSellersCount: 'sellerModule/filteredSellersCount',
-            sectionLabels: 'labelModule/sectionLabels',
+            customSectionLabels: 'labelModule/customSectionLabels',
         }),
         rows() {
             return this.total ? this.total : 1
@@ -276,12 +277,12 @@ export default {
         try {
             this.$store.dispatch('uxModule/setLoading')
             // Fetching the visible custom fields
-            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'seller'});
+            await this.$store.dispatch('labelModule/sectionVisibleCustomFields',{section:'seller'});
             this.sellerFields  = [...this.fields];
             const subjectAgeIndex = this.sellerFields.findIndex(x=>x.key == "seller_company_owned");
             const instance = this;
-            if(this.sectionLabels) {
-                this.sectionLabels.forEach(function(item,index) {
+            if(this.customSectionLabels) {
+                this.customSectionLabels.forEach(function(item,index) {
                     instance.sellerFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
                 });
             }

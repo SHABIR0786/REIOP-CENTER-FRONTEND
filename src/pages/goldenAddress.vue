@@ -231,7 +231,7 @@ export default {
             filtersCountTable: 'goldenAddressModule/filtersCountTable',
             filteredGoldenAddressesCount: 'goldenAddressModule/filteredGoldenAddressesCount',
             selectedGoldenAddress: 'goldenAddressModule/goldenAddress',
-            sectionLabels: 'labelModule/sectionLabels'
+            customSectionLabels: 'labelModule/customSectionLabels'
         }),
         rows() {
             return this.total ? this.total : 1
@@ -241,12 +241,12 @@ export default {
         try {
             this.$store.dispatch('uxModule/setLoading')
             // Fetching the visible custom fields
-            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'golden_address'});
+            await this.$store.dispatch('labelModule/sectionVisibleCustomFields',{section:'golden_address'});
             this.goldenAddressFields  = [...this.fields];
             const subjectAgeIndex = this.goldenAddressFields.findIndex(x=>x.key == "golden_address_zip");
             const instance = this;
-            if(this.sectionLabels) {
-                this.sectionLabels.forEach(function(item,index) {
+            if(this.customSectionLabels) {
+                this.customSectionLabels.forEach(function(item,index) {
                     instance.goldenAddressFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
                 });
             }

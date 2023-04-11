@@ -186,6 +186,7 @@
     <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
+    <!-- <filter-subjects ref="filtersubjects" :search="searchSubject" @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-subjects> -->
     <filter-subjects ref="filtersubjects" :search="searchSubject" @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-subjects>
 </div>
 </template>
@@ -200,7 +201,7 @@ import {
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 import AddSubjectModal from "../components/subject/AddSubjectModal";
-import FilterSubjects from "@/components/subject/FilterSubjects";
+import FilterSubjects from "@/components/subject/NewFilterSubjects";
 
 export default {
     name: "Subject",
@@ -262,7 +263,7 @@ export default {
             filteredSubjectsCount: 'subjectModule/filteredSubjectsCount',
             filtersCountTable: 'subjectModule/filtersCountTable',
             total: 'subjectModule/total',
-            sectionLabels: 'labelModule/sectionLabels',
+            customSectionLabels: 'labelModule/customSectionLabels',
             selectedSubject: 'subjectModule/subject'
         }),
         rows() {
@@ -275,12 +276,12 @@ export default {
         try {
             this.$store.dispatch('uxModule/setLoading');
             // Fetching the visible custom fields
-            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'subject'});
+            await this.$store.dispatch('labelModule/sectionVisibleCustomFields',{section:'subject'});
             this.subjectFields  = [...this.fields];
             const subjectAgeIndex = this.subjectFields.findIndex(x=>x.key == "subject_age");
             const instance = this;
-            if(this.sectionLabels) {
-                this.sectionLabels.forEach(function(item,index) {
+            if(this.customSectionLabels) {
+                this.customSectionLabels.forEach(function(item,index) {
                     instance.subjectFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
                 });
             }
@@ -407,6 +408,7 @@ export default {
             }
         },
         async filter(data, filterValue) {
+            console.log(data, filterValue);
             this.$store.dispatch('uxModule/setLoading');
             try {
                 this.filtersName = data
@@ -434,7 +436,7 @@ export default {
                     this.filteredOrAllData = this.filteredItems
                     this.itemsCount = this.filteredSubjectsCount
                 }
-                this.showFilterPropertiesModal = false;
+                // this.showFilterPropertiesModal = false;
                 this.$store.dispatch('uxModule/hideLoader');
             } catch (error) {
                 console.log(error);

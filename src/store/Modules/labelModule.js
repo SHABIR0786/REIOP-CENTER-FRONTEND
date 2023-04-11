@@ -10,7 +10,7 @@ const state = {
         {key: "actions", label: "Actions"}
     ],
     labels: [],
-    sectionLabels: [],
+    customSectionLabels: [],
     //custom fields
     visibleCustomFields: {
         list_custom_field_1: false,
@@ -28,7 +28,7 @@ const mutations = {
         state.labels = payload;
     },
     SET_SECTION_LABELS(state, payload) {
-        state.sectionLabels = payload;
+        state.customSectionLabels = payload;
     },
     SET_ENABLE_LABELS(state, payload) {
         payload.forEach(e => {
@@ -64,8 +64,8 @@ const actions = {
             }
         });
     },
-    async sectionVisibleFields({ commit },data) {
-        return await api.post('/visible-labels',{...data}).then((response) => {
+    async sectionVisibleCustomFields({ commit },data) {
+        return await api.post('/visible-custom-labels',{...data}).then((response) => {
             if (response && response.labels) {
                 commit('SET_SECTION_LABELS', response.labels);
             }
@@ -96,7 +96,7 @@ const getters = {
     labels: ({ labels }) => labels,
     visibleCustomFields: ({ visibleCustomFields }) => visibleCustomFields,
     customFieldsArray: ({ customFieldsArray }) => customFieldsArray,
-    sectionLabels: ({ sectionLabels }) => sectionLabels,
+    customSectionLabels: ({ customSectionLabels }) => customSectionLabels,
 }
 
 export default {

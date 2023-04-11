@@ -15,6 +15,7 @@ export const state = {
     uploadedFields: [],
     uploaded: false,
     importVisibleFields: [],
+    sectionVisibleFields: [],
     mappingTemplates:[{ value: null, text: 'Select Optional Mapping Template' }],
     mappingTemplate:{},
     additionalFilterFieldsTypes: [

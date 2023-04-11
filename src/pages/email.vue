@@ -173,7 +173,7 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditEmailModal from "../components/email/EditEmailModal"
 import AddEmailModal from "../components/email/AddEmailModal";
-import FilterEmails from "../components/email/FilterEmails";
+import FilterEmails from "../components/email/NewFilterEmails";
 
 export default {
     name: "Email",
@@ -235,7 +235,7 @@ export default {
             filteredItems: 'emailModule/filteredEmail',
             filtersCountTable: 'emailModule/filtersCountTable',
             filteredEmailsCount:'emailModule/filteredEmailsCount',
-            sectionLabels: 'labelModule/sectionLabels'
+            customSectionLabels: 'labelModule/customSectionLabels'
         }),
         rows() { return this.total ? this.total : 1 }
     },
@@ -243,12 +243,12 @@ export default {
         try {
           this.$store.dispatch('uxModule/setLoading')
             // Fetching the visible custom fields
-            await this.$store.dispatch('labelModule/sectionVisibleFields',{section:'email'});
+            await this.$store.dispatch('labelModule/sectionVisibleCustomFields',{section:'email'});
             this.emailFields  = [...this.fields];
             const subjectAgeIndex = this.emailFields.findIndex(x=>x.key == "email_skip_source");
             const instance = this;
-            if(this.sectionLabels) {
-                this.sectionLabels.forEach(function(item,index) {
+            if(this.customSectionLabels) {
+                this.customSectionLabels.forEach(function(item,index) {
                     instance.emailFields.splice((subjectAgeIndex + (index+1)),0,{key: item.field, stickyColumn: true, label: item.label, sortable: true});
                 });
             }

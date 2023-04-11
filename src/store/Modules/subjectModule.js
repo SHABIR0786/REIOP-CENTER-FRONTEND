@@ -167,15 +167,16 @@ const actions = {
 
     async filterSubject({ commit }, param) {
         let data = Object.assign({}, JSON.parse(JSON.stringify(param)));
-        if(data.filter){
-            let keys = Object.keys(data.filter);
-            for(let i = 0; i < keys.length; i++) {
-                let index =  data.filter[keys[i]].findIndex(x=>x == "Blank");
-              if(index != -1) {
-                data.filter[keys[i]][index] = " ";
-              }
-            }
-        }
+        // if(data.filter) {
+        //     let keys = Object.keys(data.filter);
+        //     for(let i = 0; i < keys.length; i++) {
+        //         let index =  data.filter[keys[i]].findIndex(x=>x == "Blank");
+        //       if(index != -1) {
+        //         data.filter[keys[i]][index] = " ";
+        //       }
+        //     }
+        // }
+        data.filter = JSON.stringify(data.filter);
         return await api.post(`/subjects/filter`, {...data}).then((response) => {
             commit('FILTER_SUBJECT', response.subjects)
             return response
