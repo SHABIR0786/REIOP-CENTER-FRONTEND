@@ -476,17 +476,17 @@ export default {
             }
         },
         editItem(item) {
-            this.showModal = true;
             const data = {
                 ...item
             }
-            data.lists.forEach(e => {
-                e.created_at = e.created_at.split('T')[0];
-                e.updated_at = e.updated_at.split('T')[0];
-            })
+            // data.lists.forEach(e => {
+            //     e.created_at = e.created_at.split('T')[0];
+            //     e.updated_at = e.updated_at.split('T')[0];
+            // })
             this.editedItem = {
                 ...data
             }
+            this.showModal = true;
         },
         save(item) {
             // this.showModal = false
