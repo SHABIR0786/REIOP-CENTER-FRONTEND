@@ -24,7 +24,7 @@
                 :options="AndOrStatement"
                 v-model="result.statement"
               ></b-form-select>
-              {{ result.name }} {{ result.rule }} {{ result.option }}</span
+              {{ result.name }} {{ result.rule }} {{result.rule == "range"? (result.before+' - '+result.after) : result.option }}</span
             >
           </p>
           <p v-for="(result, index) in StackFilters" :key="index">
@@ -210,6 +210,99 @@
               </b-col>
             </b-row>
           </b-col>
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="2">
+                <label class="font-weight-bold pt-2" for="pull_date">Pull Date</label>
+              </b-col>
+              <b-col cols="4">
+                <b-form-select
+                  id="pull_date"
+                  class="w-100"
+                  :options="dateTimeRules"
+                  v-model="chooseListFilters.PullDate.rule"
+                ></b-form-select>
+              </b-col>
+              <b-col cols="4">
+                <b-form-input type="date" v-if="chooseListFilters.PullDate.rule != 'range'" v-model="chooseListFilters.PullDate.option"/>
+                <b-form-input type="date" v-if="chooseListFilters.PullDate.rule == 'range'" v-model="chooseListFilters.PullDate.before"/>
+                -
+                <b-form-input type="date" v-if="chooseListFilters.PullDate.rule == 'range'" v-model="chooseListFilters.PullDate.after"/>
+
+              </b-col>
+              <b-col cols="2">
+                <b-button class="font-weight-bold pt-2" @click="addListFilter(chooseListFilters.PullDate)" for="market">Add</b-button>
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="2">
+                <label class="font-weight-bold pt-2" for="pull_date">Run Month/ Year</label>
+              </b-col>
+              <b-col cols="4">
+                <b-form-select
+                  id="pull_date"
+                  class="w-100"
+                  :options="dateTimeRules"
+                  v-model="chooseListFilters.RunMonthYear.rule"
+                ></b-form-select>
+              </b-col>
+              <b-col cols="4">
+                  <b-form-select
+                  id="pull_date"
+                  class="w-100"
+                  v-if="chooseListFilters.RunMonthYear.rule != 'range'"
+                  :options="listRunMonthYear"
+                  v-model="chooseListFilters.RunMonthYear.option"
+                ></b-form-select>
+                <b-form-select
+                  id="pull_date"
+                  class="w-100"
+                  v-if="chooseListFilters.RunMonthYear.rule == 'range'"
+                  :options="listRunMonthYear"
+                  v-model="chooseListFilters.RunMonthYear.before"
+                ></b-form-select>
+                -
+                <b-form-select
+                  id="pull_date"
+                  class="w-100"
+                  v-if="chooseListFilters.RunMonthYear.rule == 'range'"
+                  :options="listRunMonthYear"
+                  v-model="chooseListFilters.RunMonthYear.after"
+                ></b-form-select>
+              </b-col>
+              <b-col cols="2">
+                <b-button class="font-weight-bold pt-2" :disabled="chooseListFilters.RunMonthYear.option == null || chooseListFilters.RunMonthYear.option == ''" @click="addListFilter(chooseListFilters.RunMonthYear)" for="market">Add</b-button>
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col cols="12" lg="12" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="2">
+                <label class="font-weight-bold pt-2" for="pull_date">Import File Name</label>
+              </b-col>
+              <b-col cols="4">
+                <b-form-select
+                  id="ImportFileName"
+                  class="w-100"
+                  :options="IncludesExcludes"
+                  v-model="chooseListFilters.ImportFileName.rule"
+                ></b-form-select>
+              </b-col>
+              <b-col cols="4">
+              <b-form-select
+                  id="ImportFileName"
+                  class="w-100"
+                  :options="importFilesNames"
+                  v-model="chooseListFilters.ImportFileName.option"
+                ></b-form-select>
+              </b-col>
+              <b-col cols="2">
+                <b-button class="font-weight-bold pt-2" :disabled="chooseListFilters.ImportFileName.option == null || chooseListFilters.ImportFileName.option == ''" @click="addListFilter(chooseListFilters.ImportFileName)" for="ImportFileName">Add</b-button>
+              </b-col>
+            </b-row>
+          </b-col>
         </b-row>
         <br />
         <h5 class="font-weight-bold mb-0">Stack Filters</h5>
@@ -374,6 +467,157 @@
             </b-row>
           </b-col>
         </b-row>
+        <b-row class="p-0">
+          <!-- <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="2">
+                <label class="font-weight-bold pt-2" for="pull_date">Last Attempted Skip Trace Date</label>
+              </b-col>
+              <b-col cols="4">
+                <b-form-select
+                  id="pull_date"
+                  class="w-100"
+                  :options="dateTimeRules"
+                  v-model="StatementFilters.lastAttemptedSkipTraceDate.rule"
+                ></b-form-select>
+              </b-col>
+              <b-col cols="4">
+                <b-form-input type="date" v-if="StatementFilters.lastAttemptedSkipTraceDate.rule != 'range'"  v-model="StatementFilters.lastAttemptedSkipTraceDate.option"/>
+                <b-form-input type="date" v-if="StatementFilters.lastAttemptedSkipTraceDate.rule == 'range'"  v-model="StatementFilters.lastAttemptedSkipTraceDate.before"/>
+                -
+                <b-form-input type="date" v-if="StatementFilters.lastAttemptedSkipTraceDate.rule == 'range'"  v-model="StatementFilters.lastAttemptedSkipTraceDate.after"/>
+              </b-col>
+              <b-col cols="2">
+                <b-button class="font-weight-bold pt-2" @click="addListFilter(StatementFilters.lastAttemptedSkipTraceDate)" for="market">Add</b-button>
+              </b-col>
+            </b-row>
+          </b-col> -->
+
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="5">
+                <label class="font-weight-bold pt-2" for="attempted_skips">Skip Trace Attempts</label>
+                <p>(1,1-4,3+, or 3-)</p>
+              </b-col>  
+              <b-col cols="5">
+                <b-form-input
+                  id="attempted_skips"
+                  class="w-100"
+                  v-model="StatementFilters.skipTraceAttempts.value"
+                ></b-form-input>
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+
+       <b-row class="p-0">
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="5">
+                <label class="font-weight-bold pt-2" for="skip_trace">Has Phone Number</label>
+              </b-col>
+              <b-col cols="5">
+                <b-form-select
+                  id="skip_trace"
+                  class="w-100"
+                  :options="YesNo_Option"
+                  v-model="StatementFilters.hasPhoneNumbers.value"
+                ></b-form-select>
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="5">
+                <label class="font-weight-bold pt-2" for="skip_trace">Has Email Address</label>
+              </b-col>
+              <b-col cols="5">
+                <b-form-select
+                  id="skip_trace"
+                  class="w-100"
+                  :options="YesNo_Option"
+                  v-model="StatementFilters.hasEmailAddresses.value"
+                ></b-form-select>
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+
+        <b-row class="p-0">
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="5">
+                <label class="font-weight-bold pt-2" for="skip_trace">Has Golden Addresses</label>
+              </b-col>
+              <b-col cols="5">
+                <b-form-select
+                  id="skip_trace"
+                  class="w-100"
+                  :options="YesNo_Option"
+                  v-model="StatementFilters.hasGoldenAddresses.value"
+                ></b-form-select>
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="5">
+                <label class="font-weight-bold pt-2" for="skip_trace">Has Been Exported For Marketing</label>
+              </b-col>
+              <b-col cols="5">
+                <b-form-select
+                  id="skip_trace"
+                  class="w-100"
+                  :options="YesNo_Option"
+                  v-model="StatementFilters.hasBeenExported.value"
+                ></b-form-select>
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="2">
+                <label class="font-weight-bold pt-2" for="pull_date">Last Marketed Date</label>
+              </b-col>
+              <b-col cols="4">
+                <b-form-select
+                  id="pull_date"
+                  class="w-100"
+                  :options="dateTimeRules"
+                  v-model="StatementFilters.lastMarketedDate.rule"
+                ></b-form-select>
+              </b-col>
+              <b-col cols="4">
+                <b-form-input type="date" v-if="StatementFilters.lastMarketedDate.rule != 'range'" v-model="StatementFilters.lastMarketedDate.option"/>
+                <b-form-input type="date" v-if="StatementFilters.lastMarketedDate.rule == 'range'" v-model="StatementFilters.lastMarketedDate.before"/>
+                -
+                <b-form-input type="date" v-if="StatementFilters.lastMarketedDate.rule == 'range'" v-model="StatementFilters.lastMarketedDate.after"/>
+
+              </b-col>
+              <b-col cols="2">
+                <b-button class="font-weight-bold pt-2" @click="addListFilter(StatementFilters.lastMarketedDate)" for="market">Add</b-button>
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col cols="12" lg="6" md="12" class="mb-3">
+            <b-row>
+              <b-col cols="5">
+                <label class="font-weight-bold pt-2" for="attempted_skips">Marketing Attempts</label>
+                <p>(1,1-4,3+, or 3-)</p>
+              </b-col>  
+              <b-col cols="5">
+                <b-form-input
+                  id="attempted_skips"
+                  class="w-100"
+                  v-model="StatementFilters.marketingAttempts.value"
+                ></b-form-input>
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+        
         <br />
         <h5 class="font-weight-bold mb-0">Additional Filters</h5>
         <hr class="m-0 border border-dark" />
@@ -557,8 +801,9 @@ export default {
       dateTimeRules: [
         { value: null, text: "Choose Rule", disabled: true },
         { value: "=", text: "Equal" },
-        { value: "before", text: "Before" },
-        { value: "after", text: "After" }
+        { value: "before", text: "On or Before" },
+        { value: "after", text: "On or After" },
+        { value: "range", text: "Range" }
       ],
       YesNo_Option: [
         { value: null, text: "Choose Option", disabled: true },
@@ -578,11 +823,15 @@ export default {
         { value: null, text: "Choose Additional Filters", disabled: true },
       ],
       additionalFilters:[],
+      listRunMonthYear: [],
       chooseListFilters: {
         Market: { rule: null, option: null, statement: "And", name: "Market" },
         Group: { rule: null, option: null, statement: "And", name: "Group" },
         Type: { rule: null, option: null, statement: "And", name: "Type" },
         Source: { rule: null, option: null, statement: "And", name: "Source" },
+        PullDate: { rule: null, option: null, before:null, after:null, statement: "And", name: "PullDate"},
+        ImportFileName: { rule: null, option: null, statement: "And", name: "ImportFileName"},
+        RunMonthYear: { rule: null, option: null, before:null, after:null, statement: "And", name: "RunMonthYear"}
       },
       ListFilters: [],
       StackFilters: {
@@ -591,9 +840,25 @@ export default {
         TotalSellers: { statement: "And", value: null, name: "Total Sellers", key: "TotalSellers" },
         TotalEmails: { statement: "And", value: null, name: "Total Emails", key: "TotalEmails" },
         TotalPhones: { statement: "And", value: null, name: "Total Phones", key: "TotalPhones" },
-        TotalGoldens: { statement: "And", value: null, name: "Total Goldens", key: "TotalGoldens" },
+        TotalGoldens: { statement: "And", value: null, name: "Total Goldens", key: "TotalGoldens" }
       },
       StatementFilters: {
+        lastAttemptedSkipTraceDate: {
+           rule: null,
+           option: null,
+           before: null,
+           after: null,
+           statement: "And",
+           name: "lastAttemptedSkipTraceDate"
+        },
+        lastMarketedDate: {
+          rule: null,
+          option: null,
+          before: null,
+          after: null,
+          statement: "And",
+          name: "lastMarketedDate"
+        },
         hasSkipTraceData: {
           statement: "And",
           value: "",
@@ -606,6 +871,42 @@ export default {
           name: "has Attemted Skips",
           key: "hasAttemtedSkips"
         },
+        skipTraceAttempts: {
+          statement: "And",
+          value: "",
+          name: "Skip Trace Attempts",
+          key: "skipTraceAttempts"
+        },
+        hasPhoneNumbers: {
+          statement: "And",
+          value: "",
+          name: "Has Phone Numbers",
+          key: "hasPhoneNumbers"
+        },
+        hasEmailAddresses: {
+          statement: "And",
+          value: "",
+          name: "Has Email Addresses",
+          key: "hasEmailAddresses"
+        },
+        hasGoldenAddresses: {
+          statement: "And",
+          value: "",
+          name: "Has Golden Address",
+          key: "hasGoldenAddresses"
+        },
+        hasBeenExported: {
+          statement: "And",
+          value: "",
+          name: "has Been Exported",
+          key: "hasBeenExported"
+        },
+        marketingAttempts: {
+          statement: "And",
+          value: "",
+          name: "Marketing Attempts",
+          key: "marketingAttempts"
+        }
       },
     };
   },
@@ -614,7 +915,8 @@ export default {
       filterList: "subjectModule/filterList",
       customViewVisibleFields: "importModule/customViewVisibleFields",
       additionalFilterFieldsTypes: "importModule/additionalFilterFieldsTypes",
-      additionalFilterOptions: "propertyModule/additionalFilterOptions"
+      additionalFilterOptions: "propertyModule/additionalFilterOptions",
+      importFilesNames: "importModule/importFilesNames"
     }),
     totalFilters() {
       let total = 0;
@@ -640,8 +942,10 @@ export default {
   async mounted() {
     try {
       this.subject = this.propsData;
-      await this.$store.dispatch("importModule/loadVisibleFields");
       const instance = this;
+      // Load Import files Names
+      await this.$store.dispatch("importModule/getFilesName");
+      await this.$store.dispatch("importModule/loadVisibleFields");
       this.customViewVisibleFields.forEach(function(item) {
       const defaultField = instance.additionalFilterFieldsTypes.find(x=>x.column == item.field);
       if(item.type || defaultField) {
@@ -653,6 +957,13 @@ export default {
         "subjectModule/SubjectfilterList",
         { filter: this.allFilters, search: this.search }
       );
+      if(response.lists) {
+        response.lists.forEach(function(item) {
+          if(instance.listRunMonthYear.findIndex(x=>x == item.list_run_month+"/"+item.list_run_year) == -1) {
+            instance.listRunMonthYear.push(item.list_run_month+"/"+item.list_run_year);
+          }
+        })
+      }
       await this.MapFilters(response);
     } catch (error) {
       console.log(error);
@@ -678,7 +989,7 @@ export default {
   },
   methods: {
     addListFilter(filterName) {
-      if(this.ListFilters.findIndex(x=>x.name == filterName.name && x.rule == filterName.rule && x.option == filterName.option) == -1){
+      if(this.ListFilters.findIndex(x=>x.name == filterName.name && x.rule == filterName.rule) == -1){
           this.ListFilters.push(JSON.parse(JSON.stringify(filterName)));
       }
     },

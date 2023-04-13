@@ -7,6 +7,7 @@ export const state = {
     phoneNumberFields: [],
     sellerFields: [],
     subjectFields: [],
+    importFilesNames: [],
     mappedHeader: [
         {key: 'fromField', label: 'From', sortable: true},
         {key: 'toField', label: 'To', sortable: true},
@@ -208,6 +209,9 @@ export const state = {
 }
 
 export const mutations = {
+    SET_IMPORT_FILE_NAMES(state, payload) {
+        state.importFilesNames = payload;
+    },
     SET_UPLOADED_FIELDS(state, payload) {
         state.uploadedFields = payload
     },
@@ -271,6 +275,12 @@ export const mutations = {
 export const actions = {
     setUploadedFields ({ commit }, data) {
         commit('SET_UPLOADED_FIELDS', data)
+    },
+    async getFilesName ({ commit}) {
+        return await api.get(`/importFileNames`).then((response) => {
+            commit('SET_IMPORT_FILE_NAMES', response.fileNames)
+            return response
+        })
     },
 
     async uploadExcelData({ commit }, {data, url}) {
@@ -364,6 +374,7 @@ export const getters = {
     mappingTemplate: ({ mappingTemplate }) => mappingTemplate,
     customViewVisibleFields: ({ importVisibleFields }) => importVisibleFields,  
     additionalFilterFieldsTypes: ({ additionalFilterFieldsTypes }) => additionalFilterFieldsTypes,
+    importFilesNames: ({ importFilesNames }) => importFilesNames,
 }
 
 export default {
