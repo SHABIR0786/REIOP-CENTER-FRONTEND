@@ -19,7 +19,7 @@
                         <small class="text-primary" v-if="please_wait">Plesae Wait...</small>
                     </b-col>
                     <b-col cols="6" v-if="show_save_button">
-                      <b-input-group prepend="Team Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                      <b-input-group prepend="User Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
                           <b-form-select v-model="$v.user_check.role.$model" aria-describedby="role-id" :options="team_permission" :state="validateUserCheck('role')" required>
                           </b-form-select>
                           <b-form-invalid-feedback id="role-id">Team Role is Required.</b-form-invalid-feedback>
@@ -32,8 +32,9 @@
                           </b-form-select>
                       </b-input-group>
                       <small class="text-primary">Make this user Company Admin (Optional)</small>
-
-                      
+                  </b-col>
+                  <b-col cols="6" v-if="show_save_button">
+                      <b-form-checkbox v-model="user_check.notInviteEmail">“Click here to NOT send the user invite email”.</b-form-checkbox>
                   </b-col>
             </b-row>
       <b-row class="mb-1" v-else>
@@ -58,7 +59,7 @@
                 </b-input-group>
             </b-col>
             <b-col cols="6">
-                <b-input-group prepend="Team Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
+                <b-input-group prepend="User Role" id="role-id" label="Role" label-for="role-id" class="mb-2">
                     <b-form-select v-model="$v.user.role.$model" aria-describedby="role-id" :options="team_permission" :state="validateState('role')" required>
                     </b-form-select>
                     <b-form-invalid-feedback id="role-id">Team Role is Required.</b-form-invalid-feedback>
@@ -73,6 +74,9 @@
                 <small class="text-primary">Make this user Company Admin (Optional)</small>
 
                 
+            </b-col>
+            <b-col cols="6" v-if="show_save_button">
+              <b-form-checkbox v-model="user.notInviteEmail">“Click here to NOT send the user invite email”.</b-form-checkbox>
             </b-col>
         </b-row>
         <span v-b-tooltip.hover title="Search User by Email. Enter Email press search button or enter key. To change email press Reset button.">
@@ -204,7 +208,8 @@ export default {
                 name: '',
                 email: '',
                 password: '',
-                role:2
+                role:2,
+                notInviteEmail:false,
 
 
             },
@@ -212,6 +217,7 @@ export default {
                     email: '',
                     role:2,
                 company_role:null,
+                notInviteEmail:false,
                 },
             user_exist:true,
 
@@ -239,6 +245,10 @@ export default {
                 {
                     value: 2,
                     text: "Team Admin"
+                },
+                {
+                    value: 4,
+                    text: "Demo User"
                 }
             ],
 
@@ -358,6 +368,8 @@ export default {
                         autoHideDelay: 5000,
                     });
                     this.user_exist = true;
+                    this.user_check = response.user;
+                    this.user_check.notInviteEmail=false;
                 }else{
                     this.$bvToast.toast(response.message, {
                         title: "Warning",
@@ -367,6 +379,7 @@ export default {
                     this.user_exist = false;
                     this.user.email = this.user_check.email;
                     this.user.role = this.user_check.role;
+                    this.user_check.notInviteEmail=false;
                    
                 }
                 this.show_save_button = true;

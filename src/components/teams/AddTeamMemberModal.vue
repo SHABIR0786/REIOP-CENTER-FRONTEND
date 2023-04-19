@@ -29,6 +29,9 @@
                         </b-input-group>
 
                     </b-col>
+                    <b-col cols="12" v-if="show_save_button">
+                        <b-form-checkbox v-model="user_check.notInviteEmail">“Click here to NOT send the user invite email”.</b-form-checkbox>
+                    </b-col>
             </b-row>
             <b-row v-else>
                 <b-row >
@@ -60,6 +63,9 @@
                             <b-form-invalid-feedback id="role-id" v-if="$v.user.role.required">Role Field is Required.</b-form-invalid-feedback>
                         </b-input-group>
 
+                    </b-col>
+                    <b-col cols="12" v-if="show_save_button">
+                        <b-form-checkbox v-model="user.notInviteEmail">“Click here to NOT send the user invite email”.</b-form-checkbox>
                     </b-col>
                 </b-row>
             </b-row>
@@ -122,11 +128,13 @@ import {
                     name: '',
                     email: '',
                     password: '',
-                    role:2
+                    role:2,
+                    notInviteEmail:false,
                 },
                 user_check: {
                     email: '',
                     role:2,
+                    notInviteEmail:false,
                 },
                 company_permission: [
                 // {
@@ -136,6 +144,10 @@ import {
                 {
                     value: 2,
                     text: "Team Admin"
+                },
+                {
+                    value: 4,
+                    text: "Demo User"
                 }
             ],
             user_exist:true,
@@ -199,6 +211,8 @@ import {
                     });
                     // this.$emit('add', this.user_check);
                     this.user_exist = true;
+                    this.user_check = response.user;
+                    this.user_check.notInviteEmail=false;
                 }else{
                     this.$bvToast.toast(response.message, {
                         title: "Warning",
@@ -208,6 +222,7 @@ import {
                     this.user_exist = false;
                     this.user.email = this.user_check.email;
                     this.user.role = this.user_check.role;
+                    this.user_check.notInviteEmail=false;
                     // this.$store.dispatch('uxModule/hideLoader')
                 }
                 this.show_save_button = true;
@@ -249,10 +264,12 @@ import {
                 name: '',
                 email:'',
                 password:'',
+                notInviteEmail:false
             };
             this.user_check = {
                 role: 2,
                 email:'',
+                notInviteEmail:false
             };
             this.$v.user.$reset();
             this.$v.user_check.$reset();

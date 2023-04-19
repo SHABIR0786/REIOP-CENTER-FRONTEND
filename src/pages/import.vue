@@ -59,11 +59,13 @@
       </div>
     </div>
     <b-row>
-      <b-col class="text-right" cols="12" md="12">
-
+      <b-col class="text-right" cols="12" md="12" v-if="user.role!=4">
         <b-btn class="mr-2" variant="primary" :disabled=isDisable @click="createMapping()">Save Mapping Template and Import</b-btn>
         <span>OR</span>
         <b-btn class="ml-2"  variant="primary" @click="confirm(mappedItems)">Import</b-btn>
+      </b-col>
+      <b-col class="text-right" cols="12" md="12" v-else>
+      <span class="text-danger">Importing is not allowed for demo accounts.</span>
       </b-col>
     </b-row>
     <confirm-modal :showModal="showConfirmModal"
@@ -224,6 +226,7 @@ export default {
       skippedValidation: 'importV2Module/isSkipValidation',
       mappingTemplates: 'importModule/mappingTemplates',
       mappingTemplate: 'importModule/mappingTemplate',
+      user: 'loginModule/getAuthUser',
     }),
     isSkippedData: {
       get() {
