@@ -171,7 +171,7 @@ import {
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditGoldenAddressModal from "../components/goldenAddress/EditGoldenAddressModal";
 import AddGoldenAddressModal from "../components/goldenAddress/AddGoldenAddressModal";
-import FilterGoldenAddresses from "../components/goldenAddress/FilterGoldenAddresses.vue"
+import FilterGoldenAddresses from "../components/goldenAddress/NewFilterGoldenAddresses.vue"
 export default {
     name: "GoldenAddress",
     components: {

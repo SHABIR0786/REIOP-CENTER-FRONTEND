@@ -173,7 +173,7 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditEmailModal from "../components/email/EditEmailModal"
 import AddEmailModal from "../components/email/AddEmailModal";
-import FilterEmails from "../components/email/NewFilterEmails";
+import FilterEmails from "../components/email/FilterEmails";
 
 export default {
     name: "Email",

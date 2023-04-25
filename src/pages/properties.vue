@@ -162,12 +162,11 @@
         </b-col>
     </b-row>
     <div v-if="componentMounted">
-    <filter-properties :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewFilterPropertiesModal" @cancel="showNewFilterPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></filter-properties>
     <export-properties-modal :filtersName="filtersName" :search="searchProperty" :selectedItems="bulkDeleteItems" :showModal="showNewExportPropertiesModal" @cancel="showNewExportPropertiesModal=false" :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></export-properties-modal>
     <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <custom-view :customViews="templatesToExport" :changeTemplate="changeTemplate" :showModal="showCustomModalView" @cancel="showCustomModalView=false" @show="showCustomView" @save="saveCustomView"></custom-view>
-    <list-filter :showModal="showListFilterModal" @cancel="showListFilterModal=false" :search="searchProperty" :selectedItems="bulkDeleteItems"  :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></list-filter>
+    <filter-properties :showModal="showListFilterModal" @cancel="showListFilterModal=false" :search="searchProperty" :selectedItems="bulkDeleteItems"  :custom_view="getCustomView" :template_id="selectedTemplate" @filterProperties="filterProperties" :sortBy="sortBy" :sortDesc="sortDesc" :totals="exportCount" :fields_type="fieldsType"></filter-properties>
 
     </div>
 </div>
@@ -184,7 +183,6 @@ import EditSubjectModal from "../components/subject/EditSubjectModal";
 import CustomView from "../components/properties/CustomView";
 import FilterProperties from "../components/properties/FilterProperties";
 import ExportPropertiesModal from "../components/properties/ExportPropertiesModal";
-import ListFilter from "../components/properties/ListFilter2";
 
 export default {
     name: "Properties",
@@ -196,7 +194,6 @@ export default {
         CustomView,
         FilterProperties,
         ExportPropertiesModal,
-        ListFilter
     },
     data() {
         return {
@@ -512,6 +509,7 @@ export default {
                 filter: this.filtersName,
                 custom: '',
             });
+            this.totals = this.totalsCount;
             this.loadingTotals = false;
             this.propertyFields = [...this.fields];
             this.propertyFields.unshift({
@@ -570,6 +568,7 @@ export default {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
                 });
+                this.totals = this.totalsCount;
                 this.loadingTotals = false;
                 this.isPropertySearched = false;
                 this.$store.dispatch('uxModule/hideLoader')
@@ -594,6 +593,7 @@ export default {
                     filter: JSON.stringify(this.filtersName),
                     custom: '',
                 });
+                this.totals = this.totalsCount;
                 this.loadingTotals = false;
                 if (this.customViewTemplate) {
                     this.showCustomView();
@@ -629,6 +629,7 @@ export default {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
                 });
+                this.totals = this.totalsCount;
                 this.loadingTotals = false;
                 this.$store.dispatch('uxModule/hideLoader')
                 if (this.customViewTemplate) {
@@ -1011,6 +1012,7 @@ export default {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
             });
+            this.totals = this.totalsCount;
             this.loadingTotals = false;
         },
         async getTemplate(event) {
@@ -1050,14 +1052,6 @@ export default {
         }
     },
     watch: {
-        totalsCount: {
-            handler: function () {
-                if(this.totalsCount.subjectsCount) {
-                this.exportCount = this.totalsCount.subjectsCount;
-                this.totals = this.totalsCount;
-                }
-            }
-        },
         currentPage: {
             handler: async function () {
                 this.$store.dispatch('uxModule/setLoading')

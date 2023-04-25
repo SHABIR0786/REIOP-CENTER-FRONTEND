@@ -200,7 +200,7 @@ import {
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditSellerModal from "../components/seller/EditSellerModal"
 import AddSellerModal from "../components/seller/AddSellerModal";
-import FilterSellers from "../components/seller/NewFilterSellers";
+import FilterSellers from "../components/seller/FilterSellers";
 
 export default {
     name: "Seller",
@@ -479,6 +479,7 @@ export default {
             const data = {
                 ...item
             }
+            console.log(data);
             // data.lists.forEach(e => {
             //     e.created_at = e.created_at.split('T')[0];
             //     e.updated_at = e.updated_at.split('T')[0];

@@ -201,7 +201,7 @@ import {
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditSubjectModal from "../components/subject/EditSubjectModal";
 import AddSubjectModal from "../components/subject/AddSubjectModal";
-import FilterSubjects from "@/components/subject/NewFilterSubjects";
+import FilterSubjects from "@/components/subject/FilterSubjects";
 
 export default {
     name: "Subject",

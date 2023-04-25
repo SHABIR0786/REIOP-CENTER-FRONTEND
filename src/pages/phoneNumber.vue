@@ -156,7 +156,7 @@ import {
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditPhoneNumberModal from "../components/phoneNumber/EditPhoneNumberModal"
 import AddPhoneNumberModal from "../components/phoneNumber/AddPhoneNumberModal";
-import FilterPhoneNumbers from "../components/phoneNumber/NewFilterPhoneNumbers";
+import FilterPhoneNumbers from "../components/phoneNumber/FilterPhoneNumbers";
 
 export default {
     name: "PhoneNumber",
