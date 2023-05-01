@@ -311,50 +311,12 @@ export default {
 
     },
     methods: {
-        applyFilter() {
-            let filter = this.filters.find(x => x.id == this.selectedFilter);
-            if (filter.configuration) {
-                let allFilters = JSON.parse(filter.configuration);
-                let total = 0
-                for (let item in allFilters) {
-                    total += allFilters[item].length
-                }
-                this.totalFilters = total;
-                this.filter(allFilters, total);
-            }
-        },
-        async clearsearch() {
-            this.searchSeller = '';
-            await this.search();
-            this.isClearSearch = false;
-        },
-        async clearAllFilters() {
-            this.selectedFilter = null;
-            this.$refs.filterSellers.clearAllFilters();
-            this.$refs.filterSellers.filtersAlreadyApplied = null;
-            this.filtersName = {
-                    Market: [],
-                    Group: [],
-                    Type: [],
-                    Source: [],
-                    Errors: [],
-                    Error: [],
-                    RunDate: [],
-                    CompanyOwned: [],
-                    TotalSubjects:[],
-                    TotalPhones:[],
-                    TotalEmails:[],
-                    AttemptedSkipTraceSources:[],
-                    HasSkipTraceData:[]
-                },
-                await this.search();
-        },
-        async search() {
-            this.$store.dispatch('uxModule/setLoading');
+        async getSellers() {
+        this.$store.dispatch('uxModule/setLoading');
             try {
                 if (!this.totalFilters) {
                     await this.$store.dispatch('sellerModule/searchSellers', {
-                        page: this.currentPage,
+                        page: 1,
                         perPage: this.perPage,
                         search: this.searchSeller,
                         sortBy: this.sortBy,
@@ -379,43 +341,68 @@ export default {
                 } else {
                     this.isClearSearch = true;
                 }
-                this.$store.dispatch('uxModule/hideLoader');
             } catch (error) {
-                this.$store.dispatch('uxModule/hideLoader');
+                    this.$store.dispatch('uxModule/hideLoader')
+            }   
+        },
+        applyFilter() {
+            let filter = this.filters.find(x => x.id == this.selectedFilter);
+            if (filter.configuration) {
+                let allFilters = JSON.parse(filter.configuration);
+                let total = 0
+                for (let item in allFilters) {
+                    total += allFilters[item].length
+                }
+                this.totalFilters = total;
+                this.filter(allFilters, total);
             }
         },
-        async sortingChanged(ctx) {
-            this.$store.dispatch('uxModule/setLoading');
-            try {
-                this.sortBy = ctx.sortBy;
-                this.sortDesc = ctx.sortDesc;
-                if (!this.totalFilters) {
-                    await this.$store.dispatch("sellerModule/getAllSellers", {
-                        page: 1,
-                        perPage: this.perPage,
-                        search: this.searchSeller,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.items;
-                } else {
-                    await this.$store.dispatch("sellerModule/filterSeller", {
-                        page: 1,
-                        perPage: this.perPage,
-                        search: this.searchSeller,
-                        filter: this.filtersName,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.filteredItems
-                }
-                this.$store.dispatch('uxModule/hideLoader');
-            } catch (error) {
-                this.$store.dispatch('uxModule/hideLoader');
+        async clearsearch() {
+            this.searchSeller = '';
+            await this.search();
+            this.isClearSearch = false;
+        },
+        async clearAllFilters() {
+            this.totalFilters = 0;
+            this.selectedFilter = null;
+            this.$refs.filterSellers.clearAllFilters();
+            this.$refs.filterSellers.filtersAlreadyApplied = null;
+            this.filtersName = {
+                    Market: [],
+                    Group: [],
+                    Type: [],
+                    Source: [],
+                    Errors: [],
+                    Error: [],
+                    RunDate: [],
+                    TotalSellers: [],
+                    ListStack: [],
+                    list_custom_field_1: [],
+                    list_custom_field_2: [],
+                    list_custom_field_3: [],
+                    list_custom_field_4: [],
+                    list_custom_field_5: [],
+                },
+                await this.search();
+        },
+        search() {
+            if(this.currentPage == 1) {
+                this.getSellers();
+            } else {
+                this.currentPage  = 1;
+            }
+        },
+        sortingChanged(ctx) {
+            this.sortBy = ctx.sortBy;
+            this.sortDesc = ctx.sortDesc;
+            if(this.currentPage == 1) {
+                this.getSellers();
+            } else {
+                this.currentPage  = 1;
             }
         },
         filtersCount(total) {
-            this.totalFilters = total
+            this.totalFilters = total;
             return total
         },
         async doCreatedOperation() {
@@ -440,40 +427,15 @@ export default {
             this.filteredOrAllData = this.items;
             this.itemsCount = this.total;
         },
-        async filter(data, filterValue) {
-            this.$store.dispatch('uxModule/setLoading');
-            try {
-                this.filtersName = data
-                await this.$store.dispatch("sellerModule/filterSeller", {
-                    page: 1,
-                    perPage: this.perPage,
-                    search: this.searchSeller,
-                    filter: data,
-                    sortBy: this.sortBy,
-                    sortDesc: this.sortDesc
-                })
-                if (!filterValue) {
-                    if (!this.items.length) {
-                        await this.$store.dispatch("sellerModule/getAllSellers", {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchSeller,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                    }
-                    this.filteredOrAllData = this.items
-                    this.itemsCount = this.total
-                } else {
-                    this.filteredOrAllData = this.filteredItems
-                    this.itemsCount = this.filteredSellersCount
-                }
-                this.showFilterPropertiesModal = false;
-                this.$store.dispatch('uxModule/hideLoader');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('uxModule/hideLoader');
+        filter(data, filterValue) {
+            this.totalFilters = filterValue;
+            this.filtersName = data
+            if(this.currentPage == 1) {
+                this.getSellers();
+            } else {
+                this.currentPage  = 1;
             }
+            this.showFilterPropertiesModal = false;
         },
         editItem(item) {
             const data = {
@@ -565,63 +527,18 @@ export default {
             }
         },
         currentPage: {
-            handler: async function () {
+            handler: function () {
                 this.$store.dispatch('uxModule/setLoading');
-                try {
-                    if (!this.totalFilters) {
-                        await this.$store.dispatch('sellerModule/getAllSellers', {
-                            page: this.currentPage,
-                            perPage: this.perPage,
-                            search: this.searchSeller,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.items
-                    } else {
-                        await this.$store.dispatch("sellerModule/filterSeller", {
-                            page: this.currentPage,
-                            perPage: this.perPage,
-                            search: this.searchSeller,
-                            filter: this.filtersName,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.filteredItems
-                    }
-                    this.$store.dispatch('uxModule/hideLoader');
-                } catch (error) {
-                    this.$store.dispatch('uxModule/hideLoader');
-                }
+                this.getSellers();
             }
         },
         perPage: {
             handler: async function () {
-                this.$store.dispatch('uxModule/setLoading');
-                try {
-                    if (!this.totalFilters) {
-                        this.$store.dispatch('sellerModule/getAllSellers', {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchSeller,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.items
-                    } else {
-                        await this.$store.dispatch("sellerModule/filterSeller", {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchSeller,
-                            filter: this.filtersName,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.filteredItems
-                    }
-                    this.$store.dispatch('uxModule/hideLoader');
-                } catch (error) {
-                    this.$store.dispatch('uxModule/hideLoader');
-                }
+            if(this.currentPage == 1) {
+                this.getSellers();
+            } else {
+                this.currentPage  = 1;
+            }
             }
         },
         isFinishedFilterSellers() {

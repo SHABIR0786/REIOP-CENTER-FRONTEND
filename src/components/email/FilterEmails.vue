@@ -864,6 +864,44 @@ export default {
 
       this.$emit('filter', JSON.parse(JSON.stringify(filterNames)), filterValue);
     },
+    clearAllFilters() {
+        this.ListFilters = [];
+        this.StackFilters = {
+        ListStack: { statement: "And", value: null, name: "List Stack", key: "ListStack" },
+        TotalSubjects: { statement: "And", value: null, name: "Total Subjects", key: "TotalSubjects"},
+        TotalSellers: { statement: "And", value: null, name: "Total Sellers", key: "TotalSellers" },
+        TotalEmails: { statement: "And", value: null, name: "Total Emails", key: "TotalEmails" },
+        TotalPhones: { statement: "And", value: null, name: "Total Phones", key: "TotalPhones" },
+        TotalGoldens: { statement: "And", value: null, name: "Total Goldens", key: "TotalGoldens" },
+        };
+        this.StatementFilters = {
+        hasSkipTraceData: {
+          statement: "And",
+          value: "",
+          name: "has SkipTrace Data",
+          key: "hasSkipTraceData"
+        },
+        hasAttemtedSkips: {
+          statement: "And",
+          value: "",
+          name: "has Attemted Skips",
+          key: "hasAttemtedSkips"
+        },
+        Error: {
+          statement: "And",
+          value: "",
+          name: "Error",
+          key: "Error"
+        },
+        ErrorType: {
+          statement: "And",
+          value: "",
+          name: "Error",
+          key: "ErrorType"
+        }
+      };
+      this.additionalFilters = [];        
+    },
     closeFilterModal() {
       this.$emit("cancel");
     },

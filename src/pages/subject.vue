@@ -186,7 +186,6 @@
     <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
-    <!-- <filter-subjects ref="filtersubjects" :search="searchSubject" @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-subjects> -->
     <filter-subjects ref="filtersubjects" :search="searchSubject" @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-subjects>
 </div>
 </template>
@@ -242,6 +241,13 @@ export default {
                 Errors: [],
                 Error: [],
                 RunDate: [],
+                TotalSellers: [],
+                ListStack: [],
+                list_custom_field_1: [],
+                list_custom_field_2: [],
+                list_custom_field_3: [],
+                list_custom_field_4: [],
+                list_custom_field_5: [],
             },
             searchInFiltered: {},
             sortBy: 'id',
@@ -310,6 +316,36 @@ export default {
         await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
     },
     methods: {
+        async getSubjects() {
+            this.$store.dispatch('uxModule/setLoading')
+            try {
+                if (!this.totalFilters) {
+                        await this.$store.dispatch('subjectModule/getAllSubjects', {
+                            page: this.currentPage,
+                            perPage: this.perPage,
+                            search: this.searchSubject,
+                            sortBy: this.sortBy,
+                            sortDesc: this.sortDesc
+                        })
+                        this.itemsCount = this.total;
+                        this.filteredOrAllData = this.items;
+                    } else {
+                        await this.$store.dispatch("subjectModule/filterSubject", {
+                            page: this.currentPage,
+                            perPage: this.perPage,
+                            search: this.searchSubject,
+                            filter: this.filtersName,
+                            sortBy: this.sortBy,
+                            sortDesc: this.sortDesc
+                        })
+                        this.filteredOrAllData = this.filteredItems
+                        this.itemsCount = this.filteredSubjectsCount
+                    }
+                    this.$store.dispatch('uxModule/hideLoader')
+                } catch (error) {
+                    this.$store.dispatch('uxModule/hideLoader')
+                }        
+        },
         applyFilter() {
             let filter = this.filters.find(x => x.id == this.selectedFilter);
             if (filter.configuration) {
@@ -323,6 +359,7 @@ export default {
             }
         },
         async clearAllFilters() {
+            this.totalFilters = 0;
             this.selectedFilter = null;
             this.$refs.filtersubjects.clearAllFilters();
             this.$refs.filtersubjects.filtersAlreadyApplied = null;
@@ -332,8 +369,15 @@ export default {
                     Type: [],
                     Source: [],
                     Errors: [],
-                    Error:[],
+                    Error: [],
                     RunDate: [],
+                    TotalSellers: [],
+                    ListStack: [],
+                    list_custom_field_1: [],
+                    list_custom_field_2: [],
+                    list_custom_field_3: [],
+                    list_custom_field_4: [],
+                    list_custom_field_5: [],
                 };
                 await this.search();
         },
@@ -343,105 +387,30 @@ export default {
             this.isSearched = false;
         },
         async search() {
-            this.$store.dispatch('uxModule/setLoading');
-            try {
-                if (!this.totalFilters) {
-                    await this.$store.dispatch('subjectModule/searchSubjects', {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchSubject,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.itemsCount = this.total;
-                    this.filteredOrAllData = this.items;
-                } else {
-                    await this.$store.dispatch("subjectModule/filterSubject", {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchSubject,
-                        filter: this.filtersName,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.filteredItems
-                    this.itemsCount = this.filteredSubjectsCount
-                }
-                if (this.searchSubject.length == 0) {
-                    this.isSearched = false;
-                } else {
-                    this.isSearched = true;
-                }
-                this.$store.dispatch('uxModule/hideLoader');
-            } catch (error) {
-                this.$store.dispatch('uxModule/hideLoader');
+            if(this.currentPage == 1) {
+                this.getSubjects();
+            } else {
+                this.currentPage  = 1;
             }
         },
-        async sortingChanged(ctx) {
-            this.$store.dispatch('uxModule/setLoading');
-            try {
-                this.sortBy = ctx.sortBy;
-                this.sortDesc = ctx.sortDesc;
-                if (!this.totalFilters) {
-                    await this.$store.dispatch("subjectModule/getAllSubjects", {
-                        page: 1,
-                        perPage: this.perPage,
-                        search: this.searchSubject,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    });
-                    this.filteredOrAllData = this.items;
-                } else {
-                    await this.$store.dispatch("subjectModule/filterSubject", {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchSubject,
-                        filter: this.filtersName,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.filteredItems
-                }
-                this.$store.dispatch('uxModule/hideLoader');
-            } catch (error) {
-                this.$store.dispatch('uxModule/hideLoader');
+        sortingChanged(ctx) {
+            this.sortBy = ctx.sortBy;
+            this.sortDesc = ctx.sortDesc;
+            if(this.currentPage == 1) {
+                this.getSubjects();
+            } else {
+                this.currentPage  = 1;
             }
         },
         async filter(data, filterValue) {
-            console.log(data, filterValue);
-            this.$store.dispatch('uxModule/setLoading');
-            try {
-                this.filtersName = data
-                await this.$store.dispatch("subjectModule/filterSubject", {
-                    page: 1,
-                    perPage: this.perPage,
-                    search: this.searchSubject,
-                    filter: data,
-                    sortBy: this.sortBy,
-                    sortDesc: this.sortDesc
-                })
-                if (!filterValue) {
-                    if (!this.items.length) {
-                        await this.$store.dispatch("subjectModule/getAllSubjects", {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchSubject,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                    }
-                    this.filteredOrAllData = this.items
-                    this.itemsCount = this.total
-                } else {
-                    this.filteredOrAllData = this.filteredItems
-                    this.itemsCount = this.filteredSubjectsCount
-                }
-                // this.showFilterPropertiesModal = false;
-                this.$store.dispatch('uxModule/hideLoader');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('uxModule/hideLoader');
+            this.totalFilters = filterValue;
+            this.filtersName = data
+            if(this.currentPage == 1) {
+                this.getSubjects();
+            } else {
+                this.currentPage  = 1;
             }
+            this.showFilterPropertiesModal = false;
         },
         editSubject(item) {
             this.$store.dispatch('uxModule/setLoading');
@@ -554,63 +523,13 @@ export default {
             }
         },
         currentPage: {
-            handler: async function () {
-                this.$store.dispatch('uxModule/setLoading')
-                try {
-                    if (!this.totalFilters) {
-                        await this.$store.dispatch('subjectModule/getAllSubjects', {
-                            page: this.currentPage,
-                            perPage: this.perPage,
-                            search: this.searchSubject,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.items
-                    } else {
-                        await this.$store.dispatch("subjectModule/filterSubject", {
-                            page: this.currentPage,
-                            perPage: this.perPage,
-                            search: this.searchSubject,
-                            filter: this.filtersName,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.filteredItems
-                    }
-                    this.$store.dispatch('uxModule/hideLoader')
-                } catch (error) {
-                    this.$store.dispatch('uxModule/hideLoader')
-                }
+            handler: function () {
+                this.getSubjects();
             }
         },
         perPage: {
-            handler: async function () {
-                this.$store.dispatch('uxModule/setLoading')
-                try {
-                    if (!this.totalFilters) {
-                        await this.$store.dispatch('subjectModule/getAllSubjects', {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchSubject,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.items
-                    } else {
-                        await this.$store.dispatch("subjectModule/filterSubject", {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchSubject,
-                            filter: this.filtersName,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.filteredItems
-                    }
-                    this.$store.dispatch('uxModule/hideLoader')
-                } catch (error) {
-                    this.$store.dispatch('uxModule/hideLoader')
-                }
+            handler: function () {
+                this.getSubjects();
             }
         },
         isFinishedFilterSubjects() {
