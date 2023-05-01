@@ -341,6 +341,7 @@ export default {
                 } else {
                     this.isClearSearch = true;
                 }
+            this.$store.dispatch('uxModule/hideLoader')
             } catch (error) {
                     this.$store.dispatch('uxModule/hideLoader')
             }   
