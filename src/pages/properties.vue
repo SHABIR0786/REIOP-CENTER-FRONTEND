@@ -508,6 +508,7 @@ export default {
             await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: this.filtersName,
                 custom: '',
+                search: this.searchProperty
             });
             this.totals = this.totalsCount;
             this.loadingTotals = false;
@@ -563,10 +564,12 @@ export default {
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 })
+                this.exportCount = this.total;
                 this.loadingTotals = true;
                 await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
+                search: this.searchProperty
                 });
                 this.totals = this.totalsCount;
                 this.loadingTotals = false;
@@ -589,9 +592,11 @@ export default {
                     custom: this.customViewTemplate
                 });
                 this.loadingTotals = true;
+                this.exportCount = this.total;
                 await this.$store.dispatch("propertyModule/getTotalsCount", {
                     filter: JSON.stringify(this.filtersName),
                     custom: '',
+                    search: this.searchProperty
                 });
                 this.totals = this.totalsCount;
                 this.loadingTotals = false;
@@ -624,10 +629,12 @@ export default {
                     sortDesc: this.sortDesc,
                     custom: this.customViewTemplate
                 });
+                this.exportCount = this.total;
                 this.loadingTotals = true;
                 await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
+                search: this.searchProperty
                 });
                 this.totals = this.totalsCount;
                 this.loadingTotals = false;
@@ -1011,6 +1018,7 @@ export default {
              await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
+                search: this.searchProperty
             });
             this.totals = this.totalsCount;
             this.loadingTotals = false;
