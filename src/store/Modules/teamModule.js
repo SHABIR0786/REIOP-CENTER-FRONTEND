@@ -167,9 +167,9 @@ const actions = {
             return response
         })
     },
-    async mappingTemplateCopyTeam({ commit }, data) {
-        return await api.post(`/mappingTemplateCopyTeam`, {...data}).then((response) => {
-            commit('Mapping_Template_Copy_Team', response.newMappingData)
+    async mappingTemplate({ commit }, data) {
+        return await api.post(`/mapping`, {...data}).then((response) => {
+            commit('Mapping_Template_Copy_Team', response.data)
             return response
         })
     },

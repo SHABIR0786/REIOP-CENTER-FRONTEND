@@ -221,7 +221,7 @@ export default {
       // console.log('item',item);
 
       this.$store.dispatch('uxModule/setLoading');
-      await this.$store.dispatch('teamModule/mappingTemplateCopyTeam', {...item}).then((response) => {
+      await this.$store.dispatch('teamModule/mappingTemplate', {...item}).then((response) => {
           if(response.success==true) {
 
               this.$bvToast.toast(response.message, {
