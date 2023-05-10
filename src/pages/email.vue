@@ -173,7 +173,7 @@ import { BIcon } from "bootstrap-vue"
 import  DeleteModal from'@/components/deleteModal/DeleteModal'
 import EditEmailModal from "../components/email/EditEmailModal"
 import AddEmailModal from "../components/email/AddEmailModal";
-import FilterEmails from "../components/email/NewFilterEmails";
+import FilterEmails from "../components/email/FilterEmails";
 
 export default {
     name: "Email",
@@ -285,6 +285,29 @@ export default {
       await this.$store.dispatch("emailModule/filtersOnTable", 'emails');
     },
     methods: {
+    async getEmails() {
+          this.$store.dispatch('uxModule/setLoading')
+            try {
+              if (!this.totalFilters) {
+                await this.$store.dispatch('emailModule/searchEmails', { page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                this.itemsCount = this.total;
+                this.filteredOrAllData = this.items;
+                } else {
+                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
+                this.filteredOrAllData = this.filteredItems
+                this.itemsCount = this.filteredEmailsCount
+                }
+
+              if(this.searchEmail.length == 0) {
+                this.isEmailSearched = false;
+              } else {
+                this.isEmailSearched = true;
+              }
+            this.$store.dispatch('uxModule/hideLoader')
+          } catch (error) {
+            this.$store.dispatch('uxModule/hideLoader')
+          }
+    },
         applyFilter() {
             let filter = this.filters.find(x => x.id == this.selectedFilter);
             if (filter.configuration) {
@@ -318,67 +341,31 @@ export default {
         },
         await this.search();
         },
-        async search() {
-          this.$store.dispatch('uxModule/setLoading')
-            try {
-              if (!this.totalFilters) {
-                await this.$store.dispatch('emailModule/searchEmails', { page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                  this.itemsCount = this.total;
-                this.filteredOrAllData = this.items;
-                } else {
-                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                this.filteredOrAllData = this.filteredItems
-                this.itemsCount = this.filteredEmailsCount
-                }
-
-              if(this.searchEmail.length == 0) {
-                this.isEmailSearched = false;
-              } else {
-                this.isEmailSearched = true;
-              }
-            this.$store.dispatch('uxModule/hideLoader')
-          } catch (error) {
-            this.$store.dispatch('uxModule/hideLoader')
-          }
+        search() {
+            if(this.currentPage == 1) {
+              this.getEmails();
+            } else {
+              this.currentPage = 1;
+            }
         },
         async sortingChanged(ctx) {
-            this.$store.dispatch('uxModule/setLoading')
-            try {
-            this.sortBy = ctx.sortBy;
-            this.sortDesc = ctx.sortDesc;
-            if (!this.totalFilters){
-                await this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
-                this.filteredOrAllData = this.items
-              }else{
-                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                this.filteredOrAllData = this.filteredItems
-              }
-          this.$store.dispatch('uxModule/hideLoader')
-          } catch (error) {
-            this.$store.dispatch('uxModule/hideLoader')
-          }
+          this.sortBy = ctx.sortBy;
+          this.sortDesc = ctx.sortDesc;
+            if(this.currentPage == 1) {
+              this.getEmails();
+            } else {
+              this.currentPage = 1;
+            }
         },
         async filter(data,filterValue) {
-          this.$store.dispatch('uxModule/setLoading')
-          try {
-         this.filtersName = data
-         await this.$store.dispatch("emailModule/filterEmail", {page: 1, perPage: this.perPage, search: this.searchEmail, filter: data, sortBy:this.sortBy,sortDesc:this.sortDesc})
-         if (!filterValue) {
-            if(!this.items.length){
-              await this.$store.dispatch("emailModule/getAllEmails", {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
-           }
-            this.filteredOrAllData = this.items
-            this.itemsCount = this.total
-          } else {
-            this.filteredOrAllData = this.filteredItems
-            this.itemsCount = this.filteredEmailsCount
-          }
-          this.showFilterPropertiesModal =false
-          this.$store.dispatch('uxModule/hideLoader')
-          } catch (error) {
-            console.log(error);
-            this.$store.dispatch('uxModule/hideLoader')
-          }
+          this.filtersName = data
+          this.totalFilters = filterValue;
+            if(this.currentPage == 1) {
+              this.getEmails();
+            } else {
+              this.currentPage = 1;
+            }
+            this.showFilterPropertiesModal = false;
         },
         filtersCount(total){
         this.totalFilters = total
@@ -502,36 +489,16 @@ export default {
         },
         currentPage: {
             handler: async function() {
-            this.$store.dispatch('uxModule/setLoading')
-            try {
-              if (!this.totalFilters){
-                await this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
-                this.filteredOrAllData = this.items
-              }else{
-                await this.$store.dispatch("emailModule/filterEmail", { page: this.currentPage, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                this.filteredOrAllData = this.filteredItems
-              }
-            this.$store.dispatch('uxModule/hideLoader')
-          } catch (error) {
-            this.$store.dispatch('uxModule/hideLoader')
-          }
+              this.getEmails();
             }
         },
         perPage: {
             handler: async function () {
-            this.$store.dispatch('uxModule/setLoading')
-            try {
-              if (!this.totalFilters) {
-                await this.$store.dispatch('emailModule/getAllEmails', {page: 1, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
-                this.filteredOrAllData = this.items
-              } else {
-                await this.$store.dispatch("emailModule/filterEmail", { page: 1, perPage: this.perPage, search: this.searchEmail, filter: this.filtersName, sortBy:this.sortBy,sortDesc:this.sortDesc })
-                this.filteredOrAllData = this.filteredItems
-              }
-              this.$store.dispatch('uxModule/hideLoader')
-              } catch (error) {
-                this.$store.dispatch('uxModule/hideLoader')
-              }
+            if(this.currentPage == 1) {
+              this.getEmails();
+            } else {
+                this.currentPage  = 1;
+            }  
             }
         },
         isFinishedFilterEmails() {

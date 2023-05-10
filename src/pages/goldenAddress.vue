@@ -291,39 +291,7 @@ export default {
 
     },
     methods: {
-        applyFilter() {
-            let filter = this.filters.find(x => x.id == this.selectedFilter);
-            if (filter.configuration) {
-                let allFilters = JSON.parse(filter.configuration);
-                let total = 0
-                for (let item in allFilters) {
-                    total += allFilters[item].length
-                }
-                this.totalFilters = total;
-                this.filter(allFilters, total);
-            }
-        },
-        async clearsearch() {
-            this.searchGoldenAddress = '';
-            await this.search();
-            this.isGoldenAddressSearched = false;
-        },
-        async clearAllFilters() {
-            this.selectedFilter = null;
-            this.$refs.filterGolden.clearAllFilters();
-            this.$refs.filterGolden.filtersAlreadyApplied = null;
-            this.filtersName = {
-                    Market: [],
-                    Group: [],
-                    Type: [],
-                    Source: [],
-                    Errors: [],
-                    RunDate: [],
-                    SkipSource: []
-                },
-                await this.search();
-        },
-        async search() {
+        async getGoldenAddresses() {
             this.$store.dispatch('uxModule/setLoading')
               try {
             if (!this.totalFilters) {
@@ -358,70 +326,63 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
             }
         },
+        applyFilter() {
+            let filter = this.filters.find(x => x.id == this.selectedFilter);
+            if (filter.configuration) {
+                let allFilters = JSON.parse(filter.configuration);
+                let total = 0
+                for (let item in allFilters) {
+                    total += allFilters[item].length
+                }
+                this.totalFilters = total;
+                this.filter(allFilters, total);
+            }
+        },
+        async clearsearch() {
+            this.searchGoldenAddress = '';
+            await this.search();
+            this.isGoldenAddressSearched = false;
+        },
+        async clearAllFilters() {
+            this.selectedFilter = null;
+            this.$refs.filterGolden.clearAllFilters();
+            this.$refs.filterGolden.filtersAlreadyApplied = null;
+            this.filtersName = {
+                    Market: [],
+                    Group: [],
+                    Type: [],
+                    Source: [],
+                    Errors: [],
+                    RunDate: [],
+                    SkipSource: []
+                },
+                await this.search();
+        },
+        search() {
+            if(this.currentPage == 1) {
+                this.getGoldenAddresses();
+            } else {
+                this.currentPage = 1;
+            }
+        },
         async sortingChanged(ctx) {
-            this.$store.dispatch('uxModule/setLoading')
-            try {
             this.sortBy = ctx.sortBy;
             this.sortDesc = ctx.sortDesc;
-            if (!this.totalFilters) {
-                await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {
-                    page: this.currentPage,
-                    perPage: this.perPage,
-                    search: this.searchGoldenAddress,
-                    sortBy: this.sortBy,
-                    sortDesc: this.sortDesc
-                })
-                this.filteredOrAllData = this.items
+            if(this.currentPage == 1) {
+                this.getGoldenAddresses();
             } else {
-                await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", {
-                    page: this.currentPage,
-                    perPage: this.perPage,
-                    search: this.searchGoldenAddress,
-                    filter: this.filtersName,
-                    sortBy: this.sortBy,
-                    sortDesc: this.sortDesc
-                })
-                this.filteredOrAllData = this.filteredItems
-            }
-            this.$store.dispatch('uxModule/hideLoader')
-            } catch(error) {
-            this.$store.dispatch('uxModule/hideLoader')
+                this.currentPage = 1;
             }
         },
         async filter(data, filterValue) {
-            this.$store.dispatch('uxModule/setLoading')
-            try {
             this.filtersName = data
-            await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", {
-                page: 1,
-                perPage: this.perPage,
-                search: this.searchGoldenAddress,
-                filter: data,
-                sortBy: this.sortBy,
-                sortDesc: this.sortDesc
-            })
-            if (!filterValue) {
-                if (!this.items.length) {
-                    await this.$store.dispatch("goldenAddressModule/getAllGoldenAddresses", {
-                        page: 1,
-                        perPage: this.perPage,
-                        search: this.searchGoldenAddress,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                }
-                this.filteredOrAllData = this.items
-                this.itemsCount = this.total
+            this.totalFilters = filterValue;
+            if(this.currentPage == 1) {
+                this.getGoldenAddresses();
             } else {
-                this.filteredOrAllData = this.filteredItems
-                this.itemsCount = this.filteredGoldenAddressesCount
+                this.currentPage = 1;
             }
             this.showFilterPropertiesModal = false;
-            this.$store.dispatch('uxModule/hideLoader')
-            } catch(error) {
-            console.log(error);
-            this.$store.dispatch('uxModule/hideLoader')
-            }
         },
         async editItem(item) {
             const subjects = [];
@@ -553,62 +514,16 @@ export default {
         },
         currentPage: {
             handler: async function () {
-                this.$store.dispatch('uxModule/setLoading')
-                try {
-                if (!this.totalFilters) {
-                    await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchGoldenAddress,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.items
-                } else {
-                    await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchGoldenAddress,
-                        filter: this.filtersName,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.filteredItems
-                }
-            this.$store.dispatch('uxModule/hideLoader')
-            } catch(error) {
-                this.$store.dispatch('uxModule/hideLoader')
-            }
+                this.getGoldenAddresses();
             }
         },
         perPage: {
             handler: async function () {
-                this.$store.dispatch('uxModule/setLoading')
-                try {
-                if (!this.totalFilters) {
-                    await this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {
-                        page: 1,
-                        perPage: this.perPage,
-                        search: this.searchGoldenAddress,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.items
-                } else {
-                    await this.$store.dispatch("goldenAddressModule/filterGoldenAddress", {
-                        page: 1,
-                        perPage: this.perPage,
-                        search: this.searchGoldenAddress,
-                        filter: this.filtersName,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.filteredItems
-                }
-            this.$store.dispatch('uxModule/hideLoader')
-            } catch(error) {
-                this.$store.dispatch('uxModule/hideLoader')
-            }
+            if(this.currentPage == 1) {
+                this.getGoldenAddresses();
+            } else {
+                this.currentPage = 1;
+            } 
             }
         },
         isFinishedFilterGoldenAddresses() {

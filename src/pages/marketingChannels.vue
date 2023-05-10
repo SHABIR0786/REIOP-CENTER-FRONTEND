@@ -192,6 +192,7 @@ export default {
 <style scoped>
   .add-seller {
     width: 200px;
+    margin-top: -50px;
   }
 
   .filter-icon {

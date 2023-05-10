@@ -156,7 +156,7 @@ import {
 import DeleteModal from '@/components/deleteModal/DeleteModal'
 import EditPhoneNumberModal from "../components/phoneNumber/EditPhoneNumberModal"
 import AddPhoneNumberModal from "../components/phoneNumber/AddPhoneNumberModal";
-import FilterPhoneNumbers from "../components/phoneNumber/NewFilterPhoneNumbers";
+import FilterPhoneNumbers from "../components/phoneNumber/FilterPhoneNumbers";
 
 export default {
     name: "PhoneNumber",
@@ -278,41 +278,8 @@ export default {
         }
     },
     methods: {
-        applyFilter() {
-            let filter = this.filters.find(x => x.id == this.selectedFilter);
-            if (filter.configuration) {
-                let allFilters = JSON.parse(filter.configuration);
-                let total = 0
-                for (let item in allFilters) {
-                    total += allFilters[item].length
-                }
-                this.totalFilters = total;
-                this.filter(allFilters, total);
-            }
-        },
-        async clearsearch() {
-            this.searchPhone = '';
-            await this.search();
-            this.isPhoneSearched = false;
-        },
-        async clearAllFilters() {
-            this.selectedFilter = null;
-            this.$refs.filterPhone.clearAllFilters();
-            this.$refs.filterPhone.filtersAlreadyApplied = null;
-            this.filtersName = {
-                    Market: [],
-                    Group: [],
-                    Type: [],
-                    Source: [],
-                    Errors: [],
-                    Error:[],
-                    RunDate: [],
-                    SkipSource: [],
-                },
-                await this.search();
-        },
-        async search() {
-            this.$store.dispatch('uxModule/setLoading');
+        async getPhoneNumbers() {
+        this.$store.dispatch('uxModule/setLoading');
             try {
                 if (!this.totalFilters) {
                     await this.$store.dispatch('phoneNumberModule/searchPhoneNumbers', {
@@ -347,70 +314,64 @@ export default {
                 this.$store.dispatch('uxModule/hideLoader');
             }
         },
-        async sortingChanged(ctx) {
-            this.$store.dispatch('uxModule/setLoading');
-            try {
-                this.sortBy = ctx.sortBy;
-                this.sortDesc = ctx.sortDesc;
-                if (!this.totalFilters) {
-                    await this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchPhone,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.items
-                } else {
-                    await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {
-                        page: this.currentPage,
-                        perPage: this.perPage,
-                        search: this.searchPhone,
-                        filter: this.filtersName,
-                        sortBy: this.sortBy,
-                        sortDesc: this.sortDesc
-                    })
-                    this.filteredOrAllData = this.filteredPhoneNumber
+        applyFilter() {
+            let filter = this.filters.find(x => x.id == this.selectedFilter);
+            if (filter.configuration) {
+                let allFilters = JSON.parse(filter.configuration);
+                let total = 0
+                for (let item in allFilters) {
+                    total += allFilters[item].length
                 }
-                this.$store.dispatch('uxModule/hideLoader');
-            } catch (error) {
-                this.$store.dispatch('uxModule/hideLoader');
+                this.totalFilters = total;
+                this.filter(allFilters, total);
             }
         },
-        async filter(data, filterValue) {
-            this.$store.dispatch('uxModule/setLoading');
-            try {
-                this.filtersName = data
-                await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {
-                    page: 1,
-                    perPage: this.perPage,
-                    search: this.searchPhone,
-                    filter: data,
-                    sortBy: this.sortBy,
-                    sortDesc: this.sortDesc
-                })
-                if (!filterValue) {
-                    if (!this.items.length) {
-                        await this.$store.dispatch("phoneNumberModule/getAllPhoneNumbers", {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchPhone,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                    }
-                    this.filteredOrAllData = this.items
-                    this.itemsCount = this.total
-                } else {
-                    this.filteredOrAllData = this.filteredPhoneNumber
-                    this.itemsCount = this.filteredPhoneNumbersCount
-                }
-                this.showFilterPropertiesModal = false;
-                this.$store.dispatch('uxModule/hideLoader');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('uxModule/hideLoader');
-            }
+        async clearsearch() {
+            this.searchPhone = '';
+            await this.search();
+            this.isPhoneSearched = false;
+        },
+        async clearAllFilters() {
+            this.selectedFilter = null;
+            this.$refs.filterPhone.clearAllFilters();
+            this.$refs.filterPhone.filtersAlreadyApplied = null;
+            this.filtersName = {
+                    Market: [],
+                    Group: [],
+                    Type: [],
+                    Source: [],
+                    Errors: [],
+                    Error:[],
+                    RunDate: [],
+                    SkipSource: [],
+                },
+                await this.search();
+        },
+        async search() {
+            if(this.currentPage == 1) {
+                this.getPhoneNumbers();
+            } else {
+                this.currentPage  = 1;
+            }     
+        },
+        async sortingChanged(ctx) {
+            this.sortBy = ctx.sortBy;
+            this.sortDesc = ctx.sortDesc;
+            if(this.currentPage == 1) {
+                this.getPhoneNumbers();
+            } else {
+                this.currentPage  = 1;
+            } 
+        },
+        filter(data, filterValue) {
+            this.filtersName = data;
+            this.totalFilters = filterValue;
+            if(this.currentPage == 1) {
+                this.getPhoneNumbers();
+            } else {
+                this.currentPage  = 1;
+            } 
+            this.showFilterPropertiesModal = false;
         },
         async editItem(item) {
                 const subjects = [];
@@ -551,62 +512,16 @@ export default {
         },
         currentPage: {
             handler: async function () {
-                this.$store.dispatch('uxModule/setLoading');
-                try {
-                    if (!this.totalFilters) {
-                        await this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {
-                            page: this.currentPage,
-                            perPage: this.perPage,
-                            search: this.searchPhone,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.items
-                    } else {
-                        await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {
-                            page: this.currentPage,
-                            perPage: this.perPage,
-                            search: this.searchPhone,
-                            filter: this.filtersName,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.filteredPhoneNumber
-                    }
-                    this.$store.dispatch('uxModule/hideLoader')
-                } catch (error) {
-                    this.$store.dispatch('uxModule/hideLoader')
-                }
+                this.getPhoneNumbers();
             }
         },
         perPage: {
             handler: async function () {
-                this.$store.dispatch('uxModule/setLoading');
-                try {
-                    if (!this.totalFilters) {
-                        await this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchPhone,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.items
-                    } else {
-                        await this.$store.dispatch("phoneNumberModule/filterPhoneNumber", {
-                            page: 1,
-                            perPage: this.perPage,
-                            search: this.searchPhone,
-                            filter: this.filtersName,
-                            sortBy: this.sortBy,
-                            sortDesc: this.sortDesc
-                        })
-                        this.filteredOrAllData = this.filteredPhoneNumber
-                    }
-                    this.$store.dispatch('uxModule/hideLoader')
-                } catch (error) {
-                    this.$store.dispatch('uxModule/hideLoader')
-                }
+            if(this.currentPage == 1) {
+                this.getPhoneNumbers();
+            } else {
+                this.currentPage  = 1;
+            }   
             }
         },
         isFinishedFilterPhoneNumbers() {

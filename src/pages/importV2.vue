@@ -17,8 +17,9 @@
                     </b-col>
                     <b-col cols="4">
                       <b-input-group class="">
+                        <b-form-select v-if="user && user.role == 1" v-model="currentTeam" aria-describedby="role-id" @change="changeTeam()" :options="teams">
+                        </b-form-select>
                     <b-form-input v-model="searchPendingImport" placeholder="Search" title="Search Imports" v-b-tooltip.hover @keyup.enter="searchPendingImportFunction()"></b-form-input>
-
                     <b-input-group-append>
                         <b-input-group-text role="button"  @click="searchPendingImportFunction()" v-b-tooltip.hover title="Search (press Enter key)">
                             <b-spinner v-if="isBusy" small variant="primary" class="my-auto ml-2"></b-spinner>
@@ -137,9 +138,10 @@
                     </b-col>
                     <b-col cols="4">
                       <b-input-group class="">
-                    <b-form-input v-model="searchImport" placeholder="Search" title="Search Imports" v-b-tooltip.hover @keyup.enter="searchImportFunction()"></b-form-input>
-
-                    <b-input-group-append>
+                      <b-form-select v-if="user && user.role == 1" v-model="currentTeam" aria-describedby="role-id" @change="changeTeam()" :options="teams">
+                      </b-form-select>
+                      <b-form-input v-model="searchImport" placeholder="Search" title="Search Imports" v-b-tooltip.hover @keyup.enter="searchImportFunction()"></b-form-input>
+                      <b-input-group-append>
                         <b-input-group-text role="button"  @click="searchImportFunction()" v-b-tooltip.hover title="Search (press Enter key)">
                             <b-spinner v-if="isBusy" small variant="primary" class="my-auto ml-2"></b-spinner>
                             <b-icon  v-else icon="search" variant="primary" ></b-icon> 
@@ -327,6 +329,8 @@ export default {
         filteredItemsPending: [],
         previousStepArr: [],
         tab:'previousImports',
+        teams: [{text:'My Team',value:'myteam'}, {text: 'All Teams', value:'all'}],
+        currentTeam: 'myteam',
       }
     },
     async created () {
@@ -343,7 +347,6 @@ export default {
           fields: 'importV2Module/fields',
           items: 'importV2Module/imports',
           pendingJobs: 'importV2Module/pendingJobs',
-
           pageTo: 'importV2Module/pageTo',
           pageFrom: 'importV2Module/pageFrom',
           pending_pageTo: 'importV2Module/pending_pageTo',
@@ -354,15 +357,18 @@ export default {
           editData: 'importV2Module/editData',
           showImportFirstPage: 'importV2Module/showImportFirstPage',
           fieldsLoadingZone: 'importV2Module/fieldsLoadingZone',
+          user: 'loginModule/getAuthUser',
       }),
       rows() { return this.total ? this.total : 0 },
       pending_rows() { return this.pending_total ? this.pending_total : 0 },
-
       getPreviousStep() {
         return this.previousStepArr[this.previousStepArr.length - 1];
-      },
+      }
     },
     methods: {
+      changeTeam() {
+        this.showImports();
+      },
      async resumeJob(item) {
          await this.$store.dispatch('listModule/resumePendingJob', {batchId:item.id});
       },
@@ -395,8 +401,8 @@ export default {
         try {
           this.$store.dispatch('uxModule/setLoading')
           await this.$store.dispatch('importV2Module/getTotal')
-          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage,search: this.searchImport})
-          await this.$store.dispatch("importV2Module/pendingJobBatches", {page: this.pending_currentPage, perPage: this.pending_perPage,search: ''})
+          await this.$store.dispatch("importV2Module/getAllProcesses", {page: this.currentPage, perPage: this.perPage,search: this.searchImport, team:this.currentTeam})
+          await this.$store.dispatch("importV2Module/pendingJobBatches", {page: this.pending_currentPage, perPage: this.pending_perPage,search: '', team: this.currentTeam})
 
           this.filteredItems = this.items;
           this.filteredItemsPending = this.pendingJobs;
