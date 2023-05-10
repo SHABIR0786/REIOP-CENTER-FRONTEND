@@ -17,6 +17,8 @@
                     </b-col>
                     <b-col cols="3">
                     <b-button
+                    :disabled="copySettings.mappingTemplate.teamId==null"
+                    @click="MappingTeam()"
                         variant="primary"
                         size="sm"
                         class="float-right">
@@ -68,6 +70,9 @@ import { mapGetters } from "vuex";
             showModal: {
                 type: Boolean
             },
+            propsData: {
+                type: Object
+            },
         },
     computed: {
         ...mapGetters({
@@ -80,11 +85,13 @@ import { mapGetters } from "vuex";
                     mappingTemplate: {teamId:null, copy:false},
                     propertiesFilter: {teamId:null, copy:false},
                 },
+                team:{}
             }
         },
         watch: {
             showModal:async function() {
-            if(this.showModal && !this.teams) {
+            if(this.showModal && this.teams) {
+                this.team= {...this.propsData}
             this.$store.dispatch('uxModule/setLoading');
             await this.$store.dispatch("teamModule/getAllTeams");
             this.$store.dispatch('uxModule/hideLoader');
@@ -92,6 +99,24 @@ import { mapGetters } from "vuex";
             }
         },
         methods:{
+            MappingTeam(){
+                
+                if(this.copySettings.mappingTemplate.teamId!=null){
+                    // console.log('this.team',this.team);
+                // console.log('selected.team',this.copySettings.mappingTemplate.teamId);
+                this.$emit('mappingTemplate', this.team,this.copySettings);
+                }else{
+                    this.$bvToast.toast("Please Select Team!", {
+                    title: "Message",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+                });
+                }
+                
+
+                
+
+            }
     }
     }
 </script>

@@ -21,6 +21,7 @@ const state = {
     isTeamViewAccess : false,
     teamViewAccessData : {},
     companyTeamName : '',
+    mappingTemplateCopyTeamData:[],
 
 
 
@@ -67,6 +68,9 @@ const mutations = {
     ADD_TEAM(state, payload) {
         const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
         findIndex !== -1 && state.teams.splice(findIndex, 1, { ...payload })
+    },
+    Mapping_Template_Copy_Team(state, payload) {
+        state.mappingTemplateCopyTeamData = payload;
     },
     ADD_TEAM_MEMBER(state, payload) {
         const findIndex = state.teams.findIndex(({ id }) => id === payload.id)
@@ -163,6 +167,12 @@ const actions = {
             return response
         })
     },
+    async mappingTemplateCopyTeam({ commit }, data) {
+        return await api.post(`/mappingTemplateCopyTeam`, {...data}).then((response) => {
+            commit('Mapping_Template_Copy_Team', response.newMappingData)
+            return response
+        })
+    },
     async deleteTeam({ commit }, data) {
         return await api.deleteAPI(`/teams/${data}`).then((response) => {
             if(response.status ==true){
@@ -237,6 +247,7 @@ const getters = {
     isTeamViewAccess: ({ isTeamViewAccess }) => isTeamViewAccess,
     teamViewAccessData: ({ teamViewAccessData }) => teamViewAccessData,
     companyTeamName: ({ companyTeamName }) => companyTeamName,
+    Mapping_Template_Copy_Team: ({ Mapping_Template_Copy_Team }) => Mapping_Template_Copy_Team,
 
 
 
