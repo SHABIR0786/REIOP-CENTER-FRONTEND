@@ -37,6 +37,8 @@
                     </b-col>
                     <b-col cols="3">
                     <b-button
+                    :disabled="copySettings.propertiesFilter.teamId==null"
+                    @click="PropertieTemplate()"
                         variant="primary"
                         size="sm"
                         class="float-right">
@@ -105,6 +107,24 @@ import { mapGetters } from "vuex";
                     // console.log('this.team',this.team);
                 // console.log('selected.team',this.copySettings.mappingTemplate.teamId);
                 this.$emit('mappingTemplate', this.team,this.copySettings);
+                }else{
+                    this.$bvToast.toast("Please Select Team!", {
+                    title: "Message",
+                    variant: 'warning',
+                    autoHideDelay: 5000,
+                });
+                }
+                
+
+                
+
+            },
+            PropertieTemplate(){
+                
+                if(this.copySettings.propertiesFilter.teamId!=null){
+                    // console.log('this.team',this.team);
+                // console.log('selected.team',this.copySettings.mappingTemplate.teamId);
+                this.$emit('propertiesTemplate', this.team,this.copySettings);
                 }else{
                     this.$bvToast.toast("Please Select Team!", {
                     title: "Message",

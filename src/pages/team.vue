@@ -112,7 +112,7 @@
       </b-row>
     </div>
     <add-team-modal :showModal="showAddModal" @cancel="showAddModal=false" @add="add"></add-team-modal>
-    <copy-settings-modal :showModal="showCopySettingsModal" :propsData="editedItem" @mappingTemplate="mappingTemplate" @cancel="showCopySettingsModal=false"></copy-settings-modal>
+    <copy-settings-modal :showModal="showCopySettingsModal" :propsData="editedItem" @mappingTemplate="mappingTemplate" @propertiesTemplate="propertiesTemplate" @cancel="showCopySettingsModal=false"></copy-settings-modal>
     <edit-team-modal :showModal="showEditModal" :showEditAddModal="showEdit_AddModal" :propsData="editedItem" @cancel="showEditModal=false;showEdit_AddModal=false" @save="save" @delete="showDeleteModal = true;showEditModal=false"></edit-team-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse" header="Delete Team" title="Are you sure? you want to delete this Team with all of its data"></delete-modal>
     <confirm-modal :showModal="showUserExistModal"   @modalResponse="userExist">
@@ -210,18 +210,38 @@ export default {
       this.showEdit_AddModal = true;
     },
     async mappingTemplate(editTeam,copyTeam) {
-      // console.log('editTeam',editTeam);
-      // console.log('copyTeam',copyTeam);
       var item = {
-        // editTeam:editTeam,
-        // mappingTemplate:copyTeam.mappingTemplate,
         editTeamId:editTeam.id,
         mappingTeamId:copyTeam.mappingTemplate.teamId
       };
-      // console.log('item',item);
 
       this.$store.dispatch('uxModule/setLoading');
       await this.$store.dispatch('teamModule/mappingTemplate', {...item}).then((response) => {
+          if(response.success==true) {
+
+              this.$bvToast.toast(response.message, {
+                  title: "Message",
+                  variant: 'success',
+                  autoHideDelay: 5000,
+              });
+            }else{
+              this.$bvToast.toast(response.error, {
+                  title: "Error",
+                  variant: 'danger',
+                  autoHideDelay: 5000,
+              });
+            }
+          })
+      this.$store.dispatch('uxModule/hideLoader');
+      
+    },
+    async propertiesTemplate(editTeam,copyTeam) {
+      var item = {
+        editTeamId:editTeam.id,
+        mappingTeamId:copyTeam.propertiesFilter.teamId
+      };
+      this.$store.dispatch('uxModule/setLoading');
+      await this.$store.dispatch('teamModule/propertiesTemplate', {...item}).then((response) => {
           if(response.success==true) {
 
               this.$bvToast.toast(response.message, {
