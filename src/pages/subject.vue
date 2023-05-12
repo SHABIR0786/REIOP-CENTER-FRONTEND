@@ -437,12 +437,27 @@ export default {
             this.showDeleteModal = true;
             this.itemToDelete = item;
         },
-        modalResponse(response) {
+        async modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
                 this.$store.dispatch('uxModule/setLoading');
                 try {
-                    this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id)
+                    let responseRequest =  await this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id)
+                    if(responseRequest.status==200) {
+                        this.$bvToast.toast("Item Deleted Successfully.", {
+                            title: "Message",
+                            variant: 'success',
+                            autoHideDelay: 5000,
+                        });
+                        const findIndex = this.filteredOrAllData.findIndex(({ id }) => id == this.itemToDelete.id)
+                        findIndex !== -1 && this.filteredOrAllData.splice(findIndex, 1)
+                    }else{
+                        this.$bvToast.toast("Somethin went wrong!", {
+                            title: "Error",
+                            variant: 'danger',
+                            autoHideDelay: 5000,
+                        });
+                    }
                     this.$store.dispatch('uxModule/hideLoader');
                 } catch (error) {
                     this.$store.dispatch('uxModule/hideLoader');
@@ -452,18 +467,24 @@ export default {
         addItem() {
             this.showAddModal = true;
         },
-        bulkDelete() {
+        async bulkDelete() {
             this.$store.dispatch('uxModule/setLoading');
             try {
-                this.$store.dispatch('subjectModule/deleteMultipleSubjects', this.bulkDeleteItems).then(() => {
+               await this.$store.dispatch('subjectModule/deleteMultipleSubjects', this.bulkDeleteItems).then(() => {
                     this.$store.dispatch('subjectModule/getAllSubjects', {
                         page: this.currentPage,
                         perPage: this.perPage,
                         search: this.searchSubject,
                         sortBy: this.sortBy,
                         sortDesc: this.sortDesc
-                    })
-                })
+                    }).then(() => {
+                        this.itemsCount = this.total;
+                        this.filteredOrAllData = this.items;
+                    });
+                    
+                });
+                await this.$store.dispatch("filterModule/getAllFilters", 'subjects');
+                await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
                 this.$store.dispatch('uxModule/hideLoader');
             } catch (error) {
                 this.$store.dispatch('uxModule/hideLoader');
