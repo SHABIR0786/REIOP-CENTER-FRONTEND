@@ -3,7 +3,7 @@
     <div class="properties-header">
         <h3>Properties</h3>
         <div class="boxes">
-            <div> {{totals.subjectsCount}} Subjects</div>
+            <div> <b-spinner v-if="loadingTotals" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> <span v-if="!loadingTotals">{{totals.subjectsCount}}</span> Subjects</div>
             <div><b-spinner v-if="loadingTotals" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> <span v-if="!loadingTotals">{{totals.sellersCount}}</span> Sellers</div>
             <div><b-spinner v-if="loadingTotals" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> <span v-if="!loadingTotals">{{totals.phonesCount}}</span> Phones</div>
             <div><b-spinner v-if="loadingTotals" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> <span v-if="!loadingTotals">{{totals.emailsCount}}</span> Emails</div>
@@ -49,14 +49,15 @@
         <b-row class="text-end">
             <div class="d-flex justify-content-end col-12">
                 <b-col cols="2">
-                    <b-button variant="primary" class="filter float-right" @click="showCustomModalView = true">Custom View</b-button>
+                    <b-button :disabled="isTemplateLoading" variant="primary" class="filter float-right" @click="showCustomModalView = true">Custom View</b-button>
                 </b-col>
                 <p class="pr-3 pt-1">or</p>
                 <b-col cols="4 p-0">
-                    <b-form-select class="select-template w-100 float-right" v-model="selectedTemplate" @change="getTemplate($event)" :disabled="isTemplateLoading" :options="templatesToExport">
-                        <div v-if="isTemplateLoading" class="spinner">
-                            <b-spinner label="Loading..." type="border" small></b-spinner>
-                        </div>
+                    <!-- <b-spinner v-if="isTemplateLoading" style="width: 1rem; height: 1rem;" label="Spinning"></b-spinner> -->
+                    <b-form-select  class="select-template w-100 float-right" v-model="selectedTemplate" @change="getTemplate($event)" :disabled="isTemplateLoading" :options="templatesToExport">
+                        <template #first v-if="isTemplateLoading">
+                            <b-form-select-option  :value="null" disabled>Template is Loading. Please wait ...</b-form-select-option>
+                        </template>
                     </b-form-select>
                 </b-col>
             </div>
@@ -962,6 +963,7 @@ export default {
         },
         async saveCustomView(template, type) {
             this.showCustomModalView = false;
+            this.$store.dispatch('uxModule/setLoading');
             if (type === 'save' && template) {
                 const templateDuplication = Object.assign({}, template);
                 const keys = Object.keys(templateDuplication);
@@ -992,6 +994,7 @@ export default {
                 await this.$store.dispatch("templatesModule/getAllTemplates")
             }
             this.showCustomView(template, template.fields_type);
+            this.$store.dispatch('uxModule/hideLoader');
 
         },
        async triggerFilter(filter) {
@@ -1015,6 +1018,7 @@ export default {
                 custom: this.customViewTemplate
             });
             this.loadingTotals = true;
+            this.$store.dispatch('uxModule/setLoading');
              await this.$store.dispatch("propertyModule/getTotalsCount", {
                 filter: JSON.stringify(this.filtersName),
                 custom: '',
@@ -1022,6 +1026,7 @@ export default {
             });
             this.totals = this.totalsCount;
             this.loadingTotals = false;
+            this.$store.dispatch('uxModule/hideLoader');
         },
         async getTemplate(event) {
             this.$store.dispatch('uxModule/setLoading');
