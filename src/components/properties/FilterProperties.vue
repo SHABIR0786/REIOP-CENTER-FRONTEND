@@ -717,14 +717,14 @@
     <save-filter-modal
       :showModal="showSaveFilterModal"
       @cancel="showSaveFilterModal = false"
-      :allFilters="allFilters"
-      type="subjects"
+      :allFilters="savedFilters"
+      type="properties"
     ></save-filter-modal>
     <manage-filter-modal
       :showModal="showManageFilterModal"
       @cancel="showManageFilterModal = false"
-      :allFilters="allFilters"
-      type="subjects"
+      :allFilters="savedFilters"
+      type="properties"
     ></manage-filter-modal>
   </b-modal>
 </template>
@@ -918,13 +918,27 @@ export default {
       additionalFilterOptions: "propertyModule/additionalFilterOptions",
       importFilesNames: "importModule/importFilesNames"
     }),
+    savedFilters() {
+      /* eslint-disable  no-unused-vars */
+      let stackFilters = Object.fromEntries(Object.entries(this.StackFilters).filter(([key, value]) => value.value != null && value.value != ""));
+      let statementFilters = Object.fromEntries(Object.entries(this.StatementFilters).filter(([key, value]) => value.value != null && value.value != ""));
+      return {listFilters:this.ListFilters, stackFilters: stackFilters, statementFilters: statementFilters, additionalFilters: this.additionalFilters};
+    },
     totalFilters() {
-      let total = 0;
-      for (let item in this.allFilters) {
-        total += this.allFilters[item].length;
+       /* eslint-disable  no-unused-vars */
+      let stackFilters = Object.fromEntries(Object.entries(this.StackFilters).filter(([key, value]) => value.value != null && value.value != ""));
+      let statementFilters = Object.fromEntries(Object.entries(this.StatementFilters).filter(([key, value]) => value.value != null && value.value != ""));
+      let filterNames =  {listFilters:this.ListFilters, stackFilters: stackFilters, statementFilters: statementFilters, additionalFilters: this.additionalFilters};
+      let filterValue = 0;
+      for (let i in filterNames) {
+        if(filterNames[i].length) {
+        filterValue += filterNames[i].length
+        } else {
+        filterValue += Object.keys(filterNames[i]).length
+        }
       }
-      this.$emit("filtersCount", total);
-      return total;
+      this.$emit("filtersCount", filterValue);
+      return filterValue;
     },
     MarketList() {
       return this.allData["Market"];

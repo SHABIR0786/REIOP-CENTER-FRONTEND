@@ -134,7 +134,7 @@
         </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item, data.index)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
         </template>
         <template v-slot:cell(seller_first_name)="data">
             <div v-b-tooltip.hover :title="data.item.seller_first_name">{{ data.item.seller_first_name }}</div>
@@ -253,8 +253,7 @@ export default {
             }],
             sortBy: 'attempted_skip_trace_sources',
             sortDesc: true,
-            isClearSearch: false,
-            indexDeleteItem: null
+            isClearSearch: false
         }
     },
     computed: {
@@ -464,18 +463,31 @@ export default {
                 ...item
             })
         },
-        deleteItem(item,index) {
+        deleteItem(item) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
-            this.indexDeleteItem = index;
         },
-        modalResponse(response) {
+       async modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
                 try {
                     this.$store.dispatch('uxModule/setLoading');
-                    this.$store.dispatch('sellerModule/deleteSeller', this.itemToDelete.id);
-                    this.filteredOrAllData.splice(this.indexDeleteItem,1);
+                    let responseRequest = await this.$store.dispatch('sellerModule/deleteSeller', this.itemToDelete.id);
+                    if(responseRequest.status==200) {
+                    this.$bvToast.toast("Item Deleted Successfully.", {
+                            title: "Message",
+                            variant: 'success',
+                            autoHideDelay: 5000,
+                        });
+                    const findIndex = this.filteredOrAllData.findIndex(({ id }) => id == this.itemToDelete.id)
+                    findIndex !== -1 && this.filteredOrAllData.splice(findIndex, 1)
+                    }else{
+                        this.$bvToast.toast("Somethin went wrong!", {
+                            title: "Error",
+                            variant: 'danger',
+                            autoHideDelay: 5000,
+                        });
+                    }
                     this.$store.dispatch('uxModule/hideLoader');
                 } catch (error) {
                     this.$store.dispatch('uxModule/hideLoader');

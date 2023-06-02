@@ -3,9 +3,6 @@
     <h3>Golden Addresses</h3>
     <div>
         <b-row>
-            <!-- <b-col cols="4" class="d-flex">
-                <h3>Golden Addresses</h3>
-            </b-col> -->
             <b-col cols="8" class="d-flex">
                 <div class="info total">
                     <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -113,7 +110,7 @@
         </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item,data.index)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
         </template>
         <template v-slot:cell(golden_address_address)="data">
             <div v-b-tooltip.hover :title="data.item.golden_address_address">{{ data.item.golden_address_address }}</div>
@@ -217,8 +214,7 @@ export default {
             }],
             sortBy: 'id',
             sortDesc: true,
-            isGoldenAddressSearched: false,
-            indexDeleteItem: null
+            isGoldenAddressSearched: false
         }
     },
     computed: {
@@ -424,18 +420,31 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
             }
         },
-        deleteItem(item,index) {
+        deleteItem(item) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
-            this.indexDeleteItem = index;
         },
-        modalResponse(response) {
+        async modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
                 this.$store.dispatch('uxModule/setLoading')
                 try {
-                this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', this.itemToDelete.id);
-                this.filteredOrAllData.splice(this.indexDeleteItem,1);
+                let responseRequest = await this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', this.itemToDelete.id);
+                if(responseRequest.status==200) {
+                this.$bvToast.toast("Item Deleted Successfully.", {
+                            title: "Message",
+                            variant: 'success',
+                            autoHideDelay: 5000,
+                        });
+                const findIndex = this.filteredOrAllData.findIndex(({ id }) => id == this.itemToDelete.id)
+                findIndex !== -1 && this.filteredOrAllData.splice(findIndex, 1)
+                } else {
+                        this.$bvToast.toast("Somethin went wrong!", {
+                            title: "Error",
+                            variant: 'danger',
+                            autoHideDelay: 5000,
+                        });
+                }
                 this.$store.dispatch('uxModule/hideLoader')
                 } catch(error) {
                     this.$store.dispatch('uxModule/hideLoader')

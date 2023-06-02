@@ -137,7 +137,7 @@
         </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item,data.index)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
         </template>
         <template v-slot:cell(subject_address)="data">
             <div v-b-tooltip.hover :title="data.item.subject_address">{{ data.item.subject_address }}</div>
@@ -253,7 +253,6 @@ export default {
             sortBy: 'id',
             sortDesc: true,
             isSearched: false,
-            indexDeleteItem: null,
             savedFilters: [{
                 value: null,
                 text: "Save Filters"
@@ -434,18 +433,31 @@ export default {
                 ...item
             })
         },
-        deleteSubject(item,index) {
+        deleteSubject(item) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
-            this.indexDeleteItem = index;
         },
-        modalResponse(response) {
+        async modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
                 this.$store.dispatch('uxModule/setLoading');
                 try {
-                    this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id);
-                    this.filteredOrAllData.splice(this.indexDeleteItem,1);
+                    let responseRequest =  await this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id)
+                    if(responseRequest.status==200) {
+                        this.$bvToast.toast("Item Deleted Successfully.", {
+                            title: "Message",
+                            variant: 'success',
+                            autoHideDelay: 5000,
+                        });
+                        const findIndex = this.filteredOrAllData.findIndex(({ id }) => id == this.itemToDelete.id)
+                        findIndex !== -1 && this.filteredOrAllData.splice(findIndex, 1)
+                    }else{
+                        this.$bvToast.toast("Somethin went wrong!", {
+                            title: "Error",
+                            variant: 'danger',
+                            autoHideDelay: 5000,
+                        });
+                    }
                     this.$store.dispatch('uxModule/hideLoader');
                 } catch (error) {
                     this.$store.dispatch('uxModule/hideLoader');
@@ -455,7 +467,7 @@ export default {
         addItem() {
             this.showAddModal = true;
         },
-        bulkDelete() {
+        async bulkDelete() {
             this.$store.dispatch('uxModule/setLoading');
             try {
                 const instance = this;
@@ -470,8 +482,14 @@ export default {
                         search: this.searchSubject,
                         sortBy: this.sortBy,
                         sortDesc: this.sortDesc
-                    })
-                })
+                    }).then(() => {
+                        this.itemsCount = this.total;
+                        this.filteredOrAllData = this.items;
+                    });
+                    
+                });
+                await this.$store.dispatch("filterModule/getAllFilters", 'subjects');
+                await this.$store.dispatch("subjectModule/filtersOnTable", 'subjects');
                 this.$store.dispatch('uxModule/hideLoader');
             } catch (error) {
                 this.$store.dispatch('uxModule/hideLoader');
