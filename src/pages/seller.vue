@@ -134,7 +134,7 @@
         </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item, data.index)"></b-icon>
         </template>
         <template v-slot:cell(seller_first_name)="data">
             <div v-b-tooltip.hover :title="data.item.seller_first_name">{{ data.item.seller_first_name }}</div>
@@ -181,7 +181,7 @@
             <b-pagination class="mb-0" v-model="currentPage" :total-rows="itemsCount" :per-page="perPage" aria-controls="seller-table"></b-pagination>
         </b-col>
     </b-row>
-    <edit-seller-modal :showModal="showModal" :propsSeller="editedItem" @cancel="showModal=false" @save="save"></edit-seller-modal>
+    <edit-seller-modal :showModal="showModal" :customFields="customSectionLabels" :propsSeller="editedItem" @cancel="showModal=false" @save="save"></edit-seller-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-seller-modal :showModal="showAddModal" @cancel="showAddModal=false" @save="add"></add-seller-modal>
     <filter-sellers ref="filterSellers" :search="searchSeller" @filter="filter" @finish-process="isFinishedFilterSellers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-sellers>
@@ -253,7 +253,8 @@ export default {
             }],
             sortBy: 'attempted_skip_trace_sources',
             sortDesc: true,
-            isClearSearch: false
+            isClearSearch: false,
+            indexDeleteItem: null
         }
     },
     computed: {
@@ -303,9 +304,9 @@ export default {
                 this.showModal = true
             });
         }
-
         this.filteredOrAllData = this.items;
         this.itemsCount = this.total;
+        console.log('sellers');
         await this.$store.dispatch("filterModule/getAllFilters", 'sellers');
         await this.$store.dispatch("sellerModule/filtersOnTable", 'sellers');
 
@@ -442,7 +443,6 @@ export default {
             const data = {
                 ...item
             }
-            console.log(data);
             // data.lists.forEach(e => {
             //     e.created_at = e.created_at.split('T')[0];
             //     e.updated_at = e.updated_at.split('T')[0];
@@ -464,16 +464,18 @@ export default {
                 ...item
             })
         },
-        deleteItem(item) {
+        deleteItem(item,index) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
+            this.indexDeleteItem = index;
         },
         modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
                 try {
                     this.$store.dispatch('uxModule/setLoading');
-                    this.$store.dispatch('sellerModule/deleteSeller', this.itemToDelete.id)
+                    this.$store.dispatch('sellerModule/deleteSeller', this.itemToDelete.id);
+                    this.filteredOrAllData.splice(this.indexDeleteItem,1);
                     this.$store.dispatch('uxModule/hideLoader');
                 } catch (error) {
                     this.$store.dispatch('uxModule/hideLoader');
@@ -486,6 +488,11 @@ export default {
         bulkDelete() {
             try {
                 this.$store.dispatch('uxModule/setLoading');
+                const instance = this;
+                this.bulkDeleteItems.forEach(function(item) {
+                    let index = instance.filteredOrAllData.findIndex(x=>x.id == item);
+                    instance.filteredOrAllData.splice(index,1);
+                }); 
                 this.$store.dispatch('sellerModule/deleteMultipleSellers', this.bulkDeleteItems).then(() => {
                     this.$store.dispatch('sellerModule/getAllSellers', {
                         page: this.currentPage,

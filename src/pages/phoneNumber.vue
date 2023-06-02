@@ -107,7 +107,7 @@
         </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item, data.index)"></b-icon>
         </template>
         <template v-slot:cell(phone_number)="data">
             <div v-b-tooltip.hover :title="data.item.phone_number">{{ data.item.phone_number }}</div>
@@ -139,7 +139,7 @@
             <b-pagination class="mb-0" v-model="currentPage" :total-rows="itemsCount" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         </b-col>
     </b-row>
-    <edit-phone-number-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-phone-number-modal>
+    <edit-phone-number-modal :showModal="showModal" :customFields="customSectionLabels" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-phone-number-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-phone-number-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-phone-number-modal>
     <filter-phone-numbers ref="filterPhone" :search="searchPhone" @filter="filter" @finish-process="isFinishedFilterPhoneNumbers = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-phone-numbers>
@@ -204,7 +204,8 @@ export default {
             }],
             sortBy: 'id',
             sortDesc: true,
-            isPhoneSearched: false
+            isPhoneSearched: false,
+            indexDeleteItem: null
         }
     },
     computed: {
@@ -410,17 +411,16 @@ export default {
             this.showAddModal = false
             this.$store.dispatch('uxModule/setLoading');
             try {
-                this.$store.dispatch('phoneNumberModule/addPhoneNumber', {
-                    ...item
-                })
+                this.$store.dispatch('phoneNumberModule/addPhoneNumber', {...item})
                 this.$store.dispatch('uxModule/hideLoader');
             } catch (error) {
                 this.$store.dispatch('uxModule/hideLoader');
             }
         },
-        deleteItem(item) {
+        deleteItem(item,index) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
+            this.indexDeleteItem = index;
         },
         modalResponse(response) {
             this.showDeleteModal = false;
@@ -428,6 +428,7 @@ export default {
                 this.$store.dispatch('uxModule/setLoading');
                 try {
                     this.$store.dispatch('phoneNumberModule/deletePhoneNumber', this.itemToDelete.id)
+                    this.filteredOrAllData.splice(this.indexDeleteItem,1);
                     this.$store.dispatch('uxModule/hideLoader');
                 } catch (error) {
                     this.$store.dispatch('uxModule/hideLoader');
@@ -440,6 +441,11 @@ export default {
         bulkDelete() {
             this.$store.dispatch('uxModule/setLoading');
             try {
+                const instance = this;
+                this.bulkDeleteItems.forEach(function(item) {
+                    let index = instance.filteredOrAllData.findIndex(x=>x.id == item);
+                    instance.filteredOrAllData.splice(index,1);
+                }); 
                 this.$store.dispatch('phoneNumberModule/deleteMultiplePhoneNumber', this.bulkDeleteItems).then(() => {
                     this.$store.dispatch('phoneNumberModule/getAllPhoneNumbers', {
                         page: this.currentPage,

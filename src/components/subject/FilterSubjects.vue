@@ -494,7 +494,6 @@
           </b-col>
           <b-col cols="6" class="d-flex justify-content-end">
             <b-button
-              :disabled="totalFilters == 0"
               variant="primary"
               @click="saveFilter()"
               class="filter d-flex align-items-center mr-3">Save Filter</b-button>
@@ -509,7 +508,7 @@
     <save-filter-modal
       :showModal="showSaveFilterModal"
       @cancel="showSaveFilterModal = false"
-      :allFilters="allFilters"
+      :allFilters="savedFilter"
       type="subjects"
     ></save-filter-modal>
     <manage-filter-modal
@@ -666,6 +665,12 @@ export default {
       additionalFilterFieldsTypes: "importModule/additionalFilterFieldsTypes",
       additionalFilterOptions: "propertyModule/additionalFilterOptions",
     }),
+    savedFilter() {
+       /* eslint-disable  no-unused-vars */
+      let stackFilters = Object.fromEntries(Object.entries(this.StackFilters).filter(([key, value]) => value.value != null && value.value != ""));
+      let statementFilters = Object.fromEntries(Object.entries(this.StatementFilters).filter(([key, value]) => value.value != null && value.value != ""));
+      return {listFilters:this.ListFilters, stackFilters: stackFilters, statementFilters: statementFilters, additionalFilters: this.additionalFilters};
+    },
     totalFilters() {
       let total = 0;
       for (let item in this.allFilters) {

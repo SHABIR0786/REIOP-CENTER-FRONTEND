@@ -137,7 +137,7 @@
         </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editSubject(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteSubject(data.item,data.index)"></b-icon>
         </template>
         <template v-slot:cell(subject_address)="data">
             <div v-b-tooltip.hover :title="data.item.subject_address">{{ data.item.subject_address }}</div>
@@ -183,7 +183,7 @@
             <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         </b-col>
     </b-row>
-    <edit-subject-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
+    <edit-subject-modal :showModal="showModal" :customFields="customSectionLabels" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-subject-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-subject-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-subject-modal>
     <filter-subjects ref="filtersubjects" :search="searchSubject" @filter="filter" @finish-process="isFinishedFilterSubjects = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-subjects>
@@ -253,6 +253,7 @@ export default {
             sortBy: 'id',
             sortDesc: true,
             isSearched: false,
+            indexDeleteItem: null,
             savedFilters: [{
                 value: null,
                 text: "Save Filters"
@@ -433,16 +434,18 @@ export default {
                 ...item
             })
         },
-        deleteSubject(item) {
+        deleteSubject(item,index) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
+            this.indexDeleteItem = index;
         },
         modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
                 this.$store.dispatch('uxModule/setLoading');
                 try {
-                    this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id)
+                    this.$store.dispatch('subjectModule/deleteSubject', this.itemToDelete.id);
+                    this.filteredOrAllData.splice(this.indexDeleteItem,1);
                     this.$store.dispatch('uxModule/hideLoader');
                 } catch (error) {
                     this.$store.dispatch('uxModule/hideLoader');
@@ -455,6 +458,11 @@ export default {
         bulkDelete() {
             this.$store.dispatch('uxModule/setLoading');
             try {
+                const instance = this;
+                this.bulkDeleteItems.forEach(function(item) {
+                    let index = instance.filteredOrAllData.findIndex(x=>x.id == item);
+                    instance.filteredOrAllData.splice(index,1);
+                }); 
                 this.$store.dispatch('subjectModule/deleteMultipleSubjects', this.bulkDeleteItems).then(() => {
                     this.$store.dispatch('subjectModule/getAllSubjects', {
                         page: this.currentPage,

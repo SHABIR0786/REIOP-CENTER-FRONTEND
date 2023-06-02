@@ -510,13 +510,13 @@
       :showModal="showSaveFilterModal"
       @cancel="showSaveFilterModal = false"
       :allFilters="allFilters"
-      type="subjects"
+      type="goldens"
     ></save-filter-modal>
     <manage-filter-modal
       :showModal="showManageFilterModal"
       @cancel="showManageFilterModal = false"
       :allFilters="allFilters"
-      type="subjects"
+      type="goldens"
     ></manage-filter-modal>
   </b-modal>
 </template>

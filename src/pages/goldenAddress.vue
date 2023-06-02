@@ -113,7 +113,7 @@
         </template>
         <template v-slot:cell(actions)="data">
             <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+            <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item,data.index)"></b-icon>
         </template>
         <template v-slot:cell(golden_address_address)="data">
             <div v-b-tooltip.hover :title="data.item.golden_address_address">{{ data.item.golden_address_address }}</div>
@@ -154,7 +154,7 @@
             <b-pagination class="mb-0" v-model="currentPage" :total-rows="itemsCount" :per-page="perPage" aria-controls="subject-table"></b-pagination>
         </b-col>
     </b-row>
-    <edit-golden-address-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-golden-address-modal>
+    <edit-golden-address-modal :showModal="showModal" :customFields="customSectionLabels" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-golden-address-modal>
     <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
     <add-golden-address-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-golden-address-modal>
     <filter-golden-addresses ref="filterGolden" :search="searchGoldenAddress" @filter="filter" @finish-process="isFinishedFilterGoldenAddresses = true" @filtersCount="filtersCount" :propsData="filteredOrAllData" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false"></filter-golden-addresses>
@@ -218,6 +218,7 @@ export default {
             sortBy: 'id',
             sortDesc: true,
             isGoldenAddressSearched: false,
+            indexDeleteItem: null
         }
     },
     computed: {
@@ -423,16 +424,18 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
             }
         },
-        deleteItem(item) {
+        deleteItem(item,index) {
             this.showDeleteModal = true;
             this.itemToDelete = item;
+            this.indexDeleteItem = index;
         },
         modalResponse(response) {
             this.showDeleteModal = false;
             if (response) {
                 this.$store.dispatch('uxModule/setLoading')
                 try {
-                this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', this.itemToDelete.id)
+                this.$store.dispatch('goldenAddressModule/deleteGoldenAddress', this.itemToDelete.id);
+                this.filteredOrAllData.splice(this.indexDeleteItem,1);
                 this.$store.dispatch('uxModule/hideLoader')
                 } catch(error) {
                     this.$store.dispatch('uxModule/hideLoader')
@@ -445,6 +448,11 @@ export default {
         bulkDelete() {
             this.$store.dispatch('uxModule/setLoading')
             try {
+                const instance = this;
+                this.bulkDeleteItems.forEach(function(item) {
+                    let index = instance.filteredOrAllData.findIndex(x=>x.id == item);
+                    instance.filteredOrAllData.splice(index,1);
+                });
             this.$store.dispatch('goldenAddressModule/deleteMultipleGoldenAddress', this.bulkDeleteItems).then(() => {
                 this.$store.dispatch('goldenAddressModule/getAllGoldenAddresses', {
                     page: this.currentPage,

@@ -98,6 +98,13 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
+                        <b-row class="mb-1 text-center" v-for="customfield in customFields" :key="customfield.id">
+                            <b-col cols="12" v-if="customfield.visible && subject[customfield.field]">
+                                <b-input-group :prepend="customfield.label" class="mb-2">
+                                    <b-form-input :readonly="isReadOnly" v-model="subject[customfield.field]"></b-form-input>
+                                </b-input-group>
+                            </b-col>
+                        </b-row>
                     </b-col>
                 </b-row>
             </b-row>
@@ -319,6 +326,9 @@ export default {
         },
         propsData: {
             type: Object
+        },
+        customFields: {
+            type: Array
         }
     },
     data() {

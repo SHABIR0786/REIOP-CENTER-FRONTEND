@@ -119,6 +119,13 @@
                                 </b-input-group>
                             </b-col>
                         </b-row>
+                        <b-row class="mb-1 text-center" v-for="customfield in customFields" :key="customfield.id">
+                            <b-col cols="12" v-if="customfield.visible && seller[customfield.field]">
+                                <b-input-group :prepend="customfield.label" class="mb-2">
+                                    <b-form-input :readonly="isReadOnly" v-model="seller[customfield.field]"></b-form-input>
+                                </b-input-group>
+                            </b-col>
+                        </b-row>
                     </b-col>
                 </b-row>
             </b-row>
@@ -416,9 +423,7 @@
                                 responsive
                                 :per-page="0"
                                 :sticky-header="true"
-                                class="table_height_all_modal"
-
-                        >
+                                class="table_height_all_modal">
                             <template #table-busy>
                                 <div class="text-center" my-2>
                                     <b-spinner class="align-middle"></b-spinner>
@@ -488,6 +493,9 @@ export default {
         },
         propsSeller: {
             type: Object
+        },
+        customFields: {
+            type: Array
         }
     },
     methods: {

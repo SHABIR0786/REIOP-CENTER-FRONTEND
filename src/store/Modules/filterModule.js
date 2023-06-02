@@ -65,7 +65,6 @@ const actions = {
             return response
         })
     },
-
     async getAllFilters({ commit, dispatch }, type) {
         return await api.get(`/filters/getAllFilters?type=${type}`).then((response) => {
             if (response && response.response && response.response.status === 401) {

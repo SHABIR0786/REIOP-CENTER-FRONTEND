@@ -3,9 +3,6 @@
       <h3>Emails</h3>
         <div>
             <b-row>
-              <!-- <b-col cols="4" class="d-flex">
-                <h3>Emails</h3>
-              </b-col> -->
                 <b-col cols="8" class="d-flex">
                     <div class="info total">
                         <b-icon class="mr-2 cursor-pointer" icon="graph-up" variant="primary" @click="editItem(data.item)"></b-icon>
@@ -18,10 +15,6 @@
                         <div>Added This Month</div>
                     </div>
                 </b-col>
-<!--                <b-col cols="4" class="d-flex justify-content-end">-->
-<!--                    <b-button variant="primary" class="add-seller" @click="addItem()">-->
-<!--                        <b-icon icon="plus" aria-hidden="true"></b-icon> Add Email</b-button>-->
-<!--                </b-col>-->
             </b-row>
             <hr>
             <b-row class="mb-3">
@@ -72,8 +65,7 @@
             responsive
             :per-page="0"
             :current-page="currentPage"
-            :sticky-header="true"
-        >
+            :sticky-header="true">
             <template #table-busy>
                 <div class="text-center" my-2>
                     <b-spinner class="align-middle"></b-spinner>
@@ -118,7 +110,7 @@
             </template>
             <template v-slot:cell(actions)="data">
                 <b-icon class="mr-2 cursor-pointer" icon="pencil" variant="primary" @click="editItem(data.item)"></b-icon>
-                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item)"></b-icon>
+                <b-icon class="cursor-pointer" variant="danger" icon="trash" @click="deleteItem(data.item,data.index)"></b-icon>
             </template>
             <template v-slot:cell(email_address)="data">
                 <div v-b-tooltip.hover :title="data.item.email_address">{{ data.item.email_address }}</div>
@@ -161,7 +153,7 @@
                 <b-pagination class="mb-0" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="subject-table"></b-pagination>
             </b-col>
         </b-row>
-        <edit-email-modal :showModal="showModal" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-email-modal>
+        <edit-email-modal :showModal="showModal" :customFields="customSectionLabels" :propsData="editedItem" @cancel="showModal=false" @save="save"></edit-email-modal>
         <delete-modal :showModal="showDeleteModal" @cancel="showDeleteModal=false" @modalResponse="modalResponse"></delete-modal>
         <add-email-modal :showModal="showAddModal" :propsData="editedItem" @cancel="showAddModal=false" @save="add"></add-email-modal>
         <filter-emails ref="filterEmail" :search="searchEmail" @filter="filter" @finish-process="isFinishedFilterEmails = true" @filtersCount="filtersCount" :propsData="filteredOrAllData"  :currentPage="currentPage" :showModal="showFilterPropertiesModal" @cancel="showFilterPropertiesModal=false" ></filter-emails>
@@ -222,6 +214,7 @@ export default {
             sortBy: 'id',
             sortDesc: true,
             isEmailSearched: false,
+            indexDeleteItem: null
         }
     },
     computed: {
@@ -387,9 +380,7 @@ export default {
                     }
                 });
                 item.subjects = subjects;
-                this.editedItem = {
-                    ...item
-                }
+                this.editedItem = {...item}
                 this.showModal = true
         },
         save(item) {
@@ -405,9 +396,10 @@ export default {
             this.$store.dispatch('uxModule/hideLoader')
           }
         },
-        deleteItem(item){
+        deleteItem(item,index){
             this.showDeleteModal = true;
             this.itemToDelete = item;
+            this.indexDeleteItem = index;
         },
         modalResponse(response) {
           this.$store.dispatch('uxModule/setLoading')
@@ -415,6 +407,7 @@ export default {
             this.showDeleteModal = false;
             if (response) {
                 this.$store.dispatch('emailModule/deleteEmail', this.itemToDelete.id)
+                this.filteredOrAllData.splice(this.indexDeleteItem,1);
             }
           this.$store.dispatch('uxModule/hideLoader')
           } catch (error) {
@@ -427,6 +420,11 @@ export default {
         bulkDelete () {
           this.$store.dispatch('uxModule/setLoading')
           try {
+            const instance = this;
+                this.bulkDeleteItems.forEach(function(item) {
+                    let index = instance.filteredOrAllData.findIndex(x=>x.id == item);
+                    instance.filteredOrAllData.splice(index,1);
+                }); 
             this.$store.dispatch('emailModule/deleteMultipleEmails', this.bulkDeleteItems).then(() => {
               this.$store.dispatch('emailModule/getAllEmails', {page: this.currentPage, perPage: this.perPage, search: this.searchEmail, sortBy:this.sortBy,sortDesc:this.sortDesc})
             })
